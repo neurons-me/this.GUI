@@ -1,0 +1,16 @@
+/* public/styles/global.css */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  h1, h2, h3 {
+    margin: 0;
+    padding: 0;
+  }
+  
+  nav {
+    background-color: #1976d2;
+    color: white;
+    padding: 1rem;
+  }

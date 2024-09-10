@@ -2,25 +2,56 @@
   "name": "this.gui",
   "version": "0.0.55",
   "description": "This Graphic User Interface.",
-  "main": "index.js",
+  "main": "dist/this-gui.umd.js",
+  "module": "dist/this-gui.es.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/suiGn/GUI.git"
+    "url": "git+https://github.com/neurons-me/GUI.git"
   },
   "scripts": {
-    "start": "node index.js"
+    "dev": "vite",
+    "build": "vite build",
+    "prepublishOnly": "npm run build",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
-  "homepage": "https://neurons.me",
-  "docs": "https://suiGn.github.io/GUI",
-  "type":"module",
+  "type": "module",
   "author": "suiGn",
   "license": "MIT",
-  "repoType": "NPM Package",
-  "category": "dataformatter",
   "dependencies": {
-
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@storybook/addon-docs": "^8.2.9",
+    "@storybook/addons": "^7.6.17",
+    "@storybook/builder-vite": "^8.2.9",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.45",
+    "tailwindcss": "^3.4.10"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "devDependencies": {
-  
-  }
+    "@chromatic-com/storybook": "^1.8.0",
+    "@storybook/addon-essentials": "^8.2.9",
+    "@storybook/addon-interactions": "^8.2.9",
+    "@storybook/addon-links": "^8.2.9",
+    "@storybook/addon-onboarding": "^8.2.9",
+    "@storybook/blocks": "^8.2.9",
+    "@storybook/manager-api": "^8.2.9",
+    "@storybook/react": "^8.2.9",
+    "@storybook/react-vite": "^8.2.9",
+    "@storybook/test": "^8.2.9",
+    "@storybook/theming": "^8.2.9",
+    "prop-types": "^15.8.1",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "storybook": "^8.2.9",
+    "vite": "^4.5.3"
+  },
+  "files": [
+    "dist"
+  ]
 }
