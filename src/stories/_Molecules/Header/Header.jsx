@@ -1,7 +1,7 @@
 //this.GUI/src/stories/Profile/ProfilePageContext.jsx
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '../../_Atomic/Button/Button';
+import { Button } from '../../_Atomic/Button/Button/Button';
 import './Header.css';
 
 export const Header = ({ user, onLogin, onLogout, onCreateAccount }) => (
