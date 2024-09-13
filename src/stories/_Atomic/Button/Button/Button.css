@@ -1,0 +1,29 @@
+
+.button {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+}
+
+.button--primary {
+  background-color: #e3f2fd;
+  border-color: #1e88e5;
+}
+
+.button--secondary {
+  background-color: #fff;
+  border-color: #ccc;
+}
+
+.button--small {
+  padding: 8px;
+}
+
+.button--medium {
+  padding: 16px;
+}
+
+.button--large {
+  padding: 32px;
+}

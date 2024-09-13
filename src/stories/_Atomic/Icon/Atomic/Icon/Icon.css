@@ -1,0 +1,29 @@
+
+.icon {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+}
+
+.icon--primary {
+  background-color: #e3f2fd;
+  border-color: #1e88e5;
+}
+
+.icon--secondary {
+  background-color: #fff;
+  border-color: #ccc;
+}
+
+.icon--small {
+  padding: 8px;
+}
+
+.icon--medium {
+  padding: 16px;
+}
+
+.icon--large {
+  padding: 32px;
+}

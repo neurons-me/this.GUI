@@ -1,0 +1,29 @@
+
+.label {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+}
+
+.label--primary {
+  background-color: #e3f2fd;
+  border-color: #1e88e5;
+}
+
+.label--secondary {
+  background-color: #fff;
+  border-color: #ccc;
+}
+
+.label--small {
+  padding: 8px;
+}
+
+.label--medium {
+  padding: 16px;
+}
+
+.label--large {
+  padding: 32px;
+}

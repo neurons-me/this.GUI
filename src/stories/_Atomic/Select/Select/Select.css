@@ -1,0 +1,29 @@
+
+.select {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+}
+
+.select--primary {
+  background-color: #e3f2fd;
+  border-color: #1e88e5;
+}
+
+.select--secondary {
+  background-color: #fff;
+  border-color: #ccc;
+}
+
+.select--small {
+  padding: 8px;
+}
+
+.select--medium {
+  padding: 16px;
+}
+
+.select--large {
+  padding: 32px;
+}

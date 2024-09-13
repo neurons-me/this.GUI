@@ -1,0 +1,29 @@
+
+.tooltip {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+}
+
+.tooltip--primary {
+  background-color: #e3f2fd;
+  border-color: #1e88e5;
+}
+
+.tooltip--secondary {
+  background-color: #fff;
+  border-color: #ccc;
+}
+
+.tooltip--small {
+  padding: 8px;
+}
+
+.tooltip--medium {
+  padding: 16px;
+}
+
+.tooltip--large {
+  padding: 32px;
+}

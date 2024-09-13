@@ -1,0 +1,29 @@
+
+.snackbar {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+}
+
+.snackbar--primary {
+  background-color: #e3f2fd;
+  border-color: #1e88e5;
+}
+
+.snackbar--secondary {
+  background-color: #fff;
+  border-color: #ccc;
+}
+
+.snackbar--small {
+  padding: 8px;
+}
+
+.snackbar--medium {
+  padding: 16px;
+}
+
+.snackbar--large {
+  padding: 32px;
+}
