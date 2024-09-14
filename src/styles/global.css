@@ -1,16 +1,18 @@
 /* public/styles/global.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-  }
-  
-  h1, h2, h3 {
-    margin: 0;
-    padding: 0;
-  }
-  
-  nav {
-    background-color: #1976d2;
-    color: white;
-    padding: 1rem;
-  }
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.light-theme {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+}
+
+.dark-theme {
+  --bg-color: #181818;
+  --text-color: #eaeaea;
+}

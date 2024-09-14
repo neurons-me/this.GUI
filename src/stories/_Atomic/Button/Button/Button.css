@@ -1,66 +1,53 @@
 /* Base styles */
 .button {
   display: inline-block;
-  padding: 8px 18px;
-  border-radius: 5px;
+  padding: 10px 20px;
+  border-radius: 8px;
   font-family: 'Roboto', sans-serif;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
   text-align: center;
   border: 1px solid transparent;
-  box-shadow: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Primary button */
 .button--primary {
-  background-color: #0077ff; /* Light blue */
-  color: white;
-  border-color: transparent;
+  background-color: #00695c; /* Green color matching your theme */
+  color: #fff;
+  border-color: #004d40; /* Darker green for border */
 }
 
 .button--primary:hover {
-  background-color: #0056b3; /* Slightly darker blue */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Minimal shadow on hover */
+  background-color: #004d40;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Secondary button */
+/* Secondary button (white with green text and border) */
 .button--secondary {
-  background-color: transparent;
-  color: #333; /* Dark grey text */
-  border-color: #ccc; /* Soft grey border */
+  background-color: #fff;
+  color: #00695c;
+  border-color: #00695c;
 }
 
 .button--secondary:hover {
-  background-color: #f8f8f8; /* Light grey background */
-  box-shadow: none;
-  border-color: #bbb; /* Slightly darker border on hover */
-}
-
-/* Button without border */
-.button--noborder {
-  background-color: transparent;
-  color: #0077ff;
-  border: none;
-}
-
-.button--noborder:hover {
-  color: #0056b3;
   background-color: #f0f0f0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 /* Sizes */
 .button--small {
   font-size: 12px;
-  padding: 5px 10px;
+  padding: 6px 12px;
 }
 
 .button--medium {
   font-size: 14px;
-  padding: 8px 18px;
+  padding: 10px 20px;
 }
 
 .button--large {
   font-size: 16px;
-  padding: 12px 24px;
+  padding: 14px 28px;
 }

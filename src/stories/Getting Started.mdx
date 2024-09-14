@@ -1,118 +1,240 @@
-# This.GUI
-**MDX** is a powerful format because it allows you to combine the simplicity of **Markdown** with the flexibility of **React components**. This means you can write documentation, content, or pages using normal Markdown syntax and sprinkle in **React components** wherever needed.
+<img src="https://suign.github.io/assets/imgs/this_GUI.svg" alt="Cleaker Me" width="477" height="477" align="center" style={{marginBottom: '55px'}}/>
 
-Here’s a breakdown of how it works:
 
-### 1. **Markdown + JSX**
-MDX lets you write Markdown like usual, but when you need interactive or dynamic content, you can directly insert React components. It merges **Markdown** and **JSX** seamlessly in the same file.
 
-Example:
+# Welcome to THIS.GUI
 
-```mdx
-# Welcome to My Site
+### **Explanation of Grouping:**
+The **Atomic Design** methodology defines organisms as complex structures built from smaller components, but how we perceive complexity can vary based on context.
+ Let’s break it down to align with your insight:
 
-This is a simple introduction written in Markdown.
+​	•	**Atomic**: Smallest components that are not broken down further.
 
-## Here’s a custom button:
+​	•	**Molecules**: Simple combinations of atomic components that together form a small UI feature.
 
-<Button label="Click Me" />
+​	•	**Organisms**: More complex, combining molecules and atomic components to create larger, more detailed features.
 
-Here is more markdown text below the button!
-```
+​	•	**Layout**: Components related to structuring and organizing content across the page.
 
-In this example:
-- The heading `# Welcome to My Site` and the paragraph are standard **Markdown**.
-- The `<Button />` component is a **React component** that you import and use directly in the MDX file.
+​	•	**Templates**: Layouts of full pages, combining organisms and layout components.
 
-### 2. **Passing Props to Components**
-You can pass props to React components just like you would in a React project. This allows you to create dynamic, reusable content.
+​	•	**Pages**: Complete and functional pages made up of templates and content.
 
-```mdx
-## Example with Props
+​	•	**Miscellaneous**: Utility components that don’t fit into the above categories but provide important functions, such as popovers, overlays, and media controls.
 
-Here’s a button with dynamic props:
+### Here’s how it breaks down:
 
-<Button label="Submit" color="primary" />
-```
+	•	Pages combine multiple Organisms (like forms, media collections, and navigation elements) to create a full layout.
+	•	Organisms themselves are composed of Molecules (which could be form fields, buttons, etc.).
+	•	Molecules are built from Atoms (the smallest UI components like text, buttons, inputs).
+	
+# Recap of Hierarchy
 
-### 3. **Reusability with Components**
-Since you can use any React component, you can integrate complex UI elements, such as forms, charts, or interactive widgets, into your content.
+	1.	**Atoms:** Basic building blocks (buttons, inputs).
+	2.	**Molecules:** Small functional units combining Atoms (input groups, button groups).
+	3.	**Organisms:** Larger functional blocks combining Molecules (forms, media cards).
+	4.	**Layouts:** Define structure and positioning (grids, sections, flexbox).
+	5.	**Pages:** Use Layouts, Organisms, Molecules, and Atoms to create entire pages.
 
-For example:
 
-```mdx
-# User Statistics
+-------------------
+# 1. Atomic Components (Basic/Building Blocks)
+Atomic components are the smallest building blocks and cannot be broken down further.
 
-<Chart data={userData} />
+		**Text Components:**
+	
+	•	Heading (H1, H2, H3, etc.)
+	•	Paragraph
+	•	Label
+	•	Caption
 
-This chart is embedded directly into the documentation!
-```
+		**Interactive Components:**
 
-### 4. **How to Set It Up**
-To use **MDX** in your project, you’ll typically configure a tool like **Storybook**, **Next.js**, or a custom React setup.
+	•	Button
+	•	Link (Anchor)
+	•	Icon (Clickable)
+	•	Checkbox
+	•	Radio Button
+	•	Toggle/Switch
+	•	Text Input
+	•	Text Area
+	•	Select/Dropdown
+	•	Slider
+	•	Range Input
 
-#### With **Storybook**:
-MDX is perfect for writing component documentation in **Storybook**. You can write documentation for your components and render the components directly in the docs.
+		**Media Components:**
+	
+	•	Image
+	•	Video
+	•	Audio
+	•	Icon
 
-```mdx
-import { Button } from './Button';
+		**Visual Components:**
 
-<Meta title="Button" component={Button} />
+	•	Divider
+	•	Spacer (For layout spacing)
+	•	Tooltip
+	•	Badge
+	•	Tag/Chip
 
-# Button Component
+		**Feedback Components:**
 
-This is the `Button` component with different styles.
+	•	Loader/Spinner
+	•	Progress Bar
+	•	Alert
+	•	Snackbar/Toast
+	•	Tooltip
 
-<Canvas>
-  <Story name="Primary Button">
-    <Button label="Primary" color="primary" />
-  </Story>
-</Canvas>
-```
+# 2. Molecules (Combining Atomic Components)
+Molecules are combinations of atomic components that work together to form a functional unit.
 
-#### With **Next.js**:
-Next.js makes it easy to integrate MDX for static pages or blogs.
+		**Form Elements:**
 
-1. Install MDX support for Next.js:
-   ```bash
-   npm install @next/mdx @mdx-js/loader
-   ```
+	•	Input Group (Input with Button)
+	•	Input with Label
+	•	Search Bar
+	•	File Upload
+	•	Form Field (Label + Input + Helper Text)
 
-2. Configure Next.js in `next.config.js`:
-   ```js
-   const withMDX = require('@next/mdx')({
-     extension: /\.mdx?$/
-   });
-   
-   module.exports = withMDX({
-     pageExtensions: ['js', 'jsx', 'md', 'mdx'],
-   });
-   ```
+		**Buttons with Icons or Text:**
 
-3. Create an `.mdx` file and use React components inside:
-   ```mdx
-   # Hello World
+	•	Icon Button (Button with Icon)
+	•	Button Group (Multiple Buttons together)
 
-   <Button label="Click Me" />
-   ```
+		**Media Molecules:**
 
-#### With **Gatsby**:
-MDX can also be used in **Gatsby** to create rich blog posts or pages by embedding React components within Markdown.
+	•	Image with Caption
+	•	Video with Controls and Description
+	•	Avatar + Name
+	•	Audio Player
 
-### 5. **Where to Use MDX**
-MDX is often used for:
-- **Technical documentation** (with live component previews).
-- **Component libraries** (Storybook).
-- **Blogs or content management systems** (Next.js/Gatsby).
-- **Interactive tutorials**.
+		**Feedback Molecules:**
 
-### Key Advantages of MDX:
-- **Markdown simplicity**: Use the same syntax you’re used to for writing docs or blog posts.
-- **React components**: Dynamically enhance content with interactivity, custom UI, or reusable components.
-- **Reusable content**: Leverage the power of React to make your content dynamic and interactive.
+	•	Notification (with Alert, Title, and Action)
+	•	Modal (Header, Body, Footer)
 
----
+# 3. Organisms (Combining Molecules)
+Organisms are larger and more complex UI components formed by grouping together multiple molecules or simple components.
 
-MDX gives you the **best of both worlds**: you can write content in **Markdown**, and whenever you need dynamic or interactive elements, you simply drop in a React component. It’s ideal for use cases where you want content and code to live together seamlessly.
+		**Forms and Form Layouts:**
 
-Let me know if you'd like help with setting up or using MDX further!
+	•	Sign-In Form (Form fields + Submit Button)
+	•	Registration Form (Fields for name, email, password + Terms Checkbox + Submit)
+	•	Contact Form (Input fields + Message TextArea + Send Button)
+
+		**Content Display:**
+
+	•	Card (Image + Title + Description + Action Button)
+	•	Media Card (Image/Video + Title + Text)
+	•	List (Collection of items, e.g., a list of links or products)
+	•	Accordion (Expandable sections with content inside)
+
+		**Navigation:**
+
+	•	Navbar (Logo + Links + Search + Menu Toggle)
+	•	Sidebar (List of links for navigation)
+	•	Breadcrumbs (Links showing hierarchy)
+	
+		**Media Collections:**
+
+	•	Image Gallery (Grid of images with captions)
+	•	Video Playlist (List of videos to watch)
+	•	Carousel/Slider (Image or Media Slider)
+
+		**Tables:**
+
+	•	Data Table (Rows and Columns for displaying structured data)
+	•	Pricing Table (Different pricing options)
+	•	Comparison Table (Compares features/products)
+
+# 4. Layout Components (Page-Level Components)
+Layout components are structural elements used to organize content on a page.
+
+	•	**Grid/Section Layouts:**
+
+	•	Grid (Arranges items in a structured layout with rows and columns)
+	•	Section (A part of the page with a header, content, and actions)
+	•	Flexbox Layout (Horizontally/Vertically aligned containers)
+
+		**Navigation & Menus:**
+
+	•	Header (Navbar + Search + Links)
+	•	Footer (Copyright + Links + Social Media Icons)
+	•	Dropdown Menu (Toggleable menu of options)
+	•	Pagination (Buttons for navigating multiple pages)
+
+		**Content Organization:**
+
+	•	Sidebar (For navigation or additional info)
+	•	Tabs (Switching between different content views)
+	•	Accordion (Collapsible sections)
+
+		**Hero Sections:**
+
+	•	Hero Banner (Large heading, subheading, image, and call to action)
+	•	Hero Image/Video Section (Introductory section at the top of a page)
+
+# 5. Templates (Combining Organisms and Layout Components)
+Templates define the structure of entire pages by arranging multiple organisms and layout components.
+
+		**Landing Pages:**
+
+	•	Hero Section + Features List + Call-to-Action Button + Testimonials
+	•	Product Landing Page (Hero, Features, Pricing, CTA)
+
+		**Dashboard Layouts:**
+
+	•	Sidebar + Top Navbar + Content Area
+	•	Admin Dashboard (Graphs, Lists, Cards, Notifications)
+
+		**E-Commerce Pages:**
+
+	•	Product Page (Product Image, Description, Price, Add to Cart Button)
+	•	Shopping Cart (List of items, quantity, total, checkout button)
+
+		**Authentication Pages:**
+
+	•	Sign-In Page (Form + Link to Register)
+	•	Registration Page (Form + Link to Sign In)
+
+		**Contact Us Page:**
+
+	•	Form Section + Location Info + Social Media Links
+
+# 6. Pages (Final Composition of Templates)
+Pages are final representations of the full UI, using templates to create entire sections with components.
+
+	•	Home Page
+	•	About Us Page
+	•	Contact Us Page
+	•	User Profile Page
+	•	Product Detail Page
+	•	Checkout Page
+	•	Blog/Article Page
+	•	Admin Dashboard
+	•	Search Results Page
+
+# 7. Miscellaneous / Utility Components
+These components often serve specialized purposes and improve user interaction.
+
+		**Tooltips & Popovers:**
+
+	•	Pop-up information when hovering over or clicking an element.
+		**Overlays:**
+
+	•	Modal/Popup Window
+	•	Drawer (Slide-in navigation or settings panel)
+
+		**Search Components:**
+
+	•	Search Box (Input field with search button)
+	•	Autocomplete/Typeahead
+
+		**Media and Content Controls:**
+
+	•	Audio/Video Controls (Play, Pause, Mute)
+	•	Filters (Search filters, Tag filters)
+	
+		**Interactive Maps:**
+
+	•	Map (With interactive markers, zoom, and pan)

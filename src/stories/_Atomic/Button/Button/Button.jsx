@@ -1,17 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Button.css';
+import './Button.css'; // Assuming you're using Tailwind, you can remove this if no longer needed
 
-/**
- * Button component for user interaction
- */
 export const Button = ({ primary, size, label, children, ...props }) => {
   const mode = primary ? 'button--primary' : 'button--secondary';
-  
+  const buttonSize = size ? `button--${size}` : '';
+
   return (
     <button
       type="button"
-      className={['button', `button--${size}`, mode].join(' ')}
+      className={`button ${mode} ${buttonSize} text-white bg-green-500 rounded px-4 py-2`}
       {...props}
     >
       {children || label}
@@ -31,3 +29,5 @@ Button.defaultProps = {
   size: 'medium',
   label: '',  // Default label to an empty string
 };
+
+export default Button;

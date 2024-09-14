@@ -1,4 +1,4 @@
-<img src="https://suign.github.io/assets/imgs/this_GUI.svg" alt="Cleaker Me" width="244" height="244" align="right">
+<img src="https://suign.github.io/assets/imgs/this_GUI.svg" alt="Cleaker Me" width="377" height="377" align="right">
 
 # THIS.GUI
 
