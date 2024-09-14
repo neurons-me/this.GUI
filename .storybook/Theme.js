@@ -4,6 +4,6 @@ export default create({
   base: 'light',
   brandTitle: 'This.GUI',
   brandUrl: 'https://neurons.me',
-  brandImage: 'https://suign.github.io/assets/imgs/this_GUI.png',
+  brandImage: 'https://suign.github.io/assets/imgs/this_GUI.svg',
   brandTarget: '_self',
 });

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import './Button.css';
@@ -6,36 +5,29 @@ import './Button.css';
 /**
  * Button component for user interaction
  */
-export const Button = ({ primary, size, children, ...props }) => {
+export const Button = ({ primary, size, label, children, ...props }) => {
   const mode = primary ? 'button--primary' : 'button--secondary';
+  
   return (
-    <div
+    <button
+      type="button"
       className={['button', `button--${size}`, mode].join(' ')}
       {...props}
     >
-      {children}
-    </div>
+      {children || label}
+    </button>
   );
 };
 
 Button.propTypes = {
-  /**
-   * Is this the primary style for the component?
-   */
   primary: PropTypes.bool,
-  /**
-   * Size of the component
-   */
   size: PropTypes.oneOf(['small', 'medium', 'large']),
-  /**
-   * Content to be rendered inside the component
-   */
-  children: PropTypes.node.isRequired,
+  label: PropTypes.string,
+  children: PropTypes.node,
 };
 
 Button.defaultProps = {
   primary: false,
   size: 'medium',
+  label: '',  // Default label to an empty string
 };
-
-export default Button;

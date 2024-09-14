@@ -21,10 +21,13 @@
   vertical-align: top;
 }
 
-.storybook-header button + button {
-  margin-left: 10px;
+.storybook-header button {
+  padding: 8px 16px; /* Ensure the padding is correctly applied */
+  font-size: 12px;    /* Adjust font size */
+  border-radius: 6px;
+  display: inline-block;
+  margin-right:5px;
 }
-
 .storybook-header .welcome {
   color: #333;
   font-size: 14px;

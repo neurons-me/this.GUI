@@ -1,29 +1,66 @@
-
+/* Base styles */
 .button {
-  padding: 16px;
-  border-radius: 8px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: 5px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  border: 1px solid transparent;
+  box-shadow: none;
 }
 
+/* Primary button */
 .button--primary {
-  background-color: #e3f2fd;
-  border-color: #1e88e5;
+  background-color: #0077ff; /* Light blue */
+  color: white;
+  border-color: transparent;
 }
 
+.button--primary:hover {
+  background-color: #0056b3; /* Slightly darker blue */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Minimal shadow on hover */
+}
+
+/* Secondary button */
 .button--secondary {
-  background-color: #fff;
-  border-color: #ccc;
+  background-color: transparent;
+  color: #333; /* Dark grey text */
+  border-color: #ccc; /* Soft grey border */
 }
 
+.button--secondary:hover {
+  background-color: #f8f8f8; /* Light grey background */
+  box-shadow: none;
+  border-color: #bbb; /* Slightly darker border on hover */
+}
+
+/* Button without border */
+.button--noborder {
+  background-color: transparent;
+  color: #0077ff;
+  border: none;
+}
+
+.button--noborder:hover {
+  color: #0056b3;
+  background-color: #f0f0f0;
+}
+
+/* Sizes */
 .button--small {
-  padding: 8px;
+  font-size: 12px;
+  padding: 5px 10px;
 }
 
 .button--medium {
-  padding: 16px;
+  font-size: 14px;
+  padding: 8px 18px;
 }
 
 .button--large {
-  padding: 32px;
+  font-size: 16px;
+  padding: 12px 24px;
 }

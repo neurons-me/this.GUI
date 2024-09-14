@@ -21,7 +21,6 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
-    "@storybook/addon-docs": "^8.2.9",
     "@storybook/addons": "^7.6.17",
     "@storybook/builder-vite": "^8.2.9",
     "@vitejs/plugin-react": "^4.3.1",
@@ -36,6 +35,7 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.8.0",
+    "@storybook/addon-docs": "^8.3.0",
     "@storybook/addon-essentials": "^8.2.9",
     "@storybook/addon-interactions": "^8.2.9",
     "@storybook/addon-links": "^8.2.9",
