@@ -1,12 +1,20 @@
-import { ThemeProvider, CssBaseline } from '@mui/joy/styles';
-import lightTheme from './themes/light';  // Adjust the path to your theme
+import React, { useState, useEffect } from 'react';
 
 const Theme = ({ children }) => {
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    localStorage.setItem('theme', theme);  // Persist theme preference in localStorage
+  }, [theme]);
+
   return (
-    <ThemeProvider theme={lightTheme}>
-      <CssBaseline />
+    <div>
+      <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+        Toggle Theme
+      </button>
       {children}
-    </ThemeProvider>
+    </div>
   );
 };
 

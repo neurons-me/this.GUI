@@ -1,0 +1,69 @@
+/* Base styles */
+.button {
+  display: inline-block;
+  padding: var(--button-padding, 10px 20px);
+  border-radius: var(--button-border-radius, 8px);
+  font-family: var(--button-font-family, 'Roboto', sans-serif);
+  font-size: var(--button-font-size, 14px);
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  text-align: center;
+  border: 1px solid transparent;
+  box-shadow: var(--button-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Primary button */
+.button--primary {
+  background-color: var(--button-primary-bg-color, #00695c);
+  color: var(--button-primary-text-color, #fff);
+  border-color: var(--button-primary-border-color, #004d40);
+}
+
+.button--primary:hover {
+  background-color: var(--button-primary-hover-bg-color, #004d40);
+  box-shadow: var(--button-primary-hover-box-shadow, 0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+/* Secondary button */
+.button--secondary {
+  background-color: var(--button-secondary-bg-color, #fff);
+  color: var(--button-secondary-text-color, #00695c);
+  border-color: var(--button-secondary-border-color, #00695c);
+}
+
+.button--secondary:hover {
+  background-color: var(--button-secondary-hover-bg-color, #f0f0f0);
+  box-shadow: var(--button-secondary-hover-box-shadow, 0 4px 6px rgba(0, 0, 0, 0.05));
+}
+
+/* Sizes */
+.button--small {
+  font-size: var(--button-small-font-size, 12px);
+  padding: var(--button-small-padding, 6px 12px);
+}
+
+.button--medium {
+  font-size: var(--button-medium-font-size, 14px);
+  padding: var(--button-medium-padding, 10px 20px);
+}
+
+.button--large {
+  font-size: var(--button-large-font-size, 16px);
+  padding: var(--button-large-padding, 14px 28px);
+}
+
+/* No Border Button Style */
+.button--no-border {
+  background-color: var(--button-no-border-bg-color, transparent);
+  color: var(--button-no-border-text-color, #00695c);
+  border: var(--button-no-border-border, none);
+  border-bottom: var(--button-no-border-border-bottom, 2px solid #00695c);
+  border-radius: var(--button-no-border-border-radius, 0);
+  padding: var(--button-no-border-padding, 0);
+}
+
+.button--no-border:hover {
+  border-bottom: var(--button-no-border-hover-border-bottom, 2px solid #004d40);
+  background-color: var(--button-no-border-hover-bg-color, transparent);
+  box-shadow: var(--button-no-border-hover-box-shadow, none);
+}

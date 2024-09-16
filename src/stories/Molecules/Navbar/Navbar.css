@@ -1,0 +1,61 @@
+/* src/stories/Molecules/Navigation/Navbar/Navbar.css */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(34, 139, 34, 0); /* Light greenish background with low opacity */
+  border: 1px solid rgba(34, 139, 34, 0.235);   /* Light border with dark greenish color and low opacity */
+  padding: 8px 16px;
+  margin: 16px;          /* Adds margin around the navbar */
+  border-radius: 4px;    /* Rounds the corners slightly */
+}
+
+.navbar__logo {
+  display: flex;
+  align-items: center;
+  margin-right: 24px;    /* Adds margin to the right of the logo */
+}
+
+.navbar__links {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar__item {
+  margin: 0 12px;        /* Adds margin around each nav link */
+}
+
+.navbar__link {
+  color: #006400;        /* Dark green text color */
+  text-decoration: none;
+  padding: 8px;
+}
+
+.navbar__link:hover,
+.navbar__link--active {
+  background-color: rgba(34, 139, 34, 0.1); /* Slightly darker on hover */
+  border-radius: 4px;
+}
+
+.navbar__controls {
+  display: flex;
+  align-items: center;
+  margin-left: 24px;     /* Adds margin to the left of the controls */
+}
+
+.navbar__controls > * {
+  margin-left: 12px;     /* Adds spacing between control elements */
+}
+
+/* Optional: Adjust button styles for the light theme */
+.button {
+  background-color: #228B22;
+  color: #fff;
+}
+
+.button:hover {
+  background-color: #1e7a1e;
+}

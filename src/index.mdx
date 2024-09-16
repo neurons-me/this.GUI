@@ -1,0 +1,22 @@
+import GUI from '../index';
+
+# Welcome to THIS.GUI
+
+## Using the Navbar Component with Internal NavLink
+
+<GUI.molecules.Navigation.Navbar
+  links={[
+    { url: '/', label: 'Home', isActive: true },
+    { url: '/about', label: 'About', isActive: false },
+    { url: '/contact', label: 'Contact', isActive: false },
+  ]}
+  logo={
+    <img src="https://suign.github.io/assets/imgs/neurons_me_logo.png" alt="Logo" style={{ height: '40px' }} />
+  }
+  userControls={
+    <GUI.atoms.Interactive.Button>Click</GUI.atoms.Interactive.Button>
+  }
+/>
+
+Hello, world!
+[Click here](https://example.com) to visit an example link.

@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import mdx from '@mdx-js/rollup';
 
 // Ensure the defineConfig function is correctly used here
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), mdx()],
   build: {
     lib: {
       entry: 'index.js',  // Entry point now in the root directory

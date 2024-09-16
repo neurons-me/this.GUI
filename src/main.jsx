@@ -1,11 +1,13 @@
+// src/main.jsx
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import './styles/index.css';   // Tailwind CSS (or your main styles)
-import './styles/global.css';  // Your global styles
+import ReactDOM from 'react-dom';
+import MDXContent from './index.mdx';
+import './styles/global.css'; // Import the global CSS
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+
+ReactDOM.render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <MDXContent />
+  </React.StrictMode>,
+  document.getElementById('root')
 );

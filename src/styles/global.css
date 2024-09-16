@@ -1,11 +1,52 @@
-/* public/styles/global.css */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+/* src/global.css */
 
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+/* Apply global styles */
 body {
   font-family: 'Roboto', sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  font-weight: 400;
+  line-height: 1.6;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
 }
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: 1em;
+}
+
+/* Links */
+a {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Code blocks */
+pre {
+  background-color: #f5f5f5;
+  padding: 1em;
+  overflow-x: auto;
+}
+
+code {
+  font-family: 'Courier New', Courier, monospace;
+}
+
 
 .light-theme {
   --bg-color: #ffffff;
