@@ -3,7 +3,7 @@ import { Toggle } from './Toggle';
 
 // Storybook configuration for Toggle component
 export default {
-  title: '_Atomic/Toggle',
+  title: 'Atoms/Interactive/Toggle',
   component: Toggle,
   parameters: {
     layout: 'centered',

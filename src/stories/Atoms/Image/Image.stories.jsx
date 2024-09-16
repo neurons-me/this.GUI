@@ -3,7 +3,7 @@ import { Image } from './Image';
 
 // Storybook configuration for Image component
 export default {
-  title: '_Atomic/Image',
+  title: 'Atoms/Media/Image',
   component: Image,
   parameters: {
     layout: 'centered',

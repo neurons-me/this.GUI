@@ -3,7 +3,7 @@ import { Container } from './Container';
 
 // Storybook configuration for Container component
 export default {
-  title: '_Atomic/Container',
+  title: 'Atoms/Interactive/Container',
   component: Container,
   parameters: {
     layout: 'centered',

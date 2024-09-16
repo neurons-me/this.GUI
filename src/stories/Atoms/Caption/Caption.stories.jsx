@@ -3,7 +3,7 @@ import { Caption } from './Caption';
 
 // Storybook configuration for Caption component
 export default {
-  title: '_Atomic/Caption',
+  title: 'Atoms/Text/Caption',
   component: Caption,
   parameters: {
     layout: 'centered',

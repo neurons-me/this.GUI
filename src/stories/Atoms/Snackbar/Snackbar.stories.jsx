@@ -3,7 +3,7 @@ import { Snackbar } from './Snackbar';
 
 // Storybook configuration for Snackbar component
 export default {
-  title: '_Atomic/Snackbar',
+  title: 'Atoms/Feedback/Snackbar',
   component: Snackbar,
   parameters: {
     layout: 'centered',

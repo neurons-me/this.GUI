@@ -11,12 +11,15 @@ function getAbsolutePath(value) {
 
 /** @type { import('@storybook/react-vite').StorybookConfig } */
 const config = {
-  stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
+  stories: [
+    // Only include .mdx and .stories.* files from the ./src/stories/ directory and its subdirectories
+    "../src/stories/**/*.mdx",
+    "../src/stories/**/*.stories.@(js|jsx|mjs|ts|tsx)"
+  ],
   addons: [
     "@storybook/addon-onboarding",
-    '@storybook/addon-docs', 
     "@storybook/addon-links",
-    "@storybook/addon-essentials",
+    "@storybook/addon-essentials",  // This already includes addon-docs
     "@chromatic-com/storybook",
     "@storybook/addon-interactions",
   ],

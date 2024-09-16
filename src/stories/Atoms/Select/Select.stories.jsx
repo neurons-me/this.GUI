@@ -3,7 +3,7 @@ import { Select } from './Select';
 
 // Storybook configuration for Select component
 export default {
-  title: '_Atomic/Select',
+  title: 'Atoms/Interactive/Select',
   component: Select,
   parameters: {
     layout: 'centered',

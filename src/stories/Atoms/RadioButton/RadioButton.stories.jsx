@@ -3,7 +3,7 @@ import { RadioButton } from './RadioButton';
 
 // Storybook configuration for RadioButton component
 export default {
-  title: '_Atomic/RadioButton',
+  title: 'Atoms/Interactive/RadioButton',
   component: RadioButton,
   parameters: {
     layout: 'centered',

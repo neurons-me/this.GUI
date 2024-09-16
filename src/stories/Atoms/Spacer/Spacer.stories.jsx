@@ -3,7 +3,7 @@ import { Spacer } from './Spacer';
 
 // Storybook configuration for Spacer component
 export default {
-  title: '_Atomic/Spacer',
+  title: 'Atoms/Visual/Spacer',
   component: Spacer,
   parameters: {
     layout: 'centered',

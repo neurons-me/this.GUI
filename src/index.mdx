@@ -4,19 +4,71 @@ import GUI from '../index';
 
 ## Using the Navbar Component with Internal NavLink
 
-<GUI.molecules.Navigation.Navbar
+<GUI.Molecules.Navbar
   links={[
     { url: '/', label: 'Home', isActive: true },
     { url: '/about', label: 'About', isActive: false },
+    { url: 'http://localhost:6006/', label: 'Storybook', isActive: false },
     { url: '/contact', label: 'Contact', isActive: false },
   ]}
   logo={
     <img src="https://suign.github.io/assets/imgs/neurons_me_logo.png" alt="Logo" style={{ height: '40px' }} />
   }
   userControls={
-    <GUI.atoms.Interactive.Button>Click</GUI.atoms.Interactive.Button>
+    <GUI.Atoms.Button>Click</GUI.Atoms.Button>
   }
 />
 
 Hello, world!
 [Click here](https://example.com) to visit an example link.
+
+### **Explanation of Grouping:**
+The **Atomic Design** methodology defines organisms as complex structures built from smaller components, but how we perceive complexity can vary based on context.
+ Let’s break it down to align with your insight:
+
+​	•	**Atomic**: Smallest components that are not broken down further.
+
+Alert, Audio, Badge, Button, Caption, Checkbox, Container, Divider, Heading, Icon,  Image, Label, Link , Loader, Paragraph, ProgressBar, RadioButton, RangeInput, Select, Slider, Snackbar, Spacer, Spinner, Tag, TextArea, TextInput, Toggle, Tooltip, Video.
+
+  <div>
+  {/* Primary Button */}
+  <GUI.Atoms.Button primary size="medium">Primary Button</GUI.Atoms.Button>
+
+  {/* Secondary Button */}
+  <GUI.Atoms.Button size="medium">Secondary Button</GUI.Atoms.Button>
+
+  {/* No Border Button */}
+  <GUI.Atoms.Button noBorder size="medium">No Border Button</GUI.Atoms.Button>
+
+  {/* Small Primary Button */}
+  <GUI.Atoms.Button primary size="small">Small Primary Button</GUI.Atoms.Button>
+
+  {/* Large No Border Button */}
+  <GUI.Atoms.Button noBorder size="large">Large No Border Button</GUI.Atoms.Button>
+
+  {/* Custom Button Example */}
+  <GUI.Atoms.Button
+    primary
+    size="large"
+    primaryBgColor="#007bff"
+    primaryTextColor="#ffffff"
+    primaryHoverBgColor="#0056b3"
+    padding="12px 24px"
+  >
+    Custom Styled Button
+  </GUI.Atoms.Button>
+</div>
+
+
+​	•	**Molecules**: Simple combinations of atomic components that together form a small UI feature.
+Accordion, AudioPlayer, AvatarWithName, Breadcrumbs, ButtonGroup, Card, ComparisonTable, DataTable, FileUpload, FormField, Header, IconButton, ImageWithCaption, InputGroup, InputWithLabel, List, MediaCard, Modal, Navbar, Notification, PricingTable, SearchBar, Sidebar, VideoWithDescription.
+
+​	•	**Organisms**: More complex, combining molecules and atomic components to create larger, more detailed features.
+
+​	•	**Layout**: Components related to structuring and organizing content across the page.
+
+​	•	**Templates**: Layouts of full pages, combining organisms and layout components.
+
+​	•	**Pages**: Complete and functional pages made up of templates and content.
+
+​	•	**Miscellaneous**: Utility components that don’t fit into the above categories but provide important functions, such as popovers, overlays, and media controls.

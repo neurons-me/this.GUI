@@ -1,20 +1,29 @@
 /* src/stories/Molecules/Navigation/Navbar/Navbar.css */
 
+/* CSS variables for dynamic styling */
 .navbar {
+  --navbar-background-color: rgba(34, 139, 34, 0); /* Light greenish background with low opacity */
+  --navbar-border-color: rgba(34, 139, 34, 0.235); /* Light border with dark greenish color and low opacity */
+  --navbar-padding: 8px 16px;
+  --navbar-margin: 16px;
+  --navbar-border-radius: 4px;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: rgba(34, 139, 34, 0); /* Light greenish background with low opacity */
-  border: 1px solid rgba(34, 139, 34, 0.235);   /* Light border with dark greenish color and low opacity */
-  padding: 8px 16px;
-  margin: 16px;          /* Adds margin around the navbar */
-  border-radius: 4px;    /* Rounds the corners slightly */
+  background-color: var(--navbar-background-color);
+  border: 1px solid var(--navbar-border-color);
+  padding: var(--navbar-padding);
+  margin: var(--navbar-margin);
+  border-radius: var(--navbar-border-radius);
 }
 
 .navbar__logo {
+  --navbar-logo-margin-right: 24px;
+
   display: flex;
   align-items: center;
-  margin-right: 24px;    /* Adds margin to the right of the logo */
+  margin-right: var(--navbar-logo-margin-right);
 }
 
 .navbar__links {
@@ -25,37 +34,54 @@
 }
 
 .navbar__item {
-  margin: 0 12px;        /* Adds margin around each nav link */
+  --navbar-item-margin: 0 12px;
+
+  margin: var(--navbar-item-margin);
 }
 
 .navbar__link {
-  color: #006400;        /* Dark green text color */
+  --navbar-link-color: #006400;
+  --navbar-link-padding: 8px;
+
+  color: var(--navbar-link-color);
   text-decoration: none;
-  padding: 8px;
+  padding: var(--navbar-link-padding);
 }
 
 .navbar__link:hover,
 .navbar__link--active {
-  background-color: rgba(34, 139, 34, 0.1); /* Slightly darker on hover */
-  border-radius: 4px;
+  --navbar-link-hover-background-color: rgba(34, 139, 34, 0.1);
+  --navbar-link-hover-border-radius: 4px;
+
+  background-color: var(--navbar-link-hover-background-color);
+  border-radius: var(--navbar-link-hover-border-radius);
 }
 
 .navbar__controls {
+  --navbar-controls-margin-left: 24px;
+
   display: flex;
   align-items: center;
-  margin-left: 24px;     /* Adds margin to the left of the controls */
+  margin-left: var(--navbar-controls-margin-left);
 }
 
 .navbar__controls > * {
-  margin-left: 12px;     /* Adds spacing between control elements */
+  --navbar-control-item-margin-left: 12px;
+
+  margin-left: var(--navbar-control-item-margin-left);
 }
 
-/* Optional: Adjust button styles for the light theme */
+/* Button styles */
 .button {
-  background-color: #228B22;
-  color: #fff;
+  --button-background-color: #228B22;
+  --button-text-color: #fff;
+
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
 }
 
 .button:hover {
-  background-color: #1e7a1e;
+  --button-hover-background-color: #1e7a1e;
+
+  background-color: var(--button-hover-background-color);
 }

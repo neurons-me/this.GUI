@@ -3,7 +3,7 @@ import { Slider } from './Slider';
 
 // Storybook configuration for Slider component
 export default {
-  title: '_Atomic/Slider',
+  title: 'Atoms/Interactive/Slider',
   component: Slider,
   parameters: {
     layout: 'centered',

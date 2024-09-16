@@ -4,41 +4,57 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './Navbar.css';
 
-export const Navbar = ({ links, logo, userControls }) => {
-  // Define the NavLink component inside Navbar
-  const NavLink = ({ url, label, isActive, ...props }) => (
-    <a
-      href={url}
-      className={`navbar__link ${isActive ? 'navbar__link--active' : ''}`}
-      {...props}
-    >
-      {label}
-    </a>
-  );
+export const Navbar = ({
+  links,
+  logo,
+  userControls,
+  styleOverrides = {},
+}) => {
+  // Build the style object for CSS variable overrides
+  const style = {};
 
-  NavLink.propTypes = {
-    url: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-    isActive: PropTypes.bool,
+  // Map of styleOverrides keys to CSS variable names
+  const cssVariableMap = {
+    navbarBackgroundColor: '--navbar-background-color',
+    navbarBorderColor: '--navbar-border-color',
+    navbarPadding: '--navbar-padding',
+    navbarMargin: '--navbar-margin',
+    navbarBorderRadius: '--navbar-border-radius',
+    logoMarginRight: '--navbar-logo-margin-right',
+    itemMargin: '--navbar-item-margin',
+    linkColor: '--navbar-link-color',
+    linkPadding: '--navbar-link-padding',
+    linkHoverBackgroundColor: '--navbar-link-hover-background-color',
+    linkHoverBorderRadius: '--navbar-link-hover-border-radius',
+    controlsMarginLeft: '--navbar-controls-margin-left',
+    controlItemMarginLeft: '--navbar-control-item-margin-left',
+    buttonBackgroundColor: '--button-background-color',
+    buttonTextColor: '--button-text-color',
+    buttonHoverBackgroundColor: '--button-hover-background-color',
   };
 
-  NavLink.defaultProps = {
-    isActive: false,
-  };
+  // Set CSS variables based on styleOverrides
+  Object.keys(styleOverrides).forEach((key) => {
+    const cssVar = cssVariableMap[key];
+    if (cssVar) {
+      style[cssVar] = styleOverrides[key];
+    }
+  });
 
   return (
-    <nav className="navbar">
+    <nav className="navbar" style={style}>
       <div className="navbar__logo">
         {logo}
       </div>
       <ul className="navbar__links">
         {links.map((link, index) => (
           <li key={index} className="navbar__item">
-            <NavLink
-              url={link.url}
-              label={link.label}
-              isActive={link.isActive}
-            />
+            <a
+              href={link.url}
+              className={`navbar__link ${link.isActive ? 'navbar__link--active' : ''}`}
+            >
+              {link.label}
+            </a>
           </li>
         ))}
       </ul>
@@ -50,29 +66,22 @@ export const Navbar = ({ links, logo, userControls }) => {
 };
 
 Navbar.propTypes = {
-  /**
-   * Array of navigation links
-   */
   links: PropTypes.arrayOf(
     PropTypes.shape({
       url: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
-      isActive: PropTypes.bool, // Optional prop to indicate active link
+      isActive: PropTypes.bool,
     })
   ).isRequired,
-  /**
-   * Logo component or element
-   */
   logo: PropTypes.node,
-  /**
-   * User control elements (e.g., login/logout buttons)
-   */
   userControls: PropTypes.node,
+  styleOverrides: PropTypes.object,
 };
 
 Navbar.defaultProps = {
   logo: null,
   userControls: null,
+  styleOverrides: {},
 };
 
 export default Navbar;

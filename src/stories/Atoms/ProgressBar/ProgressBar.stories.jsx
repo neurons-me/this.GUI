@@ -3,7 +3,7 @@ import { ProgressBar } from './ProgressBar';
 
 // Storybook configuration for ProgressBar component
 export default {
-  title: '_Atomic/ProgressBar',
+  title: 'Atoms/Feedback/ProgressBar',
   component: ProgressBar,
   parameters: {
     layout: 'centered',

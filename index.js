@@ -2,14 +2,14 @@
 ⓝⓔⓤⓡⓞⓝⓢ.ⓜⓔ
 this.GUI
 🆂🆄🅸🅶🅽 */
-import atoms from './src/stories/Atoms/index';
-import molecules from './src/stories/Molecules/index';
+import Atoms from './src/stories/Atoms/index';
+import Molecules from './src/stories/Molecules/index';
 // ... import other categories
 
 // src/index.js
 export const GUI = {
-  atoms,
-  molecules,
+  Atoms,
+  Molecules,
   // ... other categories
 };
 

@@ -3,7 +3,7 @@ import { TextInput } from './TextInput';
 
 // Storybook configuration for TextInput component
 export default {
-  title: '_Atomic/TextInput',
+  title: 'Atoms/Interactive/TextInput',
   component: TextInput,
   parameters: {
     layout: 'centered',

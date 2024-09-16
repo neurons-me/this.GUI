@@ -4,7 +4,7 @@ import React from 'react';
 import { Icon } from './Icon';
 
 export default {
-  title: 'Atoms/Interactive/Icon',
+  title: 'Atoms/Media/Icon',
   component: Icon,
   parameters: {
     layout: 'centered',

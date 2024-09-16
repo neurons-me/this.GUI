@@ -3,7 +3,7 @@ import { Alert } from './Alert';
 
 // Storybook configuration for Alert component
 export default {
-  title: '_Atomic/Alert',
+  title: 'Atoms/Feedback/Alert',
   component: Alert,
   parameters: {
     layout: 'centered',

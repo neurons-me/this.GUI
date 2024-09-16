@@ -3,7 +3,7 @@ import { Link } from './Link';
 
 // Storybook configuration for Link component
 export default {
-  title: '_Atomic/Link',
+  title: 'Atoms/Interactive/Link',
   component: Link,
   parameters: {
     layout: 'centered',

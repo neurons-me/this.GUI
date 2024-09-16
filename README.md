@@ -1,4 +1,4 @@
-<img src="https://suign.github.io/assets/imgs/this_GUI.svg" alt="Cleaker Me" width="377" height="377" align="right">
+<img src="https://suign.github.io/assets/imgs/this_GUI.svg" alt="Cleaker Me" width="377" height="377">
 
 # THIS.GUI
 
@@ -6,15 +6,30 @@ Install `this.gui` via **npm**:
 ```shell
 npm install this.gui
 ```
-The goal is to automate the UI generation process so users only pass data or configurations, and **this.GUI** handles the rest.
 
-1.	React is still required in the user’s project because the UI components provided are React components that need to be rendered by React.
+Then run command:
 
-The Key Value of this.gui:
+```bash
+npm start
+```
 
-•	**Simplifies UI creation:** Users only pass configurations or data; they don’t need to deal with the intricacies of React.
-•	**Dynamic generation:** The components adapt and render based on the input you give them.
-**•	Automation:** You handle all the complexity of component creation, leaving users with a simplified interface to generate UIs.
+The goal is to automate the **GUI** generation process so users only pass data or configurations, and **this.GUI** handles the rest.
+
+## **Explanation of Grouping:**
+
+​	•	**Atomic**: Smallest components that are not broken down further.
+
+Alert, Audio, Badge, Button, Caption, Checkbox, Container, Divider, Heading, Icon,  Image, Label, Link , Loader, Paragraph, ProgressBar, RadioButton, RangeInput, Select, Slider, Snackbar, Spacer, Spinner, Tag, TextArea, TextInput, Toggle, Tooltip, Video.
+
+​	•	**Molecules**: Simple combinations of atomic components that together form a small UI feature.
+
+Accordion, AudioPlayer, AvatarWithName, Breadcrumbs, ButtonGroup, Card, ComparisonTable, DataTable, FileUpload, FormField, Header, IconButton, ImageWithCaption, InputGroup, InputWithLabel, List, MediaCard, Modal, Navbar, Notification, PricingTable, SearchBar, Sidebar, VideoWithDescription.
+
+​	•	**Organisms**: More complex, combining molecules and atomic components to create larger, more detailed features.
+​	•	**Layout**: Components related to structuring and organizing content across the page.
+​	•	**Templates**: Layouts of full pages, combining organisms and layout components.
+​	•	**Pages**: Complete and functional pages made up of templates and content.
+​	•	**Miscellaneous**: Utility components that don’t fit into the above categories but provide important functions, such as popovers, overlays, and media controls.
 
 
 

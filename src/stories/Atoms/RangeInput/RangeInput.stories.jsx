@@ -3,7 +3,7 @@ import { RangeInput } from './RangeInput';
 
 // Storybook configuration for RangeInput component
 export default {
-  title: '_Atomic/RangeInput',
+  title: 'Atoms/Interactive/RangeInput',
   component: RangeInput,
   parameters: {
     layout: 'centered',

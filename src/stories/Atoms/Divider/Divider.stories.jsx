@@ -3,7 +3,7 @@ import { Divider } from './Divider';
 
 // Storybook configuration for Divider component
 export default {
-  title: '_Atomic/Divider',
+  title: 'Atoms/Visual/Divider',
   component: Divider,
   parameters: {
     layout: 'centered',

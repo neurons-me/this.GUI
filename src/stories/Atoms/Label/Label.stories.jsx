@@ -3,7 +3,7 @@ import { Label } from './Label';
 
 // Storybook configuration for Label component
 export default {
-  title: '_Atomic/Label',
+  title: 'Atoms/Text/Label',
   component: Label,
   parameters: {
     layout: 'centered',

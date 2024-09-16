@@ -3,7 +3,7 @@ import { Tag } from './Tag';
 
 // Storybook configuration for Tag component
 export default {
-  title: '_Atomic/Tag',
+  title: 'Atoms/Visual/Tag',
   component: Tag,
   parameters: {
     layout: 'centered',

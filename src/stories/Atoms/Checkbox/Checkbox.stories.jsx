@@ -3,7 +3,7 @@ import { Checkbox } from './Checkbox';
 
 // Storybook configuration for Checkbox component
 export default {
-  title: '_Atomic/Checkbox',
+  title: 'Atoms/Interactive/Checkbox',
   component: Checkbox,
   parameters: {
     layout: 'centered',

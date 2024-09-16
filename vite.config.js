@@ -1,10 +1,22 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import mdx from '@mdx-js/rollup';
+import dotenv from 'dotenv';
 
-// Ensure the defineConfig function is correctly used here
+// Load .env file
+dotenv.config();
+
 export default defineConfig({
-  plugins: [react(), mdx()],
+  plugins: [
+    react(),
+    mdx({
+      // Exclude the src/stories/ directory from MDX processing
+      exclude: 'src/stories/**',
+    }),
+  ],
+  server: {
+    port: process.env.VITE_PORT || 7774,  // Use VITE_PORT from .env or default to 3000
+  },
   build: {
     lib: {
       entry: 'index.js',  // Entry point now in the root directory

@@ -3,7 +3,7 @@ import { Heading } from './Heading';
 
 // Storybook configuration for Heading component
 export default {
-  title: '_Atomic/Heading',
+  title: 'Atoms/Text/Heading',
   component: Heading,
   parameters: {
     layout: 'centered',

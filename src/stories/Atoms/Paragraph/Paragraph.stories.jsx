@@ -3,7 +3,7 @@ import { Paragraph } from './Paragraph';
 
 // Storybook configuration for Paragraph component
 export default {
-  title: '_Atomic/Paragraph',
+  title: 'Atoms/Text/Paragraph',
   component: Paragraph,
   parameters: {
     layout: 'centered',

@@ -1,6 +1,6 @@
 //this.GUI/src/stories/Profile/ProfilePageContext.jsx
 import React from 'react';
-import { Header } from '../_Molecules/Header/Header';
+import { Header } from '../../Molecules/Header/Header';
 import './Page.css';
 
 export const Page = () => {

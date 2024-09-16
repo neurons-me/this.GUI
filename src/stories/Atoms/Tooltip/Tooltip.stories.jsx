@@ -3,7 +3,7 @@ import { Tooltip } from './Tooltip';
 
 // Storybook configuration for Tooltip component
 export default {
-  title: '_Atomic/Tooltip',
+  title: 'Atoms/Visual/Tooltip',
   component: Tooltip,
   parameters: {
     layout: 'centered',

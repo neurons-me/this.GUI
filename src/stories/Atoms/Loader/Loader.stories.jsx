@@ -3,7 +3,7 @@ import { Loader } from './Loader';
 
 // Storybook configuration for Loader component
 export default {
-  title: '_Atomic/Loader',
+  title: 'Atoms/Feedback/Loader',
   component: Loader,
   parameters: {
     layout: 'centered',

@@ -3,7 +3,7 @@ import { TextArea } from './TextArea';
 
 // Storybook configuration for TextArea component
 export default {
-  title: '_Atomic/TextArea',
+  title: 'Atoms/Interactive/TextArea',
   component: TextArea,
   parameters: {
     layout: 'centered',

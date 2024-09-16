@@ -3,7 +3,7 @@ import { Badge } from './Badge';
 
 // Storybook configuration for Badge component
 export default {
-  title: '_Atomic/Badge',
+  title: 'Atoms/Visual/Badge',
   component: Badge,
   parameters: {
     layout: 'centered',

@@ -3,7 +3,7 @@ import { Audio } from './Audio';
 
 // Storybook configuration for Audio component
 export default {
-  title: '_Atomic/Audio',
+  title: 'Atoms/Media/Audio',
   component: Audio,
   parameters: {
     layout: 'centered',

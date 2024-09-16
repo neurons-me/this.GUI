@@ -3,7 +3,7 @@ import { Video } from './Video';
 
 // Storybook configuration for Video component
 export default {
-  title: '_Atomic/Video',
+  title: 'Atoms/Media/Video',
   component: Video,
   parameters: {
     layout: 'centered',

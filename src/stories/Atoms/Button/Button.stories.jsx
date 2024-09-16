@@ -1,7 +1,7 @@
 import { Button } from './Button';
 
 export default {
-  title: '_Atomic/Button',
+  title: 'Atoms/Interactive/Button',
   component: Button,
   parameters: {
     docs: {

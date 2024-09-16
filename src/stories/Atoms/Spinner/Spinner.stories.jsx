@@ -3,7 +3,7 @@ import { Spinner } from './Spinner';
 
 // Storybook configuration for Spinner component
 export default {
-  title: '_Atomic/Spinner',
+  title: 'Atoms/Feedback/Spinner',
   component: Spinner,
   parameters: {
     layout: 'centered',
