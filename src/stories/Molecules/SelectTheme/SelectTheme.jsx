@@ -16,7 +16,7 @@ export const SelectTheme = () => {  // Named export
   const [selectedTheme, setSelectedTheme] = useState('github'); // Default theme
 
   useEffect(() => {
-    import(`../../themes/typ/${selectedTheme}.css`).then(() => {
+    import(`../../../themes/typ/${selectedTheme}.css`).then(() => {
       console.log(`${selectedTheme} theme loaded`);
     });
   }, [selectedTheme]);
