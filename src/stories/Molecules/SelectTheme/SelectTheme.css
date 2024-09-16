@@ -1,0 +1,25 @@
+.select-theme-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: var(--bg-color, #f9f9f9); /* Use dynamic theme colors */
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .select-theme-label {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    color: var(--text-color, #333);
+  }
+  
+  .select-theme-dropdown {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color, #ccc);
+    background-color: var(--bg-color, #fff);
+    color: var(--text-color, #333);
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+  }

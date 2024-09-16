@@ -17,11 +17,10 @@ const config = {
     "../src/stories/**/*.stories.@(js|jsx|mjs|ts|tsx)"
   ],
   addons: [
-    "@storybook/addon-onboarding",
-    "@storybook/addon-links",
-    "@storybook/addon-essentials",  // This already includes addon-docs
-    "@chromatic-com/storybook",
-    "@storybook/addon-interactions",
+    '@storybook/addon-docs',
+    '@storybook/addon-essentials',
+    '@storybook/addon-links',
+    '@storybook/addon-interactions',
   ],
   docs: {
     autodocs: true, // This enables autodocs globally

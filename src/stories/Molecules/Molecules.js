@@ -23,6 +23,7 @@ const Molecules = {
       { name: "AudioPlayer", paths: { css: "./AudioPlayer/AudioPlayer.css", globalCss: "styles/global.css", jsx: "./AudioPlayer/AudioPlayer.jsx", stories: "src/stories/Molecules/AudioPlayer/AudioPlayer.stories.jsx" }},
     ],
     "ContentDisplay": [
+      { name: "SelectTheme", paths: { css: "./SelectTheme/SelectTheme.css", globalCss: "styles/global.css", jsx: "./SelectTheme/SelectTheme.jsx", stories: "src/stories/Molecules/SelectTheme/SelectTheme.stories.jsx" }},
       { name: "Card", paths: { css: "./Card/Card.css", globalCss: "styles/global.css", jsx: "./Card/Card.jsx", stories: "./Card/Card.stories.jsx" }},
       { name: "MediaCard", paths: { css: "./MediaCard/MediaCard.css", globalCss: "styles/global.css", jsx: "./MediaCard/MediaCard.jsx", stories: "./MediaCard/MediaCard.stories.jsx" }},
       { name: "List", paths: { css: "./List/List.css", globalCss: "styles/global.css", jsx: "./List/List.jsx", stories: "./List/List.stories.jsx" }},

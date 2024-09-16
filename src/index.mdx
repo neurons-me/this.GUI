@@ -2,7 +2,21 @@ import GUI from '../index';
 
 # Welcome to THIS.GUI
 
-## Using the Navbar Component with Internal NavLink
+
+## Understanding MDX (Markdown + JSX)
+
+This page is written in **MDX**, a powerful format that allows you to write Markdown while embedding JSX components. With MDX, you can write documentation or content using Markdown's simplicity and still interact with React components directly within the same file.
+
+For example, in this document, we can use regular Markdown syntax for headings, paragraphs, and links, but we also import and use components from our `this.GUI` library.
+
+### Key Concepts of MDX
+
+- **Markdown for Content**: Regular text, links, images, and other static content can be written using Markdown.
+- **JSX for Interactivity**: You can directly use any JSX component (like React components) within the MDX file. This makes it ideal for documentation or websites that need to showcase and render components dynamically.
+
+## Example: Navbar Component in MDX
+
+In the following example, we use the `Navbar` component from the `this.GUI` library. This demonstrates how we can integrate interactive elements within a Markdown-style document.
 
 <GUI.Molecules.Navbar
   links={[
@@ -19,32 +33,81 @@ import GUI from '../index';
   }
 />
 
-Hello, world!
-[Click here](https://example.com) to visit an example link.
+```mdx
+<GUI.Molecules.Navbar
+  links={[
+    { url: '/', label: 'Home', isActive: true },
+    { url: '/about', label: 'About', isActive: false },
+    { url: 'http://localhost:6006/', label: 'Storybook', isActive: false },
+    { url: '/contact', label: 'Contact', isActive: false },
+  ]}
+  logo={
+    <img src="https://suign.github.io/assets/imgs/neurons_me_logo.png" alt="Logo" style={{ height: '40px' }} />
+  }
+  userControls={
+    <GUI.Atoms.Button>Click</GUI.Atoms.Button>
+  }
+/>
+```
 
-### **Explanation of Grouping:**
-The **Atomic Design** methodology defines organisms as complex structures built from smaller components, but how we perceive complexity can vary based on context.
- Let’s break it down to align with your insight:
+This renders a live `Navbar` component, with links for navigation, including one to our Storybook instance.
 
-​	•	**Atomic**: Smallest components that are not broken down further.
+---
 
-Alert, Audio, Badge, Button, Caption, Checkbox, Container, Divider, Heading, Icon,  Image, Label, Link , Loader, Paragraph, ProgressBar, RadioButton, RangeInput, Select, Slider, Snackbar, Spacer, Spinner, Tag, TextArea, TextInput, Toggle, Tooltip, Video.
+### How This Page is Built with MDX
 
-  <div>
+1. **Markdown Elements**: 
+    - This heading (`# Welcome to THIS.GUI`) and paragraphs you're reading are written using Markdown.
+    - Links like [Click here](https://example.com) are also written in Markdown syntax.
+
+2. **JSX Elements**: 
+    - Below, we render interactive components from `this.GUI`, such as buttons and the navbar, using JSX.
+
+---
+
+## Using MDX to Showcase Components
+
+MDX allows you to mix documentation with interactive elements. For instance, let's explore different types of buttons you can use with `this.GUI`. These buttons will be rendered dynamically, and their usage will be demonstrated.
+
+### **Atomic Components Example: Buttons**
+
+Below are different variations of the Button component available in `this.GUI`, along with the code examples for each.
+
+<div>
   {/* Primary Button */}
   <GUI.Atoms.Button primary size="medium">Primary Button</GUI.Atoms.Button>
+
+  ```jsx
+  <GUI.Atoms.Button primary size="medium">Primary Button</GUI.Atoms.Button>
+  ```
 
   {/* Secondary Button */}
   <GUI.Atoms.Button size="medium">Secondary Button</GUI.Atoms.Button>
 
+  ```jsx
+  <GUI.Atoms.Button size="medium">Secondary Button</GUI.Atoms.Button>
+  ```
+
   {/* No Border Button */}
   <GUI.Atoms.Button noBorder size="medium">No Border Button</GUI.Atoms.Button>
+
+  ```jsx
+  <GUI.Atoms.Button noBorder size="medium">No Border Button</GUI.Atoms.Button>
+  ```
 
   {/* Small Primary Button */}
   <GUI.Atoms.Button primary size="small">Small Primary Button</GUI.Atoms.Button>
 
+  ```jsx
+  <GUI.Atoms.Button primary size="small">Small Primary Button</GUI.Atoms.Button>
+  ```
+
   {/* Large No Border Button */}
   <GUI.Atoms.Button noBorder size="large">Large No Border Button</GUI.Atoms.Button>
+
+  ```jsx
+  <GUI.Atoms.Button noBorder size="large">Large No Border Button</GUI.Atoms.Button>
+  ```
 
   {/* Custom Button Example */}
   <GUI.Atoms.Button
@@ -57,18 +120,41 @@ Alert, Audio, Badge, Button, Caption, Checkbox, Container, Divider, Heading, Ico
   >
     Custom Styled Button
   </GUI.Atoms.Button>
+
+  ```jsx
+  <GUI.Atoms.Button
+    primary
+    size="large"
+    primaryBgColor="#007bff"
+    primaryTextColor="#ffffff"
+    primaryHoverBgColor="#0056b3"
+    padding="12px 24px"
+  >
+    Custom Styled Button
+  </GUI.Atoms.Button>
+  ```
 </div>
 
+---
 
-​	•	**Molecules**: Simple combinations of atomic components that together form a small UI feature.
-Accordion, AudioPlayer, AvatarWithName, Breadcrumbs, ButtonGroup, Card, ComparisonTable, DataTable, FileUpload, FormField, Header, IconButton, ImageWithCaption, InputGroup, InputWithLabel, List, MediaCard, Modal, Navbar, Notification, PricingTable, SearchBar, Sidebar, VideoWithDescription.
+### How to Use MDX in Your Own Projects
 
-​	•	**Organisms**: More complex, combining molecules and atomic components to create larger, more detailed features.
+You can use MDX in your own documentation to:
 
-​	•	**Layout**: Components related to structuring and organizing content across the page.
+- Write clear and simple documentation using Markdown.
+- Embed interactive React components to showcase examples or provide live demos.
+- Combine content and functionality into one coherent file.
 
-​	•	**Templates**: Layouts of full pages, combining organisms and layout components.
+MDX files are ideal for documentation, blog posts, or any content-heavy web pages where you also want to include interactive elements. By leveraging MDX, you're able to write once and render rich, dynamic content with ease.
 
-​	•	**Pages**: Complete and functional pages made up of templates and content.
+---
 
-​	•	**Miscellaneous**: Utility components that don’t fit into the above categories but provide important functions, such as popovers, overlays, and media controls.
+This example showcases how MDX combines the best of both Markdown and JSX, giving you the flexibility to create interactive, component-rich documentation.
+```
+
+### Key Changes:
+- I've added an explanation of **MDX** and how it combines Markdown and JSX.
+- Each button example is now enclosed in a code block to show how MDX renders both the live component and its JSX code.
+- The file explains the concepts of MDX, making it clearer for developers and users to understand how this page was created. 
+
+This should provide a solid foundation for users exploring your project and help them understand how MDX can be used effectively.

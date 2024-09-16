@@ -1,16 +1,15 @@
-// src/MdxProvider.jsx
 import React from 'react';
 import { MDXProvider } from '@mdx-js/react';
 
-// Define custom components or wrappers for MDX elements
+// Define custom components without inline styles
 const components = {
-  h1: (props) => <h1 style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: '2.5em' }} {...props} />,
-  h2: (props) => <h2 style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: '2em' }} {...props} />,
-  p: (props) => <p style={{ fontFamily: 'Roboto', fontWeight: 400, fontSize: '1em' }} {...props} />,
-  a: (props) => <a style={{ color: '#0070f3' }} {...props} />,
-  code: (props) => <code style={{ fontFamily: 'Courier New', backgroundColor: '#f5f5f5', padding: '0.2em' }} {...props} />,
-  pre: (props) => <pre style={{ backgroundColor: '#f5f5f5', padding: '1em', overflowX: 'auto' }} {...props} />,
-  // Add more custom components as needed
+  h1: (props) => <h1 className="mdx-h1" {...props} />,  // Let the theme handle the styles
+  h2: (props) => <h2 className="mdx-h2" {...props} />,
+  p: (props) => <p className="mdx-p" {...props} />,
+  a: (props) => <a className="mdx-link" {...props} />,
+  code: (props) => <code className="mdx-code" {...props} />,
+  pre: (props) => <pre className="mdx-pre" {...props} />,
+  // Add more custom components as needed, without inline styles
 };
 
 const MdxProvider = ({ children }) => {

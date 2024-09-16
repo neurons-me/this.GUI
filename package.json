@@ -1,6 +1,6 @@
 {
   "name": "this.gui",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "This Graphic User Interface.",
   "main": "dist/this-gui.umd.js",
   "module": "dist/this-gui.es.js",

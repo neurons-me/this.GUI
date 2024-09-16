@@ -1,25 +1,29 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
-import MainApp from './MainApp'; // Your main app components
+import { ThemeProvider } from './themes/ThemeProvider'; // Import ThemeProvider
 
 const App = () => {
-  // Get the Storybook URL from environment variables or fallback to default
   const storybookUrl = `http://${process.env.HOSTNAME || 'localhost'}:${process.env.STORYBOOK_PORT || 6006}`;
+  
+  // Log the storybook URL to ensure the environment variables are loading correctly
+  console.log('Storybook URL:', storybookUrl);
 
   return (
-    <Router>
-      <Switch>
-        <Route exact path="/">
-          <MainApp />
-          <div>
-            <Link to="/" style={{ marginRight: '20px' }}>Home</Link>
-            <a href={storybookUrl} target="_blank" rel="noopener noreferrer">
-              Open Storybook
-            </a>
-          </div>
-        </Route>
-      </Switch>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <div>
+              <h1>Main App</h1>
+              <Link to="/" style={{ marginRight: '20px' }}>Home</Link>
+              <a href={storybookUrl} target="_blank" rel="noopener noreferrer">
+                Open Storybook
+              </a>
+            </div>
+          </Route>
+        </Switch>
+      </Router>
+    </ThemeProvider>
   );
 };
 

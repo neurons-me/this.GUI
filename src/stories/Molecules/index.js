@@ -1,4 +1,6 @@
-// Import all components directly
+// src/stories/Molecules/index.js
+
+// Import all components as named exports
 import { Navbar } from './Navbar/Navbar';
 import { Sidebar } from './Sidebar/Sidebar';
 import { Breadcrumbs } from './Breadcrumbs/Breadcrumbs';
@@ -22,6 +24,7 @@ import { Modal } from './Modal/Modal';
 import { DataTable } from './DataTable/DataTable';
 import { PricingTable } from './PricingTable/PricingTable';
 import { ComparisonTable } from './ComparisonTable/ComparisonTable';
+import { SelectTheme } from './SelectTheme/SelectTheme'; 
 
 // Flattened export of all components
 const Molecules = {
@@ -31,6 +34,7 @@ const Molecules = {
   InputGroup,
   InputWithLabel,
   SearchBar,
+  SelectTheme,  
   FileUpload,
   FormField,
   IconButton,
