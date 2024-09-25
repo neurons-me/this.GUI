@@ -16,7 +16,6 @@ npm start
 The goal is to automate the **GUI** generation process so users only pass data or configurations, and **this.GUI** handles the rest.
 
 
-
 ## **Explanation of Grouping:**
 
 ​	•	**Atomic**: Smallest components that are not broken down further.
