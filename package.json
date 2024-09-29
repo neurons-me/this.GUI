@@ -1,6 +1,6 @@
 {
   "name": "this.gui",
-  "version": "1.0.1",
+  "version": "1.0.11",
   "description": "This Graphic User Interface.",
   "main": "dist/this-gui.umd.js",
   "module": "dist/this-gui.es.js",
@@ -9,12 +9,13 @@
     "url": "git+https://github.com/neurons-me/GUI.git"
   },
   "scripts": {
-    "start": "node ./src/scripts/logASCIIArt.js && vite --open",
+  "start": "node ./src/scripts/logASCIIArt.js && concurrently \"vite --open\" \"storybook dev -p 6006 --no-open\"",
     "dev": "vite",
     "build": "vite build",
     "prepublishOnly": "npm run build",
     "storybook": "storybook dev -p ${STORYBOOK_PORT:-6006}",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "postinstall": "node src/scripts/postinstall.js" 
   },
   "type": "module",
   "author": "suiGn",
