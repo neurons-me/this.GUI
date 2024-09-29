@@ -1,31 +1,28 @@
+// vite.config.js
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import mdx from '@mdx-js/rollup';
-import dotenv from 'dotenv';
-
-// Load .env file
-dotenv.config();
 
 export default defineConfig({
   plugins: [
     react(),
     mdx({
-      // Exclude the src/stories/ directory from MDX processing
-      exclude: 'src/stories/**',
+      exclude: 'src/stories/**', // Keep this exclusion if Storybook handles these files
     }),
   ],
   server: {
-    port: process.env.VITE_PORT || 7774,  // Use VITE_PORT from .env or default to 3000
+    port: 7774,  // Default to 7774, or change this value to your desired port
+    open: true,  // Automatically open the browser on server start
   },
   build: {
     lib: {
-      entry: 'index.js',  // Entry point now in the root directory
-      name: 'GUI',        // Global variable name is now 'GUI'
-      sourcemap: false,   // Disable sourcemaps
+      entry: 'index.js',  // Ensure this points to the correct entry file for your library
+      name: 'GUI',        // Name for the global variable in UMD builds
+      sourcemap: false,
       fileName: (format) => `this-gui.${format}.js`,  // Output filenames
     },
     rollupOptions: {
-      external: ['react', 'react-dom'],  // Externalize React and ReactDOM
+      external: ['react', 'react-dom'],  // Externalize dependencies
       output: {
         globals: {
           react: 'React',

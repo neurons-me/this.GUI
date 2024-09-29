@@ -15,15 +15,11 @@ npm start
 
 The goal is to automate the **GUI** generation process so users only pass data or configurations, and **this.GUI** handles the rest.
 
-
 ## **Explanation of Grouping:**
-
 ​	•	**Atomic**: Smallest components that are not broken down further.
-
 Alert, Audio, Badge, Button, Caption, Checkbox, Container, Divider, Heading, Icon,  Image, Label, Link , Loader, Paragraph, ProgressBar, RadioButton, RangeInput, Select, Slider, Snackbar, Spacer, Spinner, Tag, TextArea, TextInput, Toggle, Tooltip, Video.
 
 ​	•	**Molecules**: Simple combinations of atomic components that together form a small UI feature.
-
 Accordion, AudioPlayer, AvatarWithName, Breadcrumbs, ButtonGroup, Card, ComparisonTable, DataTable, FileUpload, FormField, Header, IconButton, ImageWithCaption, InputGroup, InputWithLabel, List, MediaCard, Modal, Navbar, Notification, PricingTable, SearchBar, Sidebar, VideoWithDescription.
 
 ​	•	**Organisms**: More complex, combining molecules and atomic components to create larger, more detailed features.
@@ -32,6 +28,11 @@ Accordion, AudioPlayer, AvatarWithName, Breadcrumbs, ButtonGroup, Card, Comparis
 ​	•	**Pages**: Complete and functional pages made up of templates and content.
 ​	•	**Miscellaneous**: Utility components that don’t fit into the above categories but provide important functions, such as popovers, overlays, and media controls.
 
+this.GUI is set up as an NPM package that exports:
+
+	•	Pre-defined components.
+	•	MDX and Theme Providers.
+	•	An MDX editor interface.
 
 
 # About All.This

@@ -1,3 +1,5 @@
+// This file is used to generate the components object that is used to generate the components in the GUI
+// developement purposes only
 const components = {
     "Atomic": {
       "Text": [

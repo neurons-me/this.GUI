@@ -1,20 +1,11 @@
-import { join, dirname } from "path";
-
-/**
- * This function is used to resolve the absolute path of a package.
- * It is needed in projects that use Yarn PnP or are set up within a monorepo.
-
-function getAbsolutePath(value) {
-  return dirname(require.resolve(join(value, "package.json")));
-}
- */
+// .storybook/main.js
+import { join, dirname } from 'path';
 
 /** @type { import('@storybook/react-vite').StorybookConfig } */
 const config = {
   stories: [
-    // Only include .mdx and .stories.* files from the ./src/stories/ directory and its subdirectories
-    "../src/stories/**/*.mdx",
-    "../src/stories/**/*.stories.@(js|jsx|mjs|ts|tsx)"
+    "../src/stories/**/*.mdx",  // Include MDX files for component documentation
+    "../src/stories/**/*.stories.@(js|jsx|mjs|ts|tsx)", // Include all story files
   ],
   addons: [
     '@storybook/addon-essentials',
@@ -22,7 +13,7 @@ const config = {
     '@storybook/addon-interactions',
   ],
   docs: {
-    autodocs: true, // This enables autodocs globally
+    autodocs: true, // Enables automatic documentation generation
   },
   framework: {
     name: "@storybook/react-vite",

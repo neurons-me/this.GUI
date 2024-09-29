@@ -1,13 +1,9 @@
+// src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import { ThemeProvider } from './themes/ThemeProvider'; // Import ThemeProvider
 
 const App = () => {
-  const storybookUrl = `http://${process.env.HOSTNAME || 'localhost'}:${process.env.STORYBOOK_PORT || 6006}`;
-  
-  // Log the storybook URL to ensure the environment variables are loading correctly
-  console.log('Storybook URL:', storybookUrl);
-
   return (
     <ThemeProvider>
       <Router>
@@ -16,10 +12,15 @@ const App = () => {
             <div>
               <h1>Main App</h1>
               <Link to="/" style={{ marginRight: '20px' }}>Home</Link>
-              <a href={storybookUrl} target="_blank" rel="noopener noreferrer">
-                Open Storybook
-              </a>
+              <Link to="/storybook" style={{ marginRight: '20px' }}>Storybook</Link>
             </div>
+          </Route>
+          <Route path="/storybook">
+            <iframe
+              src="http://localhost:6006" // Adjust the URL based on your setup
+              style={{ width: '100%', height: '100vh', border: 'none' }}
+              title="Storybook"
+            ></iframe>
           </Route>
         </Switch>
       </Router>
