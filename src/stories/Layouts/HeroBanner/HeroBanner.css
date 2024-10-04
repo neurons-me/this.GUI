@@ -1,0 +1,16 @@
+
+.herobanner {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 16px;
+  gap: 8px;
+  border: 1px solid #ddd;
+}
+
+.herobanner--primary {
+  background-color: #e3f2fd;
+}
+
+.herobanner--secondary {
+  background-color: #fff;
+}

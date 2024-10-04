@@ -1,41 +1,120 @@
-
+import React from 'react';
 import { Badge } from './Badge';
+import './Badge.css';
 
-// Storybook configuration for Badge component
 export default {
-  title: 'Atoms/Visual/Badge',
+  title: 'Atoms/Data/Badge',
   component: Badge,
-  parameters: {
-    layout: 'centered',
-  },
   argTypes: {
-    children: { control: 'text' },
+    label: { control: 'text', defaultValue: 'Badge' },
+    variant: {
+      control: { type: 'select', options: ['primary', 'secondary'] },
+      description: 'Badge variant (primary or secondary)',
+    },
+    size: {
+      control: { type: 'select', options: ['small', 'normal', 'large'] },
+      description: 'Badge size',
+    },
+    round: {
+      control: 'boolean',
+      description: 'Make the badge round',
+    },
+    color: {
+      control: {
+        type: 'select',
+        options: [
+          'info', 'warning', 'alert', 'success', 'neutral', 'dark',
+          'classy-color-1', 'classy-color-2', 'classy-color-3', 'classy-color-4', 'classy-color-5',
+          'small-switch-color-1', 'small-switch-color-2',
+          'natural-color-1', 'natural-color-2', 'natural-color-3',
+          'grey-friend-1', 'grey-friend-2',
+          'shade-1', 'shade-2', 'shade-3', 'shade-4',
+        ],
+      },
+      description: 'Badge color',
+    },
   },
 };
 
-export const Primary = {
-  args: {
-    primary: true,
-    children: 'This is a primary Badge',
-  },
-};
+// Primary Colored Badges
+export const PrimaryColoredBadges = () => (
+  <>
+    <h3>Primary Colored Badges</h3>
+    {[
+      'info', 'warning', 'alert', 'success', 'neutral', 'dark',
+      'classy-color-1', 'classy-color-2', 'classy-color-3', 'classy-color-4', 'classy-color-5',
+      'small-switch-color-1', 'small-switch-color-2',
+      'natural-color-1', 'natural-color-2', 'natural-color-3',
+      'grey-friend-1', 'grey-friend-2',
+      'shade-1', 'shade-2', 'shade-3', 'shade-4',
+    ].map((color) => (
+      <Badge key={color} label={`${color} Badge`} variant="primary" color={color} />
+    ))}
+  </>
+);
 
-export const Secondary = {
-  args: {
-    children: 'This is a secondary Badge',
-  },
-};
+// Secondary Colored Badges
+export const SecondaryColoredBadges = () => (
+  <>
+    <h3>Secondary Colored Badges</h3>
+    {[
+      'info', 'warning', 'alert', 'success', 'neutral', 'dark',
+      'classy-color-1', 'classy-color-2', 'classy-color-3', 'classy-color-4', 'classy-color-5',
+      'small-switch-color-1', 'small-switch-color-2',
+      'natural-color-1', 'natural-color-2', 'natural-color-3',
+      'grey-friend-1', 'grey-friend-2',
+      'shade-1', 'shade-2', 'shade-3', 'shade-4',
+    ].map((color) => (
+      <Badge key={color} label={`${color} Badge`} variant="secondary" color={color} />
+    ))}
+  </>
+);
 
-export const Large = {
-  args: {
-    size: 'large',
-    children: 'This is a large Badge',
-  },
-};
+// Primary Rounded Colored Badges
+export const PrimaryRoundedBadges = () => (
+  <>
+    <h3>Primary Rounded Badges</h3>
+    {[
+      'info', 'warning', 'alert', 'success', 'neutral', 'dark',
+      'classy-color-1', 'classy-color-2', 'classy-color-3', 'classy-color-4', 'classy-color-5',
+      'small-switch-color-1', 'small-switch-color-2',
+      'natural-color-1', 'natural-color-2', 'natural-color-3',
+      'grey-friend-1', 'grey-friend-2',
+      'shade-1', 'shade-2', 'shade-3', 'shade-4',
+    ].map((color) => (
+      <Badge key={color} label={`9`} variant="primary" color={color} round />
+    ))}
+  </>
+);
 
-export const Small = {
-  args: {
-    size: 'small',
-    children: 'This is a small Badge',
-  },
+// Secondary Rounded Colored Badges
+export const SecondaryRoundedBadges = () => (
+  <>
+    <h3>Secondary Rounded Badges</h3>
+    {[
+      'info', 'warning', 'alert', 'success', 'neutral', 'dark',
+      'classy-color-1', 'classy-color-2', 'classy-color-3', 'classy-color-4', 'classy-color-5',
+      'small-switch-color-1', 'small-switch-color-2',
+      'natural-color-1', 'natural-color-2', 'natural-color-3',
+      'grey-friend-1', 'grey-friend-2',
+      'shade-1', 'shade-2', 'shade-3', 'shade-4',
+    ].map((color) => (
+      <Badge key={color} label={`8`} variant="secondary" color={color} round />
+    ))}
+  </>
+);
+
+/**
+ * Interactive Badge story
+ */
+const Template = (args) => <Badge {...args} />;
+
+export const InteractiveBadge = Template.bind({});
+InteractiveBadge.args = {
+  label: 'Interactive Badge',
+  variant: 'primary',
+  size: 'normal',
+  round: false,
+  color: 'info',
 };
+InteractiveBadge.storyName = 'Interactive Badge';

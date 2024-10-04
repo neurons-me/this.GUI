@@ -1,41 +1,99 @@
-
+// src/stories/Atoms/Loader/Loader.stories.jsx
+import React from 'react';
 import { Loader } from './Loader';
+import './Loader.css';
 
-// Storybook configuration for Loader component
 export default {
   title: 'Atoms/Feedback/Loader',
   component: Loader,
-  parameters: {
-    layout: 'centered',
-  },
   argTypes: {
-    children: { control: 'text' },
+    variant: {
+      control: {
+        type: 'select',
+        options: ['spinner', 'dots', 'bars'],
+      },
+      description: 'Variant of the loader.',
+    },
+    color: {
+      control: {
+        type: 'select',
+        options: ['primary', 'secondary', 'custom'],
+      },
+      description: 'Color of the loader.',
+    },
+    customColor: {
+      control: 'color',
+      description: 'Custom color when color is set to "custom".',
+    },
+    size: {
+      control: {
+        type: 'select',
+        options: ['sm', 'md', 'lg'],
+      },
+      description: 'Size of the loader.',
+    },
+    className: {
+      control: 'text',
+      description: 'Additional CSS classes.',
+    },
+    style: {
+      control: 'object',
+      description: 'Inline styles.',
+    },
   },
 };
 
-export const Primary = {
-  args: {
-    primary: true,
-    children: 'This is a primary Loader',
-  },
-};
+/**
+ * Spinner - Primary - Medium
+ */
+export const SpinnerPrimaryMedium = () => (
+  <Loader variant="spinner" color="primary" size="md" />
+);
 
-export const Secondary = {
-  args: {
-    children: 'This is a secondary Loader',
-  },
-};
+/**
+ * Spinner - Secondary - Large
+ */
+export const SpinnerSecondaryLarge = () => (
+  <Loader variant="spinner" color="secondary" size="lg" />
+);
 
-export const Large = {
-  args: {
-    size: 'large',
-    children: 'This is a large Loader',
-  },
-};
+/**
+ * Dots - Primary - Small
+ */
+export const DotsPrimarySmall = () => (
+  <Loader variant="dots" color="primary" size="sm" />
+);
 
-export const Small = {
-  args: {
-    size: 'small',
-    children: 'This is a small Loader',
-  },
+/**
+ * Dots - Secondary - Medium
+ */
+export const DotsSecondaryMedium = () => (
+  <Loader variant="dots" color="secondary" size="md" />
+);
+
+/**
+ * Bars - Primary - Medium
+ */
+export const BarsPrimaryMedium = () => (
+  <Loader variant="bars" color="primary" size="md" />
+);
+
+/**
+ * Bars - Custom Color - Large
+ */
+export const BarsCustomLarge = () => (
+  <Loader variant="bars" color="custom" customColor="#FF5733" size="lg" />
+);
+
+/**
+ * Interactive Loader
+ */
+const Template = (args) => <Loader {...args} />;
+
+export const InteractiveLoader = Template.bind({});
+InteractiveLoader.args = {
+  variant: 'spinner',
+  color: 'primary',
+  size: 'md',
+  customColor: '#FF5733',
 };

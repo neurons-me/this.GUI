@@ -1,18 +1,15 @@
-//this.GUI/src/mains.jsx
+// main.jsx
 import React from 'react';
-import ReactDOM from 'react-dom';
-import MDXContent from './index.mdx';
-import MdxProvider from './MdxProvider';  
-import { ThemeProvider } from './themes/ThemeProvider';  // Import ThemeProvider
-import './styles/global.css'; // Import the global CSS
+import { createRoot } from 'react-dom/client';
+import App from './App'; // Import App component
 
-ReactDOM.render(
+// Grab the container element
+const container = document.getElementById('root');
+const root = createRoot(container);
+
+// Render your app using createRoot
+root.render(
   <React.StrictMode>
-    <ThemeProvider>
-      <MdxProvider>
-        <MDXContent />
-      </MdxProvider>
-    </ThemeProvider>
-  </React.StrictMode>,
-  document.getElementById('root')
+    <App /> {/* Render the entire App component */}
+  </React.StrictMode>
 );

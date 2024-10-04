@@ -1,41 +1,35 @@
-
+import React from 'react';
 import { TextArea } from './TextArea';
 
-// Storybook configuration for TextArea component
 export default {
   title: 'Atoms/Interactive/TextArea',
   component: TextArea,
-  parameters: {
-    layout: 'centered',
-  },
   argTypes: {
-    children: { control: 'text' },
+    bold: { control: 'boolean', description: 'Bold text' },
+    italic: { control: 'boolean', description: 'Italic text' },
+    underline: { control: 'boolean', description: 'Underlined text' },
+    color: {
+      control: { type: 'select', options: ['primary', 'info', 'warning', 'alert', 'success', 'neutral', 'dark'] },
+      description: 'Text color',
+    },
+    collapsible: { control: 'boolean', description: 'Enable collapsible text area' },
+    collapseAt: { control: 'number', description: 'Collapse after N characters' },
   },
 };
 
-export const Primary = {
-  args: {
-    primary: true,
-    children: 'This is a primary TextArea',
-  },
-};
+/** Interactive TextArea */
+const Template = (args) => <TextArea {...args} />;
 
-export const Secondary = {
-  args: {
-    children: 'This is a secondary TextArea',
-  },
-};
-
-export const Large = {
-  args: {
-    size: 'large',
-    children: 'This is a large TextArea',
-  },
-};
-
-export const Small = {
-  args: {
-    size: 'small',
-    children: 'This is a small TextArea',
-  },
+export const InteractiveTextArea = Template.bind({});
+InteractiveTextArea.args = {
+  value: 'Type here...',
+  placeholder: 'Enter your text...',
+  rows: 4,
+  cols: 50,
+  bold: false,
+  italic: false,
+  underline: false,
+  color: 'primary',
+  collapsible: false,
+  collapseAt: 100,
 };

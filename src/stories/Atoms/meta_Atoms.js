@@ -6,8 +6,10 @@ const Atomic = {
       { name: "Label", paths: { css: "./Label/Label.css", globalCss: "styles/global.css", jsx: "./Label/Label.jsx", stories: "./Label/Label.stories.jsx" }},
       { name: "Caption", paths: { css: "./Caption/Caption.css", globalCss: "styles/global.css", jsx: "./Caption/Caption.jsx", stories: "./Caption/Caption.stories.jsx" }},
     ],
-    "Interactive": [
+    "Layout": [
       { name: " Container", paths: { css: "./Container/Container.css", globalCss: "styles/global.css", jsx: "./Container/Container.jsx", stories: "./Container/Container.stories.jsx" }},
+    ],
+    "Interactive": [
       { name: "Button", paths: { css: "/Button/Button.css", globalCss: "styles/global.css", jsx: "./Button/Button.jsx", stories: "./Button/Button.stories.jsx" }},
       { name: "Link", paths: { css: "Atomic/Link/Link.css", globalCss: "styles/global.css", jsx: "./Link/Link.jsx", stories: "./Link/Link.stories.jsx" }},
       { name: "Icon", paths: { css: "/Atomic/Icon/Icon.css", globalCss: "styles/global.css", jsx: "./Icon/Icon.jsx", stories: "./Icon/Icon.stories.jsx" }},

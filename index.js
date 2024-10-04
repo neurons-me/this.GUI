@@ -4,14 +4,14 @@ this.GUI
 🆂🆄🅸🅶🅽 */
 import Atoms from './src/stories/Atoms/index';
 import Molecules from './src/stories/Molecules/index';
-// ... import other categories
+import Layouts from './src/stories/Layouts/index';
+import Templates from './src/stories/Templates/index';
 
-// src/index.js
-export const GUI = {
+const GUI = {
   Atoms,
   Molecules,
-  // ... other categories
+  Layouts,
+  Templates
 };
 
-// Or, if you need default export as well
 export default GUI;

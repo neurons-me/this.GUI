@@ -1,41 +1,40 @@
-
+import React from 'react';
 import { Video } from './Video';
 
-// Storybook configuration for Video component
 export default {
   title: 'Atoms/Media/Video',
   component: Video,
-  parameters: {
-    layout: 'centered',
-  },
   argTypes: {
-    children: { control: 'text' },
+    src: { control: 'text', defaultValue: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+    poster: { control: 'text', defaultValue: 'https://www.w3schools.com/html/pic_trulli.jpg' },
+    autoplay: { control: 'boolean', defaultValue: false },
+    loop: { control: 'boolean', defaultValue: false },
+    muted: { control: 'boolean', defaultValue: false },
+    controls: { control: 'boolean', defaultValue: true },
+    width: { control: 'text', defaultValue: '100%' },
+    height: { control: 'text', defaultValue: 'auto' },
+    showControlsOnHover: { control: 'boolean', defaultValue: true },
   },
 };
 
-export const Primary = {
-  args: {
-    primary: true,
-    children: 'This is a primary Video',
-  },
-};
+export const DefaultVideo = (args) => (
+  <Video {...args} />
+);
 
-export const Secondary = {
-  args: {
-    children: 'This is a secondary Video',
-  },
-};
+export const VideoWithCustomDimensions = () => (
+  <Video
+    src="https://www.w3schools.com/html/mov_bbb.mp4"
+    poster="https://www.w3schools.com/html/pic_trulli.jpg"
+    width="640px"
+    height="360px"
+  />
+);
 
-export const Large = {
-  args: {
-    size: 'large',
-    children: 'This is a large Video',
-  },
-};
-
-export const Small = {
-  args: {
-    size: 'small',
-    children: 'This is a small Video',
-  },
-};
+export const VideoAutoplayLoop = () => (
+  <Video
+    src="https://www.w3schools.com/html/mov_bbb.mp4"
+    autoplay
+    loop
+    muted
+  />
+);

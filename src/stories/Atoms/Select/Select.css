@@ -1,29 +1,87 @@
+/* src/stories/Atoms/Select/Select.css */
 
+/* Base Select Styles */
 .select {
-  padding: 16px;
-  border-radius: 8px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--text-color);
+  width: 100%; /* Responsive to container */
 }
 
-.select--primary {
-  background-color: #e3f2fd;
-  border-color: #1e88e5;
+.select__label {
+  margin-bottom: var(--spacing-sm);
+  font-weight: var(--font-weight-medium);
 }
 
-.select--secondary {
-  background-color: #fff;
-  border-color: #ccc;
+.select__input {
+  appearance: none;
+  width: 100%; /* Responsive to container */
+  padding: var(--spacing-sm);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-size: var(--font-size-base);
+  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+  cursor: pointer;
 }
 
-.select--small {
-  padding: 8px;
+.select__input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-color-hover);
+  outline: none;
 }
 
-.select--medium {
-  padding: 16px;
+.select--disabled .select__input {
+  background-color: var(--neutral-color-hover);
+  cursor: not-allowed;
 }
 
-.select--large {
-  padding: 32px;
+/* Color Variants */
+.select--primary .select__input {
+  border-color: var(--primary-color);
+}
+
+.select--secondary .select__input {
+  border-color: var(--secondary-color);
+}
+
+.select--info .select__input {
+  border-color: var(--info-color);
+}
+
+.select--warning .select__input {
+  border-color: var(--warning-color);
+}
+
+.select--alert .select__input {
+  border-color: var(--alert-color);
+}
+
+.select--success .select__input {
+  border-color: var(--success-color);
+}
+
+.select--neutral .select__input {
+  border-color: var(--neutral-color);
+}
+
+.select--dark .select__input {
+  border-color: var(--dark-color);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .select__input {
+    font-size: var(--font-size-small);
+  }
+}
+
+@media (max-width: 480px) {
+  .select__input {
+    font-size: var(--font-size-small);
+    padding: var(--spacing-xs);
+  }
 }

@@ -1,0 +1,16 @@
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 16px;
+  gap: 8px;
+  border: 1px solid #ddd;
+}
+
+.pagination--primary {
+  background-color: #e3f2fd;
+}
+
+.pagination--secondary {
+  background-color: #fff;
+}

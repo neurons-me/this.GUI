@@ -1,0 +1,16 @@
+
+.heroimagevideo {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 16px;
+  gap: 8px;
+  border: 1px solid #ddd;
+}
+
+.heroimagevideo--primary {
+  background-color: #e3f2fd;
+}
+
+.heroimagevideo--secondary {
+  background-color: #fff;
+}

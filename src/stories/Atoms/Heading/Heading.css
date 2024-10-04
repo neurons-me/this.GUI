@@ -1,29 +1,112 @@
+/* src/stories/Atoms/Heading/Heading.css */
 
 .heading {
-  padding: 16px;
-  border-radius: 8px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
+  font-family: var(--font-family);
+  color: var(--text-color);
+  margin-bottom: var(--spacing-md);
+  transition: color var(--transition-speed) ease;
 }
 
-.heading--primary {
-  background-color: #e3f2fd;
-  border-color: #1e88e5;
+.heading--align-left {
+  text-align: left;
 }
 
-.heading--secondary {
-  background-color: #fff;
-  border-color: #ccc;
+.heading--align-center {
+  text-align: center;
 }
 
-.heading--small {
-  padding: 8px;
+.heading--align-right {
+  text-align: right;
 }
 
-.heading--medium {
-  padding: 16px;
+.heading--bold {
+  font-weight: var(--font-weight-heavy);
 }
 
-.heading--large {
-  padding: 32px;
+.heading--info {
+  color: var(--info-color);
+}
+
+.heading--warning {
+  color: var(--warning-color);
+}
+
+.heading--alert {
+  color: var(--alert-color);
+}
+
+.heading--success {
+  color: var(--success-color);
+}
+
+.heading--neutral {
+  color: var(--neutral-color);
+}
+
+.heading--dark {
+  color: var(--dark-color);
+}
+
+.heading--classy-color-1 {
+  color: var(--classy-color-1);
+}
+
+.heading--classy-color-2 {
+  color: var(--classy-color-2);
+}
+
+.heading--classy-color-3 {
+  color: var(--classy-color-3);
+}
+
+.heading--classy-color-4 {
+  color: var(--classy-color-4);
+}
+
+.heading--classy-color-5 {
+  color: var(--classy-color-5);
+}
+
+.heading--small-switch-color-1 {
+  color: var(--small-switch-color-1);
+}
+
+.heading--small-switch-color-2 {
+  color: var(--small-switch-color-2);
+}
+
+.heading--natural-color-1 {
+  color: var(--natural-color-1);
+}
+
+.heading--natural-color-2 {
+  color: var(--natural-color-2);
+}
+
+.heading--natural-color-3 {
+  color: var(--natural-color-3);
+}
+
+.heading--grey-friend-1 {
+  color: var(--grey-friend-1);
+}
+
+.heading--grey-friend-2 {
+  color: var(--grey-friend-2);
+}
+
+.heading--shade-1 {
+  color: var(--shade-1);
+}
+
+.heading--shade-2 {
+  color: var(--shade-2);
+}
+
+.heading--shade-3 {
+  color: var(--shade-3);
+}
+
+.heading--shade-4 {
+  color: var(--shade-4);
 }

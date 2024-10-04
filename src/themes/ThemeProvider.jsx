@@ -1,34 +1,59 @@
+// src/themes/ThemeProvider.jsx
 import React, { useState, useEffect } from 'react';
-import { SelectTheme } from '../stories/Molecules/SelectTheme/SelectTheme'; // Import the SelectTheme component
 
 const ThemeContext = React.createContext();
 
-export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState('github'); // Default theme
-  const [themeLoaded, setThemeLoaded] = useState(false);
+export const ThemeProvider = ({
+  children,
+  initialTheme = 'neurons',
+  initialMode = 'light',
+  targetDocument = document, // Default to global document
+}) => {
+  const [theme, setTheme] = useState(initialTheme);
+  const [mode, setMode] = useState(initialMode);
+
+  // Preload themes with Vite's `import.meta.glob`
+  // Updated to use 'query' and 'import' options instead of 'as'
+  const themes = import.meta.glob('./styles/**/*.css', {
+    query: '?raw',
+    import: 'default',
+  });
 
   useEffect(() => {
-    import(`../themes/typ/${theme}.css`)
-      .then(() => {
-        console.log(`${theme} theme loaded`);
-        setThemeLoaded(true);
-      })
-      .catch((error) => {
-        console.error(`Error loading ${theme} theme: `, error);
-      });
-  }, [theme]);
+    setTheme(initialTheme);
+  }, [initialTheme]);
 
-  // Ensure theme is loaded before rendering the app
-  if (!themeLoaded) {
-    return <div>Loading theme...</div>;
-  }
+  useEffect(() => {
+    setMode(initialMode);
+  }, [initialMode]);
+
+  useEffect(() => {
+    const themePath = `./styles/${theme}/${mode}.css`;
+
+    if (themes[themePath]) {
+      themes[themePath]().then((cssContent) => {
+        // Remove any existing theme styles
+        const existingStyle = targetDocument.getElementById('theme-styles');
+        if (existingStyle) {
+          existingStyle.parentNode.removeChild(existingStyle);
+        }
+
+        // Create a new style element
+        const style = targetDocument.createElement('style');
+        style.id = 'theme-styles';
+        style.textContent = cssContent;
+
+        // Append the style to the head
+        targetDocument.head.appendChild(style);
+      });
+    } else {
+      console.error(`Theme not found: ${theme} ${mode}`);
+    }
+  }, [theme, mode, targetDocument]);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
-      <div>
-        <SelectTheme onThemeChange={(newTheme) => setTheme(newTheme)} />
-        {children}
-      </div>
+    <ThemeContext.Provider value={{ theme, mode, setTheme, setMode }}>
+      {children}
     </ThemeContext.Provider>
   );
 };

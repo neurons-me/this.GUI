@@ -1,3 +1,4 @@
+//this.GUI/src/stories/Atoms/index.js
 // Import all components directly
 import { Heading } from './Heading/Heading';
 import { Paragraph } from './Paragraph/Paragraph';
@@ -14,7 +15,7 @@ import { TextInput } from './TextInput/TextInput';
 import { TextArea } from './TextArea/TextArea';
 import { Select } from './Select/Select';
 import { Slider } from './Slider/Slider';
-import { RangeInput } from './RangeInput/RangeInput';
+import { Range } from './Range/Range';
 import { Image } from './Image/Image';
 import { Video } from './Video/Video';
 import { Audio } from './Audio/Audio';
@@ -28,6 +29,7 @@ import { Spinner } from './Spinner/Spinner';
 import { ProgressBar } from './ProgressBar/ProgressBar';
 import { Alert } from './Alert/Alert';
 import { Snackbar } from './Snackbar/Snackbar';
+import { Logo } from './Logo/Logo'; 
 
 // Flattened export of all components
 const Atoms = {
@@ -46,7 +48,7 @@ const Atoms = {
   TextArea,
   Select,
   Slider,
-  RangeInput,
+  Range,
   Image,
   Video,
   Audio,
@@ -56,6 +58,7 @@ const Atoms = {
   Badge,
   Tag,
   Loader,
+  Logo,
   Spinner,
   ProgressBar,
   Alert,

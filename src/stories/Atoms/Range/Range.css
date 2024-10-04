@@ -1,0 +1,169 @@
+/* src/stories/Atoms/Range/Range.css */
+
+/* Base Range Styles */
+.range {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--text-color);
+}
+
+.range__label {
+  margin-right: var(--spacing-md);
+  font-weight: var(--font-weight-medium);
+}
+
+.range__wrapper {
+  flex-grow: 1;
+  position: relative;
+}
+
+/* The range input */
+.range__input {
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(
+    to right,
+    var(--primary-color) 0%,
+    var(--primary-color) 0%,
+    var(--neutral-color) 0%
+  );
+  border-radius: 5px;
+  outline: none;
+  transition: background-size var(--transition-speed);
+}
+
+/* Thumb Style */
+.range__input::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background-color: var(--thumb-color); /* Thumb color */
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color var(--transition-speed);
+}
+
+.range__input::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background-color: var(--thumb-color); /* Thumb color */
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Value Display */
+.range__value {
+  margin-left: var(--spacing-md);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Disabled State */
+.range--disabled .range__input {
+  background-color: var(--neutral-color-hover);
+}
+
+.range--disabled .range__input::-webkit-slider-thumb {
+  background-color: var(--neutral-color-hover);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .range__input {
+    height: 6px;
+  }
+
+  .range__input::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+  }
+
+  .range__input::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .range__input {
+    height: 4px;
+  }
+
+  .range__input::-webkit-slider-thumb {
+    width: 12px;
+    height: 12px;
+  }
+
+  .range__input::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* Color Variants (Track) */
+.range--primary .range__input {
+  background: linear-gradient(
+    to right,
+    var(--primary-color) 0%,
+    var(--neutral-color) 0%
+  );
+}
+
+.range--secondary .range__input {
+  background: linear-gradient(
+    to right,
+    var(--secondary-color) 0%,
+    var(--neutral-color) 0%
+  );
+}
+
+.range--info .range__input {
+  background: linear-gradient(
+    to right,
+    var(--info-color) 0%,
+    var(--neutral-color) 0%
+  );
+}
+
+.range--warning .range__input {
+  background: linear-gradient(
+    to right,
+    var(--warning-color) 0%,
+    var(--neutral-color) 0%
+  );
+}
+
+.range--alert .range__input {
+  background: linear-gradient(
+    to right,
+    var(--alert-color) 0%,
+    var(--neutral-color) 0%
+  );
+}
+
+.range--success .range__input {
+  background: linear-gradient(
+    to right,
+    var(--success-color) 0%,
+    var(--neutral-color) 0%
+  );
+}
+
+.range--neutral .range__input {
+  background: linear-gradient(
+    to right,
+    var(--neutral-color) 0%,
+    var(--neutral-color) 0%
+  );
+}
+
+.range--dark .range__input {
+  background: linear-gradient(
+    to right,
+    var(--dark-color) 0%,
+    var(--neutral-color) 0%
+  );
+}

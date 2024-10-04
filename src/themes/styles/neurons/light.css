@@ -1,0 +1,280 @@
+/* src/themes/styles/neurons/light.css */
+/* Design Tokens (CSS Variables) */
+:root {
+  /* Primary Colors */
+  --primary-color: #1F877D; /* Neurons teal */
+  --primary-color-hover: #16655C; /* Darker teal for hover effects */
+
+  /* Secondary Colors */
+  --secondary-color: #39a182; /* Bright teal */
+  --secondary-color-hover: #00877A; /* Darker teal for hover effects */
+
+  /* Semantic Colors */
+  --info-color: #008699; /* Light teal */
+  --info-color-hover: #008799d; /* Adjusted color for hover */
+
+  --warning-color: #FF6F61; /* Soft coral (Orange) */
+  --warning-color-hover: #e65b54; /* Adjusted color for hover */
+
+  --alert-color: #ffcc00; /* Yellow */
+  --alert-color-hover: #F1C40F; /* Adjusted color for hover */
+
+  --success-color: #00B4B8; /* Deep gray (Blueish) */
+  --success-color-hover: #0095991; /* Darker blueish for hover */
+
+  --neutral-color: #a4a4a4; /* Light gray */
+  --neutral-color-hover: #CCCCCC; /* Medium gray for hover */
+
+  --dark-color: #2C2C2C; /* Deep gray */
+  --dark-color-hover: #1A1A1A; /* Darker gray for hover */
+
+  /* Classy Palette */
+  --classy-color-1: #16655c;
+  --classy-color-2: #96b1ac;
+  --classy-color-3: #637c78;
+  --classy-color-4: #405b83;
+  --classy-color-5: #738db8;
+
+  /* Small Switch Palette */
+  --small-switch-color-1: #deefe6;
+  --small-switch-color-2: #4e8a6e;
+
+  /* Natural Palette */
+  --natural-color-1: #00aa96;
+  --natural-color-2: #e8fefa;
+  --natural-color-3: #e7fefe;
+
+  /* Grey Friends */
+  --grey-friend-1: #344b47;
+  --grey-friend-2: #96b1ac;
+
+  /* Shades */
+  --shade-1: #3b847a;
+  --shade-2: #5da59a;
+  --shade-3: #7ec7bc;
+  --shade-4: #a0eade;
+
+
+  /* Text Colors */
+  --text-color: #2C2C2C; /* Dark text color for contrast */
+  --text-color-inverse: #FFFFFF; /* For buttons with dark backgrounds */
+
+  /* Border Colors */
+  --border-color: #DDDDDD; /* Light border color */
+  --secondary-border-color: var(--secondary-color); /* For secondary buttons */
+
+  /* Button Sizes */
+  --button-font-size: 14px; /* Base button font size */
+  --button-padding-vertical: 11px;
+  --button-padding-horizontal: 21px;
+  --button-padding: var(--button-padding-vertical) var(--button-padding-horizontal);
+
+  /* Large and Small Sizes */
+  --button-font-size-large: calc(var(--button-font-size) * 1.1); /* 10% larger */
+  --button-font-size-small: calc(var(--button-font-size) * 0.9); /* 10% smaller */
+
+  --button-padding-vertical-large: calc(var(--button-padding-vertical) * 1.1);
+  --button-padding-horizontal-large: calc(var(--button-padding-horizontal) * 1.1);
+  --button-padding-large: var(--button-padding-vertical-large) var(--button-padding-horizontal-large);
+
+  --button-padding-vertical-small: calc(var(--button-padding-vertical) * 0.9);
+  --button-padding-horizontal-small: calc(var(--button-padding-horizontal) * 0.9);
+  --button-padding-small: var(--button-padding-vertical-small) var(--button-padding-horizontal-small);
+
+  /* Background and Text */
+  --background-color: #FFFFFF; /* Pure white background */
+  --muted-text-color: #555555; /* Muted text color */
+
+  /* Link Colors */
+  --link-color: #1F877D; /* Neurons teal */
+  --link-hover-color: #555555; /* Greyish color on hover */
+
+  /* Typography */
+  --font-family: 'Roboto', sans-serif;
+  --font-size-base: 17px; /* Slightly larger base font size */
+  --font-size-small: 15px;
+  --font-size-large: 19px;
+  --line-height: 1.6;
+  --font-weight-regular: 400; /* Normal font weight */
+  --font-weight-medium: 500; /* Medium font weight */
+  --font-weight-bold: 600; /* Less heavy bold weight */
+  --font-weight-heavy: 700; /* For headings */
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 32px;
+
+  /* Borders */
+  --border-radius: 6px; /* Slightly more rounded corners */
+  --border-width: 1px;
+
+  /* Shadows */
+  --box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+  /* Transitions */
+  --transition-speed: 0.3s;
+
+  /* Z-index */
+  --z-index-modal: 1000;
+  --z-index-tooltip: 1050;
+}
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Base Styles */
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height);
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font-weight: var(--font-weight-regular);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-color);
+  font-weight: var(--font-weight-heavy);
+  margin-bottom: var(--spacing-md);
+}
+
+h1 { font-size: 2.2em; }
+h2 { font-size: 1.9em; }
+h3 { font-size: 1.6em; }
+h4 { font-size: 1.4em; }
+h5, h6 { font-size: 1.2em; }
+
+p {
+  margin-bottom: var(--spacing-md);
+  color: var(--text-color);
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color var(--transition-speed) ease;
+}
+
+a:hover {
+  color: var(--link-hover-color);
+  text-decoration: underline;
+}
+
+
+/* Forms */
+input, textarea, select {
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+  border: var(--border-width) solid var(--border-color);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family);
+  background-color: #FFFFFF;
+  color: var(--text-color);
+  transition: border-color var(--transition-speed) ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+/* Layout */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+}
+
+.grid {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.grid__item {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: #F8F8F8; /* Very light gray */
+  padding: var(--spacing-md);
+  border-right: var(--border-width) solid var(--border-color); /* Consistent border */
+}
+
+.sidebar__link {
+  display: block;
+  padding: var(--spacing-sm);
+  color: var(--text-color);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+.sidebar__link:hover {
+  background-color: #EEEEEE; /* Slightly darker on hover */
+  color: var(--text-color);
+}
+
+/* Navbar */
+.navbar {
+  background-color: #FFFFFF;
+  padding: var(--spacing-md);
+  border-bottom: var(--border-width) solid var(--border-color); /* Consistent border */
+}
+
+.navbar__link {
+  color: var(--link-color);
+  text-decoration: none;
+  margin-right: var(--spacing-md);
+  font-weight: var(--font-weight-medium);
+  transition: color var(--transition-speed) ease;
+}
+
+.navbar__link:hover {
+  color: var(--link-hover-color);
+}
+
+/* Utility Classes */
+.mt-sm { margin-top: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.text-center { text-align: center; }
+.d-flex { display: flex; }
+.flex-column { flex-direction: column; }
+
+/* Accessibility */
+a:focus, button:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+
+  h1 {
+    font-size: 1.9em;
+  }
+
+  .navbar {
+    padding: var(--spacing-sm);
+  }
+}

@@ -1,7 +1,8 @@
+// src/stories/Molecules/FormElements/SearchBar/SearchBar.stories.jsx
 
+import React from 'react';
 import { SearchBar } from './SearchBar';
 
-// Storybook configuration for SearchBar component
 export default {
   title: 'Molecules/FormElements/SearchBar',
   component: SearchBar,
@@ -9,12 +10,20 @@ export default {
     layout: 'centered',
   },
   argTypes: {
-    // Define argTypes here
+    placeholder: {
+      control: 'text',
+      description: 'Placeholder text for the search input',
+    },
+    onSearch: {
+      action: 'searched',
+      description: 'Function to call when the search form is submitted',
+    },
   },
 };
 
-export const Default = {
-  args: {
-    // Define default args here
-  },
+const Template = (args) => <SearchBar {...args} />;
+
+export const Default = Template.bind({});
+Default.args = {
+  placeholder: 'Search...',
 };

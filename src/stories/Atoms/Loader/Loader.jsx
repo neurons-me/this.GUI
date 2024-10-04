@@ -1,41 +1,58 @@
-
+// src/stories/Atoms/Loader/Loader.jsx
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import './Loader.css';
 
-/**
- * Loader component for user interaction
- */
-export const Loader = ({ primary, size, children, ...props }) => {
-  const mode = primary ? 'loader--primary' : 'loader--secondary';
+export const Loader = ({
+  variant = 'spinner', // 'spinner', 'dots', 'bars'
+  color = 'primary', // 'primary', 'secondary', 'custom'
+  size = 'md', // 'sm', 'md', 'lg'
+  customColor,
+  className = '',
+  style = {},
+  ...props
+}) => {
+  const loaderClasses = classNames('loader', className, {
+    [`loader--${variant}`]: variant,
+    [`loader--${color}`]: color && color !== 'custom',
+    [`loader--size-${size}`]: size,
+  });
+
+  const loaderStyle = color === 'custom' && customColor ? { ...style, '--loader-color': customColor } : style;
+
   return (
-    <div
-      className={['loader', `loader--${size}`, mode].join(' ')}
-      {...props}
-    >
-      {children}
+    <div className={loaderClasses} style={loaderStyle} {...props}>
+      {variant === 'spinner' && <div className="loader__spinner"></div>}
+      {variant === 'dots' && (
+        <div className="loader__dots">
+          <div className="loader__dot"></div>
+          <div className="loader__dot"></div>
+          <div className="loader__dot"></div>
+        </div>
+      )}
+      {variant === 'bars' && (
+        <div className="loader__bars">
+          <div className="loader__bar"></div>
+          <div className="loader__bar"></div>
+          <div className="loader__bar"></div>
+        </div>
+      )}
     </div>
   );
 };
 
 Loader.propTypes = {
-  /**
-   * Is this the primary style for the component?
-   */
-  primary: PropTypes.bool,
-  /**
-   * Size of the component
-   */
-  size: PropTypes.oneOf(['small', 'medium', 'large']),
-  /**
-   * Content to be rendered inside the component
-   */
-  children: PropTypes.node.isRequired,
+  /** Variant of the loader */
+  variant: PropTypes.oneOf(['spinner', 'dots', 'bars']),
+  /** Color of the loader */
+  color: PropTypes.oneOf(['primary', 'secondary', 'custom']),
+  /** Custom color when color is set to 'custom' */
+  customColor: PropTypes.string,
+  /** Size of the loader */
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  /** Additional CSS classes */
+  className: PropTypes.string,
+  /** Inline styles */
+  style: PropTypes.object,
 };
-
-Loader.defaultProps = {
-  primary: false,
-  size: 'medium',
-};
-
-export default Loader;

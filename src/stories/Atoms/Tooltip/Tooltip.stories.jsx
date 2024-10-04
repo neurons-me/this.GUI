@@ -1,41 +1,51 @@
-
+import React from 'react';
 import { Tooltip } from './Tooltip';
 
-// Storybook configuration for Tooltip component
 export default {
-  title: 'Atoms/Visual/Tooltip',
+  title: 'Atoms/Interactive/Tooltip',
   component: Tooltip,
-  parameters: {
-    layout: 'centered',
-  },
   argTypes: {
-    children: { control: 'text' },
+    content: { control: 'text', defaultValue: 'Tooltip Content' },
+    position: {
+      control: { type: 'select', options: ['top', 'bottom', 'left', 'right', 'north', 'south', 'east', 'west'] },
+      defaultValue: 'top'
+    },
+    color: {
+      control: { type: 'select', options: [
+        'primary', 'info', 'warning', 'alert', 'success', 'neutral', 'dark',
+        'classy-color-1', 'classy-color-2', 'classy-color-3', 'classy-color-4', 'classy-color-5'
+      ]},
+      defaultValue: 'primary'
+    },
+    variant: { control: { type: 'select', options: ['primary', 'secondary'] }, defaultValue: 'primary' },
+    showArrow: { control: 'boolean', defaultValue: true },
   },
 };
 
-export const Primary = {
-  args: {
-    primary: true,
-    children: 'This is a primary Tooltip',
-  },
-};
 
-export const Secondary = {
-  args: {
-    children: 'This is a secondary Tooltip',
-  },
-};
+export const ColorVariants = () => (
+  <div style={{ padding: '50px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+    {['primary', 'info', 'warning', 'alert', 'success', 'neutral', 'dark'].map((color) => (
+      <Tooltip key={color} content={`This is ${color}`} color={color}>
+        <button>Hover for {color}</button>
+      </Tooltip>
+    ))}
+  </div>
+);
 
-export const Large = {
-  args: {
-    size: 'large',
-    children: 'This is a large Tooltip',
-  },
-};
-
-export const Small = {
-  args: {
-    size: 'small',
-    children: 'This is a small Tooltip',
-  },
-};
+export const InteractiveTooltip = (args) => (
+  <div style={{ padding: '100px', display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+    <Tooltip {...args} position="top">
+      <button>Hover Top</button>
+    </Tooltip>
+    <Tooltip {...args} position="bottom">
+      <button>Hover Bottom</button>
+    </Tooltip>
+    <Tooltip {...args} position="left">
+      <button>Hover Left</button>
+    </Tooltip>
+    <Tooltip {...args} position="right">
+      <button>Hover Right</button>
+    </Tooltip>
+  </div>
+);

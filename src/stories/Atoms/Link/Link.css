@@ -1,29 +1,71 @@
+/* src/stories/Atoms/Link/Link.css */
 
 .link {
-  padding: 16px;
-  border-radius: 8px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
+  color: var(--link-color);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family);
+  transition: color var(--transition-speed) ease, text-decoration var(--transition-speed) ease;
 }
 
-.link--primary {
-  background-color: #e3f2fd;
-  border-color: #1e88e5;
+.link--underline {
+  text-decoration: underline;
 }
 
-.link--secondary {
+.link--no-underline {
+  text-decoration: none;
+}
+
+.link--bold {
+  font-weight: var(--font-weight-bold);
+}
+
+.link--external {
+  display: inline-flex;
+  align-items: center;
+}
+
+.link__external-icon {
+  margin-left: 0.25em;
+  font-size: 0.8em;
+}
+
+.link:hover {
+  color: var(--link-hover-color);
+}
+
+.link:hover.text-decoration {
+  text-decoration: underline;
+}
+
+/* Experimental Preview Styles */
+.link__preview {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 700px;
+  height: 90%;
+  max-height: 500px;
   background-color: #fff;
-  border-color: #ccc;
+  border: 2px solid var(--primary-color);
+  box-shadow: var(--box-shadow);
+  z-index: var(--z-index-modal);
+  overflow: hidden;
 }
 
-.link--small {
-  padding: 8px;
+.link__preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
-.link--medium {
-  padding: 16px;
-}
-
-.link--large {
-  padding: 32px;
+/* Responsive */
+@media (max-width: 768px) {
+  .link__preview {
+    width: 95%;
+    height: 80%;
+    max-width: 90%;
+    max-height: 400px;
+  }
 }

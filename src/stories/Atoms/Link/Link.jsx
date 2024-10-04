@@ -1,41 +1,82 @@
-
-import React from 'react';
+// src/stories/Atoms/Link/Link.jsx
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import './Link.css';
 
-/**
- * Link component for user interaction
- */
-export const Link = ({ primary, size, children, ...props }) => {
-  const mode = primary ? 'link--primary' : 'link--secondary';
+export const Link = ({
+  text,
+  href,
+  underline = true,
+  bold = false,
+  newWindow = false,
+  external = false,
+  experimentalPreview = false,
+  className = '',
+  style = {},
+  ...props
+}) => {
+  const [showPreview, setShowPreview] = useState(false);
+
+  const handleMouseDown = () => {
+    if (experimentalPreview) {
+      setShowPreview(true);
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (experimentalPreview) {
+      setShowPreview(false);
+    }
+  };
+
+  const linkClasses = classNames('link', className, {
+    'link--underline': underline,
+    'link--no-underline': !underline,
+    'link--bold': bold,
+    'link--external': external,
+  });
+
   return (
-    <div
-      className={['link', `link--${size}`, mode].join(' ')}
-      {...props}
-    >
-      {children}
-    </div>
+    <>
+      <a
+        href={href}
+        className={linkClasses}
+        target={newWindow ? '_blank' : '_self'}
+        rel={newWindow ? 'noopener noreferrer' : undefined}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onBlur={() => setShowPreview(false)}
+        {...props}
+      >
+        {text} {external && <span className="link__external-icon">🔗</span>}
+      </a>
+      {showPreview && (
+        <div className="link__preview">
+          <iframe src={href} title="Preview" className="link__preview-iframe" />
+        </div>
+      )}
+    </>
   );
 };
 
 Link.propTypes = {
-  /**
-   * Is this the primary style for the component?
-   */
-  primary: PropTypes.bool,
-  /**
-   * Size of the component
-   */
-  size: PropTypes.oneOf(['small', 'medium', 'large']),
-  /**
-   * Content to be rendered inside the component
-   */
-  children: PropTypes.node.isRequired,
+  /** Text content of the link */
+  text: PropTypes.string.isRequired,
+  /** URL the link points to */
+  href: PropTypes.string.isRequired,
+  /** Whether the link is underlined */
+  underline: PropTypes.bool,
+  /** Whether the link text is bold */
+  bold: PropTypes.bool,
+  /** Whether the link opens in a new window */
+  newWindow: PropTypes.bool,
+  /** Whether the link is external */
+  external: PropTypes.bool,
+  /** Enable experimental preview on press */
+  experimentalPreview: PropTypes.bool,
+  /** Additional CSS classes */
+  className: PropTypes.string,
+  /** Inline styles */
+  style: PropTypes.object,
 };
-
-Link.defaultProps = {
-  primary: false,
-  size: 'medium',
-};
-
-export default Link;

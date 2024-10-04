@@ -1,41 +1,56 @@
-
+// src/stories/Atoms/Alert/Alert.jsx
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Alert.css';
+import './Alert.css'; // Import the CSS styles
 
-/**
- * Alert component for user interaction
- */
-export const Alert = ({ primary, size, children, ...props }) => {
-  const mode = primary ? 'alert--primary' : 'alert--secondary';
+export const Alert = ({
+  variant = 'primary', // 'primary', 'secondary'
+  color, // 'info', 'warning', 'alert', 'success', 'neutral', 'dark'
+  children,
+  className = '',
+  style = {},
+  onClose, // Function to handle close action
+  dismissible = false, // If true, show close button
+  icon, // Optional icon element
+  ...props
+}) => {
+  const variantClass = `alert--${variant}`;
+  const colorClass = color ? `alert--${color}` : '';
+  const dismissibleClass = dismissible ? 'alert--dismissible' : '';
+
+  const combinedClassName = `alert ${variantClass} ${colorClass} ${dismissibleClass} ${className}`.trim();
+
   return (
     <div
-      className={['alert', `alert--${size}`, mode].join(' ')}
+      className={combinedClassName}
+      style={style}
+      role="alert"
+      aria-live="assertive"
       {...props}
     >
-      {children}
+      {icon && <span className="alert__icon">{icon}</span>}
+      <span className="alert__content">{children}</span>
+      {dismissible && (
+        <button
+          className="alert__close"
+          onClick={onClose}
+          aria-label="Close Alert"
+          tabIndex="0"
+        >
+          &times;
+        </button>
+      )}
     </div>
   );
 };
 
 Alert.propTypes = {
-  /**
-   * Is this the primary style for the component?
-   */
-  primary: PropTypes.bool,
-  /**
-   * Size of the component
-   */
-  size: PropTypes.oneOf(['small', 'medium', 'large']),
-  /**
-   * Content to be rendered inside the component
-   */
+  variant: PropTypes.oneOf(['primary', 'secondary']),
+  color: PropTypes.oneOf(['info', 'warning', 'alert', 'success', 'neutral', 'dark']),
   children: PropTypes.node.isRequired,
+  className: PropTypes.string,
+  style: PropTypes.object,
+  onClose: PropTypes.func,
+  dismissible: PropTypes.bool,
+  icon: PropTypes.node,
 };
-
-Alert.defaultProps = {
-  primary: false,
-  size: 'medium',
-};
-
-export default Alert;

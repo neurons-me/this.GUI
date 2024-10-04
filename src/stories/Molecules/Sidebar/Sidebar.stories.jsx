@@ -1,7 +1,5 @@
-
 import { Sidebar } from './Sidebar';
 
-// Storybook configuration for Sidebar component
 export default {
   title: 'Molecules/Navigation/Sidebar',
   component: Sidebar,
@@ -9,12 +7,29 @@ export default {
     layout: 'centered',
   },
   argTypes: {
-    // Define argTypes here
+    // Define argTypes here for dynamic controls in Storybook
   },
 };
 
 export const Default = {
   args: {
-    // Define default args here
+    links: [
+      { url: '#home', label: 'Home', isActive: true },
+      { url: '#about', label: 'About', isActive: false },
+      { url: '#services', label: 'Services', isActive: false },
+    ],
+    logo: <img src="https://example.com/logo.png" alt="Logo" style={{ width: '100px' }} />,
+    userControls: (
+      <>
+        <button className="button">Control 1</button>
+        <button className="button">Control 2</button>
+      </>
+    ),
+    styleOverrides: {
+      sidebarBackgroundColor: '#f5f5f5',
+      sidebarBorderColor: '#ddd',
+      sidebarPadding: '20px',
+      sidebarWidth: '280px',
+    },
   },
 };

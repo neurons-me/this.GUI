@@ -1,26 +1,28 @@
-// src/stories/Layout/Grid/Grid.stories.jsx
-import React from 'react';
-import Grid from './Grid';
 
+import { Grid } from './Grid';
+
+// Storybook configuration for Grid component
 export default {
-  title: 'Layout/Grid',
+  title: 'Layouts/Grid/Grid',
   component: Grid,
+  parameters: {
+    layout: 'fullscreen',
+  },
   argTypes: {
-    columns: { control: 'number', defaultValue: 3 },
-    gap: { control: 'text', defaultValue: '10px' },
+    children: { control: 'text' },
   },
 };
 
-const Template = (args) => (
-  <Grid {...args}>
-    <div style={{ backgroundColor: '#FFDDC1', padding: '20px' }}>Item 1</div>
-    <div style={{ backgroundColor: '#FEC8D8', padding: '20px' }}>Item 2</div>
-    <div style={{ backgroundColor: '#D4A5A5', padding: '20px' }}>Item 3</div>
-  </Grid>
-);
+export const Primary = {
+  args: {
+    primary: true,
+    children: 'This is a primary Grid layout.',
+  },
+};
 
-export const Default = Template.bind({});
-Default.args = {
-  columns: 3,
-  gap: '10px',
+export const Secondary = {
+  args: {
+    primary: false,
+    children: 'This is a secondary Grid layout.',
+  },
 };

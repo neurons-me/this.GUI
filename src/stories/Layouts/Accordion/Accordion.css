@@ -1,0 +1,16 @@
+
+.accordion {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 16px;
+  gap: 8px;
+  border: 1px solid #ddd;
+}
+
+.accordion--primary {
+  background-color: #e3f2fd;
+}
+
+.accordion--secondary {
+  background-color: #fff;
+}

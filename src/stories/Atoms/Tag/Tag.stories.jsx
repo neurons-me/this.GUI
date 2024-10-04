@@ -1,41 +1,67 @@
-
+// src/stories/Atoms/Tag/Tag.stories.jsx
+import React from 'react';
 import { Tag } from './Tag';
 
-// Storybook configuration for Tag component
 export default {
-  title: 'Atoms/Visual/Tag',
+  title: 'Atoms/Interactive/Tag',
   component: Tag,
-  parameters: {
-    layout: 'centered',
-  },
   argTypes: {
-    children: { control: 'text' },
+    label: { control: 'text', defaultValue: 'Tag Label' },
+    color: {
+      control: {
+        type: 'select',
+        options: [
+          'primary', 'secondary', 'info', 'warning', 'alert', 'success', 'neutral', 'dark',
+          'classy-color-1', 'classy-color-2', 'classy-color-3', 'classy-color-4', 'classy-color-5',
+          'small-switch-color-1', 'small-switch-color-2', 'natural-color-1', 'natural-color-2', 'natural-color-3',
+          'grey-friend-1', 'grey-friend-2', 'shade-1', 'shade-2', 'shade-3', 'shade-4',
+        ],
+      },
+      description: 'Color of the tag.',
+    },
+    size: {
+      control: { type: 'select', options: ['small', 'medium', 'large'] },
+      description: 'Size of the tag.',
+    },
+    variant: {
+      control: { type: 'select', options: ['filled', 'outlined'] },
+      description: 'Variant of the tag.',
+    },
+    removable: {
+      control: 'boolean',
+      description: 'Makes the tag removable.',
+    },
+    onRemove: { action: 'removed', description: 'Called when tag is removed.' },
+    onClick: { action: 'clicked', description: 'Called when the tag is clicked.' },
   },
 };
 
-export const Primary = {
-  args: {
-    primary: true,
-    children: 'This is a primary Tag',
-  },
-};
+/** Primary Tags with all colors */
+export const PrimaryTags = () => (
+  <>
+    {['primary', 'info', 'warning', 'alert', 'success', 'neutral', 'dark'].map((color) => (
+      <Tag key={color} label={`Tag ${color}`} color={color} variant="filled" style={{ marginRight: '8px' }} />
+    ))}
+  </>
+);
 
-export const Secondary = {
-  args: {
-    children: 'This is a secondary Tag',
-  },
-};
+/** Secondary Tags with all colors */
+export const SecondaryTags = () => (
+  <>
+    {['primary', 'info', 'warning', 'alert', 'success', 'neutral', 'dark'].map((color) => (
+      <Tag key={color} label={`Tag ${color}`} color={color} variant="outlined" style={{ marginRight: '8px' }} />
+    ))}
+  </>
+);
 
-export const Large = {
-  args: {
-    size: 'large',
-    children: 'This is a large Tag',
-  },
-};
+/** Interactive Tag */
+const Template = (args) => <Tag {...args} />;
 
-export const Small = {
-  args: {
-    size: 'small',
-    children: 'This is a small Tag',
-  },
+export const InteractiveTag = Template.bind({});
+InteractiveTag.args = {
+  label: 'Interactive Tag',
+  color: 'primary',
+  size: 'medium',
+  variant: 'filled',
+  removable: true,
 };

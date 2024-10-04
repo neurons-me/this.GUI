@@ -1,43 +1,21 @@
-// src/stories/Molecules/SelectTheme/SelectTheme.jsx
+import React from 'react';
 
-import React, { useState, useEffect } from 'react';
-import './SelectTheme.css'; // Import the component styles
-
-const themes = [
-  { label: 'GitHub', value: 'github' },
-  { label: 'Gothic', value: 'gothic' },
-  { label: 'Newsprint', value: 'newsprint' },
-  { label: 'Night', value: 'night' },
-  { label: 'Pixyll', value: 'pixyll' },
-  { label: 'Whitey', value: 'whitey' }
-];
-
-export const SelectTheme = () => {  // Named export
-  const [selectedTheme, setSelectedTheme] = useState('github'); // Default theme
-
-  useEffect(() => {
-    import(`../../../themes/typ/${selectedTheme}.css`).then(() => {
-      console.log(`${selectedTheme} theme loaded`);
-    });
-  }, [selectedTheme]);
-
-  const handleThemeChange = (event) => {
-    setSelectedTheme(event.target.value);
-  };
-
+export const SelectTheme = ({ onThemeChange, onModeChange }) => {
   return (
-    <div className="select-theme-container">
-      <span className="select-theme-label">Select Theme:</span>
-      <select
-        className="select-theme-dropdown"
-        value={selectedTheme}
-        onChange={handleThemeChange}
-      >
-        {themes.map((theme) => (
-          <option key={theme.value} value={theme.value}>
-            {theme.label}
-          </option>
-        ))}
+    <div>
+      {/* Dropdown to select the theme */}
+      <label htmlFor="theme-select">Choose a theme:</label>
+      <select id="theme-select" onChange={(e) => onThemeChange(e.target.value)}>
+        <option value="neurons">Neurons</option>
+        <option value="github">GitHub</option>
+        <option value="material">Material</option>
+      </select>
+
+      {/* Toggle between light and dark modes */}
+      <label htmlFor="mode-toggle">Choose mode:</label>
+      <select id="mode-toggle" onChange={(e) => onModeChange(e.target.value)}>
+        <option value="light">Light Mode</option>
+        <option value="dark">Dark Mode</option>
       </select>
     </div>
   );

@@ -1,6 +1,5 @@
 import React from 'react';
-import SelectTheme from './SelectTheme';
-
+import { SelectTheme } from './SelectTheme';  // Correct way to import a named export
 export default {
   title: 'Molecules/ContentDisplay/SelectTheme',
   component: SelectTheme,

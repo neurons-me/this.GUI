@@ -1,0 +1,94 @@
+/* src/stories/Atoms/Logo/Logo.css */
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .logo__image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  
+  /* Size Variants */
+  .logo--size-xs {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .logo--size-sm {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .logo--size-md {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .logo--size-lg {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .logo--size-xl {
+    width: 200px;
+    height: 200px;
+  }
+  
+  /* Shape Variants */
+  .logo--shape-normal {
+    border-radius: 0;
+  }
+  
+  .logo--shape-rounded {
+    border-radius: 50%;
+  }
+  
+  .logo--shape-squared {
+    border-radius: 8px;
+  }
+  
+  /* Background Variants */
+  .logo--background-none {
+    background-color: transparent;
+  }
+  
+  .logo--background-palette {
+    background-color: var(--palette-background-color, #f0f0f0);
+  }
+  
+  .logo--background-custom {
+    background-color: var(--logo-background-color, transparent);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .logo--size-xs {
+      width: 20px;
+      height: 20px;
+    }
+  
+    .logo--size-sm {
+      width: 40px;
+      height: 40px;
+    }
+  
+    .logo--size-md {
+      width: 80px;
+      height: 80px;
+    }
+  
+    .logo--size-lg {
+      width: 120px;
+      height: 120px;
+    }
+  
+    .logo--size-xl {
+      width: 160px;
+      height: 160px;
+    }
+  }
+  

@@ -1,29 +1,171 @@
+/* src/stories/Atoms/Label/Label.css */
 
 .label {
-  padding: 16px;
-  border-radius: 8px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
+  display: inline-block;
+  font-weight: 500;
+  text-align: center;
+  border-radius: 0.25rem;
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
+  cursor: default;
 }
 
-.label--primary {
-  background-color: #e3f2fd;
-  border-color: #1e88e5;
+.label--background {
+  color: #fff;
 }
 
-.label--secondary {
-  background-color: #fff;
-  border-color: #ccc;
+.label--color-primary {
+  background-color: var(--primary-color);
 }
 
-.label--small {
-  padding: 8px;
+.label--color-secondary {
+  border: 1px solid var(--secondary-color);
+  color: var(--secondary-color);
+  background-color: transparent;
 }
 
-.label--medium {
-  padding: 16px;
+.label--color-info {
+  background-color: var(--info-color);
 }
 
-.label--large {
-  padding: 32px;
+.label--color-warning {
+  background-color: var(--warning-color);
+}
+
+.label--color-alert {
+  background-color: var(--alert-color);
+}
+
+.label--color-success {
+  background-color: var(--success-color);
+}
+
+.label--color-neutral {
+  background-color: var(--neutral-color);
+}
+
+.label--color-dark {
+  background-color: var(--dark-color);
+}
+
+.label--color-classy-color-1 {
+  background-color: var(--classy-color-1);
+}
+
+.label--color-classy-color-2 {
+  background-color: var(--classy-color-2);
+}
+
+.label--color-classy-color-3 {
+  background-color: var(--classy-color-3);
+}
+
+.label--color-classy-color-4 {
+  background-color: var(--classy-color-4);
+}
+
+.label--color-classy-color-5 {
+  background-color: var(--classy-color-5);
+}
+
+.label--color-small-switch-color-1 {
+  background-color: var(--small-switch-color-1);
+}
+
+.label--color-small-switch-color-2 {
+  background-color: var(--small-switch-color-2);
+}
+
+.label--color-natural-color-1 {
+  background-color: var(--natural-color-1);
+}
+
+.label--color-natural-color-2 {
+  background-color: var(--natural-color-2);
+}
+
+.label--color-natural-color-3 {
+  background-color: var(--natural-color-3);
+}
+
+.label--color-grey-friend-1 {
+  background-color: var(--grey-friend-1);
+}
+
+.label--color-grey-friend-2 {
+  background-color: var(--grey-friend-2);
+}
+
+.label--color-shade-1 {
+  background-color: var(--shade-1);
+}
+
+.label--color-shade-2 {
+  background-color: var(--shade-2);
+}
+
+.label--color-shade-3 {
+  background-color: var(--shade-3);
+}
+
+.label--color-shade-4 {
+  background-color: var(--shade-4);
+}
+
+/* Secondary Labels (no background) */
+.label--color-secondary:not(.label--background) {
+  border: 1px solid var(--secondary-color);
+  color: var(--secondary-color);
+  background-color: transparent;
+}
+
+/* Shape Variations */
+.label--shape-rounded {
+  border-radius: 0.25rem;
+}
+
+.label--shape-square {
+  border-radius: 0;
+}
+
+.label--shape-pill {
+  border-radius: 9999px;
+}
+
+/* Size Variations */
+.label--size-xs {
+  font-size: 0.6rem;
+  padding: 0.2em 0.4em;
+}
+
+.label--size-sm {
+  font-size: 0.75rem;
+  padding: 0.25em 0.5em;
+}
+
+.label--size-md {
+  font-size: 0.875rem;
+  padding: 0.3em 0.6em;
+}
+
+.label--size-lg {
+  font-size: 1rem;
+  padding: 0.35em 0.7em;
+}
+
+.label--size-xl {
+  font-size: 1.125rem;
+  padding: 0.4em 0.8em;
+}
+
+/* Additional Styles */
+.label-colors, .label-shapes, .label-sizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.label-sizes .label {
+  margin-right: var(--spacing-sm);
 }

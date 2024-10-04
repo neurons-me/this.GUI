@@ -1,29 +1,382 @@
-
-.tooltip {
-  padding: 16px;
-  border-radius: 8px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
+/* Base Tooltip Styles */
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
 }
 
+.tooltip {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  background-color: var(--tooltip-background-color, #333);
+  color: var(--tooltip-text-color, #fff);
+  text-align: center;
+  padding: 8px;
+  border-radius: 4px;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 999;
+  font-size: var(--font-size-base, 14px);
+}
+
+.tooltip--visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Arrow */
+.tooltip__arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+/* Tooltip Position Variants */
+.tooltip--top {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip--top .tooltip__arrow {
+  top: 100%;
+  left: 50%;
+  border-width: 6px 6px 0 6px;
+  border-color: var(--tooltip-background-color) transparent transparent transparent;
+}
+
+.tooltip--bottom {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip--bottom .tooltip__arrow {
+  bottom: 100%;
+  left: 50%;
+  border-width: 0 6px 6px 6px;
+  border-color: transparent transparent var(--tooltip-background-color) transparent;
+}
+
+.tooltip--left {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tooltip--left .tooltip__arrow {
+  right: -6px;
+  top: 50%;
+  border-width: 6px 6px 6px 0;
+  border-color: transparent var(--tooltip-background-color) transparent transparent;
+}
+
+.tooltip--right {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tooltip--right .tooltip__arrow {
+  left: -6px;
+  top: 50%;
+  border-width: 6px 0 6px 6px;
+  border-color: transparent transparent transparent var(--tooltip-background-color);
+}
+
+/* Custom Variants: North, South, East, West */
+.tooltip--north {
+  top: -120%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip--south {
+  bottom: -120%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip--east {
+  left: 120%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tooltip--west {
+  right: 120%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Colors for Primary and Secondary Variants */
 .tooltip--primary {
-  background-color: #e3f2fd;
-  border-color: #1e88e5;
+  background-color: var(--primary-color, #1F877D);
+  color: #fff;
 }
 
 .tooltip--secondary {
-  background-color: #fff;
-  border-color: #ccc;
+  background-color: transparent;
+  border: 2px solid var(--primary-color, #1F877D);
+  color: var(--primary-color, #1F877D);
 }
 
-.tooltip--small {
-  padding: 8px;
+/* Primary Colors (Background) */
+.tooltip--primary-primary {
+  background-color: var(--primary-color, #1F877D);
+  color: #fff;
 }
 
-.tooltip--medium {
-  padding: 16px;
+.tooltip--primary-secondary {
+  background-color: var(--secondary-color, #39a182);
+  color: #fff;
 }
 
-.tooltip--large {
-  padding: 32px;
+.tooltip--primary-info {
+  background-color: var(--info-color, #008699);
+  color: #fff;
+}
+
+.tooltip--primary-warning {
+  background-color: var(--warning-color, #FF6F61);
+  color: #fff;
+}
+
+.tooltip--primary-alert {
+  background-color: var(--alert-color, #ffcc00);
+  color: #fff;
+}
+
+.tooltip--primary-success {
+  background-color: var(--success-color, #00B4B8);
+  color: #fff;
+}
+
+.tooltip--primary-neutral {
+  background-color: var(--neutral-color, #a4a4a4);
+  color: #fff;
+}
+
+.tooltip--primary-dark {
+  background-color: var(--dark-color, #2C2C2C);
+  color: #fff;
+}
+
+/* Classy Palette */
+.tooltip--primary-classy-color-1 {
+  background-color: var(--classy-color-1, #16655c);
+  color: #fff;
+}
+
+.tooltip--primary-classy-color-2 {
+  background-color: var(--classy-color-2, #96b1ac);
+  color: #fff;
+}
+
+.tooltip--primary-classy-color-3 {
+  background-color: var(--classy-color-3, #637c78);
+  color: #fff;
+}
+
+.tooltip--primary-classy-color-4 {
+  background-color: var(--classy-color-4, #405b83);
+  color: #fff;
+}
+
+.tooltip--primary-classy-color-5 {
+  background-color: var(--classy-color-5, #738db8);
+  color: #fff;
+}
+
+/* Small Switch Colors */
+.tooltip--primary-small-switch-color-1 {
+  background-color: var(--small-switch-color-1, #deefe6);
+  color: #000;
+}
+
+.tooltip--primary-small-switch-color-2 {
+  background-color: var(--small-switch-color-2, #4e8a6e);
+  color: #fff;
+}
+
+/* Natural Palette */
+.tooltip--primary-natural-color-1 {
+  background-color: var(--natural-color-1, #00aa96);
+  color: #fff;
+}
+
+.tooltip--primary-natural-color-2 {
+  background-color: var(--natural-color-2, #e8fefa);
+  color: #000;
+}
+
+.tooltip--primary-natural-color-3 {
+  background-color: var(--natural-color-3, #e7fefe);
+  color: #000;
+}
+
+/* Grey Friends */
+.tooltip--primary-grey-friend-1 {
+  background-color: var(--grey-friend-1, #344b47);
+  color: #fff;
+}
+
+.tooltip--primary-grey-friend-2 {
+  background-color: var(--grey-friend-2, #96b1ac);
+  color: #fff;
+}
+
+/* Shades */
+.tooltip--primary-shade-1 {
+  background-color: var(--shade-1, #3b847a);
+  color: #fff;
+}
+
+.tooltip--primary-shade-2 {
+  background-color: var(--shade-2, #5da59a);
+  color: #fff;
+}
+
+.tooltip--primary-shade-3 {
+  background-color: var(--shade-3, #7ec7bc);
+  color: #fff;
+}
+
+.tooltip--primary-shade-4 {
+  background-color: var(--shade-4, #a0eade);
+  color: #fff;
+}
+
+/* Secondary Colors (Outlined with Text Colored) */
+.tooltip--secondary {
+  background-color: transparent;
+  border: 2px solid var(--primary-color, #1F877D);
+  color: var(--primary-color, #1F877D);
+}
+
+.tooltip--secondary-secondary {
+  border-color: var(--secondary-color, #39a182);
+  color: var(--secondary-color, #39a182);
+}
+
+.tooltip--secondary-info {
+  border-color: var(--info-color, #008699);
+  color: var(--info-color, #008699);
+}
+
+.tooltip--secondary-warning {
+  border-color: var(--warning-color, #FF6F61);
+  color: var(--warning-color, #FF6F61);
+}
+
+.tooltip--secondary-alert {
+  border-color: var(--alert-color, #ffcc00);
+  color: var(--alert-color, #ffcc00);
+}
+
+.tooltip--secondary-success {
+  border-color: var(--success-color, #00B4B8);
+  color: var(--success-color, #00B4B8);
+}
+
+.tooltip--secondary-neutral {
+  border-color: var(--neutral-color, #a4a4a4);
+  color: var(--neutral-color, #a4a4a4);
+}
+
+.tooltip--secondary-dark {
+  border-color: var(--dark-color, #2C2C2C);
+  color: var(--dark-color, #2C2C2C);
+}
+
+/* Classy Palette (Outlined) */
+.tooltip--secondary-classy-color-1 {
+  border-color: var(--classy-color-1, #16655c);
+  color: var(--classy-color-1, #16655c);
+}
+
+.tooltip--secondary-classy-color-2 {
+  border-color: var(--classy-color-2, #96b1ac);
+  color: var(--classy-color-2, #96b1ac);
+}
+
+.tooltip--secondary-classy-color-3 {
+  border-color: var(--classy-color-3, #637c78);
+  color: var(--classy-color-3, #637c78);
+}
+
+.tooltip--secondary-classy-color-4 {
+  border-color: var(--classy-color-4, #405b83);
+  color: var(--classy-color-4, #405b83);
+}
+
+.tooltip--secondary-classy-color-5 {
+  border-color: var(--classy-color-5, #738db8);
+  color: var(--classy-color-5, #738db8);
+}
+
+/* Small Switch Palette (Outlined) */
+.tooltip--secondary-small-switch-color-1 {
+  border-color: var(--small-switch-color-1, #deefe6);
+  color: var(--small-switch-color-1, #deefe6);
+}
+
+.tooltip--secondary-small-switch-color-2 {
+  border-color: var(--small-switch-color-2, #4e8a6e);
+  color: var(--small-switch-color-2, #4e8a6e);
+}
+
+/* Natural Palette (Outlined) */
+.tooltip--secondary-natural-color-1 {
+  border-color: var(--natural-color-1, #00aa96);
+  color: var(--natural-color-1, #00aa96);
+}
+
+.tooltip--secondary-natural-color-2 {
+  border-color: var(--natural-color-2, #e8fefa);
+  color: var(--natural-color-2, #e8fefa);
+}
+
+.tooltip--secondary-natural-color-3 {
+  border-color: var(--natural-color-3, #e7fefe);
+  color: var(--natural-color-3, #e7fefe);
+}
+
+/* Grey Friends (Outlined) */
+.tooltip--secondary-grey-friend-1 {
+  border-color: var(--grey-friend-1, #344b47);
+  color: var(--grey-friend-1, #344b47);
+}
+
+.tooltip--secondary-grey-friend-2 {
+  border-color: var(--grey-friend-2, #96b1ac);
+  color: var(--grey-friend-2, #96b1ac);
+}
+
+/* Shades (Outlined) */
+.tooltip--secondary-shade-1 {
+  border-color: var(--shade-1, #3b847a);
+  color: var(--shade-1, #3b847a);
+}
+
+.tooltip--secondary-shade-2 {
+  border-color: var(--shade-2, #5da59a);
+  color: var(--shade-2, #5da59a);
+}
+
+.tooltip--secondary-shade-3 {
+  border-color: var(--shade-3, #7ec7bc);
+  color: var(--shade-3, #7ec7bc);
+}
+
+.tooltip--secondary-shade-4 {
+  border-color: var(--shade-4, #a0eade);
+  color: var(--shade-4, #a0eade);
+}
+
+
+/* Hover Behavior */
+.tooltip-wrapper:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
 }

@@ -1,29 +1,182 @@
+/* src/stories/Atoms/Checkbox/Checkbox.css */
 
+/* Base Checkbox Styles */
 .checkbox {
-  padding: 16px;
-  border-radius: 8px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: var(--font-size-base); /* Inherit base font size */
+  color: var(--text-color);
+  user-select: none;
 }
 
-.checkbox--primary {
-  background-color: #e3f2fd;
-  border-color: #1e88e5;
+/* Disabled State */
+.checkbox--disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
-.checkbox--secondary {
-  background-color: #fff;
-  border-color: #ccc;
+/* Hidden Checkbox Input */
+.checkbox input {
+  opacity: 0;
+  position: absolute;
+  cursor: pointer;
+  height: 0;
+  width: 0;
 }
 
+/* Custom Checkbox */
+.checkbox::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--background-color);
+  transition: background-color var(--transition-speed), border-color var(--transition-speed);
+}
+
+/* Checked State */
+.checkbox input:checked + .checkbox__label::before {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* Checkmark */
+.checkbox input:checked + .checkbox__label::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border: solid var(--text-color-inverse);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Variants */
+.checkbox--primary::before {
+  border-color: var(--primary-color);
+}
+
+.checkbox--secondary::before {
+  border-color: var(--secondary-color);
+}
+
+/* Sizes */
 .checkbox--small {
-  padding: 8px;
-}
-
-.checkbox--medium {
-  padding: 16px;
+  font-size: var(--font-size-small); /* Inherit small font size */
 }
 
 .checkbox--large {
-  padding: 32px;
+  font-size: var(--font-size-large); /* Inherit large font size */
+}
+
+.checkbox--small::before {
+  width: 12px;
+  height: 12px;
+}
+
+.checkbox--large::before {
+  width: 20px;
+  height: 20px;
+}
+
+/* Rounded */
+.checkbox--rounded::before {
+  border-radius: 50%;
+}
+
+/* Color Classes */
+.info {
+  --primary-color: var(--info-color);
+}
+
+.warning {
+  --primary-color: var(--warning-color);
+}
+
+.alert {
+  --primary-color: var(--alert-color);
+}
+
+.success {
+  --primary-color: var(--success-color);
+}
+
+.neutral {
+  --primary-color: var(--neutral-color);
+}
+
+.dark {
+  --primary-color: var(--dark-color);
+}
+
+.classy-color-1 {
+  --primary-color: var(--classy-color-1);
+}
+
+.classy-color-2 {
+  --primary-color: var(--classy-color-2);
+}
+
+.classy-color-3 {
+  --primary-color: var(--classy-color-3);
+}
+
+.classy-color-4 {
+  --primary-color: var(--classy-color-4);
+}
+
+.classy-color-5 {
+  --primary-color: var(--classy-color-5);
+}
+
+.small-switch-color-1 {
+  --primary-color: var(--small-switch-color-1);
+}
+
+.small-switch-color-2 {
+  --primary-color: var(--small-switch-color-2);
+}
+
+.natural-color-1 {
+  --primary-color: var(--natural-color-1);
+}
+
+.natural-color-2 {
+  --primary-color: var(--natural-color-2);
+}
+
+.natural-color-3 {
+  --primary-color: var(--natural-color-3);
+}
+
+.grey-friend-1 {
+  --primary-color: var(--grey-friend-1);
+}
+
+.grey-friend-2 {
+  --primary-color: var(--grey-friend-2);
+}
+
+.shade-1 {
+  --primary-color: var(--shade-1);
+}
+
+.shade-2 {
+  --primary-color: var(--shade-2);
+}
+
+.shade-3 {
+  --primary-color: var(--shade-3);
+}
+
+.shade-4 {
+  --primary-color: var(--shade-4);
 }

@@ -1,29 +1,89 @@
+/* src/stories/Atoms/Container/Container.css */
 
+/* Base Container Styles */
 .container {
-  padding: 16px;
-  border-radius: 8px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
+  padding: var(--spacing-md);
+  background-color: transparent;
+  transition: all var(--transition-speed) ease;
+  box-sizing: border-box;
+  position: var(--position, static);
 }
 
-.container--primary {
-  background-color: #e3f2fd;
-  border-color: #1e88e5;
+/* Border Variant */
+.container--border {
+  border: 1px solid var(--border-color);
 }
 
-.container--secondary {
-  background-color: #fff;
-  border-color: #ccc;
-}
-
+/* Size Variants */
 .container--small {
-  padding: 8px;
+  width: 25%;
 }
 
 .container--medium {
-  padding: 16px;
+  width: 50%;
 }
 
 .container--large {
-  padding: 32px;
+  width: 75%;
+}
+
+/* Fluid Variant */
+.container--fluid {
+  width: 100%;
+}
+
+/* Rounded Corners */
+.container--rounded {
+  border-radius: var(--border-radius);
+}
+
+/* Alignment */
+.container--align-left {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.container--align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.container--align-right {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* Positioning */
+.container--position-static {
+  position: static;
+}
+
+.container--position-relative {
+  position: relative;
+}
+
+.container--position-absolute {
+  position: absolute;
+}
+
+.container--position-fixed {
+  position: fixed;
+}
+
+.container--position-sticky {
+  position: sticky;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .container--small,
+  .container--medium,
+  .container--large {
+    width: 100%;
+    padding: var(--spacing-sm);
+  }
+  
+  .container--fluid {
+    padding: var(--spacing-xs);
+  }
 }

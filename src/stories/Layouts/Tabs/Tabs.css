@@ -1,0 +1,16 @@
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 16px;
+  gap: 8px;
+  border: 1px solid #ddd;
+}
+
+.tabs--primary {
+  background-color: #e3f2fd;
+}
+
+.tabs--secondary {
+  background-color: #fff;
+}

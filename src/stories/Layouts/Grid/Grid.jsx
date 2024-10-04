@@ -2,7 +2,7 @@
 import React from 'react';
 import './Grid.css'; // Import the component-specific styles
 
-const Grid = ({ children, columns = 3, gap = '10px' }) => {
+export const Grid = ({ children, columns = 3, gap = '10px' }) => {
   const gridStyle = {
     display: 'grid',
     gridTemplateColumns: `repeat(${columns}, 1fr)`,
@@ -11,5 +11,3 @@ const Grid = ({ children, columns = 3, gap = '10px' }) => {
 
   return <div style={gridStyle} className="grid-container">{children}</div>;
 };
-
-export default Grid;

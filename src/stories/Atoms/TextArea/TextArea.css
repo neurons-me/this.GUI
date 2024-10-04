@@ -1,29 +1,98 @@
+.textarea-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
 
 .textarea {
-  padding: 16px;
-  border-radius: 8px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
+  padding: 10px;
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: 5px;
+  font-family: var(--font-family, sans-serif);
+  font-size: var(--font-size, 16px);
+  width: 100%;
+  transition: border-color 0.3s ease;
 }
 
+.textarea:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+/* Font Styles */
+.textarea--bold {
+  font-weight: bold;
+}
+
+.textarea--italic {
+  font-style: italic;
+}
+
+.textarea--underline {
+  text-decoration: underline;
+}
+
+/* Colors */
 .textarea--primary {
-  background-color: #e3f2fd;
-  border-color: #1e88e5;
+  color: var(--primary-color);
 }
 
-.textarea--secondary {
-  background-color: #fff;
-  border-color: #ccc;
+.textarea--info {
+  color: var(--info-color);
 }
 
-.textarea--small {
-  padding: 8px;
+.textarea--warning {
+  color: var(--warning-color);
 }
 
-.textarea--medium {
-  padding: 16px;
+.textarea--alert {
+  color: var(--alert-color);
 }
 
-.textarea--large {
-  padding: 32px;
+.textarea--success {
+  color: var(--success-color);
+}
+
+.textarea--neutral {
+  color: var(--neutral-color);
+}
+
+.textarea--dark {
+  color: var(--dark-color);
+}
+
+/* Error State */
+.textarea--error {
+  border-color: var(--error-color, red);
+}
+
+.textarea-error {
+  color: red;
+  margin-top: 5px;
+}
+
+.textarea-helper {
+  color: var(--muted-text-color, #777);
+  margin-top: 5px;
+}
+
+/* Disabled */
+.textarea--disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+/* Collapsible */
+.textarea--collapsible {
+  display: none;
+}
+
+.textarea-wrapper button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  border: none;
+  background-color: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
 }

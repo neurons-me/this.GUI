@@ -1,29 +1,114 @@
+/* src/stories/Atoms/Spacer/Spacer.css */
 
+/* Base Styles for Spacer */
 .spacer {
-  padding: 16px;
-  border-radius: 8px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
+  display: block;
+  flex-shrink: 0;
 }
 
-.spacer--primary {
-  background-color: #e3f2fd;
-  border-color: #1e88e5;
+/* Vertical Spacers (Height) */
+.spacer--vertical {
+  width: 100%;
 }
 
-.spacer--secondary {
-  background-color: #fff;
-  border-color: #ccc;
+.spacer--xs.spacer--vertical {
+  height: 4px;
 }
 
-.spacer--small {
-  padding: 8px;
+.spacer--sm.spacer--vertical {
+  height: 8px;
 }
 
-.spacer--medium {
-  padding: 16px;
+.spacer--md.spacer--vertical {
+  height: 16px;
 }
 
-.spacer--large {
-  padding: 32px;
+.spacer--lg.spacer--vertical {
+  height: 32px;
+}
+
+.spacer--xl.spacer--vertical {
+  height: 64px;
+}
+
+/* Horizontal Spacers (Width) */
+.spacer--horizontal {
+  height: 100%;
+}
+
+.spacer--xs.spacer--horizontal {
+  width: 4px;
+}
+
+.spacer--sm.spacer--horizontal {
+  width: 8px;
+}
+
+.spacer--md.spacer--horizontal {
+  width: 16px;
+}
+
+.spacer--lg.spacer--horizontal {
+  width: 32px;
+}
+
+.spacer--xl.spacer--horizontal {
+  width: 64px;
+}
+
+/* Responsive Spacers (adjust size on different screen sizes) */
+.spacer--responsive {
+  @media (max-width: 768px) {
+    .spacer--xs {
+      height: 2px;
+      width: 2px;
+    }
+
+    .spacer--sm {
+      height: 4px;
+      width: 4px;
+    }
+
+    .spacer--md {
+      height: 8px;
+      width: 8px;
+    }
+
+    .spacer--lg {
+      height: 16px;
+      width: 16px;
+    }
+
+    .spacer--xl {
+      height: 32px;
+      width: 32px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .spacer--xs {
+      height: 1px;
+      width: 1px;
+    }
+
+    .spacer--sm {
+      height: 2px;
+      width: 2px;
+    }
+
+    .spacer--md {
+      height: 4px;
+      width: 4px;
+    }
+
+    .spacer--lg {
+      height: 8px;
+      width: 8px;
+    }
+
+    .spacer--xl {
+      height: 16px;
+      width: 16px;
+    }
+  }
 }
