@@ -1,0 +1,159 @@
+/* Base Grid Styles */
+.grid {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Auto-fit responsive columns */
+  gap: 16px; /* Default gap between grid items */
+  padding: 16px;
+}
+
+/* Grid item styling */
+.grid > * {
+  background-color: var(--background-color);
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Border Styles for Grid Items when the border prop is true */
+.grid--border > * {
+  border: 1px solid var(--border-color); /* Default border color */
+}
+
+/* Rounded corners */
+.grid--rounded > * {
+  border-radius: var(--border-radius, 8px); /* Apply rounded corners */
+}
+
+/* Shadow Depth Variants */
+.grid--shadow-small > * {
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2); /* Small shadow */
+}
+
+.grid--shadow-medium > * {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Medium shadow */
+}
+
+.grid--shadow-large > * {
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4); /* Large shadow */
+}
+
+/* Responsive behavior: grid adjusts based on screen size */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* 2 columns on tablet */
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr; /* 1 column on mobile */
+  }
+}
+
+/* Hover effect for visual feedback on grid items */
+.grid > *:hover {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+/* Border Color Variants (Using Theme Colors) */
+.grid--primary > * {
+  border-color: var(--primary-color);
+}
+
+.grid--secondary > * {
+  border-color: var(--secondary-color);
+}
+
+.grid--info > * {
+  border-color: var(--info-color);
+}
+
+.grid--warning > * {
+  border-color: var(--warning-color);
+}
+
+.grid--alert > * {
+  border-color: var(--alert-color);
+}
+
+.grid--success > * {
+  border-color: var(--success-color);
+}
+
+.grid--neutral > * {
+  border-color: var(--neutral-color);
+}
+
+.grid--dark > * {
+  border-color: var(--dark-color);
+}
+
+/* Classy Palette Variants */
+.grid--classy-color-1 > * {
+  border-color: var(--classy-color-1);
+}
+
+.grid--classy-color-2 > * {
+  border-color: var(--classy-color-2);
+}
+
+.grid--classy-color-3 > * {
+  border-color: var(--classy-color-3);
+}
+
+.grid--classy-color-4 > * {
+  border-color: var(--classy-color-4);
+}
+
+.grid--classy-color-5 > * {
+  border-color: var(--classy-color-5);
+}
+
+/* Small Switch Palette */
+.grid--small-switch-color-1 > * {
+  border-color: var(--small-switch-color-1);
+}
+
+.grid--small-switch-color-2 > * {
+  border-color: var(--small-switch-color-2);
+}
+
+/* Natural Palette */
+.grid--natural-color-1 > * {
+  border-color: var(--natural-color-1);
+}
+
+.grid--natural-color-2 > * {
+  border-color: var(--natural-color-2);
+}
+
+.grid--natural-color-3 > * {
+  border-color: var(--natural-color-3);
+}
+
+/* Grey Friends */
+.grid--grey-friend-1 > * {
+  border-color: var(--grey-friend-1);
+}
+
+.grid--grey-friend-2 > * {
+  border-color: var(--grey-friend-2);
+}
+
+/* Shades */
+.grid--shade-1 > * {
+  border-color: var(--shade-1);
+}
+
+.grid--shade-2 > * {
+  border-color: var(--shade-2);
+}
+
+.grid--shade-3 > * {
+  border-color: var(--shade-3);
+}
+
+.grid--shade-4 > * {
+  border-color: var(--shade-4);
+}

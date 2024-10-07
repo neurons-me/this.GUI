@@ -4,6 +4,7 @@
 import { Navbar } from './Navbar/Navbar';
 import { Sidebar } from './Sidebar/Sidebar';
 import { Breadcrumbs } from './Breadcrumbs/Breadcrumbs';
+import { Dropdown } from './Dropdown/Dropdown';
 import { InputGroup } from './InputGroup/InputGroup';
 import { InputWithLabel } from './InputWithLabel/InputWithLabel';
 import { SearchBar } from './SearchBar/SearchBar';
@@ -30,6 +31,7 @@ import { SelectTheme } from './SelectTheme/SelectTheme';
 const Molecules = {
   Navbar,
   Sidebar,
+  Dropdown,
   Breadcrumbs,
   InputGroup,
   InputWithLabel,

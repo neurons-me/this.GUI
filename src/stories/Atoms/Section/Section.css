@@ -1,0 +1,267 @@
+/* Base Section Styles */
+.section {
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-md);
+  background-color: var(--background-color);
+  transition: all var(--transition-speed) ease;
+}
+
+/* Border Styles for Section */
+.section--border {
+  border: 1px solid var(--border-color); /* Default border color */
+}
+
+.section--full-width {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  padding: var(--spacing-lg);
+}
+
+/* Shadow Variants */
+.section--shadow-small {
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.section--shadow-medium {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.section--shadow-large {
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Title Styling */
+.section__title {
+  margin-bottom: var(--spacing-md);
+  color: var(--text-color);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Border Color Variants - Primary and Secondary Colors */
+.section--border-primary {
+  border-color: var(--primary-color);
+}
+
+.section--border-secondary {
+  border-color: var(--secondary-color);
+}
+
+/* Semantic Colors for Border */
+.section--border-info {
+  border-color: var(--info-color);
+}
+
+.section--border-warning {
+  border-color: var(--warning-color);
+}
+
+.section--border-alert {
+  border-color: var(--alert-color);
+}
+
+.section--border-success {
+  border-color: var(--success-color);
+}
+
+.section--border-neutral {
+  border-color: var(--neutral-color);
+}
+
+.section--border-dark {
+  border-color: var(--dark-color);
+}
+
+/* Classy Palette Variants */
+.section--border-classy-color-1 {
+  border-color: var(--classy-color-1);
+}
+
+.section--border-classy-color-2 {
+  border-color: var(--classy-color-2);
+}
+
+.section--border-classy-color-3 {
+  border-color: var(--classy-color-3);
+}
+
+.section--border-classy-color-4 {
+  border-color: var(--classy-color-4);
+}
+
+.section--border-classy-color-5 {
+  border-color: var(--classy-color-5);
+}
+
+/* Small Switch Palette Variants */
+.section--border-small-switch-color-1 {
+  border-color: var(--small-switch-color-1);
+}
+
+.section--border-small-switch-color-2 {
+  border-color: var(--small-switch-color-2);
+}
+
+/* Natural Palette Variants */
+.section--border-natural-color-1 {
+  border-color: var(--natural-color-1);
+}
+
+.section--border-natural-color-2 {
+  border-color: var(--natural-color-2);
+}
+
+.section--border-natural-color-3 {
+  border-color: var(--natural-color-3);
+}
+
+/* Grey Friends Palette Variants */
+.section--border-grey-friend-1 {
+  border-color: var(--grey-friend-1);
+}
+
+.section--border-grey-friend-2 {
+  border-color: var(--grey-friend-2);
+}
+
+/* Shades Variants */
+.section--border-shade-1 {
+  border-color: var(--shade-1);
+}
+
+.section--border-shade-2 {
+  border-color: var(--shade-2);
+}
+
+.section--border-shade-3 {
+  border-color: var(--shade-3);
+}
+
+.section--border-shade-4 {
+  border-color: var(--shade-4);
+}
+
+/* Background Color Variants */
+.section--background-primary {
+  background-color: var(--primary-color);
+  color: var(--text-color-inverse);
+}
+
+.section--background-secondary {
+  background-color: var(--secondary-color);
+  color: var(--text-color-inverse);
+}
+
+.section--background-info {
+  background-color: var(--info-color);
+  color: var(--text-color-inverse);
+}
+
+.section--background-warning {
+  background-color: var(--warning-color);
+  color: var(--text-color-inverse);
+}
+
+.section--background-alert {
+  background-color: var(--alert-color);
+  color: var(--text-color);
+}
+
+.section--background-success {
+  background-color: var(--success-color);
+  color: var(--text-color-inverse);
+}
+
+.section--background-neutral {
+  background-color: var(--neutral-color);
+  color: var(--text-color);
+}
+
+.section--background-dark {
+  background-color: var(--dark-color);
+  color: var(--text-color-inverse);
+}
+
+/* Classy Palette Background Variants */
+.section--background-classy-color-1 {
+  background-color: var(--classy-color-1);
+  color: var(--text-color-inverse);
+}
+
+.section--background-classy-color-2 {
+  background-color: var(--classy-color-2);
+  color: var(--text-color-inverse);
+}
+
+.section--background-classy-color-3 {
+  background-color: var(--classy-color-3);
+  color: var(--text-color-inverse);
+}
+
+.section--background-classy-color-4 {
+  background-color: var(--classy-color-4);
+  color: var(--text-color-inverse);
+}
+
+.section--background-classy-color-5 {
+  background-color: var(--classy-color-5);
+  color: var(--text-color-inverse);
+}
+
+/* Small Switch Palette Background Variants */
+.section--background-small-switch-color-1 {
+  background-color: var(--small-switch-color-1);
+  color: var(--text-color);
+}
+
+.section--background-small-switch-color-2 {
+  background-color: var(--small-switch-color-2);
+  color: var(--text-color-inverse);
+}
+
+/* Natural Palette Background Variants */
+.section--background-natural-color-1 {
+  background-color: var(--natural-color-1);
+  color: var(--text-color-inverse);
+}
+
+.section--background-natural-color-2 {
+  background-color: var(--natural-color-2);
+  color: var(--text-color);
+}
+
+.section--background-natural-color-3 {
+  background-color: var(--natural-color-3);
+  color: var(--text-color);
+}
+
+/* Grey Friends Background Variants */
+.section--background-grey-friend-1 {
+  background-color: var(--grey-friend-1);
+  color: var(--text-color-inverse);
+}
+
+.section--background-grey-friend-2 {
+  background-color: var(--grey-friend-2);
+  color: var(--text-color-inverse);
+}
+
+/* Shades Background Variants */
+.section--background-shade-1 {
+  background-color: var(--shade-1);
+  color: var(--text-color-inverse);
+}
+
+.section--background-shade-2 {
+  background-color: var(--shade-2);
+  color: var(--text-color-inverse);
+}
+
+.section--background-shade-3 {
+  background-color: var(--shade-3);
+  color: var(--text-color-inverse);
+}
+
+.section--background-shade-4 {
+  background-color: var(--shade-4);
+  color: var(--text-color-inverse);
+}

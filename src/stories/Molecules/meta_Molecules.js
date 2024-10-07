@@ -5,6 +5,9 @@ const Molecules = {
       { name: "Sidebar", paths: { css: "./Sidebar/Sidebar.css", globalCss: "styles/global.css", jsx: "./Sidebar/Sidebar.jsx", stories: "./Sidebar/Sidebar.stories.jsx" }},
       { name: "Breadcrumbs", paths: { css: "./Breadcrumbs/Breadcrumbs.css", globalCss: "styles/global.css", jsx: "./Breadcrumbs/Breadcrumbs.jsx", stories: "./Breadcrumbs/Breadcrumbs.stories.jsx" }},
     ],
+    "NavigationAndMenus": [
+      { name: "Dropdown", paths: { css: "./Dropdown/Dropdown.css", globalCss: "styles/global.css", jsx: "./Layout/Dropdown/Dropdown.jsx", stories: "src/stories/Layout/Dropdown/Dropdown.stories.jsx" }},
+    ],
     "FormElements": [
       { name: "InputGroup ", paths: { css: "./InputGroup/InputGroup.css", globalCss: "styles/global.css", jsx: "./InputGroup/InputGroup.jsx", stories: "src/stories/Molecules/InputGroup/InputGroup.stories.jsx" }},
       { name: "InputWithLabel", paths: { css: "./InputWithLabel/InputWithLabel.css", globalCss: "styles/global.css", jsx: "./InputWithLabel/InputWithLabel.jsx", stories: "src/stories/Molecules/InputWithLabel/InputWithLabel.stories.jsx" }},

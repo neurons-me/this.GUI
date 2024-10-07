@@ -1,16 +1,293 @@
-
+/* Base Accordion Styles */
 .accordion {
-  display: flex;
-  flex-wrap: wrap;
+  border-radius: var(--border-radius);
+  transition: var(--transition-speed) ease;
+}
+
+/* Accordion Item Styles */
+.accordion__item {
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Accordion Header */
+.accordion__header {
   padding: 16px;
-  gap: 8px;
-  border: 1px solid #ddd;
+  width: 100%;
+  text-align: left;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
-.accordion--primary {
-  background-color: #e3f2fd;
+/* PRIMARY VARIANT (Full Background Color) */
+.accordion--primary .accordion__header {
+  background-color: var(--primary-color);
+  color: var(--text-color-inverse);
 }
 
-.accordion--secondary {
-  background-color: #fff;
+/* Ensure the secondary variant starts with no background */
+.accordion--secondary .accordion__header {
+  background-color: transparent;
+}
+
+/* Background color variants for Primary */
+.accordion--primary.accordion--secondary .accordion__header {
+  background-color: var(--secondary-color);
+}
+
+.accordion--primary.accordion--info .accordion__header {
+  background-color: var(--info-color);
+}
+
+.accordion--primary.accordion--warning .accordion__header {
+  background-color: var(--warning-color);
+}
+
+.accordion--primary.accordion--alert .accordion__header {
+  background-color: var(--alert-color);
+}
+
+.accordion--primary.accordion--success .accordion__header {
+  background-color: var(--success-color);
+}
+
+.accordion--primary.accordion--neutral .accordion__header {
+  background-color: var(--neutral-color);
+}
+
+.accordion--primary.accordion--dark .accordion__header {
+  background-color: var(--dark-color);
+}
+
+/* Classy Palette */
+.accordion--primary.accordion--classy-color-1 .accordion__header {
+  background-color: var(--classy-color-1);
+}
+
+.accordion--primary.accordion--classy-color-2 .accordion__header {
+  background-color: var(--classy-color-2);
+}
+
+.accordion--primary.accordion--classy-color-3 .accordion__header {
+  background-color: var(--classy-color-3);
+}
+
+.accordion--primary.accordion--classy-color-4 .accordion__header {
+  background-color: var(--classy-color-4);
+}
+
+.accordion--primary.accordion--classy-color-5 .accordion__header {
+  background-color: var(--classy-color-5);
+}
+
+/* Small Switch Palette */
+.accordion--primary.accordion--small-switch-color-1 .accordion__header {
+  background-color: var(--small-switch-color-1);
+}
+
+.accordion--primary.accordion--small-switch-color-2 .accordion__header {
+  background-color: var(--small-switch-color-2);
+}
+
+/* Natural Palette */
+.accordion--primary.accordion--natural-color-1 .accordion__header {
+  background-color: var(--natural-color-1);
+}
+
+.accordion--primary.accordion--natural-color-2 .accordion__header {
+  background-color: var(--natural-color-2);
+}
+
+.accordion--primary.accordion--natural-color-3 .accordion__header {
+  background-color: var(--natural-color-3);
+}
+
+/* Grey Friends */
+.accordion--primary.accordion--grey-friend-1 .accordion__header {
+  background-color: var(--grey-friend-1);
+}
+
+.accordion--primary.accordion--grey-friend-2 .accordion__header {
+  background-color: var(--grey-friend-2);
+}
+
+/* Shades */
+.accordion--primary.accordion--shade-1 .accordion__header {
+  background-color: var(--shade-1);
+}
+
+.accordion--primary.accordion--shade-2 .accordion__header {
+  background-color: var(--shade-2);
+}
+
+.accordion--primary.accordion--shade-3 .accordion__header {
+  background-color: var(--shade-3);
+}
+
+.accordion--primary.accordion--shade-4 .accordion__header {
+  background-color: var(--shade-4);
+}
+
+/* SECONDARY VARIANT (Border Only) */
+.accordion--secondary .accordion__header {
+  background-color: transparent; /* Ensure transparent background */
+  border: 2px solid var(--primary-color); /* Default border color */
+  color: var(--primary-color); /* Default text color */
+}
+
+.accordion--secondary.accordion--secondary .accordion__header {
+  border-color: var(--secondary-color);
+  color: var(--secondary-color);
+}
+
+.accordion--secondary.accordion--info .accordion__header {
+  border-color: var(--info-color);
+  color: var(--info-color);
+}
+
+.accordion--secondary.accordion--warning .accordion__header {
+  border-color: var(--warning-color);
+  color: var(--warning-color);
+}
+
+.accordion--secondary.accordion--alert .accordion__header {
+  border-color: var(--alert-color);
+  color: var(--alert-color);
+}
+
+.accordion--secondary.accordion--success .accordion__header {
+  border-color: var(--success-color);
+  color: var(--success-color);
+}
+
+.accordion--secondary.accordion--neutral .accordion__header {
+  border-color: var(--neutral-color);
+  color: var(--neutral-color);
+}
+
+.accordion--secondary.accordion--dark .accordion__header {
+  border-color: var(--dark-color);
+  color: var(--dark-color);
+}
+
+/* Classy Palette */
+.accordion--secondary.accordion--classy-color-1 .accordion__header {
+  border-color: var(--classy-color-1);
+  color: var(--classy-color-1);
+}
+
+.accordion--secondary.accordion--classy-color-2 .accordion__header {
+  border-color: var(--classy-color-2);
+  color: var(--classy-color-2);
+}
+
+.accordion--secondary.accordion--classy-color-3 .accordion__header {
+  border-color: var(--classy-color-3);
+  color: var(--classy-color-3);
+}
+
+.accordion--secondary.accordion--classy-color-4 .accordion__header {
+  border-color: var(--classy-color-4);
+  color: var(--classy-color-4);
+}
+
+.accordion--secondary.accordion--classy-color-5 .accordion__header {
+  border-color: var(--classy-color-5);
+  color: var(--classy-color-5);
+}
+
+/* Small Switch Palette */
+.accordion--secondary.accordion--small-switch-color-1 .accordion__header {
+  border-color: var(--small-switch-color-1);
+  color: var(--small-switch-color-1);
+}
+
+.accordion--secondary.accordion--small-switch-color-2 .accordion__header {
+  border-color: var(--small-switch-color-2);
+  color: var(--small-switch-color-2);
+}
+
+/* Natural Palette */
+.accordion--secondary.accordion--natural-color-1 .accordion__header {
+  border-color: var(--natural-color-1);
+  color: var(--natural-color-1);
+}
+
+.accordion--secondary.accordion--natural-color-2 .accordion__header {
+  border-color: var(--natural-color-2);
+  color: var(--natural-color-2);
+}
+
+.accordion--secondary.accordion--natural-color-3 .accordion__header {
+  border-color: var(--natural-color-3);
+  color: var(--natural-color-3);
+}
+
+/* Grey Friends */
+.accordion--secondary.accordion--grey-friend-1 .accordion__header {
+  border-color: var(--grey-friend-1);
+  color: var(--grey-friend-1);
+}
+
+.accordion--secondary.accordion--grey-friend-2 .accordion__header {
+  border-color: var(--grey-friend-2);
+  color: var(--grey-friend-2);
+}
+
+/* Shades */
+.accordion--secondary.accordion--shade-1 .accordion__header {
+  border-color: var(--shade-1);
+  color: var(--shade-1);
+}
+
+.accordion--secondary.accordion--shade-2 .accordion__header {
+  border-color: var(--shade-2);
+  color: var(--shade-2);
+}
+
+.accordion--secondary.accordion--shade-3 .accordion__header {
+  border-color: var(--shade-3);
+  color: var(--shade-3);
+}
+
+.accordion--secondary.accordion--shade-4 .accordion__header {
+  border-color: var(--shade-4);
+  color: var(--shade-4);
+}
+/* Accordion Content */
+.accordion__content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  padding: 0 16px;
+  background-color: inherit;
+}
+
+/* Border Option for Accordion Content */
+.accordion--border .accordion__content {
+  border: 1px solid var(--border-color);
+}
+
+.accordion__content--open {
+  max-height: 200px;
+  padding: 16px;
+}
+
+/* Icon for Expand/Collapse */
+.accordion__icon {
+  transition: transform var(--transition-speed);
+}
+
+.accordion__icon--open {
+  transform: rotate(180deg);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .accordion__header {
+    font-size: var(--font-size-small);
+  }
 }

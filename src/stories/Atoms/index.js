@@ -30,6 +30,8 @@ import { ProgressBar } from './ProgressBar/ProgressBar';
 import { Alert } from './Alert/Alert';
 import { Snackbar } from './Snackbar/Snackbar';
 import { Logo } from './Logo/Logo'; 
+import { Section } from './Section/Section';
+import { Grid } from './Grid/Grid';
 
 // Flattened export of all components
 const Atoms = {
@@ -63,6 +65,8 @@ const Atoms = {
   ProgressBar,
   Alert,
   Snackbar,
+  Section,
+  Grid
 };
 
 export default Atoms;
