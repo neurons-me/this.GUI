@@ -1,3 +1,4 @@
+//this.GUI/src/stories/Atoms/Video/Video.jsx
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import './Video.css';

@@ -1,3 +1,4 @@
+//this.GUI/src/stories/Molecules/AudioPlayer/AudioPlayer.stories.jsx
 import React from 'react';
 import { AudioPlayer } from './AudioPlayer';
 import './AudioPlayer.css';

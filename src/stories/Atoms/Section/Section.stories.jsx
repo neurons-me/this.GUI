@@ -1,3 +1,4 @@
+//this.GUI/src/stories/Atoms/Section/Section.stories.jsx
 import React from 'react';
 import { Section } from './Section';
 

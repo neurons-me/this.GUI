@@ -1,4 +1,41 @@
-
+/*this.GUI/src/stories/Molecules/Card/Card.css*/
 .card {
-  /* Default styles for Card */
+  padding: 16px;
+  border-radius: var(--border-radius, 8px);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: inherit; /* Text color is inherited */
+}
+
+.card__content {
+  color: inherit; /* Inherit text color from parent */
+}
+
+.card--hoverable:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.card__expand, .card__remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.card__remove {
+  right: 12px;
+}
+
+.card__expand {
+  right: 40px;
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 12px;
+  }
 }

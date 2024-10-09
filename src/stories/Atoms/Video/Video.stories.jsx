@@ -1,3 +1,4 @@
+//this.GUI/src/stories/Atoms/Video/Video.stories.jsx
 import React from 'react';
 import { Video } from './Video';
 

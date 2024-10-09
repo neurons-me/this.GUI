@@ -1,20 +1,20 @@
-
+//this.GUI/src/stories/Molecules/AvatarWithName/AvatarWithName.stories.jsx
+import React from 'react';
 import { AvatarWithName } from './AvatarWithName';
 
-// Storybook configuration for AvatarWithName component
 export default {
-  title: 'Molecules/MediaMolecules/AvatarWithName',
+  title: 'Molecules/Display/AvatarWithName',
   component: AvatarWithName,
-  parameters: {
-    layout: 'centered',
-  },
   argTypes: {
-    // Define argTypes here
+    imageSrc: { control: 'text', defaultValue: 'https://via.placeholder.com/150' },
+    name: { control: 'text', defaultValue: 'John Doe' },
+    namePosition: { control: 'select', options: ['below', 'side'], defaultValue: 'below' },
+    size: { control: 'select', options: ['small', 'medium', 'large'], defaultValue: 'medium' },
   },
 };
 
-export const Default = {
-  args: {
-    // Define default args here
-  },
-};
+export const Default = (args) => <AvatarWithName {...args} />;
+
+export const SideName = (args) => <AvatarWithName {...args} namePosition="side" />;
+export const LargeAvatar = (args) => <AvatarWithName {...args} size="large" />;
+export const SmallAvatar = (args) => <AvatarWithName {...args} size="small" />;

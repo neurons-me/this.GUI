@@ -109,3 +109,6 @@ The Accordion component uses theme-specific CSS variables, which are applied to 
 
 ## Conclusion
 The Accordion component is a versatile and customizable UI element suitable for creating collapsible content sections. By leveraging the power of variants, colors, and props like allowMultipleOpen, you can adapt it to fit various design needs in your application.
+
+----------
+

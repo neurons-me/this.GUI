@@ -1,4 +1,147 @@
-
+/*this.GUI/src/stories/Molecules/Breadcrumbs/Breadcrumbs.css*/ 
+Base Styles */
 .breadcrumbs {
-  /* Default styles for Breadcrumbs */
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size-medium);
+  color: var(--text-color);
+}
+
+.breadcrumbs__item {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumbs__link {
+  text-decoration: none;
+  cursor: pointer;
+  color: inherit;
+  background: none;
+  border: none;
+  font-size: inherit;
+  padding: 0;
+}
+
+.breadcrumbs__separator {
+  margin: 0 8px;
+}
+
+/* Active State (Bold Text) */
+.breadcrumbs__active {
+  font-weight: bold;
+}
+
+/* Size Variants */
+.breadcrumbs--small {
+  font-size: 0.75rem;
+}
+
+.breadcrumbs--medium {
+  font-size: 1rem;
+}
+
+.breadcrumbs--large {
+  font-size: 1.25rem;
+}
+
+/* Color Variants for Breadcrumb Links */
+.breadcrumbs--primary .breadcrumbs__link {
+  color: var(--primary-color);
+}
+
+.breadcrumbs--secondary .breadcrumbs__link {
+  color: var(--secondary-color);
+}
+
+.breadcrumbs--info .breadcrumbs__link {
+  color: var(--info-color);
+}
+
+.breadcrumbs--warning .breadcrumbs__link {
+  color: var(--warning-color);
+}
+
+.breadcrumbs--alert .breadcrumbs__link {
+  color: var(--alert-color);
+}
+
+.breadcrumbs--success .breadcrumbs__link {
+  color: var(--success-color);
+}
+
+.breadcrumbs--neutral .breadcrumbs__link {
+  color: var(--neutral-color);
+}
+
+.breadcrumbs--dark .breadcrumbs__link {
+  color: var(--dark-color);
+}
+
+/* Classy Palette */
+.breadcrumbs--classy-color-1 .breadcrumbs__link {
+  color: var(--classy-color-1);
+}
+
+.breadcrumbs--classy-color-2 .breadcrumbs__link {
+  color: var(--classy-color-2);
+}
+
+.breadcrumbs--classy-color-3 .breadcrumbs__link {
+  color: var(--classy-color-3);
+}
+
+.breadcrumbs--classy-color-4 .breadcrumbs__link {
+  color: var(--classy-color-4);
+}
+
+.breadcrumbs--classy-color-5 .breadcrumbs__link {
+  color: var(--classy-color-5);
+}
+
+/* Small Switch Palette */
+.breadcrumbs--small-switch-color-1 .breadcrumbs__link {
+  color: var(--small-switch-color-1);
+}
+
+.breadcrumbs--small-switch-color-2 .breadcrumbs__link {
+  color: var(--small-switch-color-2);
+}
+
+/* Natural Palette */
+.breadcrumbs--natural-color-1 .breadcrumbs__link {
+  color: var(--natural-color-1);
+}
+
+.breadcrumbs--natural-color-2 .breadcrumbs__link {
+  color: var(--natural-color-2);
+}
+
+.breadcrumbs--natural-color-3 .breadcrumbs__link {
+  color: var(--natural-color-3);
+}
+
+/* Grey Friends */
+.breadcrumbs--grey-friend-1 .breadcrumbs__link {
+  color: var(--grey-friend-1);
+}
+
+.breadcrumbs--grey-friend-2 .breadcrumbs__link {
+  color: var(--grey-friend-2);
+}
+
+/* Shades */
+.breadcrumbs--shade-1 .breadcrumbs__link {
+  color: var(--shade-1);
+}
+
+.breadcrumbs--shade-2 .breadcrumbs__link {
+  color: var(--shade-2);
+}
+
+.breadcrumbs--shade-3 .breadcrumbs__link {
+  color: var(--shade-3);
+}
+
+.breadcrumbs--shade-4 .breadcrumbs__link {
+  color: var(--shade-4);
 }

@@ -1,3 +1,4 @@
+//this.GUI/src/stories/Atoms/Section/Section.jsx
 import React from 'react';
 import PropTypes from 'prop-types';
 import './Section.css';

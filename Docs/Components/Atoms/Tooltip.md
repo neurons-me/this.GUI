@@ -1,5 +1,3 @@
----
-
 ## Tooltip Component Guide
 
 The `Tooltip` component is an interactive UI element that provides contextual information or guidance when users hover, click, or focus on a target element. It is highly customizable in terms of content, appearance, and behavior.
@@ -125,7 +123,5 @@ The `position` prop allows you to control where the tooltip will appear relative
 
 - **Arrow Visibility**: You can toggle the visibility of the arrow by setting `showArrow` to `true` or `false`.
 - **Manual Triggering**: The tooltip can be manually triggered by programmatically controlling its visibility (e.g., on click or focus).
-
----
 
 This guide provides all the necessary information to effectively use the `Tooltip` component, customize it with different color themes, position it, and apply different variants.

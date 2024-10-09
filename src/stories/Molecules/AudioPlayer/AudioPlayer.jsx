@@ -1,3 +1,4 @@
+//this.GUI/src/stories/Molecules/AudioPlayer/AudioPlayer.jsx
 import React, { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute, FaStepForward, FaStepBackward } from 'react-icons/fa';

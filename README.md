@@ -6,6 +6,7 @@ The package exports:
 	•	Pre-defined components.
 	•	MDX and Theme Providers.
 	•	An MDX editor interface.
+  •	Site and App Builder
 
 Install `this.gui` via **npm**:
 ```shell
@@ -32,6 +33,11 @@ Accordion, AudioPlayer, AvatarWithName, Breadcrumbs, ButtonGroup, Card, Comparis
 ​	•	**Pages**: Complete and functional pages made up of templates and content.
 ​	•	**Miscellaneous**: Utility components that don’t fit into the above categories but provide important functions, such as popovers, overlays, and media controls.
 
+## Key Components:
+
+	1.	Component Registry (maps JSON keys to components)
+	2.	JSON Configuration Files (defines the structure and properties of the UI)
+	3.	Rendering Engine (reads the JSON and dynamically renders components)
 
 # About All.This
 ###### Modular Data Structures

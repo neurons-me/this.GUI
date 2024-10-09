@@ -1,3 +1,4 @@
+//this.GUI/src/stories/Atoms/Badge/Badge.stories.jsx
 import React from 'react';
 import { Badge } from './Badge';
 import './Badge.css';

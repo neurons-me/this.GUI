@@ -1,4 +1,4 @@
-
+//this.GUI/src/stories/Molecules/Accordion/Accordion.stories.jsx
 import { Accordion } from './Accordion';
 
 // Storybook configuration for Accordion component

@@ -5,7 +5,7 @@ const Molecules = {
       { name: "Sidebar", paths: { css: "./Sidebar/Sidebar.css", globalCss: "styles/global.css", jsx: "./Sidebar/Sidebar.jsx", stories: "./Sidebar/Sidebar.stories.jsx" }},
       { name: "Breadcrumbs", paths: { css: "./Breadcrumbs/Breadcrumbs.css", globalCss: "styles/global.css", jsx: "./Breadcrumbs/Breadcrumbs.jsx", stories: "./Breadcrumbs/Breadcrumbs.stories.jsx" }},
     ],
-    "NavigationAndMenus": [
+    "Menus": [
       { name: "Dropdown", paths: { css: "./Dropdown/Dropdown.css", globalCss: "styles/global.css", jsx: "./Layout/Dropdown/Dropdown.jsx", stories: "src/stories/Layout/Dropdown/Dropdown.stories.jsx" }},
     ],
     "FormElements": [
@@ -19,18 +19,18 @@ const Molecules = {
       { name: "IconButton", paths: { css: "./IconButton/IconButton.css", globalCss: "styles/global.css", jsx: "./IconButton/IconButton.jsx", stories: "src/stories/Molecules/IconButton/IconButton.stories.jsx" }},
       { name: "ButtonGroup", paths: { css: "./ButtonGroup/ButtonGroup.css", globalCss: "styles/global.css", jsx: "./ButtonGroup/ButtonGroup.jsx", stories: "src/stories/Molecules/ButtonGroup/ButtonGroup.stories.jsx" }},
     ],
-    "MediaMolecules": [
+    "Media": [
       { name: "ImageWithCaption", paths: { css: "./ImageWithCaption/ImageWithCaption.css", globalCss: "styles/global.css", jsx: "./ImageWithCaption/ImageWithCaption.jsx", stories: "src/stories/Molecules/ImageWithCaption/ImageWithCaption.stories.jsx" }},
       { name: "VideoWithDescription", paths: { css: "./VideoWithDescription/VideoWithDescription.css", globalCss: "styles/global.css", jsx: "./VideoWithDescription/VideoWithDescription.jsx", stories: "src/stories/Molecules/VideoWithDescription/VideoWithDescription.stories.jsx" }},
-      { name: "AvatarWithName", paths: { css: "./AvatarWithName/AvatarWithName.css", globalCss: "styles/global.css", jsx: "./AvatarWithName/AvatarWithName.jsx", stories: "src/stories/Molecules/AvatarWithName/AvatarWithName.stories.jsx" }},
       { name: "AudioPlayer", paths: { css: "./AudioPlayer/AudioPlayer.css", globalCss: "styles/global.css", jsx: "./AudioPlayer/AudioPlayer.jsx", stories: "src/stories/Molecules/AudioPlayer/AudioPlayer.stories.jsx" }},
     ],
-    "ContentDisplay": [
+    "Display": [
       { name: "SelectTheme", paths: { css: "./SelectTheme/SelectTheme.css", globalCss: "styles/global.css", jsx: "./SelectTheme/SelectTheme.jsx", stories: "src/stories/Molecules/SelectTheme/SelectTheme.stories.jsx" }},
       { name: "Card", paths: { css: "./Card/Card.css", globalCss: "styles/global.css", jsx: "./Card/Card.jsx", stories: "./Card/Card.stories.jsx" }},
       { name: "MediaCard", paths: { css: "./MediaCard/MediaCard.css", globalCss: "styles/global.css", jsx: "./MediaCard/MediaCard.jsx", stories: "./MediaCard/MediaCard.stories.jsx" }},
       { name: "List", paths: { css: "./List/List.css", globalCss: "styles/global.css", jsx: "./List/List.jsx", stories: "./List/List.stories.jsx" }},
       { name: "Accordion", paths: { css: "./Accordion/Accordion.css", globalCss: "styles/global.css", jsx: "./Accordion/Accordion.jsx", stories: "./Accordion/Accordion.stories.jsx" }},
+      { name: "AvatarWithName", paths: { css: "./AvatarWithName/AvatarWithName.css", globalCss: "styles/global.css", jsx: "./AvatarWithName/AvatarWithName.jsx", stories: "src/stories/Molecules/AvatarWithName/AvatarWithName.stories.jsx" }},
     ],
     "FeedbackMolecules": [
       { name: "Notification", paths: { css: "./Notification/Notification.css", globalCss: "styles/global.css", jsx: "./Notification/Notification.jsx", stories: "src/stories/Molecules/Notification/Notification.stories.jsx" }},

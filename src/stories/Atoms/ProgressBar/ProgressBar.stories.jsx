@@ -1,4 +1,4 @@
-// ProgressBar.stories.jsx
+// this.GUI/src/stories/Atoms/ProgressBar/ProgressBar.stories.jsx
 import React from 'react';
 import { ProgressBar } from './ProgressBar';
 import './ProgressBar.css'; // Import the CSS styles
