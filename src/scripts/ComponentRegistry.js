@@ -1,0 +1,70 @@
+// src/ComponentRegistry.js
+import Atoms from '../stories/Atoms/index'; 
+import Molecules from '../stories/Molecules/index';
+const ComponentRegistry = {
+ // Atoms
+Alert: Atoms.Alert,
+Audio: Atoms.Audio,
+Badge: Atoms.Badge,
+Button: Atoms.Button,
+Caption: Atoms.Caption,
+Checkbox: Atoms.Checkbox,
+Container: Atoms.Container,
+Divider: Atoms.Divider,
+Grid: Atoms.Grid,
+Heading: Atoms.Heading,
+Icon: Atoms.Icon,
+Image: Atoms.Image,
+Label: Atoms.Label,
+Link: Atoms.Link,
+Loader: Atoms.Loader,
+Logo: Atoms.Logo,
+Paragraph: Atoms.Paragraph,
+ProgressBar: Atoms.ProgressBar,
+RadioButton: Atoms.RadioButton,
+Range: Atoms.Range,
+Section: Atoms.Section,
+Select: Atoms.Select,
+Slider: Atoms.Slider,
+Snackbar: Atoms.Snackbar,
+Spacer: Atoms.Spacer,
+Spinner: Atoms.Spinner,
+Tag: Atoms.Tag,
+TextArea: Atoms.TextArea,
+TextInput: Atoms.TextInput,
+Toggle: Atoms.Toggle,
+Tooltip: Atoms.Tooltip,
+Video: Atoms.Video,
+
+// Molecules
+Accordion: Molecules.Accordion,
+AudioPlayer: Molecules.AudioPlayer,
+AvatarWithName: Molecules.AvatarWithName,
+Breadcrumbs: Molecules.Breadcrumbs,
+ButtonGroup: Molecules.ButtonGroup,
+Card: Molecules.Card,
+ComparisonTable: Molecules.ComparisonTable,
+DataTable: Molecules.DataTable,
+Dropdown: Molecules.Dropdown,
+FileUpload: Molecules.FileUpload,
+FormField: Molecules.FormField,
+IconButton: Molecules.IconButton,
+ImageWithCaption: Molecules.ImageWithCaption,
+InputGroup: Molecules.InputGroup,
+InputWithLabel: Molecules.InputWithLabel,
+List: Molecules.List,
+MediaCard: Molecules.MediaCard,
+Modal: Molecules.Modal,
+Navbar: Molecules.Navbar,
+Notification: Molecules.Notification,
+PricingTable: Molecules.PricingTable,
+SearchBar: Molecules.SearchBar,
+SelectTheme: Molecules.SelectTheme,
+Sidebar: Molecules.Sidebar,
+VideoWithDescription: Molecules.VideoWithDescription,
+
+  // Layouts and Templates
+  // Add more components as needed
+};
+
+export default ComponentRegistry;
