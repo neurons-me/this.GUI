@@ -10,29 +10,47 @@ export default {
     variant: {
       control: {
         type: 'select',
-        options: ['primary', 'secondary'],
+        options: ['solid', 'outline'],
       },
       description: 'Variant of the button.',
       table: {
-        type: { summary: 'primary | secondary' },
-        defaultValue: { summary: 'primary' },
+        type: { summary: 'solid | outline' },
+        defaultValue: { summary: 'solid' },
       },
     },
     color: {
       control: {
         type: 'select',
         options: [
+          'primary-color',
+          'secondary-color',
           'info',
           'warning',
           'alert',
           'success',
           'neutral',
           'dark',
+          'classy-color-1',
+          'classy-color-2',
+          'classy-color-3',
+          'classy-color-4',
+          'classy-color-5',
+          'small-switch-color-1',
+          'small-switch-color-2',
+          'natural-color-1',
+          'natural-color-2',
+          'natural-color-3',
+          'grey-friend-1',
+          'grey-friend-2',
+          'shade-1',
+          'shade-2',
+          'shade-3',
+          'shade-4'
         ],
       },
       description: 'Semantic color accent of the button.',
       table: {
-        type: { summary: `'info' | 'warning' | 'alert' | 'success' | 'neutral' | 'dark'` },
+        type: { summary: 'color variants from theme' },
       },
     },
     size: {
@@ -94,45 +112,47 @@ export default {
 
 /**
  * 
- * Shows the default primary and secondary buttons without any semantic color accent.
+ * Shows the default solid and outline buttons without any semantic color accent.
  */
 export const DefaultButtons = () => (
   <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-    <Button variant="primary" size="medium">
-      Primary Default
+    <Button variant="solid" size="medium">
+      Solid Default
     </Button>
-    <Button variant="secondary" size="medium">
-      Secondary Default
+    <Button variant="outline" size="medium">
+      Outline Default
     </Button>
-    <Button variant="primary" size="medium" noBorder>
-      Primary No Border
+    <Button variant="solid" size="medium" noBorder>
+      Solid No Border
     </Button>
-    <Button variant="secondary" size="medium" noBorder>
-      Secondary No Border
+    <Button variant="outline" size="medium" noBorder>
+      Outline No Border
     </Button>
   </div>
 );
 
 /**
  * 
- * Demonstrates primary buttons with all semantic colors and sizes.
+ * Demonstrates solid buttons with all color options and sizes.
  */
-export const PrimaryButtons = () => (
+export const SolidButtons = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-    <h3>Primary Buttons</h3>
-    {['info', 'warning', 'alert', 'success', 'neutral', 'dark'].map((color) => (
+    <h3>Solid Buttons</h3>
+    {[
+      'primary-color', 'secondary-color', 'info-color', 'warning-color', 'alert-color', 'success-color', 'neutral-color', 'dark-color',
+      'classy-color-1', 'classy-color-2', 'classy-color-3', 'classy-color-4', 'classy-color-5',
+      'small-switch-color-1', 'small-switch-color-2', 'natural-color-1', 'natural-color-2', 'natural-color-3',
+      'grey-friend-1', 'grey-friend-2', 'shade-1', 'shade-2', 'shade-3', 'shade-4'
+    ].map((color) => (
       <div key={color} style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-        <Button variant="primary" color={color} size="small">
-          Primary {color} Small
+        <Button variant="solid" color={color} size="small">
+          Solid {color} Small
         </Button>
-        <Button variant="primary" color={color} size="medium">
-          Primary {color} Medium
+        <Button variant="solid" color={color} size="medium">
+          Solid {color} Medium
         </Button>
-        <Button variant="primary" color={color} size="large">
-          Primary {color} Large
-        </Button>
-        <Button variant="primary" color={color} size="medium" noBorder>
-          Primary {color} No Border
+        <Button variant="solid" color={color} size="large">
+          Solid {color} Large
         </Button>
       </div>
     ))}
@@ -141,24 +161,29 @@ export const PrimaryButtons = () => (
 
 /**
  * 
- * Demonstrates secondary buttons with all semantic colors and sizes.
+ * Demonstrates outline buttons with all color options and sizes.
  */
-export const SecondaryButtons = () => (
+export const OutlineButtons = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-    <h3>Secondary Buttons</h3>
-    {['info', 'warning', 'alert', 'success', 'neutral', 'dark'].map((color) => (
+    <h3>Outline Buttons</h3>
+    {[
+      'primary-color', 'secondary-color', 'info-color', 'warning-color', 'alert-color', 'success-color', 'neutral-color', 'dark-color',
+      'classy-color-1', 'classy-color-2', 'classy-color-3', 'classy-color-4', 'classy-color-5',
+      'small-switch-color-1', 'small-switch-color-2', 'natural-color-1', 'natural-color-2', 'natural-color-3',
+      'grey-friend-1', 'grey-friend-2', 'shade-1', 'shade-2', 'shade-3', 'shade-4'
+    ].map((color) => (
       <div key={color} style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-        <Button variant="secondary" color={color} size="small">
-          Secondary {color} Small
+        <Button variant="outline" color={color} size="small">
+          Outline {color} Small
         </Button>
-        <Button variant="secondary" color={color} size="medium">
-          Secondary {color} Medium
+        <Button variant="outline" color={color} size="medium">
+          Outline {color} Medium
         </Button>
-        <Button variant="secondary" color={color} size="large">
-          Secondary {color} Large
+        <Button variant="outline" color={color} size="large">
+          Outline {color} Large
         </Button>
-        <Button variant="secondary" color={color} size="medium" noBorder>
-          Secondary {color} No Border
+        <Button variant="outline" color={color} size="medium" noBorder>
+          Outline {color} No Border
         </Button>
       </div>
     ))}
@@ -174,8 +199,8 @@ const Template = (args) => <Button {...args} />;
 
 export const Playground = Template.bind({});
 Playground.args = {
-  variant: 'primary',
-  color: 'info',
+  variant: 'solid',
+  color: 'primary-color', // Default color
   size: 'medium',
   label: 'Click Me',
   noBorder: false,

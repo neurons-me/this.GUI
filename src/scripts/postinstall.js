@@ -1,5 +1,5 @@
 // this.GUI/scripts/postinstall.js
-import { mkdir, writeFile, access } from 'fs/promises';
+import { mkdir, writeFile, access, readFile } from 'fs/promises';
 import { join } from 'path';
 
 const appRootDir = process.env.INIT_CWD || process.cwd();
@@ -8,9 +8,8 @@ const appRootDir = process.env.INIT_CWD || process.cwd();
 const guiDir = join(appRootDir, 'GUI');
 const componentsDir = join(guiDir, 'components');
 const pagesDir = join(guiDir, 'pages'); // Pages directory for JSON layouts
-const builderDir = join(guiDir, 'builder'); // Builder directory for site builder UI
-const mdxDir = join(guiDir, 'mdx');
-const stylesDir = join(guiDir, 'styles');
+const configDir = join(guiDir, 'config');
+const configFile = join(configDir, 'siteConfig.json');
 
 // Helper function to create directories only if they don't already exist
 async function createDir(dirPath) {
@@ -34,23 +33,47 @@ async function createFile(filePath, content) {
   }
 }
 
+// Helper function to update siteConfig.json
+async function updateSiteConfig(newPages) {
+  try {
+    const configContent = await readFile(configFile, 'utf-8');
+    const config = JSON.parse(configContent);
+
+    // Add new pages if they don't already exist in the config
+    newPages.forEach((newPage) => {
+      const exists = config.pages.find((page) => page.name === newPage.name);
+      if (!exists) {
+        config.pages.push(newPage);
+      }
+    });
+
+    await writeFile(configFile, JSON.stringify(config, null, 2));
+    console.log(`Updated: ${configFile}`);
+  } catch (err) {
+    console.error(`Failed to update siteConfig: ${err}`);
+  }
+}
+
 // Function to initialize the directory structure and files
 async function initializeFiles() {
-  const mdxWelcomeFile = join(mdxDir, 'Welcome.mdx');
-  const stylesFile = join(stylesDir, 'global.css');
+  const mdxWelcomeFile = join(pagesDir, 'Welcome.mdx');
   const samplePageFile = join(pagesDir, 'home.json'); // Sample JSON page
-  const builderIndexFile = join(builderDir, 'index.html'); // Entry point for builder UI
 
+  // Create siteConfig.json
+  await createFile(
+    configFile,
+    `{
+      "pages": []
+    }`
+  );
+
+  // Create Welcome.mdx as a sample MDX file
   await createFile(
     mdxWelcomeFile,
     `# Welcome to Your Custom GUI\n\nThis is your first MDX file. Edit it to start building your pages!`
   );
 
-  await createFile(
-    stylesFile,
-    `/* Add your custom styles here */\nbody { font-family: 'Roboto', sans-serif; }`
-  );
-
+  // Create a sample JSON page layout
   await createFile(
     samplePageFile,
     `{
@@ -69,31 +92,19 @@ async function initializeFiles() {
     }`
   );
 
-  await createFile(
-    builderIndexFile,
-    `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>GUI Builder</title>
-    </head>
-    <body>
-      <div id="builder-root"></div>
-      <script src="/path-to-your-builder-script.js"></script> <!-- Placeholder for the actual builder script -->
-    </body>
-    </html>`
-  );
+  // Update siteConfig.json with the sample pages
+  await updateSiteConfig([
+    { name: 'Welcome', path: '/welcome', type: 'mdx', file: './pages/Welcome.mdx' },
+    { name: 'Home', path: '/home', type: 'json', file: './pages/home.json' },
+  ]);
 }
 
 // Create the directory structure and initialize files at the app level
 (async () => {
   await createDir(guiDir);
   await createDir(componentsDir);
-  await createDir(mdxDir);
-  await createDir(stylesDir);
-  await createDir(pagesDir); // New directory for JSON-based pages
-  await createDir(builderDir); // Directory for builder UI
+  await createDir(pagesDir); // New directory for JSON and MDX pages
+  await createDir(configDir); // Create config directory
   await initializeFiles();
 
   console.log('this.GUI setup complete at the app level!');

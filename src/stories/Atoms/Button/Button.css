@@ -1,5 +1,21 @@
 /* src/stories/Atoms/Button/Button.css */
 
+:root {
+  /* Button Sizes */
+  --button-font-size: var(--font-size-base); 
+  --button-padding-vertical: 11px;
+  --button-padding-horizontal: 21px;
+  --button-padding: var(--button-padding-vertical) var(--button-padding-horizontal);
+  /* Align button sizes with global small and large font sizes */
+  --button-font-size-large: var(--font-size-large); /* Use the global large font size */
+  --button-font-size-small: var(--font-size-small); /* Use the global small font size */
+  --button-padding-vertical-large: calc(var(--button-padding-vertical) * 1.1);
+  --button-padding-horizontal-large: calc(var(--button-padding-horizontal) * 1.1);
+  --button-padding-large: var(--button-padding-vertical-large) var(--button-padding-horizontal-large);
+  --button-padding-vertical-small: calc(var(--button-padding-vertical) * 0.9);
+  --button-padding-horizontal-small: calc(var(--button-padding-horizontal) * 0.9);
+  --button-padding-small: var(--button-padding-vertical-small) var(--button-padding-horizontal-small);
+}
 /* Base styles */
 .button {
   display: inline-block;
@@ -13,116 +29,301 @@
   border: 1px solid transparent;
   box-shadow: var(--box-shadow);
   margin-right: 10px;
-  background-color: var(--button-bg-color, transparent);
   color: var(--button-text-color, var(--text-color));
-  border-color: var(--button-border-color, transparent);
 }
 
-/* Hover Effects */
-.button:hover {
-  background-color: var(--button-bg-hover-color, var(--button-bg-color));
-  color: var(--button-text-hover-color, var(--button-text-color));
-  border-color: var(--button-border-hover-color, var(--button-border-color));
+.button--small {
+  font-size: var(--button-font-size-small);
+  padding: var(--button-padding-small);
 }
 
-/* Primary Variant */
-.button--primary {
+.button--medium {
+  font-size: var(--button-font-size);
+  padding: var(--button-padding);
+}
+
+.button--large {
+  font-size: var(--button-font-size-large);
+  padding: var(--button-padding-large);
+}
+
+/* Solid variant */
+.button--solid {
+  background-color: var(--button-bg-color, var(--primary-color));
+  color: var(--button-text-color, var(--text-color-inverse));
+}
+
+/* Outline variant */
+.button--outline {
+  background-color: transparent;
+  border: 1px solid var(--button-border-color, var(--primary-color));
+  color: var(--button-border-color, var(--primary-color));
+}
+
+/* Colors (referencing global theme colors) */
+.button--primary-color {
   --button-bg-color: var(--primary-color);
-  --button-text-color: var(--text-color-inverse);
   --button-border-color: var(--primary-color);
-  --button-bg-hover-color: var(--primary-color-hover);
+  --button-text-color: var(--text-color-inverse);
 }
 
-/* Secondary Variant */
-.button--secondary {
-  --button-bg-color: transparent;
-  --button-text-color: var(--secondary-color);
-  --button-border-color: var(--secondary-border-color);
-  --button-text-hover-color: var(--primary-color-hover);
-  --button-border-hover-color: var(--primary-color);
+.button--secondary-color {
+  --button-bg-color: var(--secondary-color);
+  --button-border-color: var(--secondary-color);
+  --button-text-color: var(--text-color-inverse);
 }
 
-/* Semantic Color Modifiers */
+/* Colors (referencing global theme colors) */
+.button--primary-color {
+  --button-bg-color: var(--primary-color);
+  --button-border-color: var(--primary-color);
+  --button-text-color: var(--text-color-inverse);
+}
 
-/* For Primary Variant: Set background colors based on semantic colors */
-.button--primary.button--info {
+.button--secondary-color {
+  --button-bg-color: var(--secondary-color);
+  --button-border-color: var(--secondary-color);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--info-color {
   --button-bg-color: var(--info-color);
   --button-border-color: var(--info-color);
-  --button-bg-hover-color: var(--info-color-hover);
+  --button-text-color: var(--text-color-inverse);
 }
 
-.button--primary.button--warning {
+.button--warning-color {
   --button-bg-color: var(--warning-color);
   --button-border-color: var(--warning-color);
-  --button-bg-hover-color: var(--warning-color-hover);
+  --button-text-color: var(--text-color-inverse);
 }
 
-.button--primary.button--alert {
+.button--alert-color {
   --button-bg-color: var(--alert-color);
   --button-border-color: var(--alert-color);
-  --button-bg-hover-color: var(--alert-color-hover);
-  --button-text-color: #2C2C2C; /* Dark text for better readability */
+  --button-text-color: var(--dark-color);
 }
 
-.button--primary.button--success {
+.button--success-color {
   --button-bg-color: var(--success-color);
   --button-border-color: var(--success-color);
-  --button-bg-hover-color: var(--success-color-hover);
+  --button-text-color: var(--text-color-inverse);
 }
 
-.button--primary.button--neutral {
+.button--neutral-color {
   --button-bg-color: var(--neutral-color);
   --button-border-color: var(--neutral-color);
-  --button-bg-hover-color: var(--neutral-color-hover);
+  --button-text-color: var(--text-color-inverse);
 }
 
-.button--primary.button--dark {
+.button--dark-color {
   --button-bg-color: var(--dark-color);
   --button-border-color: var(--dark-color);
-  --button-bg-hover-color: var(--dark-color-hover);
+  --button-text-color: var(--text-color-inverse);
 }
 
-/* For Secondary Variant: Set text and border colors based on semantic colors */
-.button--secondary.button--info {
-  --button-text-color: var(--info-color);
+.button--outline.button--info-color {
   --button-border-color: var(--info-color);
-  --button-text-hover-color: var(--info-color-hover);
-  --button-border-hover-color: var(--info-color-hover);
+  --button-text-color: var(--info-color);
 }
 
-.button--secondary.button--warning {
-  --button-text-color: var(--warning-color);
+.button--outline.button--warning-color {
   --button-border-color: var(--warning-color);
-  --button-text-hover-color: var(--warning-color-hover);
-  --button-border-hover-color: var(--warning-color-hover);
+  --button-text-color: var(--warning-color);
 }
 
-.button--secondary.button--alert {
-  --button-text-color: var(--alert-color);
+.button--outline.button--alert-color {
   --button-border-color: var(--alert-color);
-  --button-text-hover-color: var(--alert-color-hover);
-  --button-border-hover-color: var(--alert-color-hover);
+  --button-text-color: var(--alert-color);
 }
 
-.button--secondary.button--success {
-  --button-text-color: var(--success-color);
+.button--outline.button--success-color {
   --button-border-color: var(--success-color);
-  --button-text-hover-color: var(--success-color-hover);
-  --button-border-hover-color: var(--success-color-hover);
+  --button-text-color: var(--success-color);
 }
 
-.button--secondary.button--neutral {
-  --button-text-color: var(--neutral-color);
+.button--outline.button--neutral-color {
   --button-border-color: var(--neutral-color);
-  --button-text-hover-color: var(--neutral-color-hover);
-  --button-border-hover-color: var(--neutral-color-hover);
+  --button-text-color: var(--neutral-color);
 }
 
-.button--secondary.button--dark {
-  --button-text-color: var(--dark-color);
+.button--outline.button--dark-color {
   --button-border-color: var(--dark-color);
-  --button-text-hover-color: var(--dark-color-hover);
-  --button-border-hover-color: var(--dark-color-hover);
+  --button-text-color: var(--dark-color);
+}
+
+/* Additional Palettes */
+.button--classy-color-1 {
+  --button-bg-color: var(--classy-color-1);
+  --button-border-color: var(--classy-color-1);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--classy-color-2 {
+  --button-bg-color: var(--classy-color-2);
+  --button-border-color: var(--classy-color-2);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--classy-color-3 {
+  --button-bg-color: var(--classy-color-3);
+  --button-border-color: var(--classy-color-3);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--classy-color-4 {
+  --button-bg-color: var(--classy-color-4);
+  --button-border-color: var(--classy-color-4);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--classy-color-5 {
+  --button-bg-color: var(--classy-color-5);
+  --button-border-color: var(--classy-color-5);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--small-switch-color-1 {
+  --button-bg-color: var(--small-switch-color-1);
+  --button-border-color: var(--small-switch-color-1);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--small-switch-color-2 {
+  --button-bg-color: var(--small-switch-color-2);
+  --button-border-color: var(--small-switch-color-2);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--natural-color-1 {
+  --button-bg-color: var(--natural-color-1);
+  --button-border-color: var(--natural-color-1);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--natural-color-2 {
+  --button-bg-color: var(--natural-color-2);
+  --button-border-color: var(--natural-color-2);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--natural-color-3 {
+  --button-bg-color: var(--natural-color-3);
+  --button-border-color: var(--natural-color-3);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--grey-friend-1 {
+  --button-bg-color: var(--grey-friend-1);
+  --button-border-color: var(--grey-friend-1);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--grey-friend-2 {
+  --button-bg-color: var(--grey-friend-2);
+  --button-border-color: var(--grey-friend-2);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--shade-1 {
+  --button-bg-color: var(--shade-1);
+  --button-border-color: var(--shade-1);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--shade-2 {
+  --button-bg-color: var(--shade-2);
+  --button-border-color: var(--shade-2);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--shade-3 {
+  --button-bg-color: var(--shade-3);
+  --button-border-color: var(--shade-3);
+  --button-text-color: var(--text-color-inverse);
+}
+
+.button--shade-4 {
+  --button-bg-color: var(--shade-4);
+  --button-border-color: var(--shade-4);
+  --button-text-color: var(--text-color-inverse);
+}
+
+/* Color handling for outline variant */
+.button--outline.button--primary-color {
+  --button-border-color: var(--primary-color);
+  --button-text-color: var(--primary-color);
+}
+
+.button--outline.button--classy-color-1 {
+  --button-border-color: var(--classy-color-1);
+  --button-text-color: var(--classy-color-1);
+}
+
+.button--outline.button--classy-color-2 {
+  --button-border-color: var(--classy-color-2);
+  --button-text-color: var(--classy-color-2);
+}
+
+.button--outline.button--classy-color-3 {
+  --button-border-color: var(--classy-color-3);
+  --button-text-color: var(--classy-color-3);
+}
+
+.button--outline.button--classy-color-4 {
+  --button-border-color: var(--classy-color-4);
+  --button-text-color: var(--classy-color-4);
+}
+
+.button--outline.button--classy-color-5 {
+  --button-border-color: var(--classy-color-5);
+  --button-text-color: var(--classy-color-5);
+}
+
+/* Additional Outline Variants */
+.button--outline.button--natural-color-1 {
+  --button-border-color: var(--natural-color-1);
+  --button-text-color: var(--natural-color-1);
+}
+
+.button--outline.button--natural-color-2 {
+  --button-border-color: var(--natural-color-2);
+  --button-text-color: var(--natural-color-2);
+}
+
+.button--outline.button--natural-color-3 {
+  --button-border-color: var(--natural-color-3);
+  --button-text-color: var(--natural-color-3);
+}
+
+.button--outline.button--grey-friend-1 {
+  --button-border-color: var(--grey-friend-1);
+  --button-text-color: var(--grey-friend-1);
+}
+
+.button--outline.button--grey-friend-2 {
+  --button-border-color: var(--grey-friend-2);
+  --button-text-color: var(--grey-friend-2);
+}
+
+.button--outline.button--shade-1 {
+  --button-border-color: var(--shade-1);
+  --button-text-color: var(--shade-1);
+}
+
+.button--outline.button--shade-2 {
+  --button-border-color: var(--shade-2);
+  --button-text-color: var(--shade-2);
+}
+
+.button--outline.button--shade-3 {
+  --button-border-color: var(--shade-3);
+  --button-text-color: var(--shade-3);
+}
+
+.button--outline.button--shade-4 {
+  --button-border-color: var(--shade-4);
+  --button-text-color: var(--shade-4);
 }
 
 /* No Border Modifier */

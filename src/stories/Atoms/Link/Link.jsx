@@ -1,14 +1,12 @@
-// src/stories/Atoms/Link/Link.jsx
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import './Link.css';
 
 export const Link = ({
   text,
   href,
-  underline = true,
-  bold = false,
+  underline = true, // Controls underline
+  bold = false,      // Controls bold text
   newWindow = false,
   external = false,
   experimentalPreview = false,
@@ -30,18 +28,19 @@ export const Link = ({
     }
   };
 
-  const linkClasses = classNames('link', className, {
-    'link--underline': underline,
-    'link--no-underline': !underline,
-    'link--bold': bold,
-    'link--external': external,
-  });
+  // Build dynamic inline styles based on props
+  const dynamicStyles = {
+    textDecoration: underline ? 'underline' : 'none',
+    fontWeight: bold ? 'bold' : 'normal',
+    ...style, // Include any additional styles passed via props
+  };
 
   return (
     <>
       <a
         href={href}
-        className={linkClasses}
+        className={`link ${className}`} // Keep the base 'link' class for consistent styling
+        style={dynamicStyles} // Apply dynamic styles here
         target={newWindow ? '_blank' : '_self'}
         rel={newWindow ? 'noopener noreferrer' : undefined}
         onMouseDown={handleMouseDown}
@@ -61,22 +60,13 @@ export const Link = ({
 };
 
 Link.propTypes = {
-  /** Text content of the link */
   text: PropTypes.string.isRequired,
-  /** URL the link points to */
   href: PropTypes.string.isRequired,
-  /** Whether the link is underlined */
   underline: PropTypes.bool,
-  /** Whether the link text is bold */
   bold: PropTypes.bool,
-  /** Whether the link opens in a new window */
   newWindow: PropTypes.bool,
-  /** Whether the link is external */
   external: PropTypes.bool,
-  /** Enable experimental preview on press */
   experimentalPreview: PropTypes.bool,
-  /** Additional CSS classes */
   className: PropTypes.string,
-  /** Inline styles */
   style: PropTypes.object,
 };

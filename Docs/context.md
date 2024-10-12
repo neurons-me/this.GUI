@@ -1,3 +1,23 @@
+PageDashboard Flow:
+
+	1.	PageDashboard:
+	•	First launch: If no pages are created yet, it will show only the + Add New Page button.
+	•	When pages exist: It will display the pages as cards in a grid format, showing a preview (or just the page name and type), and an Edit button to jump to the SiteBuilder/MDXEditor.
+	•	Always: There will always be the + Add New Page button, even when pages exist. It will be placed at the top of the grid.
+	2.	Add New Page Flow:
+	•	Clicking Add New Page sends the user to the CreatePage view, where they can:
+	•	Enter the name of the new page.
+	•	Choose whether the page should be JSON-based or MDX-based.
+	•	Once submitted, the new page will be saved in the siteConfig.json file and will be accessible in the dashboard.
+	3.	Card Layout for Page Previews:
+	•	Each page will be displayed as a card.
+	•	Each card will contain:
+	•	Page Name
+	•	Page Type (JSON/MDX)
+	•	Edit button to go directly to the page editor (JSON or MDX).
+	•	Grid format with cards will allow better visibility of multiple pages
+	
+-------
 <img src="https://suign.github.io/assets/imgs/this_GUI.svg" alt="Cleaker Me" width="377" height="377">
 
 # THIS.GUI

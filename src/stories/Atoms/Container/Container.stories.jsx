@@ -1,104 +1,145 @@
-// src/stories/Atoms/Container/Container.stories.jsx
 import React from 'react';
 import { Container } from './Container';
-import './Container.css';
 
 export default {
   title: 'Atoms/Layout/Container',
   component: Container,
   argTypes: {
-    border: {
-      control: 'boolean',
-      description: 'Add a border to the container.',
-    },
     size: {
-      control: {
-        type: 'select',
-        options: ['small', 'medium', 'large'],
-      },
-      description: 'Size of the container.',
+      control: { type: 'select' },
+      options: ['small', 'medium', 'large'],
     },
-    rounded: {
-      control: 'boolean',
-      description: 'Apply rounded corners to the container.',
-    },
-    fluid: {
-      control: 'boolean',
-      description: 'Make the container full-width.',
+    border: {
+      control: { type: 'select' },
+      options: ['on', 'off'],
     },
     align: {
-      control: {
-        type: 'select',
-        options: ['left', 'center', 'right'],
-      },
-      description: 'Alignment of the container.',
+      control: { type: 'select' },
+      options: ['left', 'center', 'right'],
+    },
+    fluid: { control: 'boolean' },
+    padding: {
+      control: { type: 'select' },
+      options: ['sm', 'md', 'lg'],
+    },
+    marginTop: {
+      control: { type: 'select' },
+      options: ['sm', 'md', 'lg'],
+    },
+    marginBottom: {
+      control: { type: 'select' },
+      options: ['sm', 'md', 'lg'],
+    },
+    marginLeft: {
+      control: { type: 'select' },
+      options: ['sm', 'md', 'lg'],
+    },
+    marginRight: {
+      control: { type: 'select' },
+      options: ['sm', 'md', 'lg'],
     },
     position: {
-      control: {
-        type: 'select',
-        options: ['static', 'relative', 'absolute', 'fixed', 'sticky'],
-      },
-      description: 'CSS position property of the container.',
+      control: { type: 'select' },
+      options: ['relative', 'static', 'fixed', 'absolute', 'sticky'],
     },
-    className: {
-      control: 'text',
-      description: 'Additional CSS classes.',
+    rounded: { control: 'boolean' }, // Add control for 'rounded' prop
+    borderColor: {
+      control: { type: 'select' },
+      options: [
+        'none',
+        'primary',
+        'secondary',
+        'link',
+        'focus',
+        'info',
+        'warning',
+        'alert',
+        'success',
+        'neutral',
+        'dark',
+        'classy-1',
+        'classy-2',
+        'classy-3',
+        'classy-4',
+        'classy-5',
+        'small-switch-1',
+        'small-switch-2',
+        'natural-1',
+        'natural-2',
+        'natural-3',
+        'grey-friend-1',
+        'grey-friend-2',
+        'shade-1',
+        'shade-2',
+        'shade-3',
+        'shade-4',
+      ],
     },
-    style: {
-      control: 'object',
-      description: 'Inline styles.',
+    backgroundColor: {
+      control: { type: 'select' }, // Use 'select' control type
+      options: [
+        'none',
+        'primary',
+        'secondary',
+        'link',
+        'focus',
+        'info',
+        'warning',
+        'alert',
+        'success',
+        'neutral',
+        'dark',
+        'classy-1',
+        'classy-2',
+        'classy-3',
+        'classy-4',
+        'classy-5',
+        'small-switch-1',
+        'small-switch-2',
+        'natural-1',
+        'natural-2',
+        'natural-3',
+        'grey-friend-1',
+        'grey-friend-2',
+        'shade-1',
+        'shade-2',
+        'shade-3',
+        'shade-4',
+      ],
     },
   },
 };
 
-/**
- * Small Container with Border and Left Alignment
- */
-export const SmallWithBorderLeft = () => (
-  <Container border size="small" align="left">
-    <p>This is a small container with a border and left alignment.</p>
-  </Container>
-);
+const Template = (args) => <Container {...args}>Content goes here</Container>;
 
-/**
- * Medium Rounded Container with Center Alignment
- */
-export const MediumRoundedCenter = () => (
-  <Container rounded size="medium" align="center">
-    <p>This is a medium-sized container with rounded corners and center alignment.</p>
-  </Container>
-);
-
-/**
- * Large Fluid Container with Right Alignment
- */
-export const LargeFluidRight = () => (
-  <Container fluid size="large" align="right">
-    <p>This is a large, fluid container without a border and right alignment.</p>
-  </Container>
-);
-
-/**
- * Container with Absolute Positioning
- */
-export const AbsolutePositioned = () => (
-  <Container position="absolute" style={{ top: '20px', left: '20px' }}>
-    <p>This container is absolutely positioned.</p>
-  </Container>
-);
-
-/**
- * Interactive Playground
- */
-const Template = (args) => <Container {...args}>This is an interactive container.</Container>;
-
-export const InteractiveContainer = Template.bind({});
-InteractiveContainer.args = {
-  border: false,
+export const Default = Template.bind({});
+Default.args = {
   size: 'medium',
-  rounded: false,
-  fluid: false,
+  border: 'on',
   align: 'left',
-  position: 'static',
+  fluid: false,
+  padding: 'md',
+  marginTop: 'md',
+  marginBottom: 'md',
+  marginLeft: 'md',
+  marginRight: 'md',
+  position: 'relative',
 };
-InteractiveContainer.storyName = 'Interactive Container';
+
+export const Fluid = Template.bind({});
+Fluid.args = {
+  ...Default.args,
+  fluid: true,
+};
+
+export const Centered = Template.bind({});
+Centered.args = {
+  ...Default.args,
+  align: 'center',
+};
+
+export const LargePadding = Template.bind({});
+LargePadding.args = {
+  ...Default.args,
+  padding: 'lg',
+};

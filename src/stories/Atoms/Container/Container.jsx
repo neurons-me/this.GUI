@@ -1,54 +1,116 @@
-// src/stories/Atoms/Container/Container.jsx
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import './Container.css';
 
 export const Container = ({
-  children,
-  border = false,
-  size = 'medium',
-  rounded = false,
+  size = 'small',
+  border = 'on',
+  align = 'center',
   fluid = false,
-  align = 'left',
-  position = 'static',
-  className = '',
-  style = {},
-  ...props
+  padding = 'md',
+  marginTop = 'md',
+  marginBottom = 'md',
+  marginLeft = 'md',
+  marginRight = 'md',
+  position = 'relative',
+  rounded = true, 
+  borderColor,
+  backgroundColor, 
+  children,
 }) => {
-  const containerClasses = classNames('container', className, {
-    'container--border': border,
-    [`container--${size}`]: size,
-    'container--rounded': rounded,
-    'container--fluid': fluid,
-    [`container--align-${align}`]: align,
-    [`container--position-${position}`]: position,
-  });
+  const containerClassNames = [
+    'container',
+    `container--size-${size}`,
+    `container--align-${align}`,
+    `container--position-${position}`,
+    `container--padding-${padding}`,
+    `container--mt-${marginTop}`,
+    `container--mb-${marginBottom}`,
+    `container--ml-${marginLeft}`,
+    `container--mr-${marginRight}`,
+    border === 'on' ? 'container--border' : '',
+    fluid ? 'container--fluid' : '',
+    rounded ? 'container--rounded' : '',
+    backgroundColor ? `container--bg-${backgroundColor}` : '',
+    borderColor ? `container--border-${borderColor}` : '', // Add class if borderColor is set
+  ].join(' ');
 
   return (
-    <div className={containerClasses} style={style} {...props}>
+    <div className={containerClassNames}>
       {children}
     </div>
   );
 };
 
 Container.propTypes = {
-  /** Content to be wrapped inside the container */
-  children: PropTypes.node.isRequired,
-  /** Add a border to the container */
-  border: PropTypes.bool,
-  /** Size of the container */
   size: PropTypes.oneOf(['small', 'medium', 'large']),
-  /** Rounded corners */
-  rounded: PropTypes.bool,
-  /** Fluid container (full width) */
-  fluid: PropTypes.bool,
-  /** Text alignment within the container */
+  border: PropTypes.oneOf(['on', 'off']),
   align: PropTypes.oneOf(['left', 'center', 'right']),
-  /** CSS position property */
-  position: PropTypes.oneOf(['static', 'relative', 'absolute', 'fixed', 'sticky']),
-  /** Additional CSS classes */
-  className: PropTypes.string,
-  /** Inline styles */
-  style: PropTypes.object,
+  fluid: PropTypes.bool,
+  padding: PropTypes.oneOf(['sm', 'md', 'lg']),
+  marginTop: PropTypes.oneOf(['sm', 'md', 'lg']),
+  marginBottom: PropTypes.oneOf(['sm', 'md', 'lg']),
+  marginLeft: PropTypes.oneOf(['sm', 'md', 'lg']),
+  marginRight: PropTypes.oneOf(['sm', 'md', 'lg']),
+  position: PropTypes.oneOf(['relative', 'static', 'fixed', 'absolute', 'sticky']),
+  rounded: PropTypes.bool,
+  borderColor: PropTypes.oneOf([
+    'none',
+    'primary',
+    'secondary',
+    'link',
+    'focus',
+    'info',
+    'warning',
+    'alert',
+    'success',
+    'neutral',
+    'dark',
+    'classy-1',
+    'classy-2',
+    'classy-3',
+    'classy-4',
+    'classy-5',
+    'small-switch-1',
+    'small-switch-2',
+    'natural-1',
+    'natural-2',
+    'natural-3',
+    'grey-friend-1',
+    'grey-friend-2',
+    'shade-1',
+    'shade-2',
+    'shade-3',
+    'shade-4',
+  ]),
+  backgroundColor: PropTypes.oneOf([
+    'none', // For no background color
+    'primary',
+    'secondary',
+    'link',
+    'focus',
+    'info',
+    'warning',
+    'alert',
+    'success',
+    'neutral',
+    'dark',
+    'classy-1',
+    'classy-2',
+    'classy-3',
+    'classy-4',
+    'classy-5',
+    'small-switch-1',
+    'small-switch-2',
+    'natural-1',
+    'natural-2',
+    'natural-3',
+    'grey-friend-1',
+    'grey-friend-2',
+    'shade-1',
+    'shade-2',
+    'shade-3',
+    'shade-4',
+  ]),
+  children: PropTypes.node,
 };
