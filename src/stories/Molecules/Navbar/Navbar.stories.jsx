@@ -1,38 +1,29 @@
 import React from 'react';
 import { Navbar } from './Navbar';
-import { SearchBar } from '../SearchBar/SearchBar';
-import { Logo } from '../../Atoms/Logo/Logo'; // Importing the Logo component
 
 export default {
   title: 'Molecules/Navigation/Navbar',
   component: Navbar,
-  parameters: {
-    layout: 'fullscreen',
-  },
   argTypes: {
     logo: {
-      control: false, // We use a React node, so control is not applicable
-      description: 'Logo component or element to display in the navbar',
+      control: 'text',
+      description: 'Logo URL or image for the navbar. Use a logo with recommended dimensions for best appearance.',
     },
-    searchComponent: {
-      control: false, // We use a React node, so control is not applicable
-      description: 'Search component to display in the navbar',
+    siteName: {
+      control: 'text',
+      description: 'Name of the website to be displayed if no logo is provided.',
     },
-    leftItems: {
-      control: 'object',
-      description: 'Array of navigation items for the left side',
+    centerLinks: {
+      control: 'array',
+      description: 'Array of center navigation links with text and href.',
     },
-    centerItems: {
-      control: 'object',
-      description: 'Array of navigation items for the center',
+    rightLinks: {
+      control: 'array',
+      description: 'Array of right-side navigation links with text and href.',
     },
-    rightItems: {
-      control: 'object',
-      description: 'Array of navigation items for the right side',
-    },
-    styleOverrides: {
-      control: 'object',
-      description: 'Override default styles with CSS variables',
+    fixed: {
+      control: 'boolean',
+      description: 'Determines if the navbar is fixed at the top of the page.',
     },
   },
 };
@@ -41,30 +32,47 @@ const Template = (args) => <Navbar {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  logo: <Logo />,  // Using the Logo component here
-  searchComponent: <SearchBar placeholder="Search..." />,
-  leftItems: [
-    { url: '#home', label: 'Home' },
-    { url: '#about', label: 'About' },
+  logo: 'https://example.com/logo.png', // Replace with a real logo image
+  siteName: 'My Site',
+  centerLinks: [
+    { text: 'Home', href: '/' },
+    { text: 'About', href: '/about' },
+    { text: 'Services', href: '/services' },
   ],
-  centerItems: [
-    { url: '#services', label: 'Services' },
-    { url: '#portfolio', label: 'Portfolio' },
+  rightLinks: [
+    { text: 'Login', href: '/login' },
+    { text: 'Sign Up', href: '/signup' },
   ],
-  rightItems: [
-    { url: '#login', label: 'Login' },
-    { url: '#signup', label: 'Sign Up' },
-  ],
+  fixed: true,
 };
 
-export const CustomizedNavbar = Template.bind({});
-CustomizedNavbar.args = {
-  ...Default.args,
-  styleOverrides: {
-    navbarBackgroundColor: '#1F1F1F',
-    navbarBorderColor: '#444444',
-    navbarHeight: '70px',
-    navbarLinkColor: '#FFFFFF',
-    navbarLinkHoverBackground: 'rgba(255, 255, 255, 0.2)',
-  },
+export const WithoutLogo = Template.bind({});
+WithoutLogo.args = {
+  logo: '', // No logo, site name will be displayed
+  siteName: 'My Awesome Site',
+  centerLinks: [
+    { text: 'Home', href: '/' },
+    { text: 'Blog', href: '/blog' },
+    { text: 'Contact', href: '/contact' },
+  ],
+  rightLinks: [
+    { text: 'Login', href: '/login' },
+    { text: 'Dashboard', href: '/dashboard' },
+  ],
+  fixed: false,
+};
+
+export const MobileVersion = Template.bind({});
+MobileVersion.args = {
+  logo: 'https://example.com/mobile-logo.png',
+  siteName: 'Mobile View',
+  centerLinks: [
+    { text: 'Home', href: '/' },
+    { text: 'Profile', href: '/profile' },
+  ],
+  rightLinks: [
+    { text: 'Logout', href: '/logout' },
+  ],
+  fixed: true,
+  // You can test this by resizing the Storybook window to a smaller width
 };

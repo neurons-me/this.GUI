@@ -204,6 +204,10 @@ Playground.args = {
   size: 'medium',
   label: 'Click Me',
   noBorder: false,
+  marginTop: 'md',
+  marginBottom: 'md',
+  marginLeft: 'md',
+  marginRight: 'md',
   children: 'Click Me',
 };
 Playground.storyName = 'Interactive Playground';

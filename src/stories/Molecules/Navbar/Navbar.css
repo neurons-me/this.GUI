@@ -1,91 +1,131 @@
-/* src/stories/Molecules/Navigation/Navbar/Navbar.css */
-
-/* Root variables for theming */
+/* Navbar default style */
 .navbar {
-  --navbar-background-color: var(--background-color);
-  --navbar-border-color: var(--border-color);
-  --navbar-height: 60px;
-  --navbar-link-color: var(--text-color);
-  --navbar-link-hover-background: rgba(255, 255, 255, 0.1);
-  --navbar-link-padding: 0 16px;
-  --navbar-fixed: fixed;
-  --navbar-z-index: 1000;
+  display: flex;
+  justify-content: space-between; /* Space between left (logo), center, and right */
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--background-color);
+  color: var(--text-color-inverse);
+  font-family: var(--font-family);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 999;
+  position: relative;
+  height: 55px;   /* Fixed height for the navbar */
 
-  position: var(--navbar-fixed);
+}
+
+.navbar-fixed {
+  position: fixed;
   top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.navbar-spacer {
+  height: 55px; /* Adjust based on navbar height */
+}
+
+.navbar-logo {
+  display: flex;          /* Align logo and site name side by side */
+  align-items: center;    /* Vertically center the logo and site name */
+}
+
+.navbar-logo img {
+  margin-right: 10px;
+  margin-top: 3px;     
+  width: 55px;           /* Control the width of the logo */
+  max-height: 55px;       /* Prevent the logo from growing too tall */
+  object-fit: contain;    /* Maintain the aspect ratio of the logo */
+}
+
+.site-name {
+  font-size: 1.2rem;      /* Set the size of the site name */
+  color: var(--link-color); /* Use a color that fits with your theme */
+  line-height: 120px;         /* Match the navbar height for vertical centering */
+  white-space: nowrap;    /* Prevent the site name from wrapping */
+}
+
+.navbar-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1; /* Center links take up remaining space equally */
+}
+
+.navbar-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex: 1; /* Let the right links take up some space */
+  gap: var(--spacing-xs); /* Space between right links */
+}
+
+.navbar-center a, .navbar-right a {
+  margin: 0 var(--spacing-sm); /* Space between each link */
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color var(--transition-speed);
+}
+
+.navbar-center a:hover, .navbar-right a:hover {
+  color: var(--link-hover-color);
+}
+
+/* Hamburger menu for mobile */
+.navbar-toggle {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  position: absolute;
+  right: var(--spacing-md);
+  top: var(--spacing-sm);
+}
+
+.bar {
+  width: 20px;
+  height: 2px;
+  margin: 3px 0;
+  background-color: var(--link-color);
+  transition: all var(--transition-speed);
+}
+
+/* Mobile menu (collapsed) */
+.navbar-links-mobile {
+  display: none; /* Initially hidden */
+  flex-direction: column;
+  align-items: flex-start;
+  position: absolute;
+  top: 60px;
   left: 0;
   width: 100%;
-  height: var(--navbar-height);
-  background-color: var(--navbar-background-color);
-  border-bottom: 1px solid var(--navbar-border-color);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  z-index: var(--navbar-z-index);
-  padding: 0 16px;
-  box-sizing: border-box;
+  background-color: var(--primary-color);
+  padding: var(--spacing-md);
 }
 
-.navbar__group {
-  display: flex;
-  align-items: center;
-}
-
-.navbar__group--left {
-  flex: 1;
-}
-
-.navbar__group--center {
-  flex: 1;
-  justify-content: center;
-}
-
-.navbar__group--right {
-  flex: 1;
-  justify-content: flex-end;
-}
-
-.navbar__logo {
-  margin-right: 16px;
-}
-
-.navbar__search {
-  margin-right: 16px;
-}
-
-.navbar__link {
-  color: var(--navbar-link-color);
+.link-mobile {
+  width: 100%;
+  padding: var(--spacing-sm);
+  color: var(--text-color-inverse);
   text-decoration: none;
-  padding: var(--navbar-link-padding);
-  display: flex;
-  align-items: center;
-  height: 100%;
-  box-sizing: border-box;
-  transition: background-color 0.3s ease;
+  transition: background-color var(--transition-speed);
 }
 
-.navbar__link:hover {
-  background-color: var(--navbar-link-hover-background);
+.link-mobile:hover {
+  background-color: var(--primary-color-hover);
 }
 
+/* Media query for responsiveness */
 @media (max-width: 768px) {
-  .navbar {
-    flex-wrap: wrap;
-    height: auto;
+  .navbar-center, .navbar-right {
+    display: none; /* Hide center and right links on small screens */
   }
 
-  .navbar__group {
-    width: 100%;
-    justify-content: center;
-    margin: 8px 0;
+  .navbar-toggle {
+    display: flex; /* Show hamburger menu */
   }
 
-  .navbar__group--left,
-  .navbar__group--right {
-    justify-content: center;
-  }
-
-  .navbar__link {
-    padding: 8px;
+  /* Show mobile links when menu is open */
+  .navbar-links-mobile {
+    display: flex; /* Reveal mobile links */
   }
 }

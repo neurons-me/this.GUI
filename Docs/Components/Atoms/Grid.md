@@ -2,14 +2,6 @@
 
 The **Grid** component is a flexible layout component designed to organize content into responsive rows and columns. It automatically adapts to different screen sizes and can be customized using properties like gap, border, and color. It also provides support for various color variants from the theme.
 
-### **Usage**
-
-**Importing the Grid Component**
-
-To use the **Grid** component in your project, import it as follows:
-
-import { Grid } from 'your-library-path';
-
 **Basic Example**
 
 Here’s a simple example of how to use the **Grid** component to organize content:
@@ -27,52 +19,23 @@ This will render a grid with auto-adjusting columns and responsive behavior.
 
 **Prop Usage Examples**
 
-**Grid with Gap**
-
-You can adjust the spacing between items by using the gap prop:
-
 ```jsx
-<Grid gap="32px">
-  <div>Item 1</div>
-  <div>Item 2</div>
-  <div>Item 3</div>
-  <div>Item 4</div>
-</Grid>
+const MyCustomGrid = () => (
+  <Grid
+    gap="24px"          // Set custom gap between items
+    border={true}       // Enable border around grid items
+    color="primary"     // Set the border color to primary
+    rounded={true}      // Apply rounded corners to grid items
+    shadow="medium"     // Add a medium shadow effect
+    hover={true}        // Enable hover effect
+  >
+    <div>Custom Item 1</div>
+    <div>Custom Item 2</div>
+    <div>Custom Item 3</div>
+    <div>Custom Item 4</div>
+  </Grid>
+);
 ```
-
-
-
-**Grid with Border**
-
-To add borders around each grid item, use the border prop:
-
-```jsx
-<Grid border={true} color="secondary">
-  <div>Item 1</div>
-  <div>Item 2</div>
-  <div>Item 3</div>
-  <div>Item 4</div>
-</Grid>
-```
-
-This will create a grid with borders around each item, and the border color will be set to the **secondary** theme color.
-
-
-
-**Custom Colors**
-
-You can choose different border colors by using the color prop in conjunction with the border prop:
-
-```jsx
-<Grid border={true} color="warning">
-  <div>Item 1</div>
-  <div>Item 2</div>
-  <div>Item 3</div>
-  <div>Item 4</div>
-</Grid>
-```
-
-This will apply a **warning** border color around the grid items.
 
 
 
@@ -130,8 +93,6 @@ The **Grid** component supports theme-based colors for borders. Here are the ava
 
 The **Grid** component automatically adjusts the number of columns based on the available width of the container, making it fully responsive. You can control the gap between items, but the layout will adapt dynamically without needing additional configuration.
 
-
-
 For example
 
 ```jsx
@@ -147,31 +108,6 @@ For example
 ```
 
 This will render a responsive grid layout that automatically adjusts to the screen size, ensuring that the grid items fit properly.
-
-
-
-**Advanced Example**
-
-Here’s a more complex example with custom colors, borders, and gaps:
-
-```jsx
-<Grid border={true} gap="24px" color="alert">
-  <div>Item 1</div>
-  <div>Item 2</div>
-  <div>Item 3</div
-  <div>Item 4</div>
-  <div>Item 5</div>
-  <div>Item 6</div>
-</Grid>
-```
-
-In this example:
-
-​	•	Each grid item has a **24px** gap between them.
-
-​	•	The grid items have a **border**.
-
-​	•	The border color is set to **alert** (yellow from the theme).
 
 **Conclusion**
 

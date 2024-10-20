@@ -4,7 +4,7 @@
   /* Button Sizes */
   --button-font-size: var(--font-size-base); 
   --button-padding-vertical: 11px;
-  --button-padding-horizontal: 21px;
+  --button-padding-horizontal: 11px;
   --button-padding: var(--button-padding-vertical) var(--button-padding-horizontal);
   /* Align button sizes with global small and large font sizes */
   --button-font-size-large: var(--font-size-large); /* Use the global large font size */
@@ -15,6 +15,11 @@
   --button-padding-vertical-small: calc(var(--button-padding-vertical) * 0.9);
   --button-padding-horizontal-small: calc(var(--button-padding-horizontal) * 0.9);
   --button-padding-small: var(--button-padding-vertical-small) var(--button-padding-horizontal-small);
+   /* Margins (using global spacing variables) */
+   --button-margin-xs: var(--spacing-xs);
+   --button-margin-sm: var(--spacing-sm);
+   --button-margin-md: var(--spacing-md);
+   --button-margin-lg: var(--spacing-lg);
 }
 /* Base styles */
 .button {
@@ -46,6 +51,27 @@
   font-size: var(--button-font-size-large);
   padding: var(--button-padding-large);
 }
+
+/* Margins */
+.button--mt-xs { margin-top: var(--button-margin-xs); }
+.button--mt-sm { margin-top: var(--button-margin-sm); }
+.button--mt-md { margin-top: var(--button-margin-md); }
+.button--mt-lg { margin-top: var(--button-margin-lg); }
+
+.button--mb-xs { margin-bottom: var(--button-margin-xs); }
+.button--mb-sm { margin-bottom: var(--button-margin-sm); }
+.button--mb-md { margin-bottom: var(--button-margin-md); }
+.button--mb-lg { margin-bottom: var(--button-margin-lg); }
+
+.button--ml-xs { margin-left: var(--button-margin-xs); }
+.button--ml-sm { margin-left: var(--button-margin-sm); }
+.button--ml-md { margin-left: var(--button-margin-md); }
+.button--ml-lg { margin-left: var(--button-margin-lg); }
+
+.button--mr-xs { margin-right: var(--button-margin-xs); }
+.button--mr-sm { margin-right: var(--button-margin-sm); }
+.button--mr-md { margin-right: var(--button-margin-md); }
+.button--mr-lg { margin-right: var(--button-margin-lg); }
 
 /* Solid variant */
 .button--solid {

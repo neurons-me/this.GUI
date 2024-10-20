@@ -9,6 +9,10 @@ export const Button = ({
   size = 'medium',
   label = '',
   noBorder = false,
+  marginTop = 'sm', // Default margin-top
+  marginBottom = 'sm', // Default margin-bottom
+  marginLeft = 'sm', // Default margin-left
+  marginRight = 'sm', // Default margin-right
   children,
   className = '',
   style = {},
@@ -18,14 +22,19 @@ export const Button = ({
   const colorClass = `button--${color}`;
   const sizeClass = `button--${size}`;
   const borderClass = noBorder ? 'button--no-border' : '';
+ // Create classNames for margins and paddings
+ const marginTopClass = `button--mt-${marginTop}`;
+ const marginBottomClass = `button--mb-${marginBottom}`;
+ const marginLeftClass = `button--ml-${marginLeft}`;
+ const marginRightClass = `button--mr-${marginRight}`;
 
-  const combinedClassName = `button ${variantClass} ${colorClass} ${sizeClass} ${borderClass} ${className}`.trim();
+ const combinedClassName = `button ${variantClass} ${colorClass} ${sizeClass} ${borderClass} ${marginTopClass} ${marginBottomClass} ${marginLeftClass} ${marginRightClass} ${className}`.trim();
 
-  return (
-    <button type="button" className={combinedClassName} style={style} {...props}>
-      {children || label}
-    </button>
-  );
+ return (
+   <button type="button" className={combinedClassName} style={style} {...props}>
+     {children || label}
+   </button>
+ );
 };
 
 Button.propTypes = {
@@ -38,6 +47,11 @@ Button.propTypes = {
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   label: PropTypes.string,
   noBorder: PropTypes.bool,
+  padding: PropTypes.oneOf(['xs', 'sm', 'md', 'lg']),
+  marginTop: PropTypes.oneOf(['xs', 'sm', 'md', 'lg']),
+  marginBottom: PropTypes.oneOf(['xs', 'sm', 'md', 'lg']),
+  marginLeft: PropTypes.oneOf(['xs', 'sm', 'md', 'lg']),
+  marginRight: PropTypes.oneOf(['xs', 'sm', 'md', 'lg']),
   children: PropTypes.node,
   className: PropTypes.string,
   style: PropTypes.object,

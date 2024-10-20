@@ -1,10 +1,20 @@
-/*this.GUI/src/stories/Molecules/Card/Card.css*/
+/* Card Grid Styles */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adjust card size */
+  gap: 16px; /* Spacing between cards */
+  padding: 16px;
+}
+
+/* Base Card Styles */
 .card {
   padding: 16px;
   border-radius: var(--border-radius, 8px);
   position: relative;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   color: inherit; /* Text color is inherited */
+  display: flex;
+  flex-direction: column;
 }
 
 .card__content {
@@ -37,5 +47,9 @@
 @media (max-width: 768px) {
   .card {
     padding: 12px;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
   }
 }
