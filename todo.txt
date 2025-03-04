@@ -1,6 +1,0 @@
-Loader
-Logo
-Paragraph
-Badge
-Icons
---- components missing md docs
