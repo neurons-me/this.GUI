@@ -1,12 +1,19 @@
 import React from 'react';
-import { CustomThemeProvider } from './themes/ThemeContext';
-import Home from './pages/Home';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import ThemeManager from './components/Theme/ThemeManager';
+import HomePage from './pages/HomePage';
+import './App.css';
 
-function App() {
+function App({ environment, host }) {
   return (
-    <CustomThemeProvider>
-      <Home />
-    </CustomThemeProvider>
+    <ThemeManager>
+      <Router>
+        <Routes>
+          {/* Ruta principal hacia HomePage */}
+          <Route path="/" element={<HomePage environment={environment} host={host} />} />
+        </Routes>
+      </Router>
+    </ThemeManager>
   );
 }
 
