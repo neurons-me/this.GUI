@@ -15,9 +15,12 @@
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@mdx-js/rollup": "^3.1.0",
+    "@mui/icons-material": "^6.4.6",
     "@mui/material": "^6.4.6",
+    "js-cookie": "^3.0.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-draggable": "^4.4.6",
     "react-router-dom": "^7.2.0"
   },
   "devDependencies": {
