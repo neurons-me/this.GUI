@@ -1,0 +1,59 @@
+{
+    "name": "neurons",
+    "light": {
+        "palette": {
+            "primary": {
+                "main": "#1976d2"
+            },
+            "secondary": {
+                "main": "#dc004e"
+            },
+            "background": {
+                "default": "#f0f0f0",
+                "paper": "#ffffff"
+            },
+            "text": {
+                "primary": "#000000",
+                "secondary": "#555555"
+            }
+        },
+        "typography": {
+            "h1": {
+                "fontSize": "2rem",
+                "fontWeight": 700
+            },
+            "h2": {
+                "fontSize": "1.5rem",
+                "fontWeight": 600
+            }
+        }
+    },
+    "dark": {
+        "palette": {
+            "primary": {
+                "main": "#90caf9"
+            },
+            "secondary": {
+                "main": "#f48fb1"
+            },
+            "background": {
+                "default": "#121212",
+                "paper": "#1e1e1e"
+            },
+            "text": {
+                "primary": "#ffffff",
+                "secondary": "#aaaaaa"
+            }
+        },
+        "typography": {
+            "h1": {
+                "fontSize": "2rem",
+                "fontWeight": 700
+            },
+            "h2": {
+                "fontSize": "1.5rem",
+                "fontWeight": 600
+            }
+        }
+    }
+}

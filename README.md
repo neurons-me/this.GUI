@@ -1,12 +1,78 @@
-# React + Vite
+**🧩 Key Concepts**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+| **Concept**                                | **Status**                                                   |
+| ------------------------------------------ | ------------------------------------------------------------ |
+| **Central Dictionary (parameters.js)**     | ✅ Defines the base structure (required keys, descriptions, types). |
+| **Theme Files (neurons.theme.json, etc.)** | ✅ Store only **values**, and match parameters.js.            |
+| **User Dictionary (userDictionary.js)**    | ✅ User can **extend the system dictionary** with personal discoveries. |
+| **Theme Merging (mergeTheme.js)**          | ❓ Needs work to combine: parameters.js + userDictionary.js + theme.json |
+| **Theme Discovery Manager (NEW)**          | ❓ Detects unknown components and prompts user to add them.   |
+| **Theme Hashing & Validation**             | ❓ Not yet implemented, but planned.                          |
 
-Currently, two official plugins are available:
+# **📂 How It Should Flow (Cleaned Up)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Core Logic (Contract + Engine)**
 
-## Expanding the ESLint configuration
+```
+/components/Theme/core/
+    parameters.js        // Official contract
+    userDictionary.js    // User's additions
+    mergeTheme.js        // Combines system + user + theme
+    validator.js         // Compares themes vs contract (for debugging)
+    hashManager.js       // (Future) Hash generator for versioning
+```
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**Data (Only Values)**
+
+```
+/components/Theme/data/
+    neurons.theme.json
+    cyberpunk.theme.json
+    minimal.theme.json
+```
+
+**UI Components (for Visibility)**
+
+```
+/components/Theme/
+    ThemeDictionaryViewer.jsx   // Show the live contract
+    ThemeMismatchViewer.jsx     // Show live differences between contract & active theme
+    ThemeDiscoveryManager.jsx   // Detect and manage new components
+    DiscoveryPrompt.jsx         // UI for user approval of new components
+```
+
+**Theme Context (Loader)**
+
+```
+/components/Theme/
+    ThemeContext.jsx            // Provides currentTheme + currentMode
+    index.js                     // Exposes getTheme()
+```
+
+I suggest:
+
+✅ **I generate a clean mergeTheme.js that does system + user + theme merging.**
+
+✅ **I generate the ThemeDiscoveryManager stub (to detect unknown components).**
+
+✅ **I generate DiscoveryPrompt.jsx (simple MUI dialog that lets user accept/reject discovered components).**
+
+✅ **I create a hashManager.js (so each userDictionary update gets hashed).**
+
+
+
+This gives you:
+
+​	•	🔗 Full **Theme Fusion Engine**.
+
+​	•	🔍 Full **Discovery Pipeline**.
+
+​	•	🧩 Full **User Personalization Layer**.
+
+​	•	🔐 Full **Audit Trail (Hashing)**.
+
+**⚡️ Do you want me to generate these now and paste them directly here?**
+
+
+
+Let me know, I can start writing code immediately. 💪 Let’s make magic!

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ThemeProvider, CssBaseline, IconButton, Box } from '@mui/material';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
-import { lightTheme, darkTheme } from '../../themes';
+import { lightTheme, darkTheme } from 'index.js';
 
 // Lista de temas disponibles
 const themes = {

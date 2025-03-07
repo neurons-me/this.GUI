@@ -1,20 +1,20 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import ThemeManager from './components/Theme/ThemeManager';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProviderWithSwitcher } from './components/Theme/ThemeContext';
+import ThemeSelector from './components/Theme/ThemeSelector';
 import HomePage from './pages/HomePage';
-import './App.css';
 
 function App({ environment, host }) {
-  return (
-    <ThemeManager>
-      <Router>
-        <Routes>
-          {/* Ruta principal hacia HomePage */}
-          <Route path="/" element={<HomePage environment={environment} host={host} />} />
-        </Routes>
-      </Router>
-    </ThemeManager>
-  );
+    return (
+        <ThemeProviderWithSwitcher>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<HomePage environment={environment} host={host} />} />
+                </Routes>
+            </Router>
+            <ThemeSelector />
+        </ThemeProviderWithSwitcher>
+    );
 }
 
 export default App;
