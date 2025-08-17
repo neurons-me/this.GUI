@@ -1,19 +1,22 @@
 import { Box, Typography, Divider } from "@mui/material";
 
 /**
- * PageTitle Component
+ * TextTitle Component
  * Displays a title (h1-h3) and an optional subtitle/description at the top of the page.
  * Meant to be used inside PageContainer for consistency across layouts.
  */
-export default function PageTitle({ title, subtitle, level = 1 }) {
+export default function TextTitle({ title, subtitle, h = 1, variant, showDivider = true }) {
   const variants = {
-    1: "h4", // main title
-    2: "h5", // sub-title
-    3: "h6", // sub-sub-title
+    1: "h1",
+    2: "h2",
+    3: "h3",
+    4: "h4",
+    5: "h5",
+    6: "h6",
   };
 
-  const typographyVariant = variants[level] || "h4";
-
+  const level = Math.min(Math.max(h, 1), 6);
+  const typographyVariant = variant || variants[level];
   return (
     <Box sx={{ width: "100%", mb: 3 }}>
       <Typography
@@ -35,7 +38,7 @@ export default function PageTitle({ title, subtitle, level = 1 }) {
           {subtitle}
         </Typography>
       )}
-      <Divider />
+      {showDivider && <Divider />}
     </Box>
   );
 }

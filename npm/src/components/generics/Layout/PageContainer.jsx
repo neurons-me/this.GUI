@@ -8,13 +8,12 @@ import { Box, useTheme, useMediaQuery } from "@mui/material";
 export default function PageContainer({ children }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const drawerWidth = 240; // same width as in NavBar
   return (
     <Box
       sx={{
         px: isMobile ? 2 : 3,
         pt: 3,
-        maxWidth: "808px",
+        maxWidth: "987px",
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",

@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
 
 /**
- * PageParagraph Component
+ * TextParagraph Component
  * Standardized paragraph text for pages with consistent spacing and alignment.
  *
  * Props:

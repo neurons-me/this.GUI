@@ -1,7 +1,8 @@
-//this.GUI/npm/src/themes/darkTheme.js
 import { createTheme } from '@mui/material/styles';
+import { baseTheme } from './baseTheme';
 
 export const darkTheme = createTheme({
+  ...baseTheme,
   palette: {
     mode: 'dark',
     primary: {
@@ -21,13 +22,14 @@ export const darkTheme = createTheme({
     link: {
       main: 'rgb(0, 170, 150)',    // Refined: slightly brighter and less saturated
     },
+    text: {
+      primary: '#ffffff',
+      secondary: 'rgba(255, 255, 255, 0.75)',
+      tertiary: 'rgba(255, 255, 255, 0.55)',
+    },
   },
   custom: {
     border: 'rgb(45, 45, 55)',     // Refined: subtle neutral border
-  },
-  typography: {
-    fontFamily: 'Roboto, sans-serif',
-    pxToRem: (size) => `${size / 16}rem`,
   },
   components: {
     MuiLink: {

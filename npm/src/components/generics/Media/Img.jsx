@@ -10,7 +10,7 @@ import { Box, Typography } from "@mui/material";
  * - caption: Optional text displayed below the image.
  * - maxWidth: Maximum width of the image (default: "100%").
  */
-export default function PageImage({
+export default function Img({
   src,
   alt = "",
   align = "center",

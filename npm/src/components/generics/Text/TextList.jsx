@@ -1,7 +1,7 @@
 import { List, ListItem, ListItemText } from "@mui/material";
 
 /**
- * PageList Component
+ * TextList Component
  * Standardized list component for ordered or unordered lists.
  *
  * Props:

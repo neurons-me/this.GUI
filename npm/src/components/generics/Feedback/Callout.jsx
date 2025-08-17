@@ -38,6 +38,30 @@ const variantStyles = {
       color: '#a5d6a7',
     },
   },
+  alert: {
+    light: {
+      background: '#ffebee',
+      border: '#f44336',
+      color: '#b71c1c',
+    },
+    dark: {
+      background: '#3d0000',
+      border: '#ef5350',
+      color: '#ef9a9a',
+    },
+  },
+  neutral: {
+    light: {
+      background: '#f5f5f5',
+      border: '#9e9e9e',
+      color: '#424242',
+    },
+    dark: {
+      background: '#2c2c2c',
+      border: '#bdbdbd',
+      color: '#e0e0e0',
+    },
+  },
 };
 
 export default function Callout({

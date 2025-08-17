@@ -1,38 +1,42 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 
 /**
- * PageSection
- * A reusable section container with a title and optional subtitle.
- * Useful for structuring page content within a PageContainer.
+ * Section
+ * Minimal container that respects parent width.
+ * Controls: width, padding, margins, background color.
  */
-export default function Section({ title, subtitle, children, sx = {}, padding, bgcolor }) {
+export default function Section({
+  children,
+  width = "100%",           // toma el ancho del padre por defecto
+  padding = 1.6,               // padding base (MUI spacing units)
+  paddingX,                  // opcional: override horizontal
+  paddingY,                  // opcional: override vertical
+  marginY = 3,               // separación vertical por defecto
+  marginTop,                 // override superior
+  marginBottom,              // override inferior
+  bgcolor = "background.paper",
+  sx = {},
+  ...props
+}) {
+  const px = paddingX ?? padding;
+  const py = paddingY ?? padding;
+  const mt = marginTop ?? marginY;
+  const mb = marginBottom ?? marginY;
+
   return (
     <Box
       component="section"
       sx={{
-        width: "100%",
-        px: padding?.x ?? 2,
-        py: padding?.y ?? 2,
-        bgcolor: bgcolor ?? "background.paper",
+        width,
+        px,
+        py,
+        mt,
+        mb,
+        bgcolor,
         ...sx,
       }}
+      {...props}
     >
-      {title && (
-        <Typography
-          variant="h6"
-          sx={{ fontWeight: 600, marginBottom: subtitle ? 0.5 : 1 }}
-        >
-          {title}
-        </Typography>
-      )}
-      {subtitle && (
-        <Typography
-          variant="body2"
-          sx={{ color: "text.secondary", marginBottom: 1 }}
-        >
-          {subtitle}
-        </Typography>
-      )}
       {children}
     </Box>
   );

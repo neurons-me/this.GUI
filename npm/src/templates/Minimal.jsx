@@ -6,48 +6,86 @@ import TopBarAndSideBar from "../components/generics/AppBars/TopBarAndSideBar";
 import PageContainer from "../components/generics/Layout/PageContainer";
 import Footer from "../components/generics/AppBars/Footer";
 import RightContextDrawer from "../components/generics/AppBars/RightContextDrawer";
-export default function MinimalLayout({ config, topic, rightContext }) {
+import StickyOptions from "../components/generics/AppBars/StickyOptions";
+
+export default function MinimalLayout({ config, topic, rightContext, stickyOptions, footer }) {
   const {
     title = "This.GUI",
     logo = "https://neurons.me/neurons.me.png",
-    sideBarLinks = [],
-    topNavLinks = []
+    sideBarLinks = undefined,
+    topNavLinks = undefined
   } = config || {};
-  const isObjectSideBar =
-    sideBarLinks && typeof sideBarLinks === "object" && !Array.isArray(sideBarLinks);
-  const showDropdown = isObjectSideBar && Object.keys(sideBarLinks).length > 0;
-  const sections = showDropdown ? sideBarLinks : {};
-  // no longer calculating finalSideBarLinks here; it's handled by TopBarAndSideBar
+
+  // ---- Normalize/guards ------------------------------------------------------
+  const hasSideBarObject =
+    sideBarLinks &&
+    typeof sideBarLinks === "object" &&
+    !Array.isArray(sideBarLinks) &&
+    Object.keys(sideBarLinks).length > 0;
+
+  // Only pass contexts if we truly have a section map. Otherwise omit the prop entirely.
+  const sections = hasSideBarObject ? sideBarLinks : undefined;
+
+  // StickyOptions: render only if we truly have an items array with content
+  const ctaConfig = stickyOptions || (config && config.stickyOptions) || null;
+  const hasCtas =
+    !!ctaConfig &&
+    Array.isArray(ctaConfig.items) &&
+    ctaConfig.items.length > 0;
+
+  // Right drawer width (guard if rightContext is malformed)
+  const rightDrawerWidth =
+    rightContext && Array.isArray(rightContext.items) && rightContext.items.length > 0 ? 260 : 0;
+
   const [drawerOpen, setDrawerOpen] = useState(false);
+
   return (
     <>
       <TopBarAndSideBar
         title={title}
         logo={logo}
         drawerWidth={240}
-        contexts={sections}
+        contexts={sections || {}}
         topic={topic}
-        topNavLinks={topNavLinks}
+        {...(Array.isArray(topNavLinks) ? { topNavLinks } : {})}
       />
-          <Box
-            sx={{
-              flex: 1,
-              padding: { xs: 2, sm: 3 },
-              width: '100%',
-              maxWidth: { md: 'calc(100% - 240px - 260px)', xs: '100%' },
-              marginLeft: { md: '240px' },
-              marginRight: { md: rightContext?.items?.length > 0 ? '260px' : 0 },
-              mt: 3,
-              ml: 'auto',
-              mr: 'auto'
-            }}
-          >
+
+      {hasCtas && (
+        <StickyOptions
+          items={ctaConfig.items}
+          positioning={ctaConfig.positioning || {}}
+          behavior={{ respectRightDrawer: true, ...(ctaConfig.behavior || {}) }}
+          theme={ctaConfig.theme || {}}
+          visibility={ctaConfig.visibility || {}}
+          i18n={ctaConfig.i18n || {}}
+        />
+      )}
+
+      <Box
+        sx={{
+          flex: 1,
+          px: { xs: 2, sm: 3 },
+          mt: 5,
+          width: "auto",
+          "--right-drawer-width": `${rightDrawerWidth}px`,
+          ml: { md: "240px", xs: 0 },
+          mr: { md: rightDrawerWidth ? `${rightDrawerWidth}px` : 0, xs: 0 }
+        }}
+      >
         <PageContainer>
           <Outlet />
         </PageContainer>
       </Box>
-      <Footer />
-      {rightContext?.items?.length > 0 && (
+
+      {footer && (
+        <Footer
+          leftInset={240}
+          rightInset={rightDrawerWidth}
+          {...(typeof footer === "object" ? footer : {})}
+        />
+      )}
+
+      {rightContext && Array.isArray(rightContext.items) && rightContext.items.length > 0 && (
         <RightContextDrawer
           open={drawerOpen}
           onClose={() => setDrawerOpen(!drawerOpen)}

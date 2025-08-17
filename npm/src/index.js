@@ -1,11 +1,11 @@
 //TEXT
-export { default as PageTitle } from "./components/generics/Text/PageTitle";
-export { default as PageParagraph } from "./components/generics/Text/PageParagraph";
-export { default as PageList } from "./components/generics/Text/PageList";
-export { default as Quote } from "./components/generics/Text/Quote";
+export { default as TextTitle } from "./components/generics/Text/TextTitle";
+export { default as TextParagraph } from "./components/generics/Text/TextParagraph";
+export { default as TextList } from "./components/generics/Text/TextList";
+export { default as TextQuote } from "./components/generics/Text/TextQuote";
 //MEDIA
-export { default as PageImage } from "./components/generics/Media/PageImage";
-export { default as PageEmbed } from "./components/generics/Media/PageEmbed";
+export { default as Img } from "./components/generics/Media/Img";
+export { default as VideoEmbed } from "./components/generics/Media/VideoEmbed";
 //ORGANIZATION
 export { default as TableOfContents } from "./components/generics/Organization/TableOfContents";
 export { default as Tabs } from "./components/generics/Organization/Tabs";
@@ -13,6 +13,7 @@ export { default as Tabs } from "./components/generics/Organization/Tabs";
 export { default as PageContainer } from "./components/generics/Layout/PageContainer";
 export { default as Gridx } from "./components/generics/Layout/Gridx";
 export { default as Section } from "./components/generics/Layout/Section";
+export { default as SectionHeader } from "./components/generics/Layout/SectionHeader";
 export { default as PageDivider } from "./components/generics/Layout/PageDivider";
 //CODE
 export { default as CodeBlock } from "./components/generics/Code/CodeBlock";
@@ -24,6 +25,8 @@ export { useThemeContext } from "./context/ThemeContext";
 //APPBARS
 export { default as TopBarAndSideBar } from "./components/generics/AppBars/TopBarAndSideBar";
 export { default as RightContextDrawer } from "./components/generics/AppBars/RightContextDrawer";
+export { default as Footer } from "./components/generics/AppBars/Footer";
+export { default as StickyOptions } from "./components/generics/AppBars/StickyOptions";
 //THIS.ME
 export { default as MeFloating } from "./components/this.me/MeFloating";
 //FEEDBACK
@@ -32,3 +35,5 @@ export { default as Callout } from "./components/generics/Feedback/Callout";
 export { default as ModuleCard } from "./components/generics/Cards/ModuleCard";
 export { default as LilBox } from "./components/generics/Cards/LilBox";
 export { default as Gridme } from "./components/generics/Cards/Gridme";
+//Chats
+export { default as FullChatBot } from "./components/generics/Chats/FullChatBot";

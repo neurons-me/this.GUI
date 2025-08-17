@@ -10,7 +10,7 @@ import { Box } from "@mui/material";
  * - ratio: Aspect ratio of the embed. Accepts "16:9", "4:3", or custom (default: "16:9").
  * - allowFullScreen: Allows fullscreen mode (default: true).
  */
-export default function PageEmbed({
+export default function VideoEmbed({
   src,
   title,
   ratio = "16:9",

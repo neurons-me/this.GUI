@@ -1,6 +1,8 @@
 // lightTheme.js (Refined for archetypal harmony and visual pleasure)
 import { createTheme } from '@mui/material/styles';
+import { baseTheme } from './baseTheme';
 export const lightTheme = createTheme({
+  ...baseTheme,
   palette: {
     mode: 'light',
     primary: {
@@ -20,10 +22,6 @@ export const lightTheme = createTheme({
     link: {
       main: 'rgb(0, 140, 125)', // Slightly muted aqua, harmonious with primary, excellent contrast
     },
-  },
-  typography: {
-    fontFamily: 'Roboto, sans-serif',
-    pxToRem: (size) => `${size / 16}rem`,
   },
   custom: {
     border: 'rgba(0, 0, 0, 0.08)', // Softer border, aligns with archetypal minimalist elegance

@@ -1,7 +1,34 @@
 import { Link as RouterLink } from "react-router-dom";
 import { Box, Typography, Card, CardActionArea, CardContent } from "@mui/material";
 
-const ModuleCard = ({ title, description, href, image }) => {
+/**
+ * ModuleCard
+ * Clickable card for modules/features.
+ *
+ * Props:
+ * - title: string (required)
+ * - description: string
+ * - image: string (url to image)
+ * - href?: string  -> preferred navigation prop (internal route or external URL)
+ * - link?: string  -> alias of href for backward compatibility
+ * - target?: string -> optional target for external links (e.g., "_blank")
+ *
+ * Behavior:
+ * - If `href` (or `link`) starts with http/https, renders an <a>.
+ * - Otherwise, renders a React Router <Link> for client-side routing.
+ * - Avoids nested anchors: do NOT wrap ModuleCard with another <Link>.
+ */
+const ModuleCard = ({ title, description, image, href, link, target }) => {
+  const to = href ?? link ?? null;
+  const isExternal = typeof to === "string" && /^https?:\/\//i.test(to);
+
+  // Decide which props to pass to CardActionArea to avoid <a> inside <a>.
+  const navProps = to
+    ? isExternal
+      ? { component: "a", href: to, target: target ?? "_self", rel: "noopener noreferrer" }
+      : { component: RouterLink, to }
+    : {}; // No navigation if no href/link provided
+
   return (
     <Card
       sx={{
@@ -17,8 +44,7 @@ const ModuleCard = ({ title, description, href, image }) => {
       }}
     >
       <CardActionArea
-        component={RouterLink}
-        to={href}
+        {...navProps}
         sx={{ height: "100%", display: "flex", flexDirection: "column" }}
       >
         <CardContent
@@ -33,17 +59,19 @@ const ModuleCard = ({ title, description, href, image }) => {
           }}
         >
           {/* Image */}
-          <Box
-            component="img"
-            src={image}
-            alt={title}
-            sx={{
-              width: "80px",
-              height: "80px",
-              marginBottom: 1,
-              objectFit: "contain",
-            }}
-          />
+          {image && (
+            <Box
+              component="img"
+              src={image}
+              alt={title}
+              sx={{
+                width: "80px",
+                height: "80px",
+                marginBottom: 1,
+                objectFit: "contain",
+              }}
+            />
+          )}
 
           {/* Title */}
           <Typography
@@ -58,15 +86,17 @@ const ModuleCard = ({ title, description, href, image }) => {
           </Typography>
 
           {/* Description */}
-          <Typography
-            variant="body2"
-            sx={{
-              fontSize: "0.85rem",
-              color: "text.secondary",
-            }}
-          >
-            {description}
-          </Typography>
+          {description && (
+            <Typography
+              variant="body2"
+              sx={{
+                fontSize: "0.85rem",
+                color: "text.secondary",
+              }}
+            >
+              {description}
+            </Typography>
+          )}
         </CardContent>
       </CardActionArea>
     </Card>
