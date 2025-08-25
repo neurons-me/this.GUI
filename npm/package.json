@@ -36,9 +36,8 @@
     "react-draggable": "^4.4.6",
     "react-feather": "^2.0.10",
     "react-helmet-async": "^2.0.5",
-    "react-syntax-highlighter": "^15.6.1",
-    "this.me": "*"
-  },
+    "react-syntax-highlighter": "^15.6.1"
+    },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "@types/react": "^19.0.10",

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Box } from "@mui/material";
 import { GlobalStyles } from "@mui/system";
 import maybeDefaultMe from "this.me";

@@ -1,4 +1,3 @@
-import React from "react";
 import { Typography, Link } from "@mui/material";
 
 export function MeActive({ status, endpoint }) {
