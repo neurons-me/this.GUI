@@ -1,12 +1,28 @@
 // all.this/packages-src/this.GUI/npm/src/templates/Minimal.jsx
-import { useState } from "react";
+import React, { useState } from "react";
+class ErrorBoundary extends React.Component {
+  constructor(props){ super(props); this.state = { hasError: false, error: null }; }
+  static getDerivedStateFromError(error){ return { hasError: true, error }; }
+  componentDidCatch(error, info){ console.error(`[MinimalLayout:${this.props.label}]`, error, info); }
+  render(){
+    if(this.state.hasError){
+      return (
+        <div style={{ padding: 16, border: '1px solid #f99', borderRadius: 8, background: 'rgba(255,0,0,0.05)', margin: '12px 0' }}>
+          <strong>Component "{this.props.label}" failed to render.</strong>
+          <div style={{ fontSize: 12, opacity: 0.8, marginTop: 6 }}>{String(this.state.error)}</div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 import { Outlet } from "react-router-dom";
 import { Box } from "@mui/material";
-import TopBarAndSideBar from "../components/generics/AppBars/TopBarAndSideBar";
+import TopBarAndSideBar from "../components/generics/AppBars/TopBarAndSideBar/TopBarAndSideBar";
 import PageContainer from "../components/generics/Layout/PageContainer";
-import Footer from "../components/generics/AppBars/Footer";
-import RightContextDrawer from "../components/generics/AppBars/RightContextDrawer";
-import StickyOptions from "../components/generics/AppBars/StickyOptions";
+import Footer from "../components/generics/AppBars/Footer/Footer";
+import RightContextDrawer from "../components/generics/AppBars/RightContextDrawer/RightContextDrawer";
+import StickyOptions from "../components/generics/AppBars/StickyOptions/StickyOptions";
 
 export default function MinimalLayout({ config, topic, rightContext, stickyOptions, footer }) {
   const {
@@ -41,24 +57,28 @@ export default function MinimalLayout({ config, topic, rightContext, stickyOptio
 
   return (
     <>
-      <TopBarAndSideBar
-        title={title}
-        logo={logo}
-        drawerWidth={240}
-        contexts={sections || {}}
-        topic={topic}
-        {...(Array.isArray(topNavLinks) ? { topNavLinks } : {})}
-      />
+      <ErrorBoundary label="TopBarAndSideBar">
+        <TopBarAndSideBar
+          title={title}
+          logo={logo}
+          drawerWidth={240}
+          contexts={sections || {}}
+          topic={topic}
+          {...(Array.isArray(topNavLinks) ? { topNavLinks } : {})}
+        />
+      </ErrorBoundary>
 
       {hasCtas && (
-        <StickyOptions
-          items={ctaConfig.items}
-          positioning={ctaConfig.positioning || {}}
-          behavior={{ respectRightDrawer: true, ...(ctaConfig.behavior || {}) }}
-          theme={ctaConfig.theme || {}}
-          visibility={ctaConfig.visibility || {}}
-          i18n={ctaConfig.i18n || {}}
-        />
+        <ErrorBoundary label="StickyOptions">
+          <StickyOptions
+            items={ctaConfig.items}
+            positioning={ctaConfig.positioning || {}}
+            behavior={{ respectRightDrawer: true, ...(ctaConfig.behavior || {}) }}
+            theme={ctaConfig.theme || {}}
+            visibility={ctaConfig.visibility || {}}
+            i18n={ctaConfig.i18n || {}}
+          />
+        </ErrorBoundary>
       )}
 
       <Box
@@ -72,25 +92,31 @@ export default function MinimalLayout({ config, topic, rightContext, stickyOptio
           mr: { md: rightDrawerWidth ? `${rightDrawerWidth}px` : 0, xs: 0 }
         }}
       >
-        <PageContainer>
-          <Outlet />
-        </PageContainer>
+        <ErrorBoundary label="Page">
+          <PageContainer>
+            <Outlet />
+          </PageContainer>
+        </ErrorBoundary>
       </Box>
 
       {footer && (
-        <Footer
-          leftInset={240}
-          rightInset={rightDrawerWidth}
-          {...(typeof footer === "object" ? footer : {})}
-        />
+        <ErrorBoundary label="Footer">
+          <Footer
+            leftInset={240}
+            rightInset={rightDrawerWidth}
+            {...(typeof footer === "object" ? footer : {})}
+          />
+        </ErrorBoundary>
       )}
 
       {rightContext && Array.isArray(rightContext.items) && rightContext.items.length > 0 && (
-        <RightContextDrawer
-          open={drawerOpen}
-          onClose={() => setDrawerOpen(!drawerOpen)}
-          rightContext={rightContext}
-        />
+        <ErrorBoundary label="RightContextDrawer">
+          <RightContextDrawer
+            open={drawerOpen}
+            onClose={() => setDrawerOpen(!drawerOpen)}
+            rightContext={rightContext}
+          />
+        </ErrorBoundary>
       )}
     </>
   );

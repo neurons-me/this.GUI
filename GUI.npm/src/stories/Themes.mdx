@@ -1,0 +1,183 @@
+# This.GUI — Theme Engine
+**Token‑first. AI‑ready.**  
+The Theme Engine compiles **JSON tokens** into a live UI theme at runtime. It ships a “global” base and override it with per‑theme tokens (light/dark/brand) — or stream tokens from an API/AI and the UI updates instantly.
+
+---
+
+## How to read & write tokens
+- **Token path (key):** the *name* / route of the token. Example: `motion.easing.easeInOut`
+- **Value:** the actual design value. Example: `"cubic-bezier(0.4, 0, 0.2, 1)"`
+- **Where it lands in the theme:**  
+  - **Layer 1 (always available):** `theme.custom.*` — a safe parking spot for *any* token, even if there’s no native mapping yet.  
+  - **Layer 2 (optional/native):** when convenient, we also map into native runtime props (e.g. MUI) like `theme.transitions`, `theme.zIndex`, etc.
+
+---
+
+## Minimal example — “Motion + Z‑Index” (global)
+### 1) Add/extend in `global.tokens.json`
+```json
+{
+  "motion": {
+    "easing": {
+      "easeInOut": { "$type": "cubicBezier", "$value": "cubic-bezier(0.4, 0, 0.2, 1)" }
+    },
+    "duration": {
+      "standard": { "$type": "duration", "$value": 250 }
+    }
+  },
+  "zIndex": {
+    "modal": { "$type": "number", "$value": 1300 }
+  }
+}
+```
+
+### 2) How it appears in the theme (Layer 1 always)
+```js
+// theme.custom snapshot
+theme.custom.motion.easing.easeInOut  // "cubic-bezier(0.4, 0, 0.2, 1)"
+theme.custom.motion.duration.standard // 250
+theme.custom.zIndex.modal             // 1300
+```
+
+### 3) Optional native mapping (Layer 2)
+When you’re ready, extend `fromTokens` to also populate natives:
+
+```js
+// Example idea inside fromTokens:
+theme.transitions = {
+  easing: {
+    easeInOut: tokens.motion?.easing?.easeInOut?.$value
+  },
+  duration: {
+    standard: tokens.motion?.duration?.standard?.$value
+  }
+};
+theme.zIndex = {
+  ...theme.zIndex,
+  modal: tokens.zIndex?.modal?.$value
+};
+```
+
+Now you can use either the native path **or** the custom path:
+
+```jsx
+<Box
+  sx={{
+    transition: theme => `all ${theme.transitions.duration.standard}ms ${theme.transitions.easing.easeInOut}`,
+    zIndex: theme => theme.zIndex.modal
+  }}
+/>
+```
+
+If you didn’t add the native mapping yet, use the custom path:
+
+```jsx
+<Box
+  sx={{
+    transition: theme => `all ${theme.custom.motion.duration.standard}ms ${theme.custom.motion.easing.easeInOut}`,
+    zIndex: theme => theme.custom.zIndex.modal
+  }}
+/>
+```
+
+---
+## What keys can I customize?
+---
+
+### Colors
+- **Tokens:** `color.primary`, `color.secondary`, `color.bgDefault`
+- **Theme target:** `palette.*`
+- **Example:**
+```json
+"color": {
+  "primary": { "$type":"color", "$value":"#0a3a42" },
+  "bgDefault": { "$type":"color", "$value":"#121214" }
+}
+```
+
+---
+
+### Motion
+- **Tokens:** `motion.easing.*`, `motion.duration.*`
+- **Theme target:** `theme.transitions.*` or `theme.custom.motion.*`
+- **Example:**
+```json
+"motion": {
+  "easing": { "easeInOut": { "$value": "cubic-bezier(0.4,0,0.2,1)" } },
+  "duration": { "standard": { "$value": 250 } }
+}
+```
+
+---
+
+### Shadows
+- **Tokens:** `shadows[0..24]`
+- **Theme target:** `theme.shadows[]` or `theme.custom.shadows[]`
+
+---
+
+### Z-Index
+- **Tokens:** `zIndex.modal`, `zIndex.drawer`
+- **Theme target:** `theme.zIndex.*`
+
+---
+
+### Breakpoints
+- **Tokens:** `breakpoints.values.*`
+- **Theme target:** `theme.breakpoints.values`
+
+---
+
+### Typography
+- **Tokens:** `font.family`, `font.weightBold`, `lineHeight.body`
+- **Theme target:** `theme.typography.*` or `theme.custom.lineHeight.*`
+
+---
+
+### Spacing & Radius
+- **Tokens:** `spacing.base`, `radius.md`
+- **Theme target:** `theme.spacing()` & `theme.shape.borderRadius`
+
+---
+
+### Opacity
+- **Tokens:** `opacity.disabled`
+- **Theme target:** `palette.action.disabledOpacity` or `custom.opacity.disabled`
+
+---
+
+> All tokens are customizable. If a token isn’t mapped yet, you can still access it under `theme.custom.*`.  
+> Add mappings later without breaking existing code.
+
+---
+
+## Making your own theme (quick)
+
+1. **Start from global**: keep spacing, radius, fonts there.  
+2. **Create a theme token file** (e.g. `my.brand.tokens.json`) with your colors + meta:
+```json
+{
+  "meta": { "id": "my-brand", "name": "My Brand", "mode": "light" },
+  "color": {
+    "primary": { "$type":"color", "$value":"#0044ff" },
+    "bgDefault": { "$type":"color", "$value":"#f7f8fc" },
+    "textPrimary": { "$type":"color", "$value":"#0f1222" }
+  }
+}
+```
+3. **Apply at runtime**:
+```js
+import { getTheme } from '../../themes';
+const theme = getTheme({ tokens: myBrandTokens, mode: myBrandTokens.meta?.mode });
+```
+
+---
+
+## TL;DR
+
+- **Name:** the token path (e.g. `motion.easing.easeInOut`)  
+- **Value:** the `$value` in JSON (e.g. `"cubic-bezier(...)"`)  
+- **Where to read it:** `theme.custom.*` (always) or a native prop when mapped  
+- **How to change it:** edit the JSON; the app recompiles theme on the fly
+
+Build now with `custom.*`, land natively later — zero lock‑in, fully AI‑ready.

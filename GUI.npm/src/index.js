@@ -25,10 +25,10 @@ import MinimalLayout from "./templates/Minimal";
 // THEME
 import { CustomThemeProvider, useThemeContext } from "./context/ThemeContext";
 // APPBARS
-import TopBarAndSideBar from "./components/generics/AppBars/TopBarAndSideBar";
-import RightContextDrawer from "./components/generics/AppBars/RightContextDrawer";
-import Footer from "./components/generics/AppBars/Footer";
-import StickyOptions from "./components/generics/AppBars/StickyOptions";
+import TopBarAndSideBar from "./components/generics/AppBars/TopBarAndSideBar/TopBarAndSideBar";
+import RightContextDrawer from "./components/generics/AppBars/RightContextDrawer/RightContextDrawer";
+import Footer from "./components/generics/AppBars/Footer/Footer";
+import StickyOptions from "./components/generics/AppBars/StickyOptions/StickyOptions";
 // FEEDBACK
 import Callout from "./components/generics/Feedback/Callout";
 // Cards

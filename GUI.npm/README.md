@@ -1,2 +1,1 @@
 # This.GUI
-Ahora puedes correr npm run dev dentro de this.GUI para que Vite observe los cambios y reconstruya automáticamente mientras desarrollas los componentes. Esto te permite trabajar eficientemente sin necesidad de estar haciendo npm run build manualmente.

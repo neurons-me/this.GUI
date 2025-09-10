@@ -22,11 +22,9 @@ import {
   Menu
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import DarkMode from '@mui/icons-material/DarkMode';
-import LightMode from '@mui/icons-material/LightMode';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import { useThemeToggle } from '../../../context/ThemeContext';
+import ThemeSelector from '../../Theme/ThemeSelector';
 
 export default function TopBarAndSideBar({
   title = 'neurons.me',
@@ -44,7 +42,6 @@ export default function TopBarAndSideBar({
   const [openGroups, setOpenGroups] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
-  const { isDarkMode, toggleTheme } = useThemeToggle();
   const [anchorEl, setAnchorEl] = useState(null);
   const [openMenu, setOpenMenu] = useState(null);
 
@@ -457,12 +454,7 @@ export default function TopBarAndSideBar({
           })}
 
           {injectThemeToggle && (
-            <IconButton
-              onClick={toggleTheme}
-              sx={{ color: theme.palette.icon.main }}
-            >
-              {isDarkMode ? <DarkMode /> : <LightMode />}
-            </IconButton>
+            <ThemeSelector />
           )}
         </Toolbar>
       </AppBar>
