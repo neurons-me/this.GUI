@@ -1,33 +1,32 @@
-// src/themes/fromTokens.js
-import { createTheme } from '@mui/material/styles';
-
+// src/themes/fromTokens.ts
+import { createTheme, type Theme } from '@mui/material/styles';
 // Helpers ------------------------------------------------------------
-export const pxToRem = (n) => `${n / 16}rem`;
+export const pxToRem = (n: number): string => `${n / 16}rem`;
 
-const pick = (obj, path, fallback) => {
+const pick = <T = any,>(obj: any, path: Array<string | number>, fallback?: T): T => {
   // Safely read nested token value supporting Tokens Studio shape { $value }
   const raw =
-    path.reduce((acc, k) => (acc && acc[k] !== undefined ? acc[k] : undefined), obj) ??
+    path.reduce<any>((acc, k) => (acc && acc[k] !== undefined ? acc[k] : undefined), obj) ??
     undefined;
-  if (raw && typeof raw === 'object' && '$value' in raw) return raw.$value;
-  return raw ?? fallback;
+  if (raw && typeof raw === 'object' && '$value' in raw) return (raw as any).$value as T;
+  return (raw ?? fallback) as T;
 };
 
-const readNumber = (v, fb) => {
+const readNumber = (v: unknown, fb: number): number => {
   if (v === undefined || v === null) return fb;
-  const n = typeof v === 'string' ? parseFloat(v) : v;
-  return Number.isFinite(n) ? n : fb;
+  const n = typeof v === 'string' ? parseFloat(v) : (v as number);
+  return Number.isFinite(n) ? (n as number) : fb;
 };
 
-const ensureArrayLen = (arr, len, filler) => {
-  const a = Array.isArray(arr) ? [...arr] : [];
+const ensureArrayLen = <T,>(arr: T[] | unknown, len: number, filler: T): T[] => {
+  const a = Array.isArray(arr) ? ([...arr] as T[]) : [];
   for (let i = a.length; i < len; i++) a.push(filler);
   return a.slice(0, len);
 };
 
 // Build MUI shadows (length 25). Accepts either an array or a map {0..24}
-const buildShadows = (shadowTokens, mode) => {
-  const DEFAULT_SHADOWS =
+const buildShadows = (shadowTokens: any, mode: 'light' | 'dark'): Theme['shadows'] => {
+  const DEFAULT_SHADOWS: string[] =
     mode === 'dark'
       ? [
           'none',
@@ -86,39 +85,36 @@ const buildShadows = (shadowTokens, mode) => {
 
   // If tokens is array: normalize; if map: read values "0..24" or "s0..s24".
   if (Array.isArray(shadowTokens)) {
-    return ensureArrayLen(shadowTokens, 25, DEFAULT_SHADOWS[0]);
+    return ensureArrayLen<string>(shadowTokens as string[], 25, DEFAULT_SHADOWS[0]) as unknown as Theme['shadows'];
   }
   if (shadowTokens && typeof shadowTokens === 'object') {
-    const arr = [];
+    const arr: string[] = [];
     for (let i = 0; i < 25; i++) {
       const v =
-        pick(shadowTokens, [String(i)], undefined) ??
-        pick(shadowTokens, [`s${i}`], undefined);
+        pick<string | undefined>(shadowTokens, [String(i)], undefined) ??
+        pick<string | undefined>(shadowTokens, [`s${i}`], undefined);
       arr.push(v ?? DEFAULT_SHADOWS[i] ?? DEFAULT_SHADOWS[0]);
     }
-    return arr;
+    return arr as unknown as Theme['shadows'];
   }
-  return DEFAULT_SHADOWS;
+  return DEFAULT_SHADOWS as unknown as Theme['shadows'];
 };
 
 // Main compiler ------------------------------------------------------
-export function makeMuiTheme(globalTokens, themeTokens, mode = 'light') {
+export function makeMuiTheme(globalTokens: any, themeTokens: any, mode: 'light' | 'dark' = 'light'): Theme {
   const g = globalTokens || {};
   const c = themeTokens?.color || {};
-
   // Core primitives
   const radius = readNumber(pick(g, ['radius', 'md'], 10), 10);
   const spacing = readNumber(pick(g, ['spacing', 'base'], 8), 8);
-  const fontFamily = pick(g, ['font', 'family'], 'Roboto, sans-serif');
+  const fontFamily = pick<string>(g, ['font', 'family'], 'Roboto, sans-serif');
   const borderDefault =
-    pick(g, ['border', 'default'], undefined) ??
+    pick<string | undefined>(g, ['border', 'default'], undefined) ??
     (mode === 'dark' ? 'rgb(45,45,55)' : 'rgba(0,0,0,0.08)');
-
   // Extended tokens
   const semantic = themeTokens?.extendedColors || themeTokens?.semantic || {};
   const gradients = semantic?.gradients || {};
   const overlays = semantic?.overlays || {};
-
   const zIndexTokens = g.zIndex || {};
   const breakpointsTokens = g.breakpoints || {};
   const motion = g.motion || {};
@@ -126,17 +122,17 @@ export function makeMuiTheme(globalTokens, themeTokens, mode = 'light') {
   const iconSizes = g.iconSizes || {};
   const lineHeights = g.lineHeights || {};
   const shadowsTokens = g.shadows;
-
   // Build MUI theme
   const theme = createTheme({
+    // Palette accepts custom keys like `link` and `background.nav` in our design system,
+    // so we cast to any to avoid fighting MUI's strict palette types.
     palette: {
       mode,
       primary: { main: pick(c, ['primary'], '#1976d2') },
       secondary: { main: pick(c, ['secondary'], '#9c27b0') },
       icon: { main: pick(c, ['icon'], '#5e5e5e') },
       background: {
-        default:
-          pick(c, ['bgDefault'], mode === 'dark' ? '#121214' : '#f8f9fa'),
+        default: pick(c, ['bgDefault'], mode === 'dark' ? '#121214' : '#f8f9fa'),
         paper: pick(c, ['bgPaper'], mode === 'dark' ? '#181a1c' : '#fff'),
         nav: pick(c, ['bgNav'], mode === 'dark' ? '#16181a' : '#fdfdfd'),
       },
@@ -152,20 +148,20 @@ export function makeMuiTheme(globalTokens, themeTokens, mode = 'light') {
         main: pick(c, ['link'], mode === 'dark' ? '#00aa96' : '#008c7d'),
         visited: pick(c, ['linkVisited'], mode === 'dark' ? '#008278' : '#006e64'),
       },
-      error: { main: pick(semantic, ['error'], mode === 'dark' ? '#ef5350' : '#d32f2f') },
+      error:   { main: pick(semantic, ['error'],   mode === 'dark' ? '#ef5350' : '#d32f2f') },
       warning: { main: pick(semantic, ['warning'], '#ed6c02') },
-      info: { main: pick(semantic, ['info'], '#0288d1') },
+      info:    { main: pick(semantic, ['info'],    '#0288d1') },
       success: { main: pick(semantic, ['success'], '#2e7d32') },
       divider: pick(c, ['border'], borderDefault),
       action: {
-        hoverOpacity: readNumber(pick(opacity, ['hover'], 0.08), 0.08),
-        selectedOpacity: readNumber(pick(opacity, ['selected'], 0.12), 0.12),
-        disabledOpacity: readNumber(pick(opacity, ['disabled'], 0.38), 0.38),
-        focusOpacity: readNumber(pick(opacity, ['focus'], 0.12), 0.12),
+        hoverOpacity:     readNumber(pick(opacity, ['hover'],     0.08), 0.08),
+        selectedOpacity:  readNumber(pick(opacity, ['selected'],  0.12), 0.12),
+        disabledOpacity:  readNumber(pick(opacity, ['disabled'],  0.38), 0.38),
+        focusOpacity:     readNumber(pick(opacity, ['focus'],     0.12), 0.12),
         activatedOpacity: readNumber(pick(opacity, ['activated'], 0.12), 0.12),
       },
     },
-
+    // All tokens exposed under theme.custom for easy access
     custom: {
       border: pick(c, ['border'], borderDefault),
       gradients,
@@ -173,10 +169,8 @@ export function makeMuiTheme(globalTokens, themeTokens, mode = 'light') {
       iconSizes,
       lineHeights,
     },
-
-    shape: { borderRadius: Number.isFinite(radius) ? radius : 10 },
-    spacing: Number.isFinite(spacing) ? spacing : 8,
-
+    shape: { borderRadius: Number.isFinite(radius) ? (radius as number) : 10 },
+    spacing: Number.isFinite(spacing) ? (spacing as number) : 8,
     breakpoints: {
       values: {
         xs: readNumber(pick(breakpointsTokens, ['values', 'xs'], 0), 0),
@@ -186,7 +180,6 @@ export function makeMuiTheme(globalTokens, themeTokens, mode = 'light') {
         xl: readNumber(pick(breakpointsTokens, ['values', 'xl'], 1536), 1536),
       },
     },
-
     zIndex: {
       appBar: readNumber(pick(zIndexTokens, ['appBar'], 1100), 1100),
       drawer: readNumber(pick(zIndexTokens, ['drawer'], 1200), 1200),
@@ -194,7 +187,6 @@ export function makeMuiTheme(globalTokens, themeTokens, mode = 'light') {
       snackbar: readNumber(pick(zIndexTokens, ['snackbar'], 1400), 1400),
       tooltip: readNumber(pick(zIndexTokens, ['tooltip'], 1500), 1500),
     },
-
     transitions: {
       easing: {
         easeInOut: pick(motion, ['easing', 'standard'], 'cubic-bezier(0.4, 0, 0.2, 1)'),
@@ -212,7 +204,6 @@ export function makeMuiTheme(globalTokens, themeTokens, mode = 'light') {
         leavingScreen: readNumber(pick(motion, ['duration', 'leaving'], 195), 195),
       },
     },
-
     typography: {
       fontFamily,
       // existing variants
@@ -225,16 +216,15 @@ export function makeMuiTheme(globalTokens, themeTokens, mode = 'light') {
       body1: { fontSize: pxToRem(16), lineHeight: 1.6 },
       body2: { fontSize: pxToRem(14), lineHeight: 1.6 },
       button: { textTransform: 'none', fontWeight: 700, letterSpacing: '0.02em' },
-      // optional lineHeight scale for generators
-      lineHeights: {
-        tight: readNumber(pick(lineHeights, ['tight'], 1.2), 1.2),
-        normal: readNumber(pick(lineHeights, ['normal'], 1.5), 1.5),
-        relaxed: readNumber(pick(lineHeights, ['relaxed'], 1.7), 1.7),
+    },
+    shadows: buildShadows(shadowsTokens, mode),
+    layout: {
+      insets: {
+        left:  readNumber(pick(g, ['layout', 'insets', 'left'],  0), 0),
+        right: readNumber(pick(g, ['layout', 'insets', 'right'], 0), 0),
+        nav:   readNumber(pick(g, ['layout', 'insets', 'nav'],   0), 0),
       },
     },
-
-    shadows: buildShadows(shadowsTokens, mode),
-
     components: {
       MuiButton: {
         defaultProps: { disableElevation: true },
@@ -259,20 +249,20 @@ export function makeMuiTheme(globalTokens, themeTokens, mode = 'light') {
             '--gui-text-secondary': theme.palette.text.secondary,
             '--gui-link': theme.palette.link.main,
             '--gui-link-visited': theme.palette.link.visited || theme.palette.link.main,
-            '--gui-border': theme.custom?.border || theme.palette?.divider,
-
+            '--gui-border': theme.custom?.border || theme.palette.divider,
             // Motion / opacity / icon sizes CSS vars for non-MUI DOM
             '--gui-ease-standard': theme.transitions.easing.easeInOut,
             '--gui-duration-standard': `${theme.transitions.duration.standard}ms`,
             '--gui-opacity-hover': theme.palette.action.hoverOpacity,
             '--gui-opacity-disabled': theme.palette.action.disabledOpacity,
-            '--gui-icon-size-sm': iconSizes.sm ?? '16px',
-            '--gui-icon-size-md': iconSizes.md ?? '20px',
-            '--gui-icon-size-lg': iconSizes.lg ?? '24px',
-
+            '--gui-icon-size-sm': (iconSizes as any).sm ?? '16px',
+            '--gui-icon-size-md': (iconSizes as any).md ?? '20px',
+            '--gui-icon-size-lg': (iconSizes as any).lg ?? '24px',
             '--gui-radius': `${theme.shape.borderRadius}px`,
             '--gui-font-family': theme.typography.fontFamily,
-            '--gui-spacing': typeof theme.spacing === 'function' ? theme.spacing(1) : `${theme.spacing}px`,
+            '--gui-spacing': typeof theme.spacing === 'function' ? theme.spacing(1) : `${(theme as any).spacing}px`,
+            '--gui-inset-left': theme.layout.insets.left + 'px',
+            '--gui-inset-right': theme.layout.insets.right + 'px',
           },
           body: {
             fontFamily: theme.typography.fontFamily,
@@ -289,6 +279,5 @@ export function makeMuiTheme(globalTokens, themeTokens, mode = 'light') {
       },
     },
   });
-
   return theme;
 }

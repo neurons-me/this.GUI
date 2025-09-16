@@ -17,6 +17,11 @@ export default defineConfig({
     ...(isStorybook ? [] : [mdx({ include: ['**/*.mdx', '**/*.md'] })]),
     react()
   ],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src'),
+    }
+  },
   build: isDemo ? undefined : {
     lib: {
       entry: resolve(__dirname, 'src/index.js'),

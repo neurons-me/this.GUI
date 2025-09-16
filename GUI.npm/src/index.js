@@ -1,5 +1,18 @@
 // this.gui/src/index.js
 console.log("[this.gui] loaded.");
+// TEMPLATES
+import MinimalLayout from "./templates/Minimal";
+// THEME
+import { GuiProvider, useThemeContext } from "./context/GuiProvider";
+// APPBARS
+import NavBar from "./components/generics/AppBars/NavBar/NavBar";
+import Footer from "./components/generics/AppBars/Footer/Footer";
+import LeftDrawer from "./components/generics/AppBars/LeftDrawer/LeftDrawer";
+import RightDrawer from "./components/generics/AppBars/RightDrawer/RightDrawer";
+import StickyOptionsTop from "./components/generics/AppBars/StickyOptions/StickyOptionsTop";
+
+import TopBarAndSideBar from "./components/generics/AppBars/TopBarAndSideBar/TopBarAndSideBar";//REMOVE SOON
+import RightContextDrawer from "./components/generics/AppBars/RightContextDrawer/RightContextDrawer"; //REMOVE SOON
 // TEXT
 import TextTitle from "./components/generics/Text/TextTitle";
 import TextParagraph from "./components/generics/Text/TextParagraph";
@@ -20,15 +33,6 @@ import PageDivider from "./components/generics/Layout/PageDivider";
 import Hero2 from "./components/generics/Layout/Hero2";
 // CODE
 import CodeBlock from "./components/generics/Code/CodeBlock";
-// TEMPLATES
-import MinimalLayout from "./templates/Minimal";
-// THEME
-import { CustomThemeProvider, useThemeContext } from "./context/ThemeContext";
-// APPBARS
-import TopBarAndSideBar from "./components/generics/AppBars/TopBarAndSideBar/TopBarAndSideBar";
-import RightContextDrawer from "./components/generics/AppBars/RightContextDrawer/RightContextDrawer";
-import Footer from "./components/generics/AppBars/Footer/Footer";
-import StickyOptions from "./components/generics/AppBars/StickyOptions/StickyOptions";
 // FEEDBACK
 import Callout from "./components/generics/Feedback/Callout";
 // Cards
@@ -40,31 +44,69 @@ import FullChatBot from "./components/generics/Chats/FullChatBot";
 
 // Named exports (para `import { TextTitle } from "this.gui"`)
 export {
-  TextTitle, TextParagraph, TextList, TextQuote,
-  Img, VideoEmbed,
-  TableOfContents, Tabs,
-  PageContainer, Gridx, Section, SectionHeader, PageDivider, Hero2,
+  GuiProvider, 
+  useThemeContext,
+  NavBar, 
+  Footer, 
+  StickyOptionsTop, 
+  LeftDrawer, 
+  RightDrawer,
+  MinimalLayout, //soon to be removed
+  TopBarAndSideBar, //soon to be removed
+  RightContextDrawer, //soon to be removed
+  TextTitle, 
+  TextParagraph,
+  TextList,
+  TextQuote,
+  Img,
+  VideoEmbed,
+  TableOfContents,
+  Tabs,
+  PageContainer,
+  Gridx, 
+  Section, 
+  SectionHeader, 
+  PageDivider, 
+  Hero2,
   CodeBlock,
-  MinimalLayout,
-  CustomThemeProvider, useThemeContext,
-  TopBarAndSideBar, RightContextDrawer, Footer, StickyOptions,
   Callout,
-  ModuleCard, LilBox, Gridme,
+  ModuleCard, 
+  LilBox,
+  Gridme,
   FullChatBot,
 };
 
 // Default namespace (para `import GUI from "this.gui"`)
 const GUI = {
-  TextTitle, TextParagraph, TextList, TextQuote,
-  Img, VideoEmbed,
-  TableOfContents, Tabs,
-  PageContainer, Gridx, Section, SectionHeader, PageDivider, Hero2,
+  GuiProvider, 
+  useThemeContext,
+  NavBar, 
+  LeftDrawer, 
+  RightDrawer,
+  StickyOptionsTop,
+  TopBarAndSideBar, // soon to be removed 
+  RightContextDrawer, // soon to be removed
+  TextTitle, 
+  TextParagraph, 
+  TextList, 
+  TextQuote,
+  Img, 
+  VideoEmbed,
+  TableOfContents, 
+  Tabs,
+  PageContainer, 
+  Gridx, 
+  Section, 
+  SectionHeader, 
+  PageDivider, 
+  Hero2,
   CodeBlock,
   MinimalLayout,
-  CustomThemeProvider, useThemeContext,
-  TopBarAndSideBar, RightContextDrawer, Footer, StickyOptions,
+  Footer, 
   Callout,
-  ModuleCard, LilBox, Gridme,
+  ModuleCard, 
+  LilBox, 
+  Gridme,
   FullChatBot,
 };
 export default GUI;

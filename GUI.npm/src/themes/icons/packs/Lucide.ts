@@ -5,7 +5,10 @@
 //   const Camera = getLucideIcon('Camera'); // or 'lucide:Camera'
 //   <Camera size={18} />
 import * as Lucide from 'lucide-react';
+const LucideLib: Record<string, any> = ((Lucide as any)?.default ?? Lucide) as any;
+import { FC } from 'react';
 export const LUCIDE_PREFIX = 'lucide';
+export type LucideIconComp = FC<any>;
 
 /**
  * Normalize user-provided names to Lucide's PascalCase exports.
@@ -14,7 +17,7 @@ export const LUCIDE_PREFIX = 'lucide';
  *  - "video-off", "lucide/video-off"
  *  - "video off", "Lucide:videoOff"
  */
-export function normalizeLucideName(name = '') {
+export function normalizeLucideName(name: string = ''): string {
   if (typeof name !== 'string') return '';
   // strip optional prefix and separators
   let n = name.trim();
@@ -26,7 +29,6 @@ export function normalizeLucideName(name = '') {
     .filter(Boolean)
     .map((seg) => seg.charAt(0).toUpperCase() + seg.slice(1))
     .join('');
-
   return n;
 }
 
@@ -34,28 +36,33 @@ export function normalizeLucideName(name = '') {
  * Returns the Lucide React component for a given name. Falls back to HelpCircle.
  * The returned component can be used directly as a React component.
  */
-export function getLucideIcon(name) {
+export function getLucideIcon(name: string): LucideIconComp {
   const key = normalizeLucideName(name);
   // Prefer exact match; otherwise fallback to HelpCircle
-  return (key && Lucide[key]) || Lucide.HelpCircle || (() => null);
+  const Comp = key ? LucideLib[key] : undefined;
+  if (typeof Comp === 'function') return Comp as LucideIconComp;
+  return (LucideLib as any).HelpCircle as LucideIconComp;
 }
 
 /**
  * Boolean helper: does this icon exist in the Lucide map?
  */
-export function hasLucideIcon(name) {
+export function hasLucideIcon(name: string): boolean {
   const key = normalizeLucideName(name);
-  return Boolean(key && Lucide[key]);
+  return Boolean(key && typeof LucideLib[key] === 'function');
 }
 
 /**
  * List all available Lucide icon export names (PascalCase).
  * Useful for building pickers or debugging. Keep in mind it’s a big list.
  */
-export const lucideIconNames = Object.keys(Lucide).filter((k) => /^[A-Z]/.test(k));
-export default {
+export const lucideIconNames: string[] = Object.keys(LucideLib).filter((k) => /^[A-Z]/.test(k));
+
+const lucidePack = {
   prefix: LUCIDE_PREFIX,
   get: getLucideIcon,
   has: hasLucideIcon,
   names: lucideIconNames,
 };
+
+export default lucidePack;

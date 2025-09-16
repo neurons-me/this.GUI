@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, MouseEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -9,12 +9,38 @@ import {
   Button,
   Menu,
   MenuItem,
-  useTheme,
-  useMediaQuery,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+} from '@/gui/primitives';
+import { useGuiTheme, useGuiMediaQuery } from '@/gui';
 import ThemeSelector from '../../Theme/ThemeSelector';
-import Icon from '../../../../icons/Icon';
+import Icon from '../../../../themes/icons/Icon';
+
+interface NavBarLinkChild {
+  label: string;
+  href?: string;
+  external?: boolean;
+  icon?: string;
+  iconColor?: string;
+}
+
+interface NavBarLink {
+  label: string;
+  href?: string;
+  external?: boolean;
+  icon?: string;
+  iconColor?: string;
+  children?: NavBarLinkChild[];
+}
+
+interface NavBarProps {
+  title?: string;
+  logo?: string;
+  NavBarLinks?: NavBarLink[];
+  showMenuButton?: boolean;
+  onMenuClick?: () => void;
+  showThemeToggle?: boolean;
+  homeTo?: string;
+  position?: "fixed" | "static" | "sticky";
+}
 
 /**
  * NavBar (presentational)
@@ -22,13 +48,14 @@ import Icon from '../../../../icons/Icon';
  * Props:
  * - title?: string = 'neurons.me'
  * - logo?: string (URL)
- * - NavBarLinks?: Array<{ label: string, path?: string, external?: boolean, icon?: string, iconColor?: string, children?: Array<{label: string, path?: string, external?: boolean, icon?: string, iconColor?: string}> }>
+ * - NavBarLinks?: Array<{ label: string, href?: string, external?: boolean, icon?: string, iconColor?: string, children?: Array<{label: string, href?: string, external?: boolean, icon?: string, iconColor?: string}> }>
  *   // icon: string from This.GUI icon registry (e.g., 'mui:Settings', 'lucide:home')
  *   // iconColor: CSS color or theme key (e.g., '#00aa96', 'primary', 'text.secondary')
  * - showMenuButton?: boolean (controls left hamburger visibility)
  * - onMenuClick?: () => void (called when hamburger is clicked)
  * - showThemeToggle?: boolean (renders theme toggle icon)
  * - homeTo?: string (router link for brand/title)
+ * - position?: "fixed" | "static" | "sticky" (AppBar position, default is "fixed")
  */
 export default function NavBar({
   title = 'neurons.me',
@@ -38,15 +65,44 @@ export default function NavBar({
   onMenuClick,
   showThemeToggle = true,
   homeTo = '/',
-}) {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  position = 'fixed',
+}: NavBarProps) {
+  const theme = useGuiTheme();
+  const isMobile = useGuiMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [openMenu, setOpenMenu] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [openMenu, setOpenMenu] = useState<null | string>(null);
 
-  const handleMenuOpen = (event, label) => {
+  const toolbarRef = useRef<HTMLDivElement | null>(null);
+
+  // Sync nav inset with real rendered height (idempotent via provider)
+  useEffect(() => {
+    const setInsets = theme?.updateInsets;
+    if (typeof setInsets !== 'function') return;
+
+    const measure = () => {
+      const h = (toolbarRef.current?.offsetHeight ?? 48);
+      setInsets({ nav: h });
+    };
+
+    // initial measure
+    measure();
+
+    // observe toolbar size changes (density, breakpoints, etc.)
+    let ro: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== 'undefined' && toolbarRef.current) {
+      ro = new ResizeObserver(() => measure());
+      ro.observe(toolbarRef.current);
+    }
+
+    return () => {
+      if (ro) ro.disconnect();
+      setInsets({ nav: 0 });
+    };
+  }, [isMobile, theme.updateInsets]);
+
+  const handleMenuOpen = (event: MouseEvent<HTMLElement>, label: string) => {
     setAnchorEl(event.currentTarget);
     setOpenMenu(label);
   };
@@ -58,7 +114,7 @@ export default function NavBar({
 
   return (
     <AppBar
-      position="fixed"
+      position={position}
       elevation={0}
       sx={{
         minHeight: 48,
@@ -70,7 +126,7 @@ export default function NavBar({
         zIndex: theme.zIndex.drawer + 1,
       }}
     >
-      <Toolbar variant="dense" sx={{ minHeight: 48 }}>
+      <Toolbar ref={toolbarRef} variant="dense" sx={{ minHeight: 48 }}>
         {showMenuButton && (
           <IconButton
             color="inherit"
@@ -79,7 +135,7 @@ export default function NavBar({
             sx={{ mr: 2 }}
             aria-label="open navigation"
           >
-            <MenuIcon sx={{ color: theme.palette.icon?.main || theme.palette.text.primary }} />
+            <Icon name="mui:Menu" color={theme.palette.icon?.main || theme.palette.text.primary} size={24} />
           </IconButton>
         )}
 
@@ -119,17 +175,14 @@ export default function NavBar({
                     {link.label}
                   </Button>
                   <Menu anchorEl={anchorEl} open={openMenu === link.label} onClose={handleMenuClose}>
-                    {link.children.map((child) => (
+                    {link.children!.map((child) => (
                       <MenuItem
                         key={child.label}
                         component={child.external ? 'a' : Link}
                         {...(child.external
-                          ? { href: child.path, target: '_blank', rel: 'noopener noreferrer' }
-                          : { to: child.path })}
-                        onClick={() => {
-                          if (!child.external && child.path) navigate(child.path);
-                          handleMenuClose();
-                        }}
+                          ? { href: child.href, target: '_blank', rel: 'noopener noreferrer' }
+                          : { to: child.href })}
+                        onClick={handleMenuClose}
                         sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
                       >
                         {child.icon && <Icon name={child.icon} color={child.iconColor} size={18} />}
@@ -145,8 +198,8 @@ export default function NavBar({
                 key={link.label}
                 component={link.external ? 'a' : Link}
                 {...(link.external
-                  ? { href: link.path, target: '_blank', rel: 'noopener noreferrer' }
-                  : { to: link.path })}
+                  ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
+                  : { to: link.href })}
                 sx={{
                   color: theme.palette.text.primary,
                   '&:hover': { backgroundColor: 'transparent', color: theme.palette.text.secondary },
@@ -156,10 +209,6 @@ export default function NavBar({
                   minWidth: 0,
                   px: 1,
                 }}
-                onClick={() => {
-                  if (!link.external && link.path) navigate(link.path);
-                }}
-                style={{ color: theme.palette.text.primary, textDecoration: 'none' }}
               >
                 {link.icon && <Icon name={link.icon} color={link.iconColor} size={18} />}
                 {link.label}

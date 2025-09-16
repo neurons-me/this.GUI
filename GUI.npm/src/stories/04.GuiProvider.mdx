@@ -1,0 +1,129 @@
+# GuiProvider
+
+- Introduction & Features
+- API table with props and context values
+- Usage example with useThemeContext
+- Notes on CSS vars, insets, and theme toggling
+## Introduction
+`GuiProvider` provides a centralized way to handle theme persistence, dynamic insets for layout adjustments, and theme toggling with support for multiple theme variants.
+This component is designed to simplify theming in complex applications by combining theme state management, localStorage persistence, and CSS variable synchronization.
+
+## Features
+- **Theme Persistence:** Automatically saves and loads the last selected theme using `localStorage`.
+- **Insets Management:** Manages layout insets (left, right, navigation bar height) with synchronization to CSS variables for consistent styling.
+- **Multi-Variant Theme Support:** Supports multiple themes beyond simple light/dark modes.
+- **Theme Toggling:** Provides a toggle function to cycle through available themes or set a specific theme.
+- **Integration with MUI Theme:** Injects custom layout insets and update callbacks into the MUI theme object for seamless access via `useTheme()`.
+
+## API
+### `GuiProvider`
+There are only two props:
+	1.	initialTheme: Defines which theme key should be active when the provider first mounts. 
+    If a value is stored in localStorage, that takes precedence.
+	2.	children: This is a standard React pattern.
+	•	children means whatever JSX elements you wrap inside GuiProvider will be rendered there.
+	•	For example:
+```jsx
+<GuiProvider initialTheme="neurons-dark">
+  <App />
+</GuiProvider>
+```
+
+#### Props
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>initialTheme</code></td>
+      <td><code>string</code></td>
+      <td><code>'neurons-dark'</code></td>
+      <td>The initial theme key to use on mount.</td>
+    </tr>
+    <tr>
+      <td><code>children</code></td>
+      <td><code>ReactNode</code></td>
+      <td>—</td>
+      <td>Child components to render within the provider.</td>
+    </tr>
+  </tbody>
+</table>
+---
+#### Context Value
+The context value refers to the collection of state and functions that the `GuiProvider` makes available to any component within its React tree. 
+This context is exposed through a custom hook called `useThemeContext()`, which allows components to easily access and interact with the current theme state, available themes, and theme-related actions such as toggling or setting a theme directly.
+ By using this hook, components can remain decoupled from the provider's internal implementation while still responding dynamically to theme changes and layout insets.
+<p>The provider exposes the following context values via <code>useThemeContext()</code> hook:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>themeName</code></td>
+      <td><code>string</code></td>
+      <td>The current active theme key.</td>
+    </tr>
+    <tr>
+      <td><code>setThemeName</code></td>
+      <td><code>function</code></td>
+      <td>Set the active theme by key.</td>
+    </tr>
+    <tr>
+      <td><code>availableThemes</code></td>
+      <td><code>Array</code></td>
+      <td>List of available theme metadata objects.</td>
+    </tr>
+    <tr>
+      <td><code>toggleTheme</code></td>
+      <td><code>function</code></td>
+      <td>Toggle between themes or set a specific theme.</td>
+    </tr>
+    <tr>
+      <td><code>getThemeMeta</code></td>
+      <td><code>function</code></td>
+      <td>Get metadata for a given theme key.</td>
+    </tr>
+  </tbody>
+</table>
+
+Here is a simple example demonstrating how to consume the context using the `useThemeContext()` hook:
+
+```jsx
+import React from 'react';
+import { useThemeContext } from 'this.gui';
+
+function ThemeInfo() {
+  const { themeName, setThemeName, availableThemes, toggleTheme, getThemeMeta } = useThemeContext();
+  return (
+    <div>
+      <p>Current Theme: {themeName}</p>
+      <button onClick={() => toggleTheme()}>Toggle Theme</button>
+      <ul>
+        {availableThemes.map(({ key, name }) => (
+          <li key={key}>
+            <button onClick={() => setThemeName(key)}>{name}</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+- `themeName`: The key of the currently active theme.
+- `setThemeName`: Function to change the active theme by specifying its key.
+- `availableThemes`: Array containing metadata about all themes available.
+- `toggleTheme`: Function to cycle through available themes or set a specific theme.
+- `getThemeMeta`: Function to retrieve metadata for a given theme key.

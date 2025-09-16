@@ -1,5 +1,5 @@
 import React from 'react';
-import Icon from '../../icons/Icon';
+import Icon from '../../themes/icons/Icon';
 
 // Expanded icon registry demonstration with both Lucide and Material (MUI) icons
 const ICONS = [
@@ -33,7 +33,6 @@ const ICONS = [
   { name: 'mui:CalendarMonth', label: 'mui:CalendarMonth' },
   { name: 'mui:Message', label: 'mui:Message' },
   { name: 'mui:Forum', label: 'mui:Forum' },
-  { name: 'mui:Whatsapp', label: 'mui:Whatsapp' },
   { name: 'mui:Telegram', label: 'mui:Telegram' },
   { name: 'mui:BusinessCenter', label: 'mui:BusinessCenter' },
   { name: 'mui:TrendingUp', label: 'mui:TrendingUp' },
@@ -165,6 +164,20 @@ import CameraAltIcon from '@mui/icons-material/CameraAlt';
 // Use in JSX
 <LucideCamera size={24} color="#4caf50" />
 <CameraAltIcon fontSize="medium" htmlColor="#ff9800" />
+`}</code>
+    </pre>
+
+    <h3>Dynamic Theming Support</h3>
+    <p>
+      If you pass a static <code>color</code> or <code>htmlColor</code> prop to <code>&lt;Icon&gt;</code>, the icon color will not update when the theme changes.
+      To make icons react to theme changes, omit the <code>color</code> or <code>htmlColor</code> props and rely on the default behavior, which uses <code>theme.palette.text.primary</code> or <code>theme.palette.text.secondary</code>.
+    </p>
+    <pre style={{ background: '#0f111a', color: '#e6e6e6', padding: 16, borderRadius: 8, overflow: 'auto' }}>
+      <code>{`// Theme-aware icon (auto-updates with dark/light theme)
+<Icon name="mui:Settings" size={24} />
+
+// Fixed-color icon (doesn't change with theme)
+<Icon name="mui:Settings" size={24} htmlColor="#ff9800" />
 `}</code>
     </pre>
   </div>

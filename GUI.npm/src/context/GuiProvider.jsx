@@ -1,14 +1,10 @@
-// src/themes/ThemeContext.jsx
-// src/context/ThemeContext.jsx
+// src/context/GuiProvider.jsx
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { getTheme, AVAILABLE_THEMES } from '../themes';
-
 // Public API: use `useThemeContext()` only. `useThemeToggle` was removed to avoid confusion
 // now that themes are multi-variant (not just light/dark).
-
 const THEMES_SOURCE = AVAILABLE_THEMES || [];
-
 // Context with a clear shape for IDEs
 const ThemeToggleContext = createContext({
   themeName: 'neurons-dark',
@@ -18,7 +14,7 @@ const ThemeToggleContext = createContext({
   getThemeMeta: () => ({})
 });
 
-export function CustomThemeProvider({ initialTheme = 'neurons-dark', children }) {
+export function GuiProvider({ initialTheme = 'neurons-dark', children }) {
   // persist last chosen theme
   const [themeName, setThemeName] = useState(() => {
     try {
@@ -31,10 +27,38 @@ export function CustomThemeProvider({ initialTheme = 'neurons-dark', children })
   useEffect(() => {
     try { localStorage.setItem('this.gui:theme', themeName); } catch {}
   }, [themeName]);
-
   // Build MUI theme from tokens
   const theme = useMemo(() => getTheme({ key: themeName }), [themeName]);
+  // Insets state (as before) and CSS var sync (optional, transparent)
+  const [insets, setInsets] = useState({ left: 0, right: 0, nav: 0 });
+  const updateInsetsCb = React.useCallback(({ left, right, nav } = {}) => {
+    setInsets((prev) => {
+      const next = {
+        left: left != null ? left : prev.left,
+        right: right != null ? right : prev.right,
+        nav: nav != null ? nav : prev.nav,
+      };
+      if (next.left === prev.left && next.right === prev.right && next.nav === prev.nav) {
+        return prev; // no change
+      }
+      return next;
+    });
+  }, []);
 
+  useEffect(() => {
+    // Keep canonical runtime CSS vars in sync for non-MUI consumers
+    const style = document.documentElement.style;
+    style.setProperty('--gui-inset-left', `${insets.left || 0}px`);
+    style.setProperty('--gui-inset-right', `${insets.right || 0}px`);
+    style.setProperty('--gui-nav-height', `${insets.nav || 0}px`);
+  }, [insets]);
+  // Inject mirror into MUI theme so components can read/update via useTheme()
+  const themed = useMemo(() => {
+    const t = { ...theme };
+    t.layout = { ...(theme.layout || {}), insets: { left: insets.left || 0, right: insets.right || 0, nav: insets.nav || 0 } };
+    t.updateInsets = updateInsetsCb;
+    return t;
+  }, [theme, insets, updateInsetsCb]);
   const availableThemes = useMemo(() => {
     // AVAILABLE_THEMES is an array of meta objects coming from tokens
     // Expected shape per item: { id, name, mode, icon, preview }
@@ -64,7 +88,6 @@ export function CustomThemeProvider({ initialTheme = 'neurons-dark', children })
   // Toggle cycles over the available keys unless a string key is provided
   const value = useMemo(() => {
     const keys = availableThemes.map((t) => t.key);
-
     return {
       themeName,
       setThemeName,
@@ -83,10 +106,9 @@ export function CustomThemeProvider({ initialTheme = 'neurons-dark', children })
       },
     };
   }, [themeName, availableThemes]);
-
   return (
     <ThemeToggleContext.Provider value={value}>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={themed}>
         <CssBaseline />
         {children}
       </ThemeProvider>
@@ -95,4 +117,4 @@ export function CustomThemeProvider({ initialTheme = 'neurons-dark', children })
 }
 
 export const useThemeContext = () => useContext(ThemeToggleContext);
-export default CustomThemeProvider;
+export default GuiProvider;

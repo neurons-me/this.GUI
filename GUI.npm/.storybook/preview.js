@@ -1,31 +1,29 @@
-// .storybook/preview.js — force-sync MUI theme in Canvas **and** Docs, no JSX
+// .storybook/preview.js
 import React from 'react'
-import { ThemeProvider, CssBaseline } from '@mui/material'
+import { CssBaseline } from '@mui/material'
+import GuiProvider from '../src/context/GuiProvider'
+import { AVAILABLE_THEMES } from '../src/themes'
 import { themes } from 'storybook/internal/theming';
-import { getTheme } from '../src/themes'
 
-// Bridge: sync `data-theme` on <html> so Docs/MDX (unattached) can react
-function HtmlThemeBridge(props) {
-  const theme = props && props.theme ? props.theme : 'light'
-  React.useEffect(() => {
-    const el = document.documentElement // <html>
-    if (!el) return
-    el.setAttribute('data-theme', theme)
-  }, [theme])
-  return null
-}
+// Items reales para la toolbar (si tienes meta en tokens)
+const TOOLBAR_ITEMS = (AVAILABLE_THEMES || []).map(t => ({
+  value: t.id || t.key || t.name,
+  title: t.name || t.id,
+}))
 
 export const globalTypes = {
   theme: {
     name: 'Theme',
     description: 'This.GUI theme',
-    defaultValue: 'dark',
+    defaultValue: 'neurons-dark',
     toolbar: {
       icon: 'mirror',
-      items: [
-        { value: 'light', right: '☀️', title: 'Light' },
-        { value: 'dark', right: '🌙', title: 'Dark' },
-      ],
+      items: TOOLBAR_ITEMS.length
+        ? TOOLBAR_ITEMS
+        : [
+            { value: 'neurons-light', title: 'Light' },
+            { value: 'neurons-dark',  title: 'Dark'  },
+          ],
       showName: true,
       dynamicTitle: true,
     },
@@ -34,29 +32,31 @@ export const globalTypes = {
 
 export const decorators = [
   (Story, context) => {
-    const themeName = context.globals.theme || 'dark'
-    const key = themeName === 'light' ? 'neurons-light' : 'neurons-dark'
-    const theme = getTheme({ key })
+    const themeKey =
+      context.globals.theme ||
+      (AVAILABLE_THEMES?.[0]?.id) ||
+      'neurons-dark';
+
+    // 1) sincroniza con localStorage (sin tocar tu provider)
+    try { localStorage.setItem('this.gui:theme', themeKey) } catch {}
+
+    // 2) setea data-theme para MDX/CSS en Docs
+    React.useEffect(() => {
+      document.documentElement?.setAttribute('data-theme', themeKey)
+    }, [themeKey])
+
+    // 3) forzamos remount con `key` para que el provider rehaga el estado
     return React.createElement(
-      ThemeProvider,
-      { theme },
+      GuiProvider,
+      { initialTheme: themeKey, key: `sb-${themeKey}` },
       React.createElement(CssBaseline, null),
-      React.createElement(HtmlThemeBridge, { theme: themeName }),
       React.createElement(Story, null)
     )
   },
 ]
 
 export const parameters = {
-  controls: {
-    matchers: {
-      color: /(background|color)$/i,
-      date: /Date$/i,
-    },
-  },
+  controls: { matchers: { color: /(background|color)$/i, date: /Date$/i } },
   backgrounds: { disable: true },
-  docs: { 
-    page: null ,
-    theme: themes.dark,
-  },
+  docs: { page: null, theme: themes.dark },
 }

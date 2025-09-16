@@ -1,7 +1,15 @@
-// src/icons/registry.jsx
-import React from 'react';
-import lucidePack, { LUCIDE_PREFIX, getLucideIcon } from './packs/lucide';
+//src/themes/icons/registry.tsx
+import * as React from 'react';
+import lucidePack, { LUCIDE_PREFIX, getLucideIcon, normalizeLucideName } from './packs/Lucide';
 import muiPack, { MUI_PREFIX } from './packs/Material';
+
+export type LazyIconComp = React.LazyExoticComponent<React.ComponentType<any>>;
+
+export interface IconProvider {
+  key: string;
+  resolve: (name: string) => LazyIconComp;
+  exists?: (name: string) => boolean;
+}
 
 /**
  * Icon registry (pluggable)
@@ -22,8 +30,15 @@ import muiPack, { MUI_PREFIX } from './packs/Material';
  */
 
 // ---------- fallback / placeholder ----------
-function emptyIconFactory(name = 'unknown') {
-  const Placeholder = ({ size = 20, color = 'currentColor', style, title, ...rest }) => (
+function emptyIconFactory(name: string = 'unknown'): LazyIconComp {
+  type PlaceholderProps = {
+    size?: number;
+    color?: string;
+    style?: React.CSSProperties;
+    title?: string;
+    [key: string]: any;
+  };
+  const Placeholder: React.FC<PlaceholderProps> = ({ size = 20, color = 'currentColor', style, title, ...rest }) => (
     <svg
       width={size}
       height={size}
@@ -46,32 +61,40 @@ function emptyIconFactory(name = 'unknown') {
     </svg>
   );
   Placeholder.displayName = `IconPlaceholder(${String(name)})`;
-  return React.lazy(() => Promise.resolve({ default: Placeholder }));
+  const Lazy = React.lazy(() => Promise.resolve({ default: Placeholder }));
+  return Lazy as LazyIconComp;
 }
 
 // ---------- helpers ----------
-const hasPrefix = (raw, prefix) => raw.toLowerCase().startsWith(prefix.toLowerCase() + ':')
-  || raw.toLowerCase().startsWith(prefix.toLowerCase() + '/');
+const hasPrefix = (raw: string, prefix: string): boolean =>
+  raw.toLowerCase().startsWith(prefix.toLowerCase() + ':') ||
+  raw.toLowerCase().startsWith(prefix.toLowerCase() + '/');
 
-const stripPrefix = (raw, prefix) =>
+const stripPrefix = (raw: string, prefix: string): string =>
   raw.replace(new RegExp(`^${prefix}[:/.-]\\s*`, 'i'), '');
 
 // ---------- built-in providers ----------
 /**
  * Lucide provider adapter
- *  - getLucideIcon(name) returns a *component* (not lazy), so wrap it.
+ *  - Dynamically import lucide-react and resolve the named export at runtime.
  */
-const lucideProvider = {
+const lucideProvider: IconProvider = {
   key: LUCIDE_PREFIX,
-  resolve: (rawName) => {
-    const Comp = getLucideIcon(stripPrefix(rawName, LUCIDE_PREFIX));
-    if (!Comp) return emptyIconFactory(rawName);
-    return React.lazy(() => Promise.resolve({ default: Comp }));
+  resolve: (rawName: string) => {
+    const key = stripPrefix(rawName, LUCIDE_PREFIX);
+    const pascal = normalizeLucideName(key);
+    const Lazy = React.lazy(async () => {
+      const mod: any = await import('lucide-react');
+      const lib: Record<string, any> = (typeof mod.default === 'object' && mod.default) ? mod.default : mod;
+      const Comp = lib[pascal] ?? lib.HelpCircle;
+      return { default: Comp };
+    });
+    return Lazy as LazyIconComp;
   },
-  exists: (name) => {
-    const key = stripPrefix(name, LUCIDE_PREFIX);
+  exists: (name: string) => {
+    // Best-effort check using the already-imported pack (fast path)
     try {
-      const Comp = getLucideIcon(key);
+      const Comp = getLucideIcon(stripPrefix(name, LUCIDE_PREFIX));
       return Boolean(Comp);
     } catch {
       return false;
@@ -83,34 +106,34 @@ const lucideProvider = {
  * MUI provider adapter
  *  - Material pack already returns React.lazy components via get(name)
  */
-const muiProvider = {
+const muiProvider: IconProvider = {
   key: MUI_PREFIX,
-  resolve: (rawName) => {
-    const Comp = muiPack.get(rawName);
-    return Comp || emptyIconFactory(rawName);
+  resolve: (rawName: string) => {
+    const Comp = muiPack.get(rawName) as LazyIconComp | undefined;
+    return Comp ?? emptyIconFactory(rawName);
   },
-  exists: (name) => !!muiPack.has?.(name),
+  exists: (name: string) => Boolean(muiPack.has?.(name)),
 };
 
 // ---------- pluggable registry ----------
-const _providers = new Map([
+const _providers: Map<string, IconProvider> = new Map([
   [lucideProvider.key, lucideProvider],
   [muiProvider.key, muiProvider],
 ]);
 
-export function registerIconProvider(key, provider) {
+export function registerIconProvider(key: string, provider: IconProvider): void {
   if (!key || !provider || typeof provider.resolve !== 'function') {
     throw new Error('[icons/registry] registerIconProvider(key, { resolve }) requires a valid resolver');
   }
-  _providers.set(String(key).toLowerCase(), { key, ...provider });
+  _providers.set(String(key).toLowerCase(), { ...provider, key });
 }
 
-export function getRegisteredProviders() {
+export function getRegisteredProviders(): string[] {
   return Array.from(_providers.keys());
 }
 
 // ---------- main resolver ----------
-export function lazyIcon(name) {
+export function lazyIcon(name: string): LazyIconComp {
   const raw = String(name || '');
   if (!raw) return emptyIconFactory('empty');
 
@@ -137,7 +160,7 @@ export function lazyIcon(name) {
   }
 }
 
-export const PROVIDERS = {
+export const PROVIDERS: { lucide: string; mui: string } = {
   lucide: lucideProvider.key,
   mui: muiProvider.key,
 };

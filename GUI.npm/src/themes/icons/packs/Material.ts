@@ -1,12 +1,16 @@
-// src/icons/packs/Material.js
-import React from 'react';  
+// src/themes/icons/packs/Material.ts
+import * as React from 'react';
 export const MUI_PREFIX = 'mui';
+// A Material icon component resolved via React.lazy
+export type MuiIconComp = React.LazyExoticComponent<React.ComponentType<any>>;
 // Whitelist de MUI Icons (añade aquí los que uses)
-export const MUI_MAP = {
+export const MUI_MAP: Record<string, MuiIconComp> = {
   BarChart: React.lazy(() => import('@mui/icons-material/BarChart')),
   Memory: React.lazy(() => import('@mui/icons-material/Memory')),
   Power: React.lazy(() => import('@mui/icons-material/Power')),
   Email: React.lazy(() => import('@mui/icons-material/Email')),
+  ExpandLess: React.lazy(() => import('@mui/icons-material/ExpandLess')),
+  ExpandMore: React.lazy(() => import('@mui/icons-material/ExpandMore')),
   Bolt: React.lazy(() => import('@mui/icons-material/Bolt')),
   AttachMoney: React.lazy(() => import('@mui/icons-material/AttachMoney')),
   Insights: React.lazy(() => import('@mui/icons-material/Insights')),
@@ -45,9 +49,10 @@ export const MUI_MAP = {
   DeveloperMode: React.lazy(() => import('@mui/icons-material/DeveloperMode')),
   CurrencyBitcoin: React.lazy(() => import('@mui/icons-material/CurrencyBitcoin')),
   Brush: React.lazy(() => import('@mui/icons-material/Brush')),
+  Menu: React.lazy(() => import('@mui/icons-material/Menu')),
 };
 
-export function normalizeMuiName(name = '') {
+export function normalizeMuiName(name: string = ''): string {
   if (typeof name !== 'string') return '';
   let n = name.trim();
   n = n.replace(/^mui[:/.-]\s*/i, '');
@@ -55,25 +60,28 @@ export function normalizeMuiName(name = '') {
     .replace(/[^a-zA-Z0-9]+/g, ' ')
     .split(' ')
     .filter(Boolean)
-    .map(s => s.charAt(0).toUpperCase() + s.slice(1))
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
     .join('');
   return n;
 }
 
-export function getMuiIcon(name) {
+export function getMuiIcon(name: string): MuiIconComp | null {
   const key = normalizeMuiName(name);
   return key && MUI_MAP[key] ? MUI_MAP[key] : null;
 }
 
-export function hasMuiIcon(name) {
+export function hasMuiIcon(name: string): boolean {
   const key = normalizeMuiName(name);
-  return !!(key && MUI_MAP[key]);
+  return Boolean(key && MUI_MAP[key]);
 }
-// Default export following the pattern in lucide.js
-export default {
+
+// Default export following the pattern in Lucide.ts
+const materialPack = {
   prefix: MUI_PREFIX,
   map: MUI_MAP,
   normalize: normalizeMuiName,
   get: getMuiIcon,
   has: hasMuiIcon,
 };
+
+export default materialPack;

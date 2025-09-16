@@ -1,11 +1,9 @@
 // src/themes/index.js
 import globalTokens from './tokens/global.tokens.json';
 import { makeMuiTheme } from './fromTokens';
-
 // Built-in themes (fallback)
 import neuronsLight from './tokens/neurons.light.tokens.json';
 import neuronsDark from './tokens/neurons.dark.tokens.json';
-
 const BUILT_IN_THEMES = {
   'neurons-light': {
     tokens: neuronsLight,

@@ -10,7 +10,7 @@ import {
   Box,
 } from '@mui/material';
 import * as MuiIcons from '@mui/icons-material';
-import { useThemeContext } from '../../../context/ThemeContext';
+import { useThemeContext } from '../../../context/GuiProvider';
 
 // Fallback a un icono si no existe el solicitado
 const getMuiIcon = (name) => {
