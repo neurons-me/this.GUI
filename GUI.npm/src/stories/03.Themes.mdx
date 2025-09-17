@@ -1,235 +1,493 @@
-# This.GUI — Theme Engine
-**Token‑first. AI‑ready.**  
-The Theme Engine compiles **JSON tokens** into a live UI theme at runtime. It ships a “global” base and override it with per‑theme tokens (light/dark/brand) — or stream tokens from an API/AI and the UI updates instantly.
-
----
-
-1. fromTokens → creates a MUI theme
-   • Your `makeMuiTheme(globalTokens, themeTokens, mode)` calls `createTheme(...)` from MUI.  
-   • It compiles tokens (palette, shadows, typography, breakpoints, etc.) and returns a valid MUI theme.  
-   • Additionally, all tokens are placed under `theme.custom` so they are always accessible (even if they don’t have a native mapping yet).
-
-2. GuiProvider → injects and coordinates layout
-   • GuiProvider takes the token‑driven theme from `getTheme(...)`, then extends it:  
-   • Adds `theme.layout.insets` (left/right/nav).  
-   • Adds `theme.updateInsets` (callback so NavBar/Drawers can report their sizes).  
-   • Syncs CSS variables (`--gui-inset-left/right`, `--gui-nav-height`).  
-   • Finally, it provides this extended theme to the app through `ThemeProvider`.
-
-3. Components → use MUI hooks on *your* extended theme
-   • `useTheme()` (from MUI) returns the same theme injected via ThemeProvider — your token‑driven theme plus the GuiProvider extensions.  
-     That means components can read palette / breakpoints / zIndex as well as `theme.layout.insets` and `theme.updateInsets`.  
-   • `useMediaQuery()` (from MUI) uses `theme.breakpoints` from the current theme. Since you define them in `fromTokens`, everything stays in sync.  
-   → You never call GuiProvider directly; you consume the theme it already injected.
-
-4. How this fits with components
-   • LeftDrawer / NavBar / Footer: typically rely on `useMediaQuery(theme.breakpoints...)` to decide layout (permanent vs. temporary, density, etc.), and they use `theme.updateInsets`/`theme.layout.insets` to coordinate global spacing.  
-   • StickyOptionsTop: in addition provides a `mobileVariant` prop to force mobile/desktop modes without depending on the real viewport. In `auto`, it can check a breakpoint (ideally from the theme) or a `mobileBreakpoint` prop.
-
-Final mental model
-   • **Responsive detection:** handled by MUI (`useMediaQuery` + `theme.breakpoints` defined by your tokens).  
-   • **Space coordination between bars and drawers:** handled by GuiProvider (injects `layout.insets` + `updateInsets` + CSS vars).  
-   • **`useTheme` hook:** from MUI, but returns your theme extended by GuiProvider (MUI + insets + utilities). It’s “MUI + GuiProvider,” just as you described. ✅
-
-
-## How to read & write tokens
-- **Token path (key):** the *name* / route of the token. Example: `motion.easing.easeInOut`
-- **Value:** the actual design value. Example: `"cubic-bezier(0.4, 0, 0.2, 1)"`
-- **Where it lands in the theme:**  
-  - **Layer 1 (always available):** `theme.custom.*` — a safe parking spot for *any* token, even if there’s no native mapping yet.  
-  - **Layer 2 (optional/native):** when convenient, we also map into native runtime props (e.g. MUI) like `theme.transitions`, `theme.zIndex`, etc.
-
----
-
-## Minimal example — “Motion + Z‑Index” (global)
-### 1) Add/extend in `global.tokens.json`
-```json
-{
-  "motion": {
-    "easing": {
-      "easeInOut": { "$type": "cubicBezier", "$value": "cubic-bezier(0.4, 0, 0.2, 1)" }
-    },
-    "duration": {
-      "standard": { "$type": "duration", "$value": 250 }
-    }
-  },
-  "zIndex": {
-    "modal": { "$type": "number", "$value": 1300 }
-  }
-}
-```
-
-### 2) How it appears in the theme (Layer 1 always)
-```js
-// theme.custom snapshot
-theme.custom.motion.easing.easeInOut  // "cubic-bezier(0.4, 0, 0.2, 1)"
-theme.custom.motion.duration.standard // 250
-theme.custom.zIndex.modal             // 1300
-```
-
-### 3) Optional native mapping (Layer 2)
-When you’re ready, extend `fromTokens` to also populate natives:
-
-```js
-// Example idea inside fromTokens:
-theme.transitions = {
-  easing: {
-    easeInOut: tokens.motion?.easing?.easeInOut?.$value
-  },
-  duration: {
-    standard: tokens.motion?.duration?.standard?.$value
-  }
-};
-theme.zIndex = {
-  ...theme.zIndex,
-  modal: tokens.zIndex?.modal?.$value
-};
-```
-
-Now you can use either the native path **or** the custom path:
-
-```jsx
-<Box
-  sx={{
-    transition: theme => `all ${theme.transitions.duration.standard}ms ${theme.transitions.easing.easeInOut}`,
-    zIndex: theme => theme.zIndex.modal
-  }}
-/>
-```
-
-If you didn’t add the native mapping yet, use the custom path:
-
-```jsx
-<Box
-  sx={{
-    transition: theme => `all ${theme.custom.motion.duration.standard}ms ${theme.custom.motion.easing.easeInOut}`,
-    zIndex: theme => theme.custom.zIndex.modal
-  }}
-/>
-```
-
----
-## What keys can I customize?
----
-
-### Colors
-- **Tokens:** `color.primary`, `color.secondary`, `color.bgDefault`
-- **Theme target:** `palette.*`
-- **Example:**
-```json
-"color": {
-  "primary": { "$type":"color", "$value":"#0a3a42" },
-  "bgDefault": { "$type":"color", "$value":"#121214" }
-}
-```
-
----
-
-### Motion
-- **Tokens:** `motion.easing.*`, `motion.duration.*`
-- **Theme target:** `theme.transitions.*` or `theme.custom.motion.*`
-- **Example:**
-```json
-"motion": {
-  "easing": { "easeInOut": { "$value": "cubic-bezier(0.4,0,0.2,1)" } },
-  "duration": { "standard": { "$value": 250 } }
-}
-```
-
----
-
-### Shadows
-- **Tokens:** `shadows[0..24]`
-- **Theme target:** `theme.shadows[]` or `theme.custom.shadows[]`
-
----
-
-### Z-Index
-- **Tokens:** `zIndex.modal`, `zIndex.drawer`
-- **Theme target:** `theme.zIndex.*`
-
----
-
-### Breakpoints
-- **Tokens:** `breakpoints.values.*`
-- **Theme target:** `theme.breakpoints.values`
-
----
-
-### Typography
-- **Tokens:** `font.family`, `font.weightBold`, `lineHeight.body`
-- **Theme target:** `theme.typography.*` or `theme.custom.lineHeight.*`
-
----
-
-### Spacing & Radius
-- **Tokens:** `spacing.base`, `radius.md`
-- **Theme target:** `theme.spacing()` & `theme.shape.borderRadius`
-
----
-
-### Opacity
-- **Tokens:** `opacity.disabled`
-- **Theme target:** `palette.action.disabledOpacity` or `custom.opacity.disabled`
-
----
-
-> All tokens are customizable. If a token isn’t mapped yet, you can still access it under `theme.custom.*`.  
-> Add mappings later without breaking existing code.
-
----
-
-## Making your own theme (quick)
-
-1. **Start from global**: keep spacing, radius, fonts there.  
-2. **Create a theme token file** (e.g. `my.brand.tokens.json`) with your colors + meta:
-```json
-{
-  "meta": { "id": "my-brand", "name": "My Brand", "mode": "light" },
-  "color": {
-    "primary": { "$type":"color", "$value":"#0044ff" },
-    "bgDefault": { "$type":"color", "$value":"#f7f8fc" },
-    "textPrimary": { "$type":"color", "$value":"#0f1222" }
-  }
-}
-```
-3. **Apply at runtime**:
-```js
-import { getTheme } from '../../themes';
-const theme = getTheme({ tokens: myBrandTokens, mode: myBrandTokens.meta?.mode });
-```
-```json
-                // Visual summary
-                ┌────────────────────────────┐
-                │     JSON Design Tokens     │
-                └──────────────┬─────────────┘
-                               │
-                               ▼
-                  ┌────────────────────────┐
-                  │   fromTokens compiler   │
-                  └──────────────┬─────────┘
-                                 │
-          ┌──────────────────────┴───────────────────────┐
-          │                                              │
-          ▼                                              ▼
- ┌───────────────────────────┐              ┌───────────────────────────┐
- │  Layer 1 — theme.custom   │              │  Layer 2 — Native MUI     │
- │  * Always present         │              │  * Optional mapping       │
- │  * Safe parking spot      │              │  * Feeds MUI ecosystem    │
- │                           │              │                           │
- │  theme.custom.motion.*    │              │  theme.transitions.*      │
- │  theme.custom.gradients.* │              │  theme.zIndex.*           │
- │  theme.custom.opacity.*   │              │  theme.breakpoints.values │
- └───────────────────────────┘              └───────────────────────────┘
-```
+# This.GUI — Theme Engine (v2)
+**Token‑first. Manifest‑driven.**  
+Compila **tokens JSON** en un tema MUI en runtime. Ahora cada **tema** tiene **modos** (normalmente `light` y `dark`) definidos por un **manifest**; además exportamos **CSS variables** y coordinamos **insets** (barras/drawers) con el `GuiProvider`.
 
 ---
 
 ## TL;DR
 
-- **Name:** the token path (e.g. `motion.easing.easeInOut`)  
-- **Value:** the `$value` in JSON (e.g. `"cubic-bezier(...)"`)  
-- **Where to read it:** `theme.custom.*` (always) or a native prop when mapped  
-- **How to change it:** edit the JSON; the app recompiles theme on the fly
+- **Tokens**: describen valores de diseño (colors, spacing, motion…).  
+- **Manifest**: describe el *tema* (id, name, icon, modos y dónde están sus tokens).  
+- **fromTokens**: `makeMuiTheme(globalTokens, modeTokens, mode)` produce un MUI theme.  
+- **getTheme**: crea el theme desde `tokens`, desde un `manifest`, o desde **built‑ins**.  
+- **GuiProvider**: guarda el tema activo `family+mode`, inyecta **CSS vars** y coordina **insets**.  
+- **Selector/Toggle**: UI para cambiar de modo (`light`/`dark`) del tema activo.  
+- **AppBar note**: MUI solo soporta `default | primary | secondary | transparent`. Otros colores → vía `sx`.
 
-Build now with `custom.*`, land natively later — zero lock‑in, fully AI‑ready.
+---
+
+## Estructura recomendada
+
+```
+src/themes/
+  tokens/
+    global.tokens.json               # base compartida (radius, spacing, motion…)
+    neurons/
+      manifest.json                  # describe el tema "neurons.me"
+      light.tokens.json              # tokens modo light (solo valores, sin metadata)
+      dark.tokens.json               # tokens modo dark  (solo valores, sin metadata)
+  fromTokens.ts                      # compilador tokens → MUI theme
+  index.js                           # registro built‑in + fábricas públicas
+  theme.d.ts                         # tipos opcionales para DX
+```
+
+### Manifest (qué es y qué contiene)
+
+- **Quién soy**: `id`, `name`, `description`, `author`, `version`, etc.
+- **Dónde están mis tokens**: `modes.light.path` y `modes.dark.path`.
+- **Icono del tema**: `icon` (opcional).  
+  - Soporta:  
+    ```ts
+    type ThemeIcon =
+      | { type: 'mui' | 'lucide'; value: string } // nombre de icon set
+      | { type: 'url'; value: string }            // ruta a .svg/.png
+      | { type: 'svg'; value: string }            // SVG inline
+      | { type: 'data'; value: string };          // data URI
+    ```
+- **Importante**: ya **no** guardamos `preview` ni metadata dentro de los token files; el preview se **deriva** del theme (por ejemplo `palette.background.default`, `palette.primary.main`, `palette.link.main`, etc.).
+
+**Ejemplo `manifest.json`:**
+```json
+{
+  "id": "neurons.me",
+  "name": "neurons.me",
+  "description": "A modern, flexible theme for Neuroverse.",
+  "author": "suiGn",
+  "version": "1.0.0",
+  "license": "MIT",
+  "icon": { "type": "mui", "value": "Palette" },
+  "modes": {
+    "light": { "path": "./light.tokens.json" },
+    "dark":  { "path": "./dark.tokens.json" }
+  }
+}
+```
+
+---
+
+## Tokens (qué va dentro)
+
+Los token files **solo** contienen valores. Si usas Tokens Studio, respeta `{"$value": ...}`; el compilador lo entiende.
+
+**Ejemplo `light.tokens.json` (recortado):**
+```json
+{
+  "color": {
+    "primary":       { "$value": "#0a3a42" },
+    "secondary":     { "$value": "#e5396f" },
+    "icon":          { "$value": "#5e5e5e" },
+    "bgDefault":     { "$value": "#f8f9fa" },
+    "bgPaper":       { "$value": "#ffffff" },
+    "bgNav":         { "$value": "#fdfdfd" },
+    "textPrimary":   { "$value": "#111111" },
+    "textSecondary": { "$value": "#444444" },
+    "link":          { "$value": "#008c7d" },
+    "linkVisited":   { "$value": "#006e64" },
+    "border":        { "$value": "rgba(0,0,0,0.08)" }
+  }
+}
+```
+
+---
+
+## Compilador (`fromTokens.ts`)
+
+**API principal**
+```ts
+makeMuiTheme(globalTokens: any, modeTokens: any, mode: 'light'|'dark'): Theme
+```
+
+- Mapea colores a `theme.palette`:
+  - `color.primary` → `palette.primary.main`
+  - `color.secondary` → `palette.secondary.main`
+  - `color.bgDefault` → `palette.background.default`
+  - `color.bgPaper` → `palette.background.paper`
+  - `color.bgNav` → `palette.background.nav` *(custom key)*
+  - `color.textPrimary` / `color.textSecondary` → `palette.text.*`
+  - `color.link` / `color.linkVisited` → `palette.link.*` *(custom key)*
+  - Semánticos (`extendedColors.*`): `success`, `warning`, `error`, `info`
+- Expone **todos** los tokens además bajo `theme.custom.*` para acceso estable.
+- Construye `breakpoints`, `zIndex`, `typography`, `shadows`, `transitions`, etc.
+- Inyecta **CSS variables** con `MuiCssBaseline`:
+  - `--gui-primary`, `--gui-secondary`, `--gui-bg-default`, `--gui-bg-paper`,  
+    `--gui-bg-nav`, `--gui-text-primary`, `--gui-text-secondary`,  
+    `--gui-link`, `--gui-link-visited`, `--gui-border`, etc.
+
+**Modo manifest (opcional)**  
+Si lo necesitas, exportamos `makeMuiThemeFromManifest(manifest, { mode })`, que toma tokens de `manifest.modes[mode].tokens` y llama internamente a `makeMuiTheme(...)`.
+
+---
+
+## Registro y fábricas (`themes/index.js`)
+
+- **Built‑ins**: Registramos `neurons` con su `manifest` y tokens `light/dark`.
+- **createThemeFromTokens(tokens, mode)**: atajo directo a `makeMuiTheme(...)`.
+- **createThemeFromManifest(manifest, mode, tokensByMode?)**: usa manifest + (opcional) map `{ light, dark }`.
+- **getTheme**  
+  ```ts
+  // options: { key?: string; manifest?: any; tokens?: any; mode: 'light' | 'dark' }
+  ```
+  - Si pasas `tokens`: prioriza `createThemeFromTokens`.
+  - Si pasas `manifest`: prioriza `createThemeFromManifest`.
+  - Si pasas `key` de built‑in: resuelve del registro (`neurons` + `mode`).
+- **AVAILABLE_THEMES**: lista plana derivada de los built‑ins:
+  ```ts
+  type AvailableTheme = {
+    id: string;         // ej. "neurons-light"
+    family: string;     // ej. "neurons"
+    name: string;       // ej. "neurons.me Light"
+    mode: 'light'|'dark';
+    manifest: any;
+  }
+  ```
+
+---
+
+## GuiProvider (coordinación y contexto)
+
+El `GuiProvider`:
+
+1) **Estado del tema activo**  
+   - Guarda `themeKey` (ej. `neurons-dark`) en `localStorage` (`this.gui:theme`).  
+   - Deriva `family` + `mode` del catálogo `AVAILABLE_THEMES`.  
+   - Expone helpers: `setMode('light'|'dark')`, `setFamilyAndMode(family, mode)`, `toggleMode()`.
+
+2) **Compila y extiende el theme**  
+   - Llama `getTheme({ key: active.id })`.  
+   - Inyecta `theme.layout.insets` y `theme.updateInsets(cb)`.  
+   - Sincroniza CSS vars: `--gui-inset-left/right` y `--gui-nav-height`.
+
+3) **Consumo desde componentes**  
+   - Usa `useTheme()` (MUI) → obtienes **MUI + extensiones de GuiProvider**.  
+   - Usa `useMediaQuery(theme.breakpoints.*)` para responsivo consistente.  
+   - Lee/actualiza insets con `theme.layout.insets` y `theme.updateInsets`.
+
+**Hook**
+```ts
+import { useThemeContext } from '@/context/GuiProvider';
+
+const { family, mode, toggleMode, setMode, setFamilyAndMode, availableFamilies } = useThemeContext();
+```
+
+---
+
+## Selector & Toggle
+
+- **ThemeSelector**: muestra el *nombre del tema* (family), un **preview** derivado del theme y un **toggle** (🌞/🌙) alineado a la derecha.  
+- **Previews**: se derivan del theme activo (p.ej. `background.default`, `primary.main`, `secondary.main`, `link.main`, etc.). Puedes aumentar la cuadrícula y mostrar tooltips con el nombre del token.
+
+---
+
+## Notas de compatibilidad (MUI)
+
+- **AppBar `color`**: soporta `default | primary | secondary | transparent`.  
+  - Si quieres `success | info | warning | error` u otro tono, usa `sx`:
+    ```jsx
+    <AppBar
+      color="transparent"
+      sx={{
+        bgcolor: (t) => t.palette.success.main,
+        color: (t) => t.palette.getContrastText(t.palette.success.main)
+      }}
+    />
+    ```
+- El resto de componentes respetan `palette` y aceptan `sx` granular.
+
+---
+
+## Ejemplos
+
+### 1) Aplicar un built‑in (neurons dark)
+```ts
+import { getTheme } from '@/themes';
+const theme = getTheme({ key: 'neurons', mode: 'dark' });
+```
+
+### 2) Aplicar tokens “al vuelo” (sin manifest)
+```ts
+import { getTheme } from '@/themes';
+import myTokens from './my.light.tokens.json';
+
+const theme = getTheme({ tokens: myTokens, mode: 'light' });
+```
+
+### 3) Cambiar de modo desde UI
+```tsx
+import { useThemeContext } from '@/context/GuiProvider';
+
+function ModeToggle() {
+  const { mode, toggleMode } = useThemeContext();
+  return <Switch checked={mode === 'dark'} onChange={toggleMode} />;
+}
+```
+
+---
+
+## Troubleshooting
+
+**“No veo mis temas en el selector”**  
+- Asegúrate de que `themes/index.js` registre tu tema en `BUILT_IN` y que `AVAILABLE_THEMES` lo incluya.  
+- Si es un tema externo, pásalo por `getTheme({ manifest, tokensByMode })` o por `getTheme({ tokens })`.
+
+**“AppBar no cambia de color a ‘success’”**  
+- Es esperado: usa `sx` como se muestra arriba.
+
+**“Quiero pre‑pintar CSS para evitar FOUC”**  
+- Puedes generar un `tokens.css` en *build‑time* con variables por defecto; el `GuiProvider` lo re‑hidrata en runtime.
+
+---
+
+## Mental model final
+- **Tokens JSON** definen la verdad de diseño.  
+- **Manifest** describe el tema (icono, modos y rutas a tokens).  
+- **fromTokens** compila a **MUI theme** + `theme.custom.*` + **CSS vars**.  
+- **GuiProvider** selecciona `family+mode`, persiste, añade **insets** y expone helpers.  
+- **Componentes** consumen el tema (MUI) y estilizan con `sx` de forma granular.
+
+Build ahora con tokens; itera el mapeo nativo cuando lo necesites — sin lock‑in, listo para AI.
+
+# This.GUI — Theme Engine (v2)
+**Token‑first. Manifest‑driven.**  
+Compiles **JSON tokens** into an MUI theme at runtime. Each **theme** now has **modes** (typically `light` and `dark`) defined by a **manifest**; we also export **CSS variables** and coordinate **insets** (bars/drawers) via `GuiProvider`.
+
+---
+
+## TL;DR
+
+- **Tokens**: describe design values (colors, spacing, motion, …).  
+- **Manifest**: describes the *theme* (id, name, icon, modes and where their tokens live).  
+- **fromTokens**: `makeMuiTheme(globalTokens, modeTokens, mode)` produces an MUI theme.  
+- **getTheme**: builds a theme from `tokens`, from a `manifest`, or from **built‑ins**.  
+- **GuiProvider**: stores the active `family+mode`, injects **CSS vars** and coordinates **insets**.  
+- **Selector/Toggle**: UI to switch between `light`/`dark` of the active theme.  
+- **AppBar note**: MUI only supports `default | primary | secondary | transparent`. Other colors → use `sx`.
+
+---
+
+## Recommended structure
+
+```
+src/themes/
+  tokens/
+    global.tokens.json               # shared base (radius, spacing, motion…)
+    neurons/
+      manifest.json                  # describes the "neurons.me" theme
+      light.tokens.json              # light‑mode tokens (values only, no metadata)
+      dark.tokens.json               # dark‑mode tokens  (values only, no metadata)
+  fromTokens.ts                      # compiler tokens → MUI theme
+  index.js                           # built‑in registry + public factories
+  theme.d.ts                         # optional DX types
+```
+
+### Manifest (what it is and what it contains)
+
+- **Identity**: `id`, `name`, `description`, `author`, `version`, etc.
+- **Where tokens are**: `modes.light.path` and `modes.dark.path`.
+- **Theme icon**: `icon` (optional).  
+  - Supported:
+    ```ts
+    type ThemeIcon =
+      | { type: 'mui' | 'lucide'; value: string } // icon-set name
+      | { type: 'url'; value: string }            // path to .svg/.png
+      | { type: 'svg'; value: string }            // inline SVG
+      | { type: 'data'; value: string };          // data URI
+    ```
+- **Important**: we **no longer** keep `preview` or metadata inside token files; the preview is **derived** from the theme (e.g. `palette.background.default`, `palette.primary.main`, `palette.link.main`, etc.).
+
+**Example `manifest.json`:**
+```json
+{
+  "id": "neurons.me",
+  "name": "neurons.me",
+  "description": "A modern, flexible theme for Neuroverse.",
+  "author": "suiGn",
+  "version": "1.0.0",
+  "license": "MIT",
+  "icon": { "type": "mui", "value": "Palette" },
+  "modes": {
+    "light": { "path": "./light.tokens.json" },
+    "dark":  { "path": "./dark.tokens.json" }
+  }
+}
+```
+
+---
+
+## Tokens (what goes inside)
+
+Token files contain **values only**. If you use Tokens Studio, keep the `{"$value": ...}` shape; the compiler understands it.
+
+**Example `light.tokens.json` (trimmed):**
+```json
+{
+  "color": {
+    "primary":       { "$value": "#0a3a42" },
+    "secondary":     { "$value": "#e5396f" },
+    "icon":          { "$value": "#5e5e5e" },
+    "bgDefault":     { "$value": "#f8f9fa" },
+    "bgPaper":       { "$value": "#ffffff" },
+    "bgNav":         { "$value": "#fdfdfd" },
+    "textPrimary":   { "$value": "#111111" },
+    "textSecondary": { "$value": "#444444" },
+    "link":          { "$value": "#008c7d" },
+    "linkVisited":   { "$value": "#006e64" },
+    "border":        { "$value": "rgba(0,0,0,0.08)" }
+  }
+}
+```
+
+---
+
+## Compiler (`fromTokens.ts`)
+
+**Primary API**
+```ts
+makeMuiTheme(globalTokens: any, modeTokens: any, mode: 'light'|'dark'): Theme
+```
+
+- Maps colors into `theme.palette`:
+  - `color.primary` → `palette.primary.main`
+  - `color.secondary` → `palette.secondary.main`
+  - `color.bgDefault` → `palette.background.default`
+  - `color.bgPaper` → `palette.background.paper`
+  - `color.bgNav` → `palette.background.nav` *(custom key)*
+  - `color.textPrimary` / `color.textSecondary` → `palette.text.*`
+  - `color.link` / `color.linkVisited` → `palette.link.*` *(custom key)*
+  - Semantic (`extendedColors.*`): `success`, `warning`, `error`, `info`
+- Exposes **all** tokens again under `theme.custom.*` for a stable access surface.
+- Builds `breakpoints`, `zIndex`, `typography`, `shadows`, `transitions`, etc.
+- Injects **CSS variables** via `MuiCssBaseline`:
+  - `--gui-primary`, `--gui-secondary`, `--gui-bg-default`, `--gui-bg-paper`,  
+    `--gui-bg-nav`, `--gui-text-primary`, `--gui-text-secondary`,  
+    `--gui-link`, `--gui-link-visited`, `--gui-border`, etc.
+
+**Manifest mode (optional)**  
+When needed, `makeMuiThemeFromManifest(manifest, { mode })` reads tokens from `manifest.modes[mode].tokens` and calls `makeMuiTheme(...)` internally.
+
+---
+
+## Registry & factories (`themes/index.js`)
+
+- **Built‑ins**: we register `neurons` with its `manifest` and `light/dark` tokens.
+- **createThemeFromTokens(tokens, mode)**: thin shortcut to `makeMuiTheme(...)`.
+- **createThemeFromManifest(manifest, mode, tokensByMode?)**: uses manifest + (optional) map `{ light, dark }`.
+- **getTheme**  
+  ```ts
+  // options: { key?: string; manifest?: any; tokens?: any; mode: 'light' | 'dark' }
+  ```
+  - If you pass `tokens`: it prioritizes `createThemeFromTokens`.
+  - If you pass a `manifest`: it prioritizes `createThemeFromManifest`.
+  - If you pass a built‑in `key`: it resolves from the registry (`neurons` + `mode`).
+- **AVAILABLE_THEMES**: flat list derived from built‑ins:
+  ```ts
+  type AvailableTheme = {
+    id: string;         // e.g. "neurons-light"
+    family: string;     // e.g. "neurons"
+    name: string;       // e.g. "neurons.me Light"
+    mode: 'light'|'dark';
+    manifest: any;
+  }
+  ```
+
+---
+
+## GuiProvider (coordination & context)
+
+`GuiProvider`:
+
+1) **Active theme state**  
+   - Stores `themeKey` (e.g. `neurons-dark`) in `localStorage` (`this.gui:theme`).  
+   - Derives `family` + `mode` from `AVAILABLE_THEMES`.  
+   - Exposes helpers: `setMode('light'|'dark')`, `setFamilyAndMode(family, mode)`, `toggleMode()`.
+
+2) **Compiles and extends the theme**  
+   - Calls `getTheme({ key: active.id })`.  
+   - Injects `theme.layout.insets` and `theme.updateInsets(cb)`.  
+   - Syncs CSS vars: `--gui-inset-left/right` and `--gui-nav-height`.
+
+3) **How components consume it**  
+   - Use MUI’s `useTheme()` → you get **MUI + GuiProvider extensions**.  
+   - Use `useMediaQuery(theme.breakpoints.*)` for consistent responsiveness.  
+   - Read/update insets via `theme.layout.insets` and `theme.updateInsets`.
+
+**Hook**
+```ts
+import { useThemeContext } from '@/context/GuiProvider';
+
+const { family, mode, toggleMode, setMode, setFamilyAndMode, availableFamilies } = useThemeContext();
+```
+
+---
+
+## Selector & Toggle
+
+- **ThemeSelector**: shows the *theme name* (family), a derived **preview**, and a **toggle** (🌞/🌙) aligned to the right.  
+- **Previews**: derived from the active theme (e.g. `background.default`, `primary.main`, `secondary.main`, `link.main`, etc.). You can increase the grid and show tooltips with the token name.
+
+---
+
+## Compatibility notes (MUI)
+
+- **AppBar `color`** supports `default | primary | secondary | transparent`.  
+  - If you want `success | info | warning | error` or any custom color, use `sx`:
+    ```jsx
+    <AppBar
+      color="transparent"
+      sx={{
+        bgcolor: (t) => t.palette.success.main,
+        color:  (t) => t.palette.getContrastText(t.palette.success.main)
+      }}
+    />
+    ```
+- The rest of the components respect your `palette` and accept granular `sx`.
+
+---
+
+## Examples
+
+### 1) Use a built‑in (neurons dark)
+```ts
+import { getTheme } from '@/themes';
+const theme = getTheme({ key: 'neurons', mode: 'dark' });
+```
+
+### 2) Use “ad‑hoc” tokens (no manifest)
+```ts
+import { getTheme } from '@/themes';
+import myTokens from './my.light.tokens.json';
+
+const theme = getTheme({ tokens: myTokens, mode: 'light' });
+```
+
+### 3) Switch mode from UI
+```tsx
+import { useThemeContext } from '@/context/GuiProvider';
+
+function ModeToggle() {
+  const { mode, toggleMode } = useThemeContext();
+  return <Switch checked={mode === 'dark'} onChange={toggleMode} />;
+}
+```
+
+---
+
+## Troubleshooting
+
+**“I don’t see my themes in the selector.”**  
+- Make sure `themes/index.js` registers your theme in `BUILT_IN` and that `AVAILABLE_THEMES` includes it.  
+- For an external theme, use `getTheme({ manifest, tokensByMode })` or `getTheme({ tokens })`.
+
+**“AppBar won’t change to ‘success’.”**  
+- That’s expected: use `sx` as shown above.
+
+**“I want pre‑painted CSS to avoid FOUC.”**  
+- You can generate a `tokens.css` at *build time* with default variables; `GuiProvider` will re‑hydrate at runtime.
+
+---
+
+## Final mental model
+- **JSON tokens** define the design truth.  
+- **Manifest** describes the theme (icon, modes, and token locations).  
+- **fromTokens** compiles to **MUI theme** + `theme.custom.*` + **CSS vars**.  
+- **GuiProvider** selects `family+mode`, persists it, adds **insets**, and exposes helpers.  
+- **Components** consume the theme and style granularly with `sx` — mature, flexible, no lock‑in, ready for AI.

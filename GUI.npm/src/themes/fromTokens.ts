@@ -1,8 +1,30 @@
 // src/themes/fromTokens.ts
 import { createTheme, type Theme } from '@mui/material/styles';
+// Manifest support ---------------------------------------------------------
+export type ThemeAuthor = { name?: string; url?: string };
+export type ThemeRepository = string | { url: string; type?: string };
+export type ThemeModeKey = 'light' | 'dark' | string;
+export type ThemeManifest = {
+  id?: string;
+  name?: string;
+  version?: string;
+  description?: string;
+  license?: string;
+  homepage?: string;
+  repository?: ThemeRepository;
+  keywords?: string[];
+  author?: ThemeAuthor | string;
+  createdAt?: string;
+  updatedAt?: string;
+  /** Optional global (shared) tokens applied to every mode */
+  global?: any;
+  /** Which mode to prefer when none is provided */
+  defaultMode?: ThemeModeKey;
+  /** Modes map (at minimum, usually `light` and/or `dark`) */
+  modes: Record<ThemeModeKey, { tokens?: any }>;
+};
 // Helpers ------------------------------------------------------------
 export const pxToRem = (n: number): string => `${n / 16}rem`;
-
 const pick = <T = any,>(obj: any, path: Array<string | number>, fallback?: T): T => {
   // Safely read nested token value supporting Tokens Studio shape { $value }
   const raw =
@@ -82,7 +104,6 @@ const buildShadows = (shadowTokens: any, mode: 'light' | 'dark'): Theme['shadows
           '0px 26px 52px rgba(0,0,0,0.33)',
           '0px 28px 56px rgba(0,0,0,0.34)',
         ];
-
   // If tokens is array: normalize; if map: read values "0..24" or "s0..s24".
   if (Array.isArray(shadowTokens)) {
     return ensureArrayLen<string>(shadowTokens as string[], 25, DEFAULT_SHADOWS[0]) as unknown as Theme['shadows'];
@@ -98,6 +119,13 @@ const buildShadows = (shadowTokens: any, mode: 'light' | 'dark'): Theme['shadows
     return arr as unknown as Theme['shadows'];
   }
   return DEFAULT_SHADOWS as unknown as Theme['shadows'];
+};
+
+const toAuthor = (a: unknown): ThemeAuthor | undefined => {
+  if (!a) return undefined;
+  if (typeof a === 'string') return { name: a };
+  if (typeof a === 'object') return a as ThemeAuthor;
+  return undefined;
 };
 
 // Main compiler ------------------------------------------------------
@@ -280,4 +308,45 @@ export function makeMuiTheme(globalTokens: any, themeTokens: any, mode: 'light' 
     },
   });
   return theme;
+}
+// ========================= Manifest-based API =============================
+/** Returns the list of modes declared in a manifest (e.g., ['light','dark']). */
+export function getAvailableModes(manifest: ThemeManifest): ThemeModeKey[] {
+  return Object.keys(manifest?.modes || {});
+}
+
+/** Picks a mode honoring explicit arg, manifest.defaultMode, or sensible fallback. */
+function pickMode(manifest: ThemeManifest, prefer?: ThemeModeKey): ThemeModeKey {
+  const modes = getAvailableModes(manifest);
+  if (prefer && modes.includes(prefer)) return prefer;
+  if (manifest.defaultMode && modes.includes(manifest.defaultMode)) return manifest.defaultMode;
+  // Prefer 'light' or 'dark' when present; otherwise first key
+  if (modes.includes('light')) return 'light';
+  if (modes.includes('dark')) return 'dark';
+  return modes[0] as ThemeModeKey;
+}
+
+/**
+ * Create a MUI theme from a ThemeManifest.
+ * - `manifest.global` is merged conceptually into `globalTokens`.
+ * - Mode tokens are taken from `manifest.modes[mode].tokens`.
+ * - `mode` is coerced to 'light'/'dark' for MUI's palette.mode; non-binary keys are supported
+ *   but will map to 'light' unless explicitly equal to 'dark'.
+ */
+export function makeMuiThemeFromManifest(
+  manifest: ThemeManifest,
+  options?: { mode?: ThemeModeKey }
+): Theme {
+  if (!manifest || typeof manifest !== 'object') {
+    throw new Error('makeMuiThemeFromManifest: invalid manifest');
+  }
+  const chosen = pickMode(manifest, options?.mode);
+  const entry = manifest.modes?.[chosen] || {};
+  const tokens = (entry as any).tokens || {};
+  const globalTokens = manifest.global || {};
+
+  // Coerce to MUI palette mode ('light' | 'dark')
+  const muiMode: 'light' | 'dark' = (String(chosen).toLowerCase() === 'dark' ? 'dark' : 'light');
+
+  return makeMuiTheme(globalTokens, tokens, muiMode);
 }

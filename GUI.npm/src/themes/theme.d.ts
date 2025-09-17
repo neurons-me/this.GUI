@@ -1,5 +1,36 @@
 // src/themes/theme.d.ts
 // src/themes/theme.d.ts
+// ---------- This.GUI Theme Manifest types (library-level, not part of MUI) ----------
+export type ThemeIcon =
+  | { type: 'mui' | 'lucide'; value: string }    // icon token from a known set
+  | { type: 'url'; value: string }               // URL to an image (svg/png)
+  | { type: 'svg'; value: string }               // inline SVG markup
+  | { type: 'data'; value: string };             // data URI
+
+/**
+ * ThemeManifest
+ * Describes a theme package and the paths to its light/dark token files.
+ * This is metadata for discovery/marketplace; it is intentionally separate
+ * from the runtime MUI Theme type augmentation below.
+ */
+export type ThemeManifest = {
+  id: string;
+  name: string;
+  description?: string;
+  author?: string;
+  version?: string;
+  license?: string;
+  homepage?: string;
+  repository?: { type: string; url: string };
+  tags?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+  icon?: ThemeIcon;  // Optional theme icon for listings
+  modes: {
+    light: { path: string };
+    dark: { path: string };
+  };
+};
 import '@mui/material/styles';
 declare module '@mui/material/styles' {
   // -----------------------------

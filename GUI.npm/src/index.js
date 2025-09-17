@@ -5,14 +5,13 @@ import MinimalLayout from "./templates/Minimal";
 // THEME
 import { GuiProvider, useThemeContext } from "./context/GuiProvider";
 // APPBARS
-import NavBar from "./components/generics/AppBars/NavBar/NavBar";
-import Footer from "./components/generics/AppBars/Footer/Footer";
-import LeftDrawer from "./components/generics/AppBars/LeftDrawer/LeftDrawer";
-import RightDrawer from "./components/generics/AppBars/RightDrawer/RightDrawer";
-import StickyOptionsTop from "./components/generics/AppBars/StickyOptions/StickyOptionsTop";
-
-import TopBarAndSideBar from "./components/generics/AppBars/TopBarAndSideBar/TopBarAndSideBar";//REMOVE SOON
-import RightContextDrawer from "./components/generics/AppBars/RightContextDrawer/RightContextDrawer"; //REMOVE SOON
+import NavBar from "@/gui/molecules/AppBars/NavBar/NavBar";
+import Footer from "@/gui/molecules/AppBars/Footer/Footer";
+import LeftDrawer from "@/gui/molecules/AppBars/LeftDrawer/LeftDrawer";
+import RightDrawer from "@/gui/molecules/AppBars/RightDrawer/RightDrawer";
+import StickyOptionsTop from "@/gui/molecules/AppBars/StickyOptions/StickyOptionsTop";
+import TopBarAndSideBar from "@/gui/molecules/AppBars/TopBarAndSideBar/TopBarAndSideBar";//REMOVE SOON
+import RightContextDrawer from "@/gui/molecules/AppBars/RightContextDrawer/RightContextDrawer"; //REMOVE SOON
 // TEXT
 import TextTitle from "./components/generics/Text/TextTitle";
 import TextParagraph from "./components/generics/Text/TextParagraph";

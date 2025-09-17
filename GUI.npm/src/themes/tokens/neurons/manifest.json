@@ -1,0 +1,23 @@
+{
+  "id": "neurons.me",
+  "name": "neurons.me",
+  "description": "A modern, flexible theme for Neuroverse.",
+  "author": "suiGn",
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://neurons.me/themes/neurons",
+  "repository": { "type": "git", "url": "https://github.com/neurons/me-themes.git" },
+  "tags": ["official", "default"],
+  "createdAt": "2025-09-16T00:00:00.000Z",
+  "updatedAt": "2025-09-16T00:00:00.000Z",
+
+  "icon": {
+    "type": "mui",
+    "value": "Palette"
+  },
+
+  "modes": {
+    "light": { "path": "./light.tokens.json" },
+    "dark":  { "path": "./dark.tokens.json" }
+  }
+}
