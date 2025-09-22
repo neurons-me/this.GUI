@@ -40,7 +40,7 @@
       "$value": "-0.01em"
     }
   },
-  "colors": {
+  "color": {
     "$description": "Extended semantic colors, gradients, overlays",
     "success": { "$type": "color", "$value": "#4caf50" },
     "warning": { "$type": "color", "$value": "#ff9800" },

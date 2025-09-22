@@ -160,9 +160,9 @@ export function makeMuiTheme(globalTokens: any, themeTokens: any, mode: 'light' 
       secondary: { main: pick(c, ['secondary'], '#9c27b0') },
       icon: { main: pick(c, ['icon'], '#5e5e5e') },
       background: {
-        default: pick(c, ['bgDefault'], mode === 'dark' ? '#121214' : '#f8f9fa'),
-        paper: pick(c, ['bgPaper'], mode === 'dark' ? '#181a1c' : '#fff'),
-        nav: pick(c, ['bgNav'], mode === 'dark' ? '#16181a' : '#fdfdfd'),
+        default: pick(c, ['background','default'], mode === 'dark' ? '#121214' : '#f8f9fa'),
+        paper: pick(c, ['background','paper'], mode === 'dark' ? '#181a1c' : '#fff'),
+        nav: pick(c, ['background','nav'], mode === 'dark' ? '#16181a' : '#fdfdfd'),
       },
       text: {
         primary: pick(c, ['textPrimary'], mode === 'dark' ? '#fff' : '#111'),
@@ -291,11 +291,25 @@ export function makeMuiTheme(globalTokens: any, themeTokens: any, mode: 'light' 
             '--gui-spacing': typeof theme.spacing === 'function' ? theme.spacing(1) : `${(theme as any).spacing}px`,
             '--gui-inset-left': theme.layout.insets.left + 'px',
             '--gui-inset-right': theme.layout.insets.right + 'px',
+            // App layout CSS variables
+            '--has-left-sidebar': 0,
+            '--has-topbar': 0,
+            '--sidebar-toggle-location': 'none',
           },
           body: {
             fontFamily: theme.typography.fontFamily,
             backgroundColor: theme.palette.background.default,
             color: theme.palette.text.primary,
+            // Conditional sidebar toggle location rules
+            '&[style*="--has-left-sidebar: 1"][style*="--has-topbar: 1"]': {
+              '--sidebar-toggle-location': 'topbar',
+            },
+            '&[style*="--has-left-sidebar: 1"][style*="--has-topbar: 0"]': {
+              '--sidebar-toggle-location': 'sidebar',
+            },
+            '&[style*="--has-left-sidebar: 0"]': {
+              '--sidebar-toggle-location': 'none',
+            },
           },
           a: {
             color: theme.palette.link.main,

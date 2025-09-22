@@ -1,14 +1,11 @@
 // src/themes/index.js
-
 // Global tokens shared by all themes (radius, spacing, zIndex, etc.)
 import globalTokens from './tokens/global.tokens.json';
 import { makeMuiTheme } from './fromTokens';
-
 // --- Built-in theme: neurons (manifest-driven) -------------------------------
 import neuronsManifest from './tokens/neurons/manifest.json';
 import neuronsLight from './tokens/neurons/light.tokens.json';
 import neuronsDark from './tokens/neurons/dark.tokens.json';
-
 /**
  * Registry of built-in themes shipped with the library.
  * Each entry couples a human-readable manifest (metadata) with the concrete
@@ -28,16 +25,13 @@ const BUILT_IN = {
     },
   },
 };
-
 // -----------------------------------------------------------------------------
 // Factories
 // -----------------------------------------------------------------------------
-
 /** Create a MUI theme straight from token JSON + a mode. */
 export const createThemeFromTokens = (tokens, mode = 'light') => {
   return makeMuiTheme(globalTokens, tokens, mode);
 };
-
 /**
  * Create a MUI theme from a manifest entry and an optional preloaded map
  * { light, dark, ... } of token JSON objects. For built-ins we pass them
@@ -46,7 +40,6 @@ export const createThemeFromTokens = (tokens, mode = 'light') => {
 export const createThemeFromManifest = (manifest, mode = 'light', tokensByMode) => {
   const m = manifest || {};
   const chosenMode = mode || m.defaultMode || 'light';
-
   // Prefer explicitly provided tokensByMode (preloaded).
   const tokens =
     tokensByMode?.[chosenMode] ??
@@ -60,7 +53,6 @@ export const createThemeFromManifest = (manifest, mode = 'light', tokensByMode) 
       tokensByMode?.light ??
       tokensByMode?.dark ??
       null;
-
     if (!fallback) {
       throw new Error(
         `[themes] No tokens found for mode "${chosenMode}". ` +
@@ -69,14 +61,11 @@ export const createThemeFromManifest = (manifest, mode = 'light', tokensByMode) 
     }
     return createThemeFromTokens(fallback, chosenMode);
   }
-
   return createThemeFromTokens(tokens, chosenMode);
 };
-
 // -----------------------------------------------------------------------------
 // Public API
 // -----------------------------------------------------------------------------
-
 /**
  * getTheme
  * - Prefer passing a manifest and (optionally) a tokensByMode map for custom themes.
@@ -90,16 +79,13 @@ export const createThemeFromManifest = (manifest, mode = 'light', tokensByMode) 
 export const getTheme = ({ key, mode, manifest, tokens, tokensByMode } = {}) => {
   // 1) Direct tokens take precedence
   if (tokens) return createThemeFromTokens(tokens, mode || 'light');
-
   // 2) Manifest-driven (custom or built-in)
   if (manifest) return createThemeFromManifest(manifest, mode || 'light', tokensByMode);
-
   // 3) Built-ins by key (preferred: 'neurons' + mode)
   if (key && BUILT_IN[key]) {
     const entry = BUILT_IN[key];
     return createThemeFromManifest(entry.manifest, mode || 'light', entry.tokensByMode);
   }
-
   // 4) Legacy keys support ('neurons-light' | 'neurons-dark')
   if (key === 'neurons-light') {
     return createThemeFromManifest(BUILT_IN.neurons.manifest, 'light', BUILT_IN.neurons.tokensByMode);
@@ -107,7 +93,6 @@ export const getTheme = ({ key, mode, manifest, tokens, tokensByMode } = {}) => 
   if (key === 'neurons-dark') {
     return createThemeFromManifest(BUILT_IN.neurons.manifest, 'dark', BUILT_IN.neurons.tokensByMode);
   }
-
   // 5) Default fallback → neurons dark
   return createThemeFromManifest(BUILT_IN.neurons.manifest, 'dark', BUILT_IN.neurons.tokensByMode);
 };

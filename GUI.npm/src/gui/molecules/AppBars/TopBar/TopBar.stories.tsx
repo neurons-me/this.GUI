@@ -1,10 +1,11 @@
 import { MemoryRouter } from 'react-router-dom';
 import GuiProvider from '../../../../context/GuiProvider';
-import NavBar from './NavBar';
+import TopBar from './TopBar';
+import type { Meta, StoryObj } from '@storybook/react';
 
-export default {
-  title: 'Molecules/AppBars/NavBar',
-  component: NavBar,
+const meta = {
+  title: 'Molecules/AppBars/TopBar',
+  component: TopBar,
   tags: ['autodocs'],
   decorators: [
     (Story) => (
@@ -18,8 +19,8 @@ export default {
   parameters: {
     docs: {
       description: {
-      component: 
-`The **NavBar** component provides a responsive, application top bar for navigation, branding and other actions.
+        component:
+`The **TopBar** component provides a responsive, application top bar for navigation, branding and other actions.
 ---
 ## Features
 - **Branding:** Display a logo and title.
@@ -42,10 +43,10 @@ Each link can specify:
 
 **Example:**
 ~~~jsx
-<NavBar
+<TopBar
   title="neurons.me"
   logo="https://neurons.me/neurons.me.png"
-  NavBarLinks={[
+  TopBarLinks={[
     { label: 'Home', href: '/', icon: 'mui:BarChart', iconColor: 'primary' },
     { label: 'Docs', href: '/docs', icon: 'mui:Insights', iconColor: 'secondary' },
     {
@@ -69,8 +70,8 @@ Each link can specify:
 - To create a dropdown, provide a \`children\` array to any link.
 
 ~~~jsx
-<NavBar
-  NavBarLinks={[
+<TopBar
+  TopBarLinks={[
     {
       label: 'More',
       icon: 'lucide:Info',
@@ -93,15 +94,15 @@ Each link can specify:
 ---
 
 ### React Component Mode (Advanced)
-You may also use NavBar as a React component and manually import icons, passing them into \`NavBarLinks\`:
+You may also use TopBar as a React component and manually import icons, passing them into \`TopBarLinks\`:
 
 ~~~jsx
-import NavBar from './NavBar';
+import TopBar from './TopBar';
 import { BarChart, Insights } from '@mui/icons-material';
 import { Mail, Info } from 'lucide-react';
 
-<NavBar
-  NavBarLinks={[
+<TopBar
+  TopBarLinks={[
     { label: 'Home', href: '/', icon: <BarChart color="primary" /> },
     { label: 'Docs', href: '/docs', icon: <Insights htmlColor="#f50057" /> },
     {
@@ -120,15 +121,15 @@ import { Mail, Info } from 'lucide-react';
 ---
 
 ## Notes
-- NavBar uses \`react-router-dom\` internally. Stories wrap it in a \`MemoryRouter\` for demo purposes.
+- TopBar uses \`react-router-dom\` internally. Stories wrap it in a \`MemoryRouter\` for demo purposes.
 - Dropdown menus are created by providing a \`children\` array for any link.
 - Icon colors can be set with theme color keys (\`primary\`, \`secondary\`, \`info\`, etc.) or any valid CSS color string.
-- NavBarLinks accepts objects with label, href, external, icon (string for your registry), and iconColor, and also supports submenus via children.
+- TopBarLinks accepts objects with label, href, external, icon (string for your registry), and iconColor, and also supports submenus via children.
 - Toggles like showMenuButton, showThemeToggle, and homeTo/position.
 Inset handling:
   - Measure Toolbar with toolbarRef, call theme.updateInsets({ nav: h }), and clean up in return → this updates theme.layout.insets.nav in GuiProvider and also the CSS vars (--gui-nav-height).
 Theme integration:
-  - Use useTheme()/useMediaQuery(). In GuiProvider, inject updateInsets and layout.insets into the memoized MUI theme, so NavBar sees them correctly.
+  - Use useTheme()/useMediaQuery(). In GuiProvider, inject updateInsets and layout.insets into the memoized MUI theme, so TopBar sees them correctly.
   
         `,
       },
@@ -143,7 +144,7 @@ Theme integration:
       description: 'Logo image URL shown in the top-left.',
       control: 'text',
     },
-    NavBarLinks: {
+    TopBarLinks: {
       description: 'Array of navigation links, supporting nested dropdown menus.',
       control: 'object',
     },
@@ -164,13 +165,16 @@ Theme integration:
       control: 'text',
     },
   },
-};
+} satisfies Meta<typeof TopBar>;
+export default meta;
 
-export const Default = {
+export type Story = StoryObj<typeof TopBar>;
+
+export const Default: Story = {
   args: {
     title: 'neurons.me',
     logo: 'https://neurons.me/neurons.me.png',
-    NavBarLinks: [
+    TopBarLinks: [
       { label: 'Home', href: '/' },
       { label: 'Docs', href: '/docs' },
       {
@@ -187,11 +191,11 @@ export const Default = {
   },
 };
 
-export const WithIcons = {
+export const WithIcons: Story = {
   args: {
     title: 'neurons.me',
     logo: 'https://neurons.me/neurons.me.png',
-    NavBarLinks: [
+    TopBarLinks: [
      {
   label: 'Home',
   href: '/',
@@ -220,12 +224,12 @@ export const WithIcons = {
   },
 };
 
-export const FixedNavBar = () => (
+export const FixedTopBar = () => (
   <>
-    <NavBar
+    <TopBar
       title="neurons.me"
       logo="https://neurons.me/neurons.me.png"
-      NavBarLinks={[
+      TopBarLinks={[
         { label: 'Home', href: '/' },
         { label: 'Docs', href: '/docs' },
         {
@@ -247,21 +251,21 @@ export const FixedNavBar = () => (
   </>
 );
 
-FixedNavBar.storyName = 'Fixed NavBar';
-FixedNavBar.parameters = {
+FixedTopBar.storyName = 'Fixed TopBar';
+FixedTopBar.parameters = {
   docs: {
     description: {
-      story: 'Demonstrates the NavBar with `position="fixed"`. Scroll down to see the NavBar stay fixed at the top.',
+      story: 'Demonstrates the TopBar with `position="fixed"`. Scroll down to see the TopBar stay fixed at the top.',
     },
   },
 };
 
-export const StaticNavBar = () => (
+export const StaticTopBar = () => (
   <>
-    <NavBar
+    <TopBar
       title="neurons.me"
       logo="https://neurons.me/neurons.me.png"
-      NavBarLinks={[
+      TopBarLinks={[
         { label: 'Home', href: '/' },
         { label: 'Docs', href: '/docs' },
         {
@@ -283,11 +287,11 @@ export const StaticNavBar = () => (
   </>
 );
 
-StaticNavBar.storyName = 'Static NavBar';
-StaticNavBar.parameters = {
+StaticTopBar.storyName = 'Static TopBar';
+StaticTopBar.parameters = {
   docs: {
     description: {
-      story: 'Demonstrates the NavBar with `position="static"`. Scroll down to see the NavBar scroll with the page.',
+      story: 'Demonstrates the TopBar with `position="static"`. Scroll down to see the TopBar scroll with the page.',
     },
   },
 };

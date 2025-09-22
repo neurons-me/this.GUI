@@ -1,6 +1,8 @@
 import * as React from 'react';
 import Switch from './Switch';
 import { FormControlLabel } from '@mui/material';
+import { SxProps, Theme } from '@mui/material/styles';
+import { ensureNodeId } from '@/gui/utils/nodeID';
 
 /**
  * Switch.resolver
@@ -26,12 +28,16 @@ export type SwitchResolverProps = React.ComponentProps<typeof Switch> & {
   label?: React.ReactNode;
   /** Label position when `label` is provided */
   labelPlacement?: 'end' | 'start' | 'top' | 'bottom';
+  sx?: SxProps<Theme>;
+  guiId?: string;
 };
 
 export default function resolveSwitch(props: SwitchResolverProps) {
-  const { label, labelPlacement = 'end', ...rest } = props || ({} as SwitchResolverProps);
+  const { label, labelPlacement = 'end', guiId, sx, ...rest } = props || ({} as SwitchResolverProps);
 
-  const control = <Switch {...rest} />;
+  const nodeId = ensureNodeId('Switch', guiId);
+
+  const control = <Switch id={nodeId} sx={sx} {...rest} />;
 
   if (label != null) {
     return (

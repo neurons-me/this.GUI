@@ -1,7 +1,9 @@
-// src/gui/primitives/Link/Link.resolver.tsx
+// src/gui/atoms/Link/Link.resolver.tsx
 import * as React from 'react';
 import type { RegistryEntry } from '@/registry/types';
 import Link, { LinkProps as GuiLinkProps } from './Link';
+import type { SxProps, Theme } from '@mui/material/styles';
+import { ensureNodeId } from '@/gui/utils/nodeID';
 
 /** Declarative spec for Link (JSON-friendly) */
 type LinkSpec = {
@@ -16,7 +18,7 @@ type LinkSpec = {
     underline?: 'none' | 'hover' | 'always';
 
     // pass-through styling/attrs
-    sx?: any;
+    sx?: SxProps<Theme>;
     className?: string;
     id?: string;
     target?: string;
@@ -24,6 +26,9 @@ type LinkSpec = {
     color?: GuiLinkProps['color'];
     variant?: GuiLinkProps['variant'];
     // ...cualquier otro prop permitido por tu Link
+
+    'data-testid'?: string;
+    ariaLabel?: string;
   };
 };
 
@@ -31,18 +36,21 @@ const LinkResolver: RegistryEntry = {
   type: 'Link',
   resolve(spec: LinkSpec) {
     const p = spec.props ?? {};
+    const nodeId = ensureNodeId('link', p.id as string | undefined);
 
     // Routing / destino
     const routingProps: Partial<GuiLinkProps> =
       p.external
         ? {
             href: p.href,
-            target: p.target ?? '_blank',
-            rel: p.rel ?? 'noopener noreferrer',
+            ...(p.target ? { target: p.target } : { target: '_blank' }),
+            ...(p.rel ? { rel: p.rel } : { rel: 'noopener noreferrer' }),
           }
         : p.to
         ? { to: p.to }
-        : { href: p.href };
+        : p.href
+        ? { href: p.href }
+        : {};
 
     const children = p.children ?? p.label ?? null;
 
@@ -53,7 +61,9 @@ const LinkResolver: RegistryEntry = {
         variant={p.variant}
         sx={p.sx}
         className={p.className}
-        id={p.id}
+        id={nodeId}
+        data-testid={p['data-testid']}
+        {...(p.ariaLabel ? { 'aria-label': p.ariaLabel } : {})}
         {...routingProps}
       >
         {children}

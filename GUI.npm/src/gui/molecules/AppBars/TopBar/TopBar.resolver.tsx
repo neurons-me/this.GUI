@@ -1,10 +1,10 @@
-// src/components/generics/AppBars/NavBar/NavBar.resolver.tsx
+// src/components/generics/AppBars/TopBar/TopBar.resolver.tsx
 import * as React from 'react';
-import NavBar from './NavBar';
+import TopBar from './TopBar';
 import type { RegistryEntry, ResolveCtx } from '@/registry/types';
 
-/** Declarative shape the renderer/LLM can emit for a NavBar */
-type NavBarLinkChildSpec = {
+/** Declarative shape the renderer/LLM can emit for a TopBar */
+type TopBarLinkChildSpec = {
   label: string;
   href?: string;
   external?: boolean;
@@ -12,21 +12,21 @@ type NavBarLinkChildSpec = {
   iconColor?: string;
 };
 
-type NavBarLinkSpec = {
+type TopBarLinkSpec = {
   label: string;
   href?: string;
   external?: boolean;
   icon?: string;
   iconColor?: string;
-  children?: NavBarLinkChildSpec[];
+  children?: TopBarLinkChildSpec[];
 };
 
-type NavBarSpec = {
-  type: 'NavBar';
+type TopBarSpec = {
+  type: 'TopBar';
   props?: {
     title?: string;
     logo?: string;
-    NavBarLinks?: NavBarLinkSpec[];
+    NavBarLinks?: TopBarLinkSpec[];
     showMenuButton?: boolean;
     showThemeToggle?: boolean;
     homeTo?: string;
@@ -46,13 +46,13 @@ type NavBarSpec = {
 };
 
 /**
- * NavBarResolver
- * - Maps a JSON-friendly spec → real <NavBar />.
+ * TopBarResolver
+ * - Maps a JSON-friendly spec → real <TopBar />.
  * - Handlers can be injected from ResolveCtx via `onMenuClickId`.
  */
-const NavBarResolver: RegistryEntry = {
-  type: 'NavBar',
-  resolve(spec: NavBarSpec, ctx?: ResolveCtx) {
+const TopBarResolver: RegistryEntry = {
+  type: 'TopBar',
+  resolve(spec: TopBarSpec, ctx?: ResolveCtx) {
     const p = spec.props ?? {};
 
     // Resolve optional handler from ctx if provided
@@ -62,17 +62,16 @@ const NavBarResolver: RegistryEntry = {
         : undefined;
 
     return (
-      <NavBar
+      <TopBar
         title={p.title ?? 'neurons.me'}
         logo={p.logo ?? 'https://neurons.me/neurons.me.png'}
-        NavBarLinks={p.NavBarLinks ?? []}
+        TopBarLinks={p.NavBarLinks ?? []}
         showMenuButton={p.showMenuButton ?? false}
         onMenuClick={onMenuClick}
         showThemeToggle={p.showThemeToggle ?? true}
         homeTo={p.homeTo ?? '/'}
         position={p.position ?? 'fixed'}
         // passthroughs
-        // @ts-expect-error: NavBar currently doesn't declare `sx` on its props; ignore if you don’t support it.
         sx={p.sx}
         id={p.id}
         className={p.className}
@@ -82,4 +81,4 @@ const NavBarResolver: RegistryEntry = {
   },
 };
 
-export default NavBarResolver;
+export default TopBarResolver;

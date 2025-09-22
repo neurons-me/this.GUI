@@ -1,5 +1,7 @@
 import * as React from 'react';
 import Tooltip from './Tooltip';
+import type { SxProps, Theme } from '@mui/material/styles';
+import { ensureNodeId } from '@/gui/utils/nodeID';
 import type { RegistryEntry, ResolveCtx } from '@/registry/types';
 
 /**
@@ -35,10 +37,11 @@ export type TooltipSpec = {
     open?: boolean; // controlled mode
 
     // Styling / test ids
-    sx?: any;
+    sx?: SxProps<Theme>;
     id?: string;
     className?: string;
     'data-testid'?: string;
+    'data-gui-id'?: string;
   };
 };
 
@@ -46,6 +49,7 @@ const TooltipResolver: RegistryEntry = {
   type: 'Tooltip',
   resolve(spec: TooltipSpec, ctx?: ResolveCtx) {
     const p = spec.props ?? {};
+    const guiId = ensureNodeId('Tooltip', (p as any)['data-gui-id']);
 
     // Resolve child: if a nested spec is provided and we have a renderer in ctx, use it.
     let childCandidate: any = (spec.props?.children ?? (spec.props as any)?.child) as any;
@@ -71,28 +75,63 @@ const TooltipResolver: RegistryEntry = {
       childEl = <span style={{ display: 'inline-block', width: 0, height: 0 }} />;
     }
 
-    const titleNode = typeof p.title === 'string' ? p.title : (p.title ?? '');
+    let titleNode: React.ReactNode = p.title;
+    if (titleNode && !React.isValidElement(titleNode) && typeof titleNode === 'object' && ctx?.render) {
+      titleNode = ctx.render(titleNode as any);
+    }
+    if (typeof titleNode === 'undefined' || titleNode === null) {
+      titleNode = '';
+    }
+
+    const {
+      // remove resolver-only keys
+      id,
+      className,
+      sx,
+      placement,
+      arrow,
+      followCursor,
+      enterDelay,
+      enterNextDelay,
+      enterTouchDelay,
+      leaveDelay,
+      leaveTouchDelay,
+      disableFocusListener,
+      disableHoverListener,
+      disableInteractive,
+      disableTouchListener,
+      open,
+      // keep title out, we already computed titleNode
+      title: _title,
+      // also remove our custom id
+      ['data-gui-id']: _dataGuiId,
+      // and remove the alias 'child' if present
+      child: _child,
+      ...rest
+    } = p as any;
 
     return (
       <Tooltip
         title={titleNode}
-        placement={p.placement}
-        arrow={p.arrow}
-        followCursor={p.followCursor}
-        enterDelay={p.enterDelay}
-        enterNextDelay={p.enterNextDelay}
-        enterTouchDelay={p.enterTouchDelay}
-        leaveDelay={p.leaveDelay}
-        leaveTouchDelay={p.leaveTouchDelay}
-        disableFocusListener={p.disableFocusListener}
-        disableHoverListener={p.disableHoverListener}
-        disableInteractive={p.disableInteractive}
-        disableTouchListener={p.disableTouchListener}
-        open={p.open}
-        sx={p.sx}
-        id={p.id}
-        className={p.className}
-        data-testid={p['data-testid']}
+        placement={placement}
+        arrow={arrow}
+        followCursor={followCursor}
+        enterDelay={enterDelay}
+        enterNextDelay={enterNextDelay}
+        enterTouchDelay={enterTouchDelay}
+        leaveDelay={leaveDelay}
+        leaveTouchDelay={leaveTouchDelay}
+        disableFocusListener={disableFocusListener}
+        disableHoverListener={disableHoverListener}
+        disableInteractive={disableInteractive}
+        disableTouchListener={disableTouchListener}
+        open={open}
+        sx={sx}
+        id={id}
+        className={className}
+        data-testid={(p as any)['data-testid']}
+        data-gui-id={guiId}
+        {...rest}
       >
         {childEl}
       </Tooltip>

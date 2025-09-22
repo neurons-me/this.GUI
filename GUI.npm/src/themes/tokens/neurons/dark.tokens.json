@@ -14,18 +14,13 @@
       "$type": "color",
       "$value": "#a8a8a8"
     },
-    "bgDefault": {
-      "$type": "color",
-      "$value": "#121214"
+
+    "background": {
+      "default": { "$type": "color", "$value": "#121214" },
+      "paper":   { "$type": "color", "$value": "#181a1c" },
+      "nav": { "$type": "color", "$value": "rgba(18,18,20,0.95)" }
     },
-    "bgPaper": {
-      "$type": "color",
-      "$value": "#181a1c"
-    },
-    "bgNav": {
-      "$type": "color",
-      "$value": "#16181a"
-    },
+
     "textPrimary": {
       "$type": "color",
       "$value": "#ffffff"

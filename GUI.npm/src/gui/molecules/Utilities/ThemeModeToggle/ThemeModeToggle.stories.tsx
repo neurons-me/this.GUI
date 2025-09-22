@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
-import { Box, Stack, Typography, Paper } from '@mui/material';
+import { Box, Stack, Typography, Paper } from "@/gui/atoms";
 import GuiProvider from '@/context/GuiProvider';
 import ThemeModeToggle from './ThemeModeToggle';
 
@@ -30,13 +30,7 @@ A compact **theme mode switcher** that plugs into \`GuiProvider\`.
 - **Variants**
   - \`minimal\`: icon-only button (sun/moon).
   - \`switch\`: MUI-like switch with state.
-- **Display** (\`show\` prop)
-  - \`icons\` – show only the sun/moon icons.
-  - \`label\` – show text label ("Light"/"Dark").
-  - \`both\` – show icon and label together.
-- **Size** (\`size\` prop)
-  - For \`switch\`: \`small\` | \`medium\`.
-  - For \`minimal\`: sizing is handled internally; \`size\` is ignored.
+- Sizing follows the component's internal defaults for each variant.
 
 The component reads and updates the active mode via **GuiProvider**
 (\`useThemeContext()\`). No extra state wiring needed.
@@ -59,12 +53,6 @@ The component reads and updates the active mode via **GuiProvider**
       options: ['icons', 'label', 'both'],
       description: 'What to render: icons, label, or both.',
     },
-    size: {
-      control: { type: 'radio' },
-      options: ['small', 'medium'],
-      description: 'Only meaningful for variant="switch".',
-      table: { category: 'Appearance' },
-    },
     id: { control: 'text', table: { category: 'DOM' } },
     className: { control: 'text', table: { category: 'DOM' } },
     'data-testid': { control: 'text', table: { category: 'Testing' } },
@@ -72,7 +60,6 @@ The component reads and updates the active mode via **GuiProvider**
   args: {
     variant: 'switch',
     show: 'both',
-    size: 'medium',
   },
 };
 export default meta;
@@ -115,7 +102,7 @@ export const MinimalWithLabel: Story = {
 
 export const SwitchIconsOnly: Story = {
   name: 'Switch / Icons only',
-  args: { variant: 'switch', show: 'icons', size: 'small' },
+  args: { variant: 'switch', show: 'icons' },
   render: (args) => (
     <Stack direction="row" spacing={2} alignItems="center">
       <Typography variant="body2">Compact switch</Typography>
@@ -126,7 +113,7 @@ export const SwitchIconsOnly: Story = {
 
 export const SwitchWithLabel: Story = {
   name: 'Switch / With label',
-  args: { variant: 'switch', show: 'both', size: 'medium' },
+  args: { variant: 'switch', show: 'both' },
   render: (args) => (
     <Stack direction="row" spacing={2} alignItems="center">
       <Typography variant="body2">Accessible labeled switch</Typography>
@@ -149,7 +136,7 @@ export const UsageSnippets: Story = {
 
 ### Switch (with label)
 ~~~tsx
-<ThemeModeToggle variant="switch" show="both" size="medium" />
+<ThemeModeToggle variant="switch" show="both" />
 ~~~
 
 This component reads and updates the active mode from **GuiProvider**.
@@ -161,7 +148,7 @@ It does not require props for state; just render it once in your layout.
   render: () => (
     <Stack direction="column" spacing={1}>
       <ThemeModeToggle variant="minimal" show="icons" />
-      <ThemeModeToggle variant="switch" show="both" size="medium" />
+      <ThemeModeToggle variant="switch" show="both" />
     </Stack>
   ),
 };

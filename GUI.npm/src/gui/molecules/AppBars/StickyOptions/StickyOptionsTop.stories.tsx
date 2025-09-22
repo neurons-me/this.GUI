@@ -4,7 +4,7 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { Box, Paper, Typography } from '@mui/material';
 import StickyOptionsTop from './StickyOptionsTop';
 import Icon from '../../../../themes/icons/Icon'; // just for the ReactNode example
-import NavBar from '../NavBar/NavBar';
+import NavBar from '../TopBar/TopBar';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof StickyOptionsTop> = {

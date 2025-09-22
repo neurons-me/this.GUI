@@ -15,15 +15,15 @@
       "$type": "color",
       "$value": "#5e5e5e"
     },
-    "bgDefault": {
+    "default": {
       "$type": "color",
       "$value": "#f8f9fa"
     },
-    "bgPaper": {
+    "paper": {
       "$type": "color",
       "$value": "#ffffff"
     },
-    "bgNav": {
+    "nav": {
       "$type": "color",
       "$value": "#fdfdfd"
     },

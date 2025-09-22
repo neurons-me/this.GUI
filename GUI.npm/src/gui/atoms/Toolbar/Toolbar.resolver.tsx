@@ -2,6 +2,8 @@
 import * as React from 'react';
 import Toolbar from './Toolbar';
 import type { RegistryEntry } from '@/registry/types';
+import type { SxProps, Theme } from '@mui/material/styles';
+import { ensureNodeId } from '@/gui/utils/nodeID';
 
 type ToolbarSpec = {
   type: 'Toolbar';
@@ -14,7 +16,7 @@ type ToolbarSpec = {
     disableGutters?: boolean;
 
     /** Styling / misc */
-    sx?: any;
+    sx?: SxProps<Theme>;
     id?: string;
     className?: string;
     'data-testid'?: string;
@@ -35,9 +37,10 @@ const ToolbarResolver: RegistryEntry = {
       variant,
       disableGutters,
       sx,
-      id,
       className,
     } = p;
+
+    const id = ensureNodeId('Toolbar', p.id);
 
     return (
       <Toolbar

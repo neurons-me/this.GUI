@@ -1,9 +1,9 @@
-// src/components/generics/AppBars/LeftDrawer/LeftDrawer.resolver.tsx
+// src/components/generics/AppBars/LeftSidebar/LeftSidebar.resolver.tsx
 import * as React from 'react';
 import type { RegistryEntry, ResolveCtx } from '@/registry/types';
-import LeftDrawer from './LeftDrawer';
+import LeftSidebar from './LeftSidebar';
 /**
- * Declarative spec for LeftDrawer.
+ * Declarative spec for LeftSidebar.
  * This is the JSON-friendly shape your renderer/LLM can emit.
  */
 type RouteItemSpec = {
@@ -15,21 +15,21 @@ type RouteItemSpec = {
   children?: RouteItemSpec[];
 };
 
-type LeftDrawerHeaderSpec = {
+type LeftSidebarHeaderSpec = {
   title?: string;
   icon?: string | React.ReactNode | React.ComponentType<any>;
   iconColor?: string;
 };
 
-type LeftDrawerSpec = {
-  type: 'LeftDrawer';
+type LeftSidebarSpec = {
+  type: 'LeftSidebar';
   props?: {
     // Behavior / layout
     drawerWidth?: number;             // px, default 240 (component default)
     open?: boolean;                   // controlled open (temporary/mobile)
     onCloseId?: string;               // resolves to a function from ctx.handlers[onCloseId]
     // Content
-    header?: LeftDrawerHeaderSpec;    // optional header (title + icon)
+    header?: LeftSidebarHeaderSpec;    // optional header (title + icon)
     drawerLinks?: RouteItemSpec[];    // navigation tree
     // Style passthrough / misc
     sx?: any;
@@ -40,15 +40,15 @@ type LeftDrawerSpec = {
 };
 
 /**
- * LeftDrawerResolver
- * - Maps a JSON-friendly spec into <LeftDrawer /> props.
+ * LeftSidebarResolver
+ * - Maps a JSON-friendly spec into <LeftSidebar /> props.
  * - Doesn’t make layout decisions (permanent vs temporary): that logic lives in the component
  *   via breakpoints. We just pass data and optional controlled "open"/"onClose".
  * - `onCloseId` lets you bind to a handler from the outside world through the ResolveCtx.
  */
-const LeftDrawerResolver: RegistryEntry = {
-  type: 'LeftDrawer',
-  resolve(spec: LeftDrawerSpec, ctx?: ResolveCtx) {
+const LeftSidebarResolver: RegistryEntry = {
+  type: 'LeftSidebar',
+  resolve(spec: LeftSidebarSpec, ctx?: ResolveCtx) {
     const p = spec.props ?? {};
     // Resolve handler by id from ctx (optional)
     const onClose =
@@ -56,7 +56,7 @@ const LeftDrawerResolver: RegistryEntry = {
         ? ctx.handlers[p.onCloseId]
         : undefined;
     return (
-      <LeftDrawer
+      <LeftSidebar
         drawerWidth={p.drawerWidth}
         open={p.open}
         onClose={onClose}
@@ -72,4 +72,4 @@ const LeftDrawerResolver: RegistryEntry = {
   },
 };
 
-export default LeftDrawerResolver;
+export default LeftSidebarResolver;

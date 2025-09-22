@@ -2,13 +2,12 @@ import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import GuiProvider from '@/context/GuiProvider';
-import RightDrawer from './RightDrawer';
-import NavBar from '../NavBar/NavBar';
-import type { RightContextDrawerProps } from './RightDrawer';
+import RightSidebar from './RightSidebar';
+import NavBar from '../TopBar/TopBar';
 
 const meta = {
-  title: 'Molecules/AppBars/Drawers/RightDrawer',
-  component: RightDrawer,
+  title: 'Molecules/AppBars/RightSidebar',
+  component: RightSidebar,
   tags: ['autodocs'],
   decorators: [
     (Story) => (
@@ -25,7 +24,7 @@ const meta = {
     docs: {
       description: {
         component: `
-The **RightDrawer** renders a contextual panel on the right side (persistent on desktop, temporary on mobile).
+The **RightSidebar** renders a contextual panel on the right side (persistent on desktop, temporary on mobile).
 It supports a hierarchical list with optional **icons** (via the This.GUI icon registry) and **nested groups**.
 
 ### Two icon usage modes
@@ -66,13 +65,13 @@ const rightContext = {
     },
   ],
 };
-<RightDrawer rightContext={rightContext} />
+<RightSidebar rightContext={rightContext} />
 \`\`\`
 
 ---
 
 ### Layout Insets (auto‑coordination)
-On **desktop**, RightDrawer is **permanent** and automatically updates the UI insets so other components (e.g., \`Footer\`, page containers) can adapt:
+On **desktop**, RightSidebar is **permanent** and automatically updates the UI insets so other components (e.g., \`Footer\`, page containers) can adapt:
 
 - Sets **\`theme.insets.right = drawerWidth\`** when permanent.
 - Sets **\`theme.insets.right = 0\`** on mobile (temporary drawer) or when unmounted.
@@ -108,7 +107,7 @@ export default function PageContainer({ children }) {
       control: 'object',
     },
   },
-} satisfies Meta<typeof RightDrawer>;
+} satisfies Meta<typeof RightSidebar>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -180,7 +179,7 @@ export const WithColoredIcons: Story = {
 export const Docs_UsageModes: Story = {
   render: () => (
     <div style={{ maxWidth: 920, padding: 24, lineHeight: 1.55 }}>
-      <h2 style={{ marginTop: 0 }}>Using Icons in RightDrawer</h2>
+      <h2 style={{ marginTop: 0 }}>Using Icons in RightSidebar</h2>
 
       <h3>1. Declarative Mode (recommended)</h3>
       <p>
@@ -201,7 +200,7 @@ export const Docs_UsageModes: Story = {
     }
   ]
 };
-<RightDrawer rightContext={rightContext} />`}</code>
+<RightSidebar rightContext={rightContext} />`}</code>
       </pre>
 
       <h3>2. Direct React Mode (advanced)</h3>
@@ -219,7 +218,7 @@ const rightContext = {
     { label: 'Reports', href: '/reports', icon: <InsightsIcon htmlColor="#ff9800" /> },
   ]
 };
-<RightDrawer rightContext={rightContext} />`}</code>
+<RightSidebar rightContext={rightContext} />`}</code>
       </pre>
 
       <p>
@@ -232,13 +231,13 @@ const rightContext = {
 export const Docs_Insets: Story = {
   render: () => (
     <div style={{ maxWidth: 920, padding: 24, lineHeight: 1.55 }}>
-      <h2 style={{ marginTop: 0 }}>RightDrawer & Layout Insets</h2>
+      <h2 style={{ marginTop: 0 }}>RightSidebar & Layout Insets</h2>
       <p>
-        On desktop, RightDrawer is permanent and reserves space by updating <code>theme.insets.right</code> via
+        On desktop, RightSidebar is permanent and reserves space by updating <code>theme.insets.right</code> via
         the Theme Provider API (<code>theme.updateInsets</code>). On mobile it is temporary and does not reserve space.
       </p>
       <pre style={{ background: '#0f111a', color: '#e6e6e6', padding: 16, borderRadius: 8, overflow: 'auto' }}>
-        <code>{`// Inside RightDrawer (simplified)
+        <code>{`// Inside RightSidebar (simplified)
 useEffect(() => {
   if (isPermanent) theme.updateInsets?.({ right: drawerWidth });
   else theme.updateInsets?.({ right: 0 });
@@ -281,14 +280,14 @@ export const WithNavbar: Story = {
     <>
       {/* Fixed AppBar that reports its height via ThemeContext */}
       <NavBar title="Demo" />
-      <RightDrawer {...args} />
+      <RightSidebar {...args} />
     </>
   ),
   parameters: {
     docs: {
       description: {
         story:
-          'RightDrawer with a fixed NavBar on top. The NavBar updates `theme.insets.nav` (and `--gui-nav-height`) in real time, so the drawer aligns its `top`/`height` accordingly. Compare this with the default stories (without NavBar).',
+          'RightSidebar with a fixed NavBar on top. The NavBar updates `theme.insets.nav` (and `--gui-nav-height`) in real time, so the drawer aligns its `top`/`height` accordingly. Compare this with the default stories (without NavBar).',
       },
     },
   },

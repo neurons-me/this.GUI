@@ -78,17 +78,26 @@ const stripPrefix = (raw: string, prefix: string): string =>
  * Lucide provider adapter
  *  - Dynamically import lucide-react and resolve the named export at runtime.
  */
+const lucideLazyCache = new Map<string, LazyIconComp>();
+
 const lucideProvider: IconProvider = {
   key: LUCIDE_PREFIX,
   resolve: (rawName: string) => {
     const key = stripPrefix(rawName, LUCIDE_PREFIX);
     const pascal = normalizeLucideName(key);
+
+    if (lucideLazyCache.has(pascal)) {
+      return lucideLazyCache.get(pascal)!;
+    }
+
     const Lazy = React.lazy(async () => {
       const mod: any = await import('lucide-react');
       const lib: Record<string, any> = (typeof mod.default === 'object' && mod.default) ? mod.default : mod;
       const Comp = lib[pascal] ?? lib.HelpCircle;
       return { default: Comp };
     });
+
+    lucideLazyCache.set(pascal, Lazy);
     return Lazy as LazyIconComp;
   },
   exists: (name: string) => {

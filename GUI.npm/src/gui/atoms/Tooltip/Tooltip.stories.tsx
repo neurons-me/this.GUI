@@ -24,6 +24,7 @@ export const Playground: Story = {
     title: 'Tooltip text',
     placement: 'top',
     arrow: false,
+    size: 'md',
     children: <Button variant="contained">Hover me</Button>,
   },
   argTypes: {
@@ -33,8 +34,12 @@ export const Playground: Story = {
       options: ['top', 'bottom', 'left', 'right'],
     },
     arrow: { control: 'boolean' },
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'],
+    },
   },
-  render: (args) => <Tooltip {...args}>{args.children}</Tooltip>,
+  render: (args) => <Tooltip {...args} size={args.size}>{args.children}</Tooltip>,
 };
 
 export const PlacementRight: Story = {
@@ -82,6 +87,31 @@ export const WithTypography: Story = {
     docs: {
       description: {
         story: 'Tooltip wrapping a Typography element, showing flexibility and full MUI compatibility.',
+      },
+    },
+  },
+};
+
+
+export const WithSize: Story = {
+  name: 'With Size',
+  render: () => (
+    <div style={{ display: 'flex', gap: 24 }}>
+      <Tooltip title="Small size tooltip" size="sm">
+        <Button variant="contained">Small (sm)</Button>
+      </Tooltip>
+      <Tooltip title="Medium size tooltip" size="md">
+        <Button variant="contained">Medium (md)</Button>
+      </Tooltip>
+      <Tooltip title="Large size tooltip" size="lg">
+        <Button variant="contained">Large (lg)</Button>
+      </Tooltip>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Demonstrates the Tooltip with different `size` props: small, medium, and large.',
       },
     },
   },

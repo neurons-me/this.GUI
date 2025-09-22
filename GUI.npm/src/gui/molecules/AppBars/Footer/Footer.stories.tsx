@@ -1,3 +1,4 @@
+import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import GuiProvider from '@/context/GuiProvider';
 import Footer from './Footer';
@@ -5,6 +6,33 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import { Mail, Instagram } from 'lucide-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { useTheme } from '@mui/material/styles';
+import LeftDrawer, { type RouteItem } from '../LeftSidebar/LeftSidebar';
+import { Box, Drawer } from '@mui/material';
+import NavBar from '../TopBar/TopBar';
+
+const demoLinks: RouteItem[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Docs', href: '/docs' },
+  { label: 'GitHub', href: 'https://github.com/neurons-me', external: true },
+];
+
+const WithInsetsProvider: React.FC<{ left?: number; right?: number; children?: React.ReactNode }> = ({ left, right, children }) => {
+  const theme = useTheme() as any;
+  React.useEffect(() => {
+    if (typeof (theme as any)?.updateInsets === 'function') {
+      (theme as any).updateInsets({ left: left ?? 0, right: right ?? 0 });
+    }
+    // Cleanup only on unmount — do NOT depend on `theme` to avoid re-running
+    return () => {
+      if (typeof (theme as any)?.updateInsets === 'function') {
+        (theme as any).updateInsets({ left: 0, right: 0 });
+      }
+    };
+  // Only re-run when the numeric insets change
+  }, [left, right]);
+  return <>{children}</>;
+};
 
 const meta = {
   title: 'Molecules/AppBars/Footer',
@@ -46,6 +74,7 @@ component provides a standardized footer layout for your application, ensuring c
   - <code>title?: string</code>
   - <code>logoSrc?: string</code> (fallbacks to <strong>https://www.neurons.me/media/neurons-grey.png</strong> when omitted)
   - <code>homeHref?: string</code> and/or <code>onBrandClick?: () =&gt; void</code>
+  - <code>brandComponent?: ElementType</code> and <code>brandTo?: string</code> for SPA routing (e.g. This.GUI Link)
 - **Social links**
   - <code>Array&lt;{ icon: string | ReactNode; href: string; iconColor?: string }&gt;</code>  
     Declarative example: <code>{ icon: 'mui:GitHub', href: '…', iconColor: 'primary' }</code>  
@@ -153,6 +182,19 @@ When using the registry-driven renderer, a Footer spec like this:
 }
 ~~~
 
+**SPA routing (declarative)**
+
+~~~json
+{
+  "type": "Footer",
+  "props": {
+    "title": "neurons.me",
+    "brandTo": "/",
+    "brandComponent": "Link"
+  }
+}
+~~~
+
 …is mapped by the Footer resolver to \`<Footer />\` props. The resolver:
 - Passes \`links\` straight to the component; if a link has \`external: true\`, it adds \`target="_blank"\` and safe \`rel\`.
 - For each \`socialLinks[]\`, if \`icon\` is a **string token**, it renders through the icon registry (\`<Icon name=... />\`) and merges \`iconProps\`. If \`icon\` is a **React node**, it renders as-is and ignores \`iconProps\` for that item.
@@ -164,6 +206,10 @@ When using the registry-driven renderer, a Footer spec like this:
 **Automatic insets**
 By default, the footer reads <code>theme.insets.left</code> and <code>theme.insets.right</code> set by permanent drawers like <code>LeftDrawer</code> and <code>RightDrawer</code>.<br/>
 To override manually, pass <code>leftInset</code> and/or <code>rightInset</code>.
+
+You can simulate permanent drawers in Storybook using \`theme.updateInsets({ left, right })\` as shown in the stories below.
+
+There's also a story that mounts a real LeftDrawer next to the Footer to verify layout push end-to-end.
         `,
       },
     },
@@ -294,4 +340,160 @@ This story demonstrates the <code>Footer</code> automatically using <code>theme.
       { icon: 'lucide:Twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
     ],
   },
+};
+
+export const WithLeftDrawer: Story = {
+  name: 'With Left Drawer (insets via theme.updateInsets)',
+  render: (args) => (
+    <WithInsetsProvider left={240}>
+      <Footer {...args} />
+    </WithInsetsProvider>
+  ),
+  args: {
+    title: 'neurons.me',
+    links: [
+      { label: 'Docs', href: '/docs' },
+      { label: 'About', href: '/about' },
+    ],
+    socialLinks: [
+      { icon: 'mui:GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
+      { icon: 'lucide:twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
+    ],
+  },
+};
+
+export const WithRightDrawer: Story = {
+  name: 'With Right Drawer (insets via theme.updateInsets)',
+  render: (args) => (
+    <WithInsetsProvider right={280}>
+      <Footer {...args} />
+    </WithInsetsProvider>
+  ),
+  args: {
+    title: 'neurons.me',
+    links: [
+      { label: 'Status', href: '/status' },
+      { label: 'Changelog', href: '/changelog' },
+    ],
+    socialLinks: [
+      { icon: 'mui:GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
+      { icon: 'lucide:twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
+    ],
+  },
+};
+
+export const WithBothDrawers: Story = {
+  name: 'With Left & Right Drawers (combined insets)',
+  render: (args) => (
+    <WithInsetsProvider left={240} right={280}>
+      <Footer {...args} />
+    </WithInsetsProvider>
+  ),
+  args: {
+    title: 'neurons.me',
+    links: [
+      { label: 'Docs', href: '/docs' },
+      { label: 'Contact', href: '/contact' },
+    ],
+    socialLinks: [
+      { icon: 'mui:GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
+      { icon: 'lucide:twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
+    ],
+  },
+};
+
+export const WithLeftDrawerLayout: Story = {
+  name: 'Layout with LeftDrawer (real component)',
+  parameters: { layout: 'fullscreen' },
+  render: () => (
+    <>
+      <NavBar title="Demo" />
+      <Box sx={{ display: 'flex', height: '100vh', flexDirection: 'column', bgcolor: 'background.default' }}>
+        <Box sx={{ display: 'flex', flex: 1, width: '100%' }}>
+          {/* Permanent left drawer updates theme.insets.left automatically */}
+          <LeftDrawer drawerWidth={240} drawerLinks={demoLinks} open />
+          {/* Main content area that would scroll */}
+          <Box sx={{ flex: 1, p: 3, overflow: 'auto' }}>
+            <Box sx={{ height: 600, border: '1px dashed', borderColor: 'divider', borderRadius: 1, bgcolor: 'background.paper' }} />
+          </Box>
+        </Box>
+        <Footer
+          title="neurons.me"
+          links={[{ label: 'Docs', href: '/docs' }, { label: 'Contact', href: '/contact' }]}
+          socialLinks={[
+            { icon: 'mui:GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
+            { icon: 'lucide:twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
+          ]}
+        />
+      </Box>
+    </>
+  ),
+};
+
+const RightDrawerPermanent: React.FC<{ width?: number; children?: React.ReactNode }> = ({ width = 280, children }) => {
+  const theme = useTheme() as any;
+  React.useEffect(() => {
+    if (typeof theme?.updateInsets === 'function') theme.updateInsets({ right: width });
+    return () => { if (typeof theme?.updateInsets === 'function') theme.updateInsets({ right: 0 }); };
+  }, [width]);
+  return (
+    <Drawer variant="permanent" anchor="right" open PaperProps={{ sx: { width, boxSizing: 'border-box' } }}>
+      {children}
+    </Drawer>
+  );
+};
+
+export const WithRightDrawerLayout: Story = {
+  name: 'Layout with Right Drawer (real component)',
+  parameters: { layout: 'fullscreen' },
+  render: () => (
+    <>
+      <NavBar title="Demo" />
+      <Box sx={{ display: 'flex', height: '100vh', flexDirection: 'column', bgcolor: 'background.default' }}>
+        <Box sx={{ display: 'flex', flex: 1, width: '100%' }}>
+          {/* Main content area */}
+          <Box sx={{ flex: 1, p: 3, overflow: 'auto' }}>
+            <Box sx={{ height: 600, border: '1px dashed', borderColor: 'divider', borderRadius: 1, bgcolor: 'background.paper' }} />
+          </Box>
+          {/* Permanent right drawer updates theme.insets.right via effect */}
+          <RightDrawerPermanent width={280} />
+        </Box>
+        <Footer
+          title="neurons.me"
+          links={[{ label: 'Docs', href: '/docs' }, { label: 'Contact', href: '/contact' }]}
+          socialLinks={[
+            { icon: 'mui:GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
+            { icon: 'lucide:twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
+          ]}
+        />
+      </Box>
+    </>
+  ),
+};
+
+export const WithBothDrawersLayout: Story = {
+  name: 'Layout with Left & Right Drawers (real components)',
+  parameters: { layout: 'fullscreen' },
+  render: () => (
+    <>
+      <NavBar title="Demo" />
+      <Box sx={{ display: 'flex', height: '100vh', flexDirection: 'column', bgcolor: 'background.default' }}>
+        <Box sx={{ display: 'flex', flex: 1, width: '100%' }}>
+          <LeftDrawer drawerWidth={240} drawerLinks={demoLinks} open />
+          <Box sx={{ flex: 1, p: 3, overflow: 'auto' }}>
+            <Box sx={{ flex:1, p:3, overflow:'auto', bgcolor: 'background.default' }} />
+          </Box>
+          <RightDrawerPermanent width={280} />
+        </Box>
+        <Footer
+          title="neurons.me"
+          links={[{ label: 'Docs', href: '/docs' }, { label: 'Contact', href: '/contact' }]}
+          socialLinks={[
+            { icon: 'lucide:facebook', href: 'https://github.com/neurons-me', iconColor: 'primary' },
+            { icon: 'lucide:twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
+          ]}
+        />
+      </Box>
+    </>
+  ),
 };

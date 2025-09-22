@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, MouseEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import type { SxProps, Theme } from '@mui/material/styles';
 import {
   AppBar,
   Toolbar,
@@ -13,8 +14,11 @@ import {
 import { useGuiTheme, useGuiMediaQuery } from '@/gui';
 import ThemeSelector from '../../Utilities/ThemeSelector';
 import Icon from '../../../../themes/icons/Icon';
+import SidebarToggleButton from '../LeftSidebar/SidebarToggleButton';
 
-interface NavBarLinkChild {
+const sxN = (...parts: Array<SxProps<Theme> | undefined>): SxProps<Theme> => (parts.filter(Boolean) as unknown) as SxProps<Theme>;
+
+interface TopBarLinkChild {
   label: string;
   href?: string;
   external?: boolean;
@@ -22,33 +26,47 @@ interface NavBarLinkChild {
   iconColor?: string;
 }
 
-interface NavBarLink {
+interface TopBarLink {
   label: string;
   href?: string;
   external?: boolean;
   icon?: string;
   iconColor?: string;
-  children?: NavBarLinkChild[];
+  children?: TopBarLinkChild[];
 }
 
-interface NavBarProps {
+interface TopBarProps {
   title?: string;
   logo?: string;
-  NavBarLinks?: NavBarLink[];
+  TopBarLinks?: TopBarLink[];
   showMenuButton?: boolean;
   onMenuClick?: () => void;
   showThemeToggle?: boolean;
   homeTo?: string;
   position?: "fixed" | "static" | "sticky";
+  sx?: SxProps<Theme>;
+  appBarSx?: SxProps<Theme>;
+  toolbarSx?: SxProps<Theme>;
+  brandSx?: SxProps<Theme>;
+  logoSx?: SxProps<Theme>;
+  titleSx?: SxProps<Theme>;
+  linksSx?: SxProps<Theme>;
+  linkSx?: SxProps<Theme>;
+  menuSx?: SxProps<Theme>;
+  menuItemSx?: SxProps<Theme>;
+  actionsSx?: SxProps<Theme>;
+  id?: string;
+  className?: string;
+  'data-testid'?: string;
 }
 
 /**
- * NavBar (presentational)
+ * TopBar (presentational)
  *
  * Props:
  * - title?: string = 'neurons.me'
  * - logo?: string (URL)
- * - NavBarLinks?: Array<{ label: string, href?: string, external?: boolean, icon?: string, iconColor?: string, children?: Array<{label: string, href?: string, external?: boolean, icon?: string, iconColor?: string}> }>
+ * - TopBarLinks?: Array<{ label: string, href?: string, external?: boolean, icon?: string, iconColor?: string, children?: Array<{label: string, href?: string, external?: boolean, icon?: string, iconColor?: string}> }>
  *   // icon: string from This.GUI icon registry (e.g., 'mui:Settings', 'lucide:home')
  *   // iconColor: CSS color or theme key (e.g., '#00aa96', 'primary', 'text.secondary')
  * - showMenuButton?: boolean (controls left hamburger visibility)
@@ -57,19 +75,34 @@ interface NavBarProps {
  * - homeTo?: string (router link for brand/title)
  * - position?: "fixed" | "static" | "sticky" (AppBar position, default is "fixed")
  */
-export default function NavBar({
+export default function TopBar({
   title = 'neurons.me',
   logo = 'https://neurons.me/neurons.me.png',
-  NavBarLinks = [],
+  TopBarLinks = [],
   showMenuButton = false,
   onMenuClick,
   showThemeToggle = true,
   homeTo = '/',
   position = 'fixed',
-}: NavBarProps) {
+  sx,
+  appBarSx,
+  toolbarSx,
+  brandSx,
+  logoSx,
+  titleSx,
+  linksSx,
+  linkSx,
+  menuSx,
+  menuItemSx,
+  actionsSx,
+  id,
+  className,
+  'data-testid': dataTestId,
+}: TopBarProps) {
   const theme = useGuiTheme();
   const isMobile = useGuiMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
+
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openMenu, setOpenMenu] = useState<null | string>(null);
@@ -112,21 +145,50 @@ export default function NavBar({
     setOpenMenu(null);
   };
 
+  // Indentation handled by Toolbar padding-left via --gui-inset-left CSS variable
+  const baseAppBarSx = {
+    minHeight: 48,
+    backgroundColor: theme.palette.background.nav,
+    borderBottom: '1px solid',
+    borderColor: theme.palette.divider,
+    // Keep AppBar *below* the Drawer so the Drawer edge sits flush over it.
+    zIndex: (theme as any)?.zIndex?.appBar ?? 1100,
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    width: '100%',
+    boxSizing: 'border-box',
+  } as const;
+
   return (
     <AppBar
+      id={id}
+      className={className}
+      data-testid={dataTestId}
       position={position}
       elevation={0}
-      sx={{
-        minHeight: 48,
-        backgroundColor:
-          theme.palette.mode === 'light'
-            ? theme.palette.background.nav || '#ffffff'
-            : theme.palette.background.paper,
-        borderBottom: `1px solid ${theme.custom?.border || (theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.1)')}`,
-        zIndex: theme.zIndex.drawer + 1,
-      }}
+      sx={sxN(baseAppBarSx as SxProps<Theme>, { '--has-topbar': 1 } as any, sx, appBarSx)}
     >
-      <Toolbar ref={toolbarRef} variant="dense" sx={{ minHeight: 48 }}>
+      <Toolbar
+        ref={toolbarRef}
+        variant="dense"
+        disableGutters
+        sx={sxN(
+          {
+            minHeight: 48,
+            pl: 'var(--gui-rail-width, 0px)',
+            pr: 'var(--gui-inset-right, 0px)',
+          },
+          toolbarSx
+        )}
+      >
+        <SidebarToggleButton
+          expanded={showMenuButton}
+          onToggle={onMenuClick || (() => {})}
+          location="topbar"
+          sx={{ mr: 1 }}
+        />
         {showMenuButton && (
           <IconButton
             color="inherit"
@@ -140,28 +202,28 @@ export default function NavBar({
         )}
 
         <Box
-          sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, textDecoration: 'none' }}
+          sx={sxN({ display: 'flex', alignItems: 'center', flexGrow: 1, textDecoration: 'none', ml: showMenuButton ? 2 : 0 }, brandSx)}
           component={Link}
           to={homeTo}
         >
           {logo && (
-            <img src={logo} alt={`${title} logo`} style={{ height: 28, marginRight: 6 }} />
+            <Box component="img" src={logo} alt={`${title} logo`} sx={sxN({ height: 28, mr: 0.75 }, logoSx)} />
           )}
-          <Typography variant="h6" noWrap component="div" sx={{ color: theme.palette.text.primary }}>
+          <Typography variant="h6" noWrap component="div" sx={sxN({ color: theme.palette.text.primary }, titleSx)}>
             {title}
           </Typography>
         </Box>
 
-        {/* NavBarLinks */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
-          {NavBarLinks.map((link) => {
+        {/* TopBarLinks */}
+        <Box sx={sxN({ display: 'flex', alignItems: 'center', gap: 1.25 }, linksSx)}>
+          {TopBarLinks.map((link) => {
             const hasChildren = Array.isArray(link.children) && link.children.length > 0;
             if (hasChildren) {
               return (
                 <Box key={link.label}>
                   <Button
-                    onClick={(e) => handleMenuOpen(e, link.label)}
-                    sx={{
+                    onClick={(e: MouseEvent<HTMLElement>) => handleMenuOpen(e, link.label)}
+                    sx={sxN({
                       color: theme.palette.text.primary,
                       '&:hover': { backgroundColor: 'transparent', color: theme.palette.text.secondary },
                       display: 'flex',
@@ -169,12 +231,12 @@ export default function NavBar({
                       gap: 0.5,
                       minWidth: 0,
                       px: 1,
-                    }}
+                    }, linkSx)}
                   >
                     {link.icon && <Icon name={link.icon} color={link.iconColor} size={18} />}
                     {link.label}
                   </Button>
-                  <Menu anchorEl={anchorEl} open={openMenu === link.label} onClose={handleMenuClose}>
+                  <Menu anchorEl={anchorEl} open={openMenu === link.label} onClose={handleMenuClose} sx={menuSx}>
                     {link.children!.map((child) => (
                       <MenuItem
                         key={child.label}
@@ -183,7 +245,7 @@ export default function NavBar({
                           ? { href: child.href, target: '_blank', rel: 'noopener noreferrer' }
                           : { to: child.href })}
                         onClick={handleMenuClose}
-                        sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+                        sx={sxN({ display: 'flex', alignItems: 'center', gap: 0.5 }, menuItemSx)}
                       >
                         {child.icon && <Icon name={child.icon} color={child.iconColor} size={18} />}
                         {child.label}
@@ -200,7 +262,7 @@ export default function NavBar({
                 {...(link.external
                   ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
                   : { to: link.href })}
-                sx={{
+                sx={sxN({
                   color: theme.palette.text.primary,
                   '&:hover': { backgroundColor: 'transparent', color: theme.palette.text.secondary },
                   display: 'flex',
@@ -208,7 +270,7 @@ export default function NavBar({
                   gap: 0.5,
                   minWidth: 0,
                   px: 1,
-                }}
+                }, linkSx)}
               >
                 {link.icon && <Icon name={link.icon} color={link.iconColor} size={18} />}
                 {link.label}
@@ -218,7 +280,7 @@ export default function NavBar({
         </Box>
 
         {showThemeToggle && (
-          <Box sx={{ ml: 1 }}>
+          <Box sx={sxN({ ml: 1 }, actionsSx)}>
             <ThemeSelector tooltip="Select theme" />
           </Box>
         )}

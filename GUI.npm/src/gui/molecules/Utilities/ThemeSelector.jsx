@@ -1,23 +1,21 @@
 // src/gui/molecules/Utilities/ThemeSelector.jsx
 import React from 'react';
 import {
-  IconButton,
-  Tooltip,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
-  Box,
-  Divider,
-  Button,
-  Typography,
+  IconButton, // .yes
+  Tooltip, // .yes
+  Menu, //yes
+  MenuItem,//yes
+  ListItemIcon,//yes
+  ListItemText, // yes
+  Box, // .yes
+  Divider, // .yes
+  Typography // .yes
 } from '@/gui/atoms';
 import MuiSwitch from '@mui/material/Switch';
 import * as MuiIcons from '@mui/icons-material';
 import { useThemeContext } from '@/context/GuiProvider';
 import { AVAILABLE_THEMES } from '@/themes';
 import { useTheme } from '@mui/material/styles';
-
 // Icons ---------------------------------------------------------------
 const Sun = MuiIcons.WbSunnyRounded || MuiIcons.WbSunny;
 const Moon = MuiIcons.DarkModeRounded || MuiIcons.NightlightRound;
@@ -25,7 +23,6 @@ const Check = MuiIcons.Check || MuiIcons.Done;
 const Info = MuiIcons.InfoOutlined || MuiIcons.Info;
 const Brush = MuiIcons.Brush || MuiIcons.Edit;
 const Palette = MuiIcons.Palette || MuiIcons.ColorLens;
-
 // Render an icon spec from manifest (or string name for MUI icons)
 const IconRenderer = ({ icon, fontSize = 'small', sx }) => {
   if (typeof icon === 'string') {
@@ -59,7 +56,6 @@ function groupByFamily(items = []) {
     if (!family) continue;
     const entry = map.get(family) || { family, meta: t.manifest || {}, modes: {} };
     entry.meta = t.manifest || entry.meta;
-
     const hasMode = typeof t.mode === 'string' && t.mode.length > 0;
     if (hasMode) {
       const mode = String(t.mode).toLowerCase();
@@ -116,7 +112,6 @@ export default function ThemeSelector({ tooltip = 'Seleccionar tema / modo' }) {
   const open = Boolean(anchorEl);
   const [expandedFamily, setExpandedFamily] = React.useState(null);
   const families = groupByFamily(items);
-
   // Active entry comes from provider’s themeKey/family/mode
   const active = items.find((t) => t.id === themeKey) || items[0];
   const activeFamily = family || active?.family || (families[0]?.family ?? '');
@@ -127,7 +122,6 @@ export default function ThemeSelector({ tooltip = 'Seleccionar tema / modo' }) {
   const handleOpen = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
   const disabled = items.length === 0;
-
   // -- Helpers ---------------------------------------------------------------
   const parseFamilyAndMode = (id, fallbackFamily = activeFamily) => {
     if (!id) return { family: fallbackFamily, mode: 'light' };
@@ -153,13 +147,11 @@ export default function ThemeSelector({ tooltip = 'Seleccionar tema / modo' }) {
   };
 
   const muiTheme = useTheme();
-
   const activeFamilyEntry = families.find((f) => f.family === activeFamily);
   const lightMode = activeFamilyEntry?.modes?.light;
   const darkMode = activeFamilyEntry?.modes?.dark;
   const isDarkSelected = mode === 'dark' || (!!darkMode && themeKey === darkMode.id);
   const isLightSelected = mode === 'light' || (!!lightMode && themeKey === lightMode.id);
-
   return (
     <>
       <Tooltip title={tooltip}>
@@ -169,7 +161,6 @@ export default function ThemeSelector({ tooltip = 'Seleccionar tema / modo' }) {
           </IconButton>
         </span>
       </Tooltip>
-
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose} keepMounted>
         {families.length === 0 ? (
           <MenuItem disabled>No themes available</MenuItem>
@@ -178,10 +169,8 @@ export default function ThemeSelector({ tooltip = 'Seleccionar tema / modo' }) {
             const { family, meta, modes } = fam;
             const light = modes.light;
             const dark = modes.dark;
-
             const isActiveLight = !!light && themeKey === light.id;
             const isActiveDark = !!dark && themeKey === dark.id;
-
             return (
               <Box key={family} component="div" sx={{ minWidth: 280 }}>
                 {/* Header: theme name + info icon (not disabled; full-contrast) */}
@@ -245,9 +234,7 @@ export default function ThemeSelector({ tooltip = 'Seleccionar tema / modo' }) {
                       </Tooltip>
                     ))}
                   </Box>
-
                   {/* Removed checkmark line */}
-
                   {/* Controls: Sun • Switch • Moon (compact group) aligned right */}
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                     <Sun fontSize="small" sx={{ opacity: light ? 1 : 0.4 }} />
@@ -269,7 +256,6 @@ export default function ThemeSelector({ tooltip = 'Seleccionar tema / modo' }) {
                     <Moon fontSize="small" sx={{ opacity: dark ? 1 : 0.4 }} />
                   </Box>
                 </Box>
-
                 {/* Expanded manifest info */}
                 {expandedFamily === family && (
                   <Box sx={{ px: 2, pb: 1.25, color: 'text.secondary', fontSize: 12 }}>
@@ -284,7 +270,6 @@ export default function ThemeSelector({ tooltip = 'Seleccionar tema / modo' }) {
                     )}
                   </Box>
                 )}
-
                 {idx < families.length - 1 ? <Divider sx={{ my: 0.5 }} /> : null}
               </Box>
             );

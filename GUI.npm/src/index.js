@@ -5,10 +5,10 @@ import MinimalLayout from "./templates/Minimal";
 // THEME
 import { GuiProvider, useThemeContext } from "./context/GuiProvider";
 // APPBARS
-import NavBar from "@/gui/molecules/AppBars/NavBar/NavBar";
+import TopBar from "@/gui/molecules/AppBars/TopBar/TopBar";
 import Footer from "@/gui/molecules/AppBars/Footer/Footer";
-import LeftDrawer from "@/gui/molecules/AppBars/LeftDrawer/LeftDrawer";
-import RightDrawer from "@/gui/molecules/AppBars/RightDrawer/RightDrawer";
+import LeftSidebar from "@/gui/molecules/AppBars/LeftSidebar/LeftSidebar";
+import RightSidebar from "@/gui/molecules/AppBars/RightSidebar/RightSidebar";
 import StickyOptionsTop from "@/gui/molecules/AppBars/StickyOptions/StickyOptionsTop";
 import TopBarAndSideBar from "@/gui/molecules/AppBars/TopBarAndSideBar/TopBarAndSideBar";//REMOVE SOON
 import RightContextDrawer from "@/gui/molecules/AppBars/RightContextDrawer/RightContextDrawer"; //REMOVE SOON
@@ -45,11 +45,11 @@ import FullChatBot from "./components/generics/Chats/FullChatBot";
 export {
   GuiProvider, 
   useThemeContext,
-  NavBar, 
+  TopBar, 
   Footer, 
   StickyOptionsTop, 
-  LeftDrawer, 
-  RightDrawer,
+  LeftSidebar, 
+  RightSidebar,
   MinimalLayout, //soon to be removed
   TopBarAndSideBar, //soon to be removed
   RightContextDrawer, //soon to be removed

@@ -3,6 +3,8 @@ import * as React from 'react';
 import Button from './Button';
 import Link from '../Link/Link';
 import type { RegistryEntry } from '@/registry/types';
+import type { SxProps, Theme } from '@mui/material/styles';
+import { ensureNodeId } from '@/gui/utils/nodeID';
 /**
  * Declarative spec for Button.
  * This is the JSON-friendly shape your renderer/LLM can emit.
@@ -19,19 +21,23 @@ type ButtonSpec = {
     size?: 'small' | 'medium' | 'large';
     startIcon?: React.ReactNode | string;
     endIcon?: React.ReactNode | string;
-    sx?: any;
+    sx?: SxProps<Theme>;
     disabled?: boolean;
     fullWidth?: boolean;
     // Routing / polymorphism
-    external?: boolean;              // if true → anchor + target/rel
+    external?: boolean | 'true' | 1;              // if true → anchor + target/rel
     href?: string;                   // for anchors
     to?: string;                     // for routers
-    component?: any;                 // override polymorphic target (e.g., your Link)
+    target?: React.HTMLAttributeAnchorTarget;
+    rel?: string;
+    component?: React.ElementType | string;                 // override polymorphic target (e.g., your Link)
+    as?: React.ElementType | string;
     type?: 'button' | 'submit' | 'reset';
     // You can extend with data-* attributes, id, className, etc.
     id?: string;
     className?: string;
     'data-testid'?: string;
+    [key: string]: any;
   };
 };
 
@@ -45,24 +51,30 @@ const ButtonResolver: RegistryEntry = {
   type: 'Button',
   resolve(spec: ButtonSpec) {
     const p = spec.props ?? {};
-    // Decide routing polymorphism
-    const routingProps = p.external
-      ? {
-          component: 'a' as const,
-          href: p.href,
-          target: '_blank',
-          rel: 'noopener noreferrer',
-        }
-      : {
-          component: p.component ?? (p.to ? Link : undefined),
-          to: p.to,
-          href: p.href,
-        };
+    // Decide component priority
+    const isExternal = p.external === true || p.external === 'true' || p.external === 1;
+    let component: React.ElementType | string | undefined =
+      p.component ?? p.as ?? (p.to ? Link : (p.href || isExternal) ? 'a' : undefined);
+
+    const routingProps: Record<string, any> = {};
+    if (component === Link && p.to) {
+      routingProps.to = p.to;
+    } else if (component === 'a') {
+      routingProps.href = p.href;
+      if (isExternal) {
+        routingProps.target = p.target ?? '_blank';
+        routingProps.rel = p.rel ?? 'noopener noreferrer';
+      } else {
+        if (p.target) routingProps.target = p.target;
+        if (p.rel) routingProps.rel = p.rel;
+      }
+    }
 
     // Children precedence: explicit children > label > fallback
     const children = p.children ?? p.label ?? 'Button';
     return (
       <Button
+        {...(component ? { component } : {})}
         variant={p.variant ?? 'text'}
         color={p.color ?? 'inherit'}
         size={p.size ?? 'medium'}
@@ -72,7 +84,7 @@ const ButtonResolver: RegistryEntry = {
         fullWidth={p.fullWidth}
         type={p.type}
         sx={p.sx}
-        id={p.id}
+        id={ensureNodeId('button', p.id)}
         className={p.className}
         data-testid={p['data-testid']}
         {...routingProps}

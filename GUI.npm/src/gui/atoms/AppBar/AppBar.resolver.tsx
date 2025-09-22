@@ -1,6 +1,8 @@
 import * as React from 'react';
+import type { SxProps, Theme } from '@mui/material/styles';
 import AppBar from './AppBar';
 import type { RegistryEntry } from '@/registry/types';
+import { ensureNodeId } from '@/gui/utils/nodeID';
 
 /**
  * Declarative spec for AppBar.
@@ -26,10 +28,10 @@ type AppBarSpec = {
       | 'error';
     elevation?: number;
     enableColorOnDark?: boolean;
-    sx?: any;
+    sx?: SxProps<Theme>;
 
     /** Polymorphism passthrough (AppBar extends Paper → supports `component`) */
-    component?: any;
+    component?: React.ElementType;
 
     /** Common DOM props */
     id?: string;
@@ -49,18 +51,23 @@ const AppBarResolver: RegistryEntry = {
   resolve(spec: AppBarSpec) {
     const p = spec.props ?? {};
 
+    const rootProps: any = {
+      position: p.position ?? 'fixed',
+      color: p.color ?? 'default',
+      elevation: p.elevation,
+      enableColorOnDark: p.enableColorOnDark,
+      sx: p.sx,
+      id: ensureNodeId('appbar', p.id),
+      className: p.className,
+      'data-testid': p['data-testid'],
+    };
+
+    if (p.component) {
+      rootProps.component = p.component;
+    }
+
     return (
-      <AppBar
-        position={p.position ?? 'fixed'}
-        color={p.color ?? 'default'}
-        elevation={p.elevation}
-        enableColorOnDark={p.enableColorOnDark}
-        component={p.component as any}
-        sx={p.sx}
-        id={p.id}
-        className={p.className}
-        data-testid={p['data-testid']}
-      >
+      <AppBar {...rootProps}>
         {p.children}
       </AppBar>
     );

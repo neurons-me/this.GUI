@@ -15,30 +15,39 @@ import { Link as RouterLink } from "react-router-dom";
 import { useGuiTheme, useGuiMediaQuery } from "@/gui";
 import type { GuiTheme } from "@/gui";
 import type * as ReactTypes from "react";
-export type RightDrawerIcon =
+export type RightSidebarIcon =
   | string
   | ReactTypes.ComponentType<any>
   | React.ReactNode;
-
-export type RightDrawerItem = {
+export type RightSidebarItem = {
   type?: "label";
   label?: string;
   href?: string;
   external?: boolean;
   onClick?: () => void;
-  icon?: RightDrawerIcon;
+  icon?: RightSidebarIcon;
   iconColor?: string;
-  children?: RightDrawerItem[];
+  children?: RightSidebarItem[];
 };
 
 export type RightContext = {
   title?: string;
-  items: RightDrawerItem[];
+  items: RightSidebarItem[];
 };
 
-export type RightContextDrawerProps = {
+export type RightSidebarProps = {
   rightContext?: RightContext;
   drawerWidth?: number;
+  open?: boolean;
+  onClose?: (event?: any) => void;
+  sx?: any;
+  paperSx?: any;
+  headerSx?: any;
+  contentSx?: any;
+  footerSx?: any;
+  id?: string;
+  className?: string;
+  "data-testid"?: string;
 };
 
 const drawerStyles = (
@@ -54,7 +63,7 @@ const drawerStyles = (
   height: "calc(100vh - var(--gui-nav-height, 48px))",
 });
 
-function DrawerContent({ rightContext }: { rightContext?: RightContext }) {
+function DrawerContent({ rightContext, headerSx, contentSx }: { rightContext?: RightContext; headerSx?: any; contentSx?: any }) {
   const { title, items: contextItems } = rightContext || {};
   const items = Array.isArray(contextItems) ? contextItems : [];
   const [openItems, setOpenItems] = React.useState<Record<number, boolean>>({});
@@ -66,14 +75,14 @@ function DrawerContent({ rightContext }: { rightContext?: RightContext }) {
     <Box role="presentation">
       {title && (
         <Box
-          sx={{ px: 2, pt: 2, pb: 2, borderBottom: "1px solid", borderColor: "divider" }}
+          sx={{ px: 2, pt: 2, pb: 2, borderBottom: "1px solid", borderColor: "divider", ...headerSx }}
         >
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             {title}
           </Typography>
         </Box>
       )}
-      <List>
+      <List sx={contentSx}>
         {items.map((item, index) => {
           if (item.type === "label") {
             return (
@@ -186,17 +195,33 @@ function DrawerContent({ rightContext }: { rightContext?: RightContext }) {
   );
 }
 
-export default function RightContextDrawer({
+export default function RightSidebar({
   rightContext,
   drawerWidth = 260,
-}: RightContextDrawerProps) {
+  open,
+  onClose,
+  sx,
+  paperSx,
+  headerSx,
+  contentSx,
+  footerSx,
+  id,
+  className,
+  "data-testid": dataTestId,
+}: RightSidebarProps) {
   const theme = useGuiTheme();
   const isMobile = useGuiMediaQuery(theme.breakpoints.down("md"));
-  const [open, setOpen] = React.useState(false);
+  const isControlled = typeof open === "boolean";
+  const [internalOpen, setInternalOpen] = React.useState(false);
+  const effectiveOpen = isControlled ? open! : internalOpen;
   const isPermanent = !isMobile;
+
   React.useEffect(() => {
-    setOpen(!isMobile);
-  }, [isMobile]);
+    if (!isControlled) {
+      setInternalOpen(!isMobile);
+    }
+  }, [isMobile, isControlled]);
+
   React.useEffect(() => {
     const setInsets = theme?.updateInsets;
     const currentRight = theme?.layout?.insets?.right ?? 0;
@@ -211,10 +236,12 @@ export default function RightContextDrawer({
       };
     }
   }, [isPermanent, drawerWidth]);
+
   if (!rightContext || !rightContext.items?.length) return null;
+
   return (
     <>
-      {isMobile && !open && (
+      {!isControlled && isMobile && !effectiveOpen && (
         <Box
           sx={{
             position: "fixed",
@@ -225,7 +252,7 @@ export default function RightContextDrawer({
           }}
         >
           <Box
-            onClick={() => setOpen(true)}
+            onClick={() => setInternalOpen(true)}
             sx={{
               backgroundColor: theme.palette.primary.main,
               color: "#fff",
@@ -240,15 +267,28 @@ export default function RightContextDrawer({
         </Box>
       )}
       <Drawer
+        id={id}
+        className={className}
+        data-testid={dataTestId}
         anchor="right"
-        open={open}
-        onClose={() => setOpen(false)}
+        open={effectiveOpen}
+        onClose={() => {
+          if (isControlled) {
+            onClose?.();
+          } else {
+            setInternalOpen(false);
+          }
+        }}
         variant={isMobile ? "temporary" : "persistent"}
         sx={{
-          "& .MuiDrawer-paper": drawerStyles(theme, drawerWidth),
+          ...sx,
+          "& .MuiDrawer-paper": {
+            ...drawerStyles(theme, drawerWidth),
+            ...paperSx,
+          },
         }}
       >
-        <DrawerContent rightContext={rightContext} />
+        <DrawerContent rightContext={rightContext} headerSx={headerSx} contentSx={contentSx} />
       </Drawer>
     </>
   );

@@ -7,6 +7,9 @@
 import * as Lucide from 'lucide-react';
 const LucideLib: Record<string, any> = ((Lucide as any)?.default ?? Lucide) as any;
 import { FC } from 'react';
+
+const iconCache = new Map<string, LucideIconComp>();
+
 export const LUCIDE_PREFIX = 'lucide';
 export type LucideIconComp = FC<any>;
 
@@ -38,10 +41,11 @@ export function normalizeLucideName(name: string = ''): string {
  */
 export function getLucideIcon(name: string): LucideIconComp {
   const key = normalizeLucideName(name);
-  // Prefer exact match; otherwise fallback to HelpCircle
-  const Comp = key ? LucideLib[key] : undefined;
-  if (typeof Comp === 'function') return Comp as LucideIconComp;
-  return (LucideLib as any).HelpCircle as LucideIconComp;
+  if (!key) return LucideLib.HelpCircle;
+  if (iconCache.has(key)) return iconCache.get(key)!;
+  const Comp = typeof LucideLib[key] === 'function' ? LucideLib[key] : LucideLib.HelpCircle;
+  iconCache.set(key, Comp);
+  return Comp;
 }
 
 /**

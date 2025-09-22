@@ -22,6 +22,8 @@ export type FooterProps = {
   title?: string;
   logoSrc?: string;
   homeHref?: string;
+  brandComponent?: any;  // ElementType for SPA routing (e.g., Link)
+  brandTo?: string;      // Destination for SPA routing
   onBrandClick?: () => void;
   socialLinks?: SocialLink[];
   links?: LinkItem[];
@@ -51,6 +53,8 @@ export default function Footer({
   title = "neurons.me",
   logoSrc,
   homeHref,
+  brandComponent,
+  brandTo,
   onBrandClick,
   socialLinks = [],
   links = [],
@@ -100,17 +104,85 @@ export default function Footer({
       ? logoSrc
       : "https://www.neurons.me/media/neurons-grey.png"; // required fallback
 
-  const Brand = (
+  const activateOnKey = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (onBrandClick) onBrandClick();
+    }
+  };
+
+  const Brand = onBrandClick ? (
+    // Button-like div when an explicit click handler is provided (keyboard accessible)
     <Box
       sx={sxN(
-        { display: 'flex', alignItems: 'center', gap: 1, cursor: homeHref || onBrandClick ? 'pointer' : 'default' },
+        { display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' },
         brandSx
       )}
-      onClick={() => {
-        if (onBrandClick) onBrandClick();
-        else if (homeHref) window.location.assign(homeHref);
-      }}
-      role={homeHref || onBrandClick ? "button" : undefined}
+      onClick={onBrandClick}
+      onKeyDown={activateOnKey}
+      role="button"
+      tabIndex={0}
+      aria-label={title}
+    >
+      <Box component="img" src={effectiveLogo} alt={`${title} logo`} sx={sxN({ width: 28, height: 28 }, logoSx)} />
+      {title && (
+        <Typography
+          variant="subtitle1"
+          sx={sxN({ color: theme.palette.text.primary, fontWeight: 600 }, titleSx)}
+        >
+          {title}
+        </Typography>
+      )}
+    </Box>
+  ) : brandComponent && brandTo ? (
+    // SPA routing: use provided brandComponent (e.g., This.GUI Link) with `to`
+    <Box
+      component={brandComponent as any}
+      to={brandTo}
+      sx={sxN(
+        { display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none', cursor: 'pointer' },
+        brandSx
+      )}
+      aria-label={title}
+    >
+      <Box component="img" src={effectiveLogo} alt={`${title} logo`} sx={sxN({ width: 28, height: 28 }, logoSx)} />
+      {title && (
+        <Typography
+          variant="subtitle1"
+          sx={sxN({ color: theme.palette.text.primary, fontWeight: 600 }, titleSx)}
+        >
+          {title}
+        </Typography>
+      )}
+    </Box>
+  ) : homeHref ? (
+    // Semantic anchor when a homeHref is provided (SSR/router safe)
+    <Box
+      component="a"
+      href={homeHref}
+      sx={sxN(
+        { display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none', cursor: 'pointer' },
+        brandSx
+      )}
+      aria-label={title}
+    >
+      <Box component="img" src={effectiveLogo} alt={`${title} logo`} sx={sxN({ width: 28, height: 28 }, logoSx)} />
+      {title && (
+        <Typography
+          variant="subtitle1"
+          sx={sxN({ color: theme.palette.text.primary, fontWeight: 600 }, titleSx)}
+        >
+          {title}
+        </Typography>
+      )}
+    </Box>
+  ) : (
+    // Non-clickable brand
+    <Box
+      sx={sxN(
+        { display: 'flex', alignItems: 'center', gap: 1, cursor: 'default' },
+        brandSx
+      )}
       aria-label={title}
     >
       <Box component="img" src={effectiveLogo} alt={`${title} logo`} sx={sxN({ width: 28, height: 28 }, logoSx)} />
@@ -159,8 +231,8 @@ export default function Footer({
           alignItems: 'center',
           justifyContent: 'space-between',
           py: 1,
-          pl: { xs: 2, sm: `calc(${effectiveLeftInset} + ${theme.spacing(5)})` },
-          pr: { xs: 2, sm: `calc(${effectiveRightInset} + ${theme.spacing(5)})` },
+          pl: { xs: 2, sm: `calc(${effectiveLeftInset} + ${theme.spacing(3)})` },
+          pr: { xs: 2, sm: `calc(${effectiveRightInset} + ${theme.spacing(3)})` },
           borderTop: `1px solid ${theme.palette.divider}`,
           bgcolor: theme.palette.background.paper,
           transition: 'padding-left 0.3s ease, padding-right 0.3s ease',
@@ -171,7 +243,7 @@ export default function Footer({
       )}
     >
       {/* Left cluster: social icons + optional start slot */}
-      <Box sx={sxN({ display: 'flex', alignItems: 'center', gap: 1.5 }, leftSx)}>
+      <Box sx={sxN({ display: 'flex', alignItems: 'center', gap: 1, flex: '0 0 auto', minWidth: 0 }, leftSx)}>
         {socialLinks?.map((item, idx) => (
           <Box key={idx} sx={{ display: "flex", alignItems: "center" }}>
             <Link
@@ -197,6 +269,10 @@ export default function Footer({
             display: 'flex',
             flexDirection: isMobile ? 'column' : 'row',
             alignItems: isMobile ? 'flex-start' : 'center',
+            justifyContent: 'center',
+            flex: '1 1 auto',
+            minWidth: 0,
+            flexWrap: isMobile ? 'nowrap' : 'wrap',
             gap: isMobile ? 0.5 : 2,
           },
           centerSx
@@ -222,7 +298,7 @@ export default function Footer({
       </Box>
 
       {/* Right cluster: branding + optional end slot */}
-      <Box sx={sxN({ display: 'flex', alignItems: 'center', gap: 2 }, rightSx)}>
+      <Box sx={sxN({ display: 'flex', alignItems: 'center', gap: 2, flex: '0 0 auto', minWidth: 0 }, rightSx)}>
         {Brand}
         {endSlot}
       </Box>

@@ -1,27 +1,27 @@
 /*
  * This.GUI — Typography (polymorphic)
- * Wrapper for MUI's Typography that preserves its full polymorphic API:
- * - component/as
- * - variantMapping
- * - support for RouterLink (to) and anchors (href) when appropriate
+ * Thin wrapper over MUI's Typography that preserves its full polymorphic API:
+ * - `component` / `as` (MUI OverridableComponent)
+ * - `variantMapping`
+ * - works with router links (`component={Link}`) or anchors (`component="a"`)
  *
- * Import from "@/gui/primitives" instead of "@mui/material" so the engine
- * can be changed without breaking consumers.
+ * Import from "@/gui/atoms" instead of "@mui/material" so we can change
+ * the underlying engine without breaking consumers.
  */
-
-import type { OverridableComponent } from '@mui/material/OverridableComponent';
-import MuiTypography from '@mui/material/Typography';
-import type { TypographyTypeMap } from '@mui/material/Typography';
 import * as React from 'react';
-// Public type (correctly typed MUI polymorphic props)
+import MuiTypography from '@mui/material/Typography';
+import type { OverridableComponent } from '@mui/material/OverridableComponent';
+import type { TypographyTypeMap } from '@mui/material/Typography';
+// Public prop type (mirrors MUI's polymorphic typing)
 export type TypographyProps = React.ComponentProps<
   OverridableComponent<TypographyTypeMap<{}, 'span'>>
 >;
-// Component: preserves the OverridableComponent from MUI
+// Component: preserve MUI OverridableComponent so `component` works as in MUI
 const Typography = MuiTypography as unknown as OverridableComponent<
   TypographyTypeMap<{}, 'span'>
 >;
+// DevTools label
 (Typography as any).displayName = 'Gui.Typography';
-// Note: displayName is not typed in OverridableComponent; casting to any avoids TS noise.
-(Typography as any).displayName = 'Gui.Typography';
+// Helpful alias for consumers who prefer a prefixed name
+export type GuiTypographyProps = TypographyProps;
 export default Typography;

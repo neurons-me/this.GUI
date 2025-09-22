@@ -2,6 +2,7 @@
 import * as React from 'react';
 import Footer from './Footer';
 import type { RegistryEntry, ResolveCtx } from '@/registry/types';
+import { Link as GuiLink } from '@/gui/atoms';
 
 export type FooterSpec = {
   type: 'Footer';
@@ -10,6 +11,10 @@ export type FooterSpec = {
     title?: string;
     logoSrc?: string;
     homeHref?: string;
+
+    // SPA routing for Brand
+    brandComponent?: string; // e.g., "Link" (string token resolved by resolver)
+    brandTo?: string;        // router destination (e.g., "/")
 
     // Links
     links?: Array<{ label: string; href: string; external?: boolean }>;
@@ -53,11 +58,22 @@ const FooterResolver: RegistryEntry = {
     const startSlot = p.startSlotId && ctx?.slots ? ctx.slots[p.startSlotId] : undefined;
     const endSlot   = p.endSlotId   && ctx?.slots ? ctx.slots[p.endSlotId]   : undefined;
 
+    // Resolve brand component for SPA routing
+    let brandComponent: any | undefined = undefined;
+    if (p.brandComponent === 'Link') {
+      brandComponent = GuiLink;
+    } else if (!p.brandComponent && p.brandTo) {
+      // If a brandTo is provided without an explicit component token, default to This.GUI Link
+      brandComponent = GuiLink;
+    }
+
     return (
       <Footer
         title={p.title ?? 'neurons.me'}
         logoSrc={p.logoSrc}
         homeHref={p.homeHref}
+        brandComponent={brandComponent}
+        brandTo={p.brandTo}
         links={p.links ?? []}
         socialLinks={p.socialLinks ?? []}
         leftInset={p.leftInset}
