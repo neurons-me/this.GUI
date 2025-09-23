@@ -1,8 +1,6 @@
-import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button, Link } from '@/gui/atoms';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
+import Icon from '@/themes/Icon/Icon';
 
 // ======================= Meta =======================
 const meta: Meta<typeof Button> = {
@@ -11,13 +9,9 @@ const meta: Meta<typeof Button> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ padding: 16, minHeight: 240 }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+        <div style={{ padding: 16, minHeight: 240 }}>
+          <Story />
+        </div>
     ),
   ],
   parameters: {
@@ -184,8 +178,8 @@ export const WithIcons: Story = {
   args: {
     variant: 'contained',
     color: 'secondary',
-    startIcon: 'mui:Power',
-    endIcon: 'lucide:bolt',
+    startIcon: <Icon name="Power" />,
+    endIcon: <Icon name="bolt" />,
     children: 'Send',
   },
 };

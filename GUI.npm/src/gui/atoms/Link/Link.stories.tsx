@@ -1,8 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Link, Button } from '@/gui/atoms';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
-
 // ======================= Meta =======================
 const meta: Meta<typeof Link> = {
   title: 'Atoms/Link',
@@ -10,13 +7,9 @@ const meta: Meta<typeof Link> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ padding: 16, minHeight: 240 }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+        <div style={{ padding: 16, minHeight: 240 }}>
+          <Story />
+        </div>
     ),
   ],
   parameters: {

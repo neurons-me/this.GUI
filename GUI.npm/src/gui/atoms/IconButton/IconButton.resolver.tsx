@@ -1,7 +1,7 @@
 // src/gui/atoms/IconButton/IconButton.resolver.tsx
 import * as React from 'react';
 import IconButton from './IconButton';
-import Icon from '@/themes/icons/Icon';
+import Icon from '@/themes/Icon/Icon';
 import Link from '../Link/Link';
 import type { RegistryEntry, ResolveCtx } from '@/registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
@@ -37,7 +37,6 @@ export type IconButtonSpec = {
 
     // Sugar: icon may be a token or a node
     icon?: string | React.ReactNode;
-    iconSx?: SxProps<Theme>;
     iconProps?: Record<string, any>;
 
     // MUI props passthrough (subset; others go via index signature)
@@ -90,14 +89,17 @@ const IconButtonResolver: RegistryEntry = {
         : {};
 
     // Prepare children (icon sugar)
-    const { children, icon, iconSx, iconProps } = p;
+    const { children, icon, iconProps } = p;
     const normalizedToken =
-      typeof icon === 'string' ? icon.trim().toLowerCase() : null;
+      typeof icon === 'string' ? icon.trim() : null;
 
     const effectiveChildren =
       children ??
       (normalizedToken ? (
-        <Icon name={normalizedToken} sx={iconSx} {...(iconProps || {})} />
+        <Icon
+          name={normalizedToken}
+          {...(iconProps || {})}
+        />
       ) : (
         icon ?? null
       ));

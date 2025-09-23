@@ -2,6 +2,7 @@
 import * as React from 'react';
 import type { RegistryEntry, ResolveCtx } from '@/registry/types';
 import LeftSidebar from './LeftSidebar';
+import Icon from '@/themes/Icon/Icon';
 /**
  * Declarative spec for LeftSidebar.
  * This is the JSON-friendly shape your renderer/LLM can emit.
@@ -25,12 +26,12 @@ type LeftSidebarSpec = {
   type: 'LeftSidebar';
   props?: {
     // Behavior / layout
-    drawerWidth?: number;             // px, default 240 (component default)
-    open?: boolean;                   // controlled open (temporary/mobile)
-    onCloseId?: string;               // resolves to a function from ctx.handlers[onCloseId]
+    drawerWidth?: number; // px, default 240 (component default)
+    open?: boolean; // controlled open (temporary/mobile)
+    onCloseId?: string; // resolves to a function from ctx.handlers[onCloseId]
     // Content
-    header?: LeftSidebarHeaderSpec;    // optional header (title + icon)
-    drawerLinks?: RouteItemSpec[];    // navigation tree
+    header?: LeftSidebarHeaderSpec; // optional header (title + icon)
+    drawerLinks?: RouteItemSpec[]; // navigation tree
     // Style passthrough / misc
     sx?: any;
     id?: string;
@@ -57,13 +58,24 @@ const LeftSidebarResolver: RegistryEntry = {
         : undefined;
     return (
       <LeftSidebar
-        drawerWidth={p.drawerWidth}
         open={p.open}
         onClose={onClose}
-        header={p.header}
+        header={
+          p.header ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.5rem 1rem' }}>
+              {typeof p.header.icon === 'string'
+                ? <Icon name={p.header.icon} iconColor={p.header.iconColor} />
+                : React.isValidElement(p.header.icon)
+                  ? p.header.icon
+                  : typeof p.header.icon === 'function'
+                    ? React.createElement(p.header.icon)
+                    : null}
+              {p.header.title && <span>{p.header.title}</span>}
+            </div>
+          ) : undefined
+        }
         drawerLinks={p.drawerLinks ?? []}
         // style/misc passthrough
-        sx={p.sx as any}
         id={p.id}
         className={p.className}
         data-testid={p['data-testid']}

@@ -4,22 +4,16 @@ import ListItem from './ListItem';
 import List from '@mui/material/List';
 import ListItemIcon from '../ListItemIcon/ListItemIcon';
 import ListItemText from '../ListItemText/ListItemText';
-import Icon from '@/themes/icons/Icon';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
+import Icon from '@/themes/Icon/Icon';
 const meta: Meta<typeof ListItem> = {
   title: 'Atoms/ListItem',
   component: ListItem,
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ padding: 16, minHeight: 260, maxWidth: 560 }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+      <div style={{ padding: 16, minHeight: 260, maxWidth: 560 }}>
+        <Story />
+      </div>
     ),
   ],
   parameters: {

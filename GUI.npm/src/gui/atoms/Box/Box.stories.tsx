@@ -1,10 +1,6 @@
 // src/gui/atoms/Box/Box.stories.tsx
-import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box, Link, Typography, Button } from '@/gui/atoms';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
-
 // ======================= Meta =======================
 const meta: Meta<typeof Box> = {
   title: 'Atoms/Box',
@@ -12,13 +8,9 @@ const meta: Meta<typeof Box> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ padding: 16, minHeight: 240 }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+        <div style={{ padding: 16, minHeight: 240 }}>
+          <Story />
+        </div>
     ),
   ],
   parameters: {

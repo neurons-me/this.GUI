@@ -2,22 +2,21 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Box } from '@mui/material';
 import LeftSidebar from './LeftSidebar';
 import TopBar from '../TopBar/TopBar';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '../../../../context/GuiProvider';
-
+import Layout from '@/templates/Layout';
 // Demo routes with icons + nested items
 const sampleLinks = [
-  { label: 'Home', href: '/', icon: 'lucide:Home' },
-  { label: 'Sockets', href: '/sockets', icon: 'mui:Power' },
+  { label: 'Home', href: '/', icon: 'home', iconColor: '#1976d2' },
+  { label: 'Sockets', href: '/sockets', icon: 'power', iconColor: '#388e3c' },
   {
     label: 'Settings',
-    icon: 'mui:Settings',
+    icon: 'settings',
+    iconColor: '#f57c00',
     children: [
-      { label: 'Profile', href: '/settings/profile', icon: 'lucide:User' },
-      { label: 'Billing', href: '/settings/billing', icon: 'lucide:CreditCard' },
+      { label: 'Profile', href: '/settings/profile', icon: 'person', iconColor: '#7b1fa2' },
+      { label: 'Billing', href: '/settings/billing', icon: 'credit_card', iconColor: '#d32f2f' },
     ],
   },
-  { label: 'Docs (ext)', href: 'https://neurons.me', external: true, icon: 'lucide:BookOpen' },
+  { label: 'Docs (ext)', href: 'https://neurons.me', external: true, icon: 'menu_book', iconColor: '#0288d1' },
 ];
 
 const meta: Meta<typeof LeftSidebar> = {
@@ -28,35 +27,29 @@ const meta: Meta<typeof LeftSidebar> = {
   },
   decorators: [
     (Story) => (
-      <MemoryRouter initialEntries={["/"]}>
-        <GuiProvider>
+        <div>
           <Story />
-        </GuiProvider>
-      </MemoryRouter>
+        </div>
     ),
   ],
 };
 export default meta;
-
 type Story = StoryObj<typeof LeftSidebar>;
-
 export const SidebarOnly: Story = {
   render: () => (
-    <Box sx={{ display: 'flex', height: '100vh' }}>
+    <Layout leftSidebarConfig={{}}>
       <LeftSidebar railMode drawerLinks={sampleLinks} />
       <Box sx={{ flex: 1, bgcolor: 'background.default' }} />
-    </Box>
+    </Layout>
   ),
 };
 
 export const SidebarWithTopbar: Story = {
   render: () => (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <TopBar title="Demo" showMenuButton={false} />
-      <Box sx={{ display: 'flex', flex: 1 }}>
-        <LeftSidebar railMode={false} drawerLinks={sampleLinks} />
-        <Box sx={{ flex: 1, bgcolor: 'background.default' }} />
-      </Box>
-    </Box>
+    <Layout topBarConfig={{}} leftSidebarConfig={{}}>
+      <TopBar showMenuButton={false} />
+      <LeftSidebar railMode={false} drawerLinks={sampleLinks} />
+      <Box sx={{ flex: 1, bgcolor: 'background.default' }} />
+    </Layout>
   ),
 };

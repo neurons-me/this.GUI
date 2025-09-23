@@ -4,7 +4,7 @@ import MuiButton from '@mui/material/Button';
 import type { OverridableComponent } from '@mui/material/OverridableComponent';
 import type { ButtonTypeMap } from '@mui/material/Button';
 import type { ButtonProps as MuiButtonProps } from '@mui/material/Button';
-import Icon from '@/themes/icons/Icon';
+import Icon from '@/themes/Icon/Icon';
 /**
  * Button (This.GUI primitive)
  * ----------------------------------------
@@ -20,7 +20,7 @@ export type ButtonProps = Omit<MuiButtonProps, 'startIcon' | 'endIcon'> & {
 };
 function resolveIcon(node: Iconish): ReactNode | null {
   if (!node) return null;
-  return typeof node === 'string' ? <Icon name={node} size={18} /> : node;
+  return typeof node === 'string' ? <Icon name={node} fontSize={18} /> : node;
 }
 const ButtonImpl = React.forwardRef<any, ButtonProps>(function Button(
   { startIcon, endIcon, ...rest },

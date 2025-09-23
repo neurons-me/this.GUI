@@ -1,22 +1,15 @@
-import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import IconButton from './IconButton';
-import Icon from '@/themes/icons/Icon';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
+import Icon from '@/themes/Icon/Icon';
 const meta: Meta<typeof IconButton> = {
   title: 'Atoms/IconButton',
   component: IconButton,
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ padding: 16, minHeight: 200 }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+        <div style={{ padding: 16, minHeight: 200 }}>
+          <Story />
+        </div>
     ),
   ],
   parameters: {

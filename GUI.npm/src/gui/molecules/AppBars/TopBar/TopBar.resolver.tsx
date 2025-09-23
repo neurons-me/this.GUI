@@ -1,8 +1,6 @@
 // src/components/generics/AppBars/TopBar/TopBar.resolver.tsx
-import * as React from 'react';
 import TopBar from './TopBar';
 import type { RegistryEntry, ResolveCtx } from '@/registry/types';
-
 /** Declarative shape the renderer/LLM can emit for a TopBar */
 type TopBarLinkChildSpec = {
   label: string;

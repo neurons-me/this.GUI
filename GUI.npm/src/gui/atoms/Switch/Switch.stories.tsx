@@ -1,10 +1,8 @@
 // src/gui/atoms/Switch/Switch.stories.tsx
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter } from 'react-router-dom';
 import { Box, Stack, Typography, Switch } from '@/gui/atoms';
 import { FormControlLabel } from '@mui/material';
-import GuiProvider from '@/context/GuiProvider';
 
 // ======================= Meta =======================
 const meta: Meta<typeof Switch> = {
@@ -13,13 +11,9 @@ const meta: Meta<typeof Switch> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <Box sx={{ p: 2 }}>
-            <Story />
-          </Box>
-        </GuiProvider>
-      </MemoryRouter>
+        <Box sx={{ p: 2 }}>
+          <Story />
+        </Box>
     ),
   ],
   parameters: {

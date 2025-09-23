@@ -1,10 +1,5 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
 import Footer from './Footer';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import TwitterIcon from '@mui/icons-material/Twitter';
-import { Mail, Instagram } from 'lucide-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useTheme } from '@mui/material/styles';
 import LeftDrawer, { type RouteItem } from '../LeftSidebar/LeftSidebar';
@@ -40,13 +35,9 @@ const meta = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ minHeight: 240 }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+        <div style={{ minHeight: 240 }}>
+          <Story />
+        </div>
     ),
   ],
   parameters: {
@@ -230,8 +221,8 @@ export const Default: Story = {
       { label: 'Contact', href: '/contact' },
     ],
     socialLinks: [
-      { icon: 'lucide:facebook', href: 'https://github.com/neurons-me', iconColor: 'primary' },
-      { icon: 'lucide:instagram', href: 'https://instagram.com/neurons', iconColor: '#E1306C' },
+      { icon: 'github', href: 'https://github.com/neurons-me' },
+      { icon: 'instagram', href: 'https://instagram.com/neurons' },
     ],
   },
 };
@@ -245,8 +236,8 @@ export const DeclarativeSocial: Story = {
       { label: 'Terms', href: '/terms' },
     ],
     socialLinks: [
-      { icon: 'lucide:Twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
-      { icon: 'lucide:mail', href: 'mailto:hi@neurons.me', iconColor: '#00aa96' },
+      { icon: 'x', href: 'https://twitter.com/neurons_me' },
+      { icon: 'mail', href: 'mailto:hi@neurons.me' },
     ],
   },
 };
@@ -260,10 +251,10 @@ export const ReactSocial: Story = {
       { label: 'Blog', href: '/blog' },
     ],
     socialLinks: [
-      { icon: <GitHubIcon htmlColor="#fff" />, href: 'https://github.com/neurons-me' },
-      { icon: <TwitterIcon htmlColor="#1DA1F2" />, href: 'https://twitter.com/neurons_me' },
-      { icon: <Mail color="#00aa96" />, href: 'mailto:hi@neurons.me' },
-      { icon: <Instagram color="#E1306C" />, href: 'https://instagram.com/neurons' },
+      { icon: 'github', href: 'https://github.com/neurons-me', iconColor: '#fff' },
+      { icon: 'twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
+      { icon: 'mail', href: 'mailto:hi@neurons.me', iconColor: '#00aa96' },
+      { icon: 'instagram', href: 'https://instagram.com/neurons', iconColor: '#E1306C' },
     ],
   },
 };
@@ -411,7 +402,7 @@ export const WithLeftDrawerLayout: Story = {
       <Box sx={{ display: 'flex', height: '100vh', flexDirection: 'column', bgcolor: 'background.default' }}>
         <Box sx={{ display: 'flex', flex: 1, width: '100%' }}>
           {/* Permanent left drawer updates theme.insets.left automatically */}
-          <LeftDrawer drawerWidth={240} drawerLinks={demoLinks} open />
+          <LeftDrawer collapsedWidth={240} drawerLinks={demoLinks} open />
           {/* Main content area that would scroll */}
           <Box sx={{ flex: 1, p: 3, overflow: 'auto' }}>
             <Box sx={{ height: 600, border: '1px dashed', borderColor: 'divider', borderRadius: 1, bgcolor: 'background.paper' }} />
@@ -479,7 +470,7 @@ export const WithBothDrawersLayout: Story = {
       <NavBar title="Demo" />
       <Box sx={{ display: 'flex', height: '100vh', flexDirection: 'column', bgcolor: 'background.default' }}>
         <Box sx={{ display: 'flex', flex: 1, width: '100%' }}>
-          <LeftDrawer drawerWidth={240} drawerLinks={demoLinks} open />
+          <LeftDrawer collapsedWidth={240} drawerLinks={demoLinks} open />
           <Box sx={{ flex: 1, p: 3, overflow: 'auto' }}>
             <Box sx={{ flex:1, p:3, overflow:'auto', bgcolor: 'background.default' }} />
           </Box>

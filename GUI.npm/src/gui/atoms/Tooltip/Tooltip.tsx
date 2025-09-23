@@ -20,9 +20,7 @@
  */
 import * as React from 'react';
 import MuiTooltip, { type TooltipProps as MuiTooltipProps } from '@mui/material/Tooltip';
-
 export type TooltipSize = 'sm' | 'md' | 'lg' | 'xl';
-
 export type TooltipProps = Omit<MuiTooltipProps, 'slotProps'> & {
   /**
    * Visual size of the tooltip bubble (typography + padding + arrow).
@@ -45,27 +43,22 @@ const SIZE_PRESETS: Record<TooltipSize, { tooltipSx: any; arrowSx: any }> = {
 
 const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(function Tooltip(props, ref) {
   const { size, slotProps, ...rest } = props;
-
   // Build merged slotProps so consumer overrides win
   const preset = size ? SIZE_PRESETS[size] : undefined;
-
   const mergedSlotProps = React.useMemo<any>(() => {
     if (!preset) return slotProps;
     const next = { ...slotProps };
-
     // Tooltip content
     next.tooltip = {
       ...(slotProps?.tooltip as any),
       // Ensure `sx` is an array so both apply; user-provided last wins.
       sx: [preset.tooltipSx, (slotProps?.tooltip as any)?.sx].filter(Boolean) as any,
     } as any;
-
     // Arrow (applies only if `arrow` prop is set, but harmless to keep)
     next.arrow = {
       ...(slotProps?.arrow as any),
       sx: [preset.arrowSx, (slotProps?.arrow as any)?.sx].filter(Boolean) as any,
     } as any;
-
     return next;
   }, [preset, slotProps]);
 
@@ -73,6 +66,5 @@ const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(function Tooltip(
 });
 
 (Tooltip as any).displayName = 'Gui.Tooltip';
-
 export default Tooltip;
 export type { TooltipProps as GuiTooltipProps };

@@ -1,5 +1,3 @@
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '../../../../context/GuiProvider';
 import TopBar from './TopBar';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -9,11 +7,7 @@ const meta = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <Story />
-        </GuiProvider>
-      </MemoryRouter>
+        <Story />
     ),
   ],
   parameters: {
@@ -44,18 +38,17 @@ Each link can specify:
 **Example:**
 ~~~jsx
 <TopBar
-  title="neurons.me"
   logo="https://neurons.me/neurons.me.png"
   TopBarLinks={[
-    { label: 'Home', href: '/', icon: 'mui:BarChart', iconColor: 'primary' },
-    { label: 'Docs', href: '/docs', icon: 'mui:Insights', iconColor: 'secondary' },
+    { label: 'Home', href: '/', icon: 'BarChart', iconColor: 'primary' },
+    { label: 'Docs', href: '/docs', icon: 'Insights', iconColor: 'secondary' },
     {
       label: 'More',
       icon: 'lucide:Info',
       iconColor: '#00aa96',
       children: [
-        { label: 'About', href: '/about', icon: 'mui:Message', iconColor: 'info' },
-        { label: 'Contact', href: '/contact', icon: 'lucide:Mail', iconColor: '#4caf50' },
+        { label: 'About', href: '/about', icon: 'Message', iconColor: 'info' },
+        { label: 'Contact', href: '/contact', icon: 'Mail', iconColor: '#4caf50' },
       ],
     },
   ]}
@@ -87,8 +80,8 @@ Each link can specify:
 ---
 
 #### Icon Usage
-- **Material UI:** Use \`mui:IconName\` (e.g. \`mui:Insights\`). See [MUI Icons Catalog](https://mui.com/material-ui/material-icons/).
-- **Lucide:** Use \`lucide:IconName\` (e.g. \`lucide:Mail\`). See [Lucide Icons Catalog](https://lucide.dev/icons/).
+- **Material UI:** Use \`IconName\` (e.g. \`Insights\`). See [MUI Icons Catalog](https://mui.com/material-ui/material-icons/).
+- **Lucide:** Use \`IconName\` (e.g. \`Mail\`). See [Lucide Icons Catalog](https://lucide.dev/icons/).
 - **Color:** Use \`iconColor\` prop for theme colors (\`primary\`, \`secondary\`, \`info\`) or any CSS color (e.g. \`#4caf50\`).
 
 ---
@@ -145,7 +138,7 @@ Theme integration:
       control: 'text',
     },
     TopBarLinks: {
-      description: 'Array of navigation links, supporting nested dropdown menus.',
+      description: 'Array of navigation link objects, e.g. [{ label: string, href?: string, icon?: string | ReactElement, iconColor?: string, children?: TopBarLinks[] }]. Supports nested dropdown menus.',
       control: 'object',
     },
     showMenuButton: {
@@ -175,13 +168,14 @@ export const Default: Story = {
     title: 'neurons.me',
     logo: 'https://neurons.me/neurons.me.png',
     TopBarLinks: [
-      { label: 'Home', href: '/' },
-      { label: 'Docs', href: '/docs' },
+      { label: 'Home', href: '/', icon: 'BarChart' },
+      { label: 'Docs', href: '/docs', icon: 'Insights' },
       {
         label: 'More',
+        icon: 'Info',
         children: [
-          { label: 'About', href: '/about' },
-          { label: 'Contact', href: '/contact' },
+          { label: 'About', href: '/about', icon: 'Message' },
+          { label: 'Contact', href: '/contact', icon: 'Mail' },
         ],
       },
     ],
@@ -196,27 +190,27 @@ export const WithIcons: Story = {
     title: 'neurons.me',
     logo: 'https://neurons.me/neurons.me.png',
     TopBarLinks: [
-     {
-  label: 'Home',
-  href: '/',
-  icon: 'mui:BarChart',
-  iconColor: 'primary'
-},
-{
-  label: 'Docs',
-  href: '/docs',
-  icon: 'mui:Insights',
-  iconColor: 'secondary'
-},
-{
-  label: 'More',
-  icon: 'lucide:Info',
-  iconColor: '#00aa96',
-  children: [
-    { label: 'About', href: '/about', icon: 'mui:Message', iconColor: 'info' },
-    { label: 'Contact', href: '/contact', icon: 'lucide:Mail', iconColor: '#4caf50' },
-  ],
-}
+      {
+        label: 'Home',
+        href: '/',
+        icon: 'bar_chart',
+        iconColor: 'primary',
+      },
+      {
+        label: 'Docs',
+        href: '/docs',
+        icon: 'Insights',
+        iconColor: 'secondary',
+      },
+      {
+        label: 'More',
+        icon: 'Info',
+        iconColor: '#00aa96',
+        children: [
+          { label: 'About', href: '/about', icon: 'Message', iconColor: 'info' },
+          { label: 'Contact', href: '/contact', icon: 'Mail', iconColor: '#4caf50' },
+        ],
+      },
     ],
     showMenuButton: false,
     showThemeToggle: true,
@@ -230,13 +224,14 @@ export const FixedTopBar = () => (
       title="neurons.me"
       logo="https://neurons.me/neurons.me.png"
       TopBarLinks={[
-        { label: 'Home', href: '/' },
-        { label: 'Docs', href: '/docs' },
+        { label: 'Home', href: '/', icon: 'BarChart' },
+        { label: 'Docs', href: '/docs', icon: 'Insights' },
         {
           label: 'More',
+          icon: 'Info',
           children: [
-            { label: 'About', href: '/about' },
-            { label: 'Contact', href: '/contact' },
+            { label: 'About', href: '/about', icon: 'Message' },
+            { label: 'Contact', href: '/contact', icon: 'Mail' },
           ],
         },
       ]}
@@ -266,13 +261,14 @@ export const StaticTopBar = () => (
       title="neurons.me"
       logo="https://neurons.me/neurons.me.png"
       TopBarLinks={[
-        { label: 'Home', href: '/' },
-        { label: 'Docs', href: '/docs' },
+        { label: 'Home', href: '/', icon: 'BarChart' },
+        { label: 'Docs', href: '/docs', icon: 'Insights' },
         {
           label: 'More',
+          icon: 'Info',
           children: [
-            { label: 'About', href: '/about' },
-            { label: 'Contact', href: '/contact' },
+            { label: 'About', href: '/about', icon: 'Message' },
+            { label: 'Contact', href: '/contact', icon: 'Mail' },
           ],
         },
       ]}

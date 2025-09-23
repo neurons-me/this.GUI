@@ -3,8 +3,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import ListItemText from './ListItemText';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
 
 const meta: Meta<typeof ListItemText> = {
   title: 'Atoms/ListItemText',
@@ -12,13 +10,9 @@ const meta: Meta<typeof ListItemText> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ padding: 16, minHeight: 260, maxWidth: 520 }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+        <div style={{ padding: 16, minHeight: 260, maxWidth: 520 }}>
+          <Story />
+        </div>
     ),
   ],
   parameters: {

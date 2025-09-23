@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, IconButton } from '@mui/material';
 import { SxProps, Theme } from '@mui/material/styles';
-import Icon from '../../../../themes/icons/Icon';
+import Icon from '@/themes/Icon/Icon';
 
 export interface SidebarToggleButtonProps {
   expanded: boolean;
@@ -10,6 +10,7 @@ export interface SidebarToggleButtonProps {
   style?: React.CSSProperties;
   location?: 'topbar' | 'sidebar' | 'none';
   sx?: SxProps<Theme>;
+  forceRender?: boolean;
 }
 
 const SidebarToggleButton: React.FC<SidebarToggleButtonProps> = ({
@@ -20,29 +21,12 @@ const SidebarToggleButton: React.FC<SidebarToggleButtonProps> = ({
   location,
   sx,
 }) => {
-  const [locationState, setLocation] = React.useState<'topbar' | 'sidebar' | 'none'>('none');
+  const [locationState, setLocation] = React.useState<'topbar' | 'sidebar' | 'none'>(location ?? 'none');
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     if (location) {
       setLocation(location);
-      return;
     }
-    const check = () => {
-      const value = getComputedStyle(document.body).getPropertyValue('--sidebar-toggle-location').trim();
-      console.log('[Toggle Debug] CSS --sidebar-toggle-location:', value);
-      if (value === 'topbar' || value === 'sidebar') {
-        setLocation(value);
-      } else {
-        setLocation('none');
-      }
-    };
-
-    check();
-
-    const observer = new MutationObserver(check);
-    observer.observe(document.body, { attributes: true, attributeFilter: ['style'] });
-
-    return () => observer.disconnect();
   }, [location]);
 
   if (locationState === 'none') return null;
@@ -58,7 +42,9 @@ const SidebarToggleButton: React.FC<SidebarToggleButtonProps> = ({
       style={style}
     >
       <IconButton size="small" onClick={onToggle} aria-label={expanded ? 'Collapse sidebar' : 'Expand sidebar'}>
-        <Icon name={expanded ? 'lucide:panel-left-close' : 'lucide:panel-left-open'} size={20} />
+        <span className="material-symbols-rounded" style={{ fontSize: 20 }}>
+          {expanded ? 'chevron_left' : 'chevron_right'}
+        </span>
       </IconButton>
     </Box>
   );

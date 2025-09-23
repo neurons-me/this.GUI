@@ -1,7 +1,4 @@
-import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
 import RightSidebar from './RightSidebar';
 import NavBar from '../TopBar/TopBar';
 
@@ -11,13 +8,9 @@ const meta = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ minHeight: '100vh' }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+        <div style={{ minHeight: '100vh' }}>
+          <Story />
+        </div>
     ),
   ],
   parameters: {

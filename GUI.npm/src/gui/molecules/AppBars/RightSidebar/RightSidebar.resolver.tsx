@@ -1,6 +1,4 @@
-
-
-import * as React from 'react';
+import Icon from '@/themes/Icon/Icon';
 import RightSidebar from './RightSidebar';
 import type { RegistryEntry, ResolveCtx } from '@/registry/types';
 
@@ -26,23 +24,19 @@ export type RightSidebarSpec = {
     // Core behavior
     rightContext?: any;
     drawerWidth?: number;
-
     // Optional control (future-friendly; forwarded if supported)
     open?: boolean;
     onClose?: (...args: any[]) => void;
-
     // Granular styling (passthrough; component may use or ignore)
     sx?: any;
     paperSx?: any;
     headerSx?: any;
     contentSx?: any;
     footerSx?: any;
-
     // Misc passthrough
     id?: string;
     className?: string;
     'data-testid'?: string;
-
     // Allow arbitrary passthrough for future props without changing the spec
     [key: string]: any;
   };
@@ -52,31 +46,38 @@ const RightSidebarResolver: RegistryEntry = {
   type: 'RightSidebar',
   resolve(spec: RightSidebarSpec, _ctx?: ResolveCtx) {
     const p = spec.props ?? {};
-
     // Extract known props and avoid leaking resolver-only keys if we add any
     const {
       rightContext,
       drawerWidth,
-
       open,
       onClose,
-
       sx,
       paperSx,
       headerSx,
       contentSx,
       footerSx,
-
       id,
       className,
       'data-testid': dataTestId,
-
       ...rest
     } = p;
 
+    // Normalize icon fields in rightContext
+    const normalizeIcon = (icon: any) => {
+      if (typeof icon === 'string') return <Icon name={icon} />;
+      if (icon && typeof icon === 'object' && icon.name) return <Icon {...icon} />;
+      return icon;
+    };
+    const normalizedRightContext = Array.isArray(rightContext)
+      ? rightContext.map((item) =>
+          item && item.icon ? { ...item, icon: normalizeIcon(item.icon) } : item
+        )
+      : rightContext;
+
     return (
       <RightSidebar
-        rightContext={rightContext}
+        rightContext={normalizedRightContext}
         drawerWidth={drawerWidth}
         open={open}
         onClose={onClose}

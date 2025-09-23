@@ -1,6 +1,7 @@
 // src/gui/primitives/Button/Button.resolver.tsx
 import * as React from 'react';
 import Button from './Button';
+import Icon from '@/themes/Icon/Icon';
 import Link from '../Link/Link';
 import type { RegistryEntry } from '@/registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
@@ -78,8 +79,12 @@ const ButtonResolver: RegistryEntry = {
         variant={p.variant ?? 'text'}
         color={p.color ?? 'inherit'}
         size={p.size ?? 'medium'}
-        startIcon={p.startIcon}
-        endIcon={p.endIcon}
+        startIcon={
+          typeof p.startIcon === 'string' ? <Icon name={p.startIcon} /> : p.startIcon
+        }
+        endIcon={
+          typeof p.endIcon === 'string' ? <Icon name={p.endIcon} /> : p.endIcon
+        }
         disabled={p.disabled}
         fullWidth={p.fullWidth}
         type={p.type}

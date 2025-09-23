@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, MouseEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import type { SxProps, Theme } from '@mui/material/styles';
 import {
   AppBar,
@@ -12,8 +12,8 @@ import {
   MenuItem,
 } from '@/gui/atoms';
 import { useGuiTheme, useGuiMediaQuery } from '@/gui';
-import ThemeSelector from '../../Utilities/ThemeSelector';
-import Icon from '../../../../themes/icons/Icon';
+import ThemeSelector from '../../Utilities/Appearance/ThemeSelector/ThemeSelector';
+import Icon from '@/themes/Icon/Icon';
 import SidebarToggleButton from '../LeftSidebar/SidebarToggleButton';
 
 const sxN = (...parts: Array<SxProps<Theme> | undefined>): SxProps<Theme> => (parts.filter(Boolean) as unknown) as SxProps<Theme>;
@@ -58,6 +58,7 @@ interface TopBarProps {
   id?: string;
   className?: string;
   'data-testid'?: string;
+  toggleLocation?: 'topbar' | 'sidebar' | 'none';
 }
 
 /**
@@ -74,10 +75,11 @@ interface TopBarProps {
  * - showThemeToggle?: boolean (renders theme toggle icon)
  * - homeTo?: string (router link for brand/title)
  * - position?: "fixed" | "static" | "sticky" (AppBar position, default is "fixed")
+ * - toggleLocation?: 'topbar' | 'sidebar' | 'none' (location prop for SidebarToggleButton)
  */
 export default function TopBar({
-  title = 'neurons.me',
-  logo = 'https://neurons.me/neurons.me.png',
+  title = '',
+  logo = '',
   TopBarLinks = [],
   showMenuButton = false,
   onMenuClick,
@@ -98,22 +100,17 @@ export default function TopBar({
   id,
   className,
   'data-testid': dataTestId,
+  toggleLocation = 'topbar',
 }: TopBarProps) {
   const theme = useGuiTheme();
   const isMobile = useGuiMediaQuery(theme.breakpoints.down('md'));
-  const navigate = useNavigate();
-
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openMenu, setOpenMenu] = useState<null | string>(null);
-
   const toolbarRef = useRef<HTMLDivElement | null>(null);
-
   // Sync nav inset with real rendered height (idempotent via provider)
   useEffect(() => {
     const setInsets = theme?.updateInsets;
     if (typeof setInsets !== 'function') return;
-
     const measure = () => {
       const h = (toolbarRef.current?.offsetHeight ?? 48);
       setInsets({ nav: h });
@@ -121,7 +118,6 @@ export default function TopBar({
 
     // initial measure
     measure();
-
     // observe toolbar size changes (density, breakpoints, etc.)
     let ro: ResizeObserver | undefined;
     if (typeof ResizeObserver !== 'undefined' && toolbarRef.current) {
@@ -186,7 +182,7 @@ export default function TopBar({
         <SidebarToggleButton
           expanded={showMenuButton}
           onToggle={onMenuClick || (() => {})}
-          location="topbar"
+          location={toggleLocation}
           sx={{ mr: 1 }}
         />
         {showMenuButton && (
@@ -197,7 +193,10 @@ export default function TopBar({
             sx={{ mr: 2 }}
             aria-label="open navigation"
           >
-            <Icon name="mui:Menu" color={theme.palette.icon?.main || theme.palette.text.primary} size={24} />
+            <Icon
+              name="menu"
+              style={{ color: theme.palette.icon?.main || theme.palette.text.primary, fontSize: 24 }}
+            />
           </IconButton>
         )}
 
@@ -233,7 +232,7 @@ export default function TopBar({
                       px: 1,
                     }, linkSx)}
                   >
-                    {link.icon && <Icon name={link.icon} color={link.iconColor} size={18} />}
+                    {link.icon && <Icon name={link.icon} style={{ color: link.iconColor, fontSize: 18 }} />}
                     {link.label}
                   </Button>
                   <Menu anchorEl={anchorEl} open={openMenu === link.label} onClose={handleMenuClose} sx={menuSx}>
@@ -247,7 +246,7 @@ export default function TopBar({
                         onClick={handleMenuClose}
                         sx={sxN({ display: 'flex', alignItems: 'center', gap: 0.5 }, menuItemSx)}
                       >
-                        {child.icon && <Icon name={child.icon} color={child.iconColor} size={18} />}
+                        {child.icon && <Icon name={child.icon.replace('material-symbols:', '')} style={{ color: child.iconColor, fontSize: 18 }} />}
                         {child.label}
                       </MenuItem>
                     ))}
@@ -272,7 +271,7 @@ export default function TopBar({
                   px: 1,
                 }, linkSx)}
               >
-                {link.icon && <Icon name={link.icon} color={link.iconColor} size={18} />}
+                {link.icon && <Icon name={link.icon.replace('material-symbols:', '')} style={{ color: link.iconColor, fontSize: 18 }} />}
                 {link.label}
               </Button>
             );
@@ -288,3 +287,4 @@ export default function TopBar({
     </AppBar>
   );
 }
+export type { TopBarLink };

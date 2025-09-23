@@ -1,54 +1,28 @@
 import React from 'react';
-import Icon from '../../themes/icons/Icon';
+import Icon from '../../themes/Icon/Icon';
 
-// Expanded icon registry demonstration with both Lucide and Material (MUI) icons
+// Material Symbols icon registry demonstration
 const ICONS = [
-  // Lucide icons
-  { name: 'lucide:home', label: 'lucide:home' },
-  { name: 'lucide:camera', label: 'lucide:camera' },
-  { name: 'lucide:user', label: 'lucide:user' },
-  { name: 'lucide:settings', label: 'lucide:settings' },
-  // Material UI icons (MUI_ICONS map)
-  { name: 'mui:BarChart', label: 'mui:BarChart' },
-  { name: 'mui:Memory', label: 'mui:Memory' },
-  { name: 'mui:Email', label: 'mui:Email' },
-  { name: 'mui:Bolt', label: 'mui:Bolt' },
-  { name: 'mui:Insights', label: 'mui:Insights' },
-  { name: 'mui:AttachMoney', label: 'mui:AttachMoney' },
-  { name: 'mui:Settings', label: 'mui:Settings' },
-  { name: 'mui:CameraAlt', label: 'mui:CameraAlt' },
-  { name: 'mui:Power', label: 'mui:Power' },
-  { name: 'mui:Help', label: 'mui:Help' },
-  { name: 'mui:SmartToy', label: 'mui:SmartToy' },
-  { name: 'mui:Chat', label: 'mui:Chat' },
-  { name: 'mui:ChatBubbleOutline', label: 'mui:ChatBubbleOutline' },
-  { name: 'mui:Psychology', label: 'mui:Psychology' },
-  { name: 'mui:SupportAgent', label: 'mui:SupportAgent' },
-  { name: 'mui:AutoAwesome', label: 'mui:AutoAwesome' },
-  { name: 'mui:Sync', label: 'mui:Sync' },
-  { name: 'mui:Loop', label: 'mui:Loop' },
-  { name: 'mui:Cached', label: 'mui:Cached' },
-  { name: 'mui:Build', label: 'mui:Build' },
-  { name: 'mui:Schedule', label: 'mui:Schedule' },
-  { name: 'mui:CalendarMonth', label: 'mui:CalendarMonth' },
-  { name: 'mui:Message', label: 'mui:Message' },
-  { name: 'mui:Forum', label: 'mui:Forum' },
-  { name: 'mui:Telegram', label: 'mui:Telegram' },
-  { name: 'mui:BusinessCenter', label: 'mui:BusinessCenter' },
-  { name: 'mui:TrendingUp', label: 'mui:TrendingUp' },
-  { name: 'mui:ShoppingCart', label: 'mui:ShoppingCart' },
-  { name: 'mui:Cloud', label: 'mui:Cloud' },
-  { name: 'mui:Code', label: 'mui:Code' },
-  { name: 'mui:Storage', label: 'mui:Storage' },
-  { name: 'mui:Dns', label: 'mui:Dns' },
-  { name: 'mui:Layers', label: 'mui:Layers' },
-  { name: 'mui:Security', label: 'mui:Security' },
-  { name: 'mui:Policy', label: 'mui:Policy' },
-  { name: 'mui:CalendarToday', label: 'mui:CalendarToday' },
-  { name: 'mui:VideoLibrary', label: 'mui:VideoLibrary' },
-  { name: 'mui:DeveloperMode', label: 'mui:DeveloperMode' },
-  { name: 'mui:CurrencyBitcoin', label: 'mui:CurrencyBitcoin' },
-  { name: 'mui:Brush', label: 'mui:Brush' },
+  { name: 'home', label: 'home', color: '#4caf50' },
+  { name: 'search', label: 'search', color: '#2196f3' },
+  { name: 'settings', label: 'settings', color: '#ff9800' },
+  { name: 'favorite', label: 'favorite', color: '#e91e63' },
+  { name: 'person', label: 'person', color: '#673ab7' },
+  { name: 'chat', label: 'chat', color: '#009688' },
+  { name: 'info', label: 'info', color: '#3f51b5' },
+  { name: 'warning', label: 'warning', color: '#ff5722' },
+  { name: 'camera_alt', label: 'camera_alt', color: '#795548' },
+  { name: 'power_settings_new', label: 'power_settings_new', color: '#607d8b' },
+  { name: 'help', label: 'help', color: '#9c27b0' },
+  { name: 'build', label: 'build', color: '#ff9800' },
+  { name: 'schedule', label: 'schedule', color: '#2196f3' },
+  { name: 'calendar_today', label: 'calendar_today', color: '#4caf50' },
+  { name: 'message', label: 'message', color: '#f44336' },
+  { name: 'forum', label: 'forum', color: '#3f51b5' },
+  { name: 'cloud', label: 'cloud', color: '#00bcd4' },
+  { name: 'code', label: 'code', color: '#9e9e9e' },
+  { name: 'storage', label: 'storage', color: '#607d8b' },
+  { name: 'security', label: 'security', color: '#673ab7' },
 ];
 
 export default {
@@ -79,7 +53,11 @@ export const Gallery = () => (
           gap: 8,
         }}
       >
-        <Icon name={i.name} size={32} />
+        <Icon
+          name={i.name}
+          fontSize={32}
+          iconColor={i.color}
+        />
         <code style={{ fontSize: 12, textAlign: 'center', wordBreak: 'break-all' }}>{i.label}</code>
       </div>
     ))}
@@ -107,14 +85,10 @@ export const ColoredGallery = () => (
           gap: 8,
         }}
       >
-        {/* Lucide usa color directamente; MUI requiere htmlColor */}
         <Icon
           name={i.name}
-          size={32}
-          {...(i.name.startsWith('lucide:')
-            ? { color: '#4caf50' } // verde
-            : { htmlColor: '#ff9800' } // naranja
-          )}
+          fontSize={32}
+          iconColor={i.color}
         />
         <code style={{ fontSize: 12, textAlign: 'center', wordBreak: 'break-all' }}>{i.label}</code>
       </div>
@@ -128,7 +102,7 @@ export const UsageModesDocs = () => (
 
     <h3>1. <strong>Declarative Mode</strong> (via JSON)</h3>
     <p>
-      In declarative mode, icons are specified as <code>strings</code> with prefixes like <code>lucide:</code> or <code>mui:</code> in JSON props.
+      In declarative mode, icons are specified as <code>strings</code> with icon names like <code>home</code> or <code>settings</code> in JSON props.
       This mode is ideal for declarative UI configurations such as NavBars, SideBars, or any dynamic content where icons are defined in JSON or similar data structures.
       The <code>&lt;Icon&gt;</code> component automatically resolves these string names to the correct icon component.
     </p>
@@ -136,15 +110,15 @@ export const UsageModesDocs = () => (
       <code>{`// Example JSON config:
 {
   "menuItems": [
-    { "label": "Home", "icon": "lucide:home" },
-    { "label": "Dashboard", "icon": "mui:BarChart" }
+    { "label": "Home", "icon": "home" },
+    { "label": "Dashboard", "icon": "bar_chart" }
   ]
 }
 
 // Usage in React:
 menuItems.map(item => (
   <div key={item.label}>
-    <Icon name={item.icon} size={24} />
+    <Icon name={item.icon} fontSize={24} />
     <span>{item.label}</span>
   </div>
 ))
@@ -153,132 +127,46 @@ menuItems.map(item => (
 
     <h3>2. <strong>Direct React Mode</strong> (manual imports)</h3>
     <p>
-      Developers can also import Material UI or Lucide icons directly as React components and use them manually.
+      Developers can also import Material Symbols icons directly as React components and use them manually.
       This mode offers full control over props, styling, and behavior, making it suitable when you need fine-grained customization.
     </p>
     <pre style={{ background: '#0f111a', color: '#e6e6e6', padding: 16, borderRadius: 8, overflow: 'auto' }}>
       <code>{`// Import icons directly
-import { Camera as LucideCamera } from 'lucide-react';
-import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import HomeIcon from '@mui/icons-material/Home';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 // Use in JSX
-<LucideCamera size={24} color="#4caf50" />
-<CameraAltIcon fontSize="medium" htmlColor="#ff9800" />
+<HomeIcon fontSize="medium" htmlColor="#4caf50" />
+<SettingsIcon fontSize="medium" htmlColor="#ff9800" />
 `}</code>
     </pre>
 
     <h3>Dynamic Theming Support</h3>
     <p>
-      If you pass a static <code>color</code> or <code>htmlColor</code> prop to <code>&lt;Icon&gt;</code>, the icon color will not update when the theme changes.
-      To make icons react to theme changes, omit the <code>color</code> or <code>htmlColor</code> props and rely on the default behavior, which uses <code>theme.palette.text.primary</code> or <code>theme.palette.text.secondary</code>.
+      If you pass a static <code>htmlColor</code> prop to <code>&lt;Icon&gt;</code>, the icon color will not update when the theme changes.
+      To make icons react to theme changes, omit the <code>htmlColor</code> prop and rely on the default behavior, which uses <code>theme.palette.text.primary</code> or <code>theme.palette.text.secondary</code>.
     </p>
     <pre style={{ background: '#0f111a', color: '#e6e6e6', padding: 16, borderRadius: 8, overflow: 'auto' }}>
       <code>{`// Theme-aware icon (auto-updates with dark/light theme)
-<Icon name="mui:Settings" size={24} />
+<Icon name="settings" fontSize={24} />
 
 // Fixed-color icon (doesn't change with theme)
-<Icon name="mui:Settings" size={24} htmlColor="#ff9800" />
+<Icon name="settings" fontSize={24} iconColor="#ff9800" />
 `}</code>
     </pre>
-  </div>
-);
-
-export const LucideDocs = () => (
-  <div style={{ maxWidth: 920, padding: 24, lineHeight: 1.55 }}>
-    <h2 style={{ marginTop: 0 }}>Lucide — Usage & Catalog</h2>
-    <p>
-      <strong>All Lucide icons</strong> are available by using the <code>lucide:</code> prefix with the
-      icon name. Names are flexible: you can use kebab-case, snake_case, spaces or PascalCase — the
-      registry normalizes them for you.
-    </p>
-
-    <p>
-      Full catalog: <a href="https://lucide.dev/icons" target="_blank" rel="noreferrer">https://lucide.dev/icons</a>
-    </p>
-
-    <h3>Basic usage</h3>
-    <pre style={{ background: '#0f111a', color: '#e6e6e6', padding: 16, borderRadius: 8, overflow: 'auto' }}>
-      <code>{`// Import once
-import Icon from '../../icons/Icon';
-
-// Use in your components
-<Icon name="lucide:camera" size={24} />
-<Icon name="lucide:arrow-left" size={20} color="#4caf50" />
-`}</code>
-    </pre>
-
-    <h3>Name mapping examples</h3>
-    <p>
-      These all resolve to the same icon (<code>video-off</code>):
-    </p>
-    <table style={{ borderCollapse: 'collapse', width: '100%', marginBottom: 16 }}>
-      <thead>
-        <tr>
-          <th style={{ textAlign: 'left', borderBottom: '1px solid #ddd', padding: '6px 8px' }}>Input</th>
-          <th style={{ textAlign: 'left', borderBottom: '1px solid #ddd', padding: '6px 8px' }}>Resolved slug</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style={{ padding: '6px 8px' }}><code>lucide:video-off</code></td>
-          <td style={{ padding: '6px 8px' }}><code>video-off</code></td>
-        </tr>
-        <tr>
-          <td style={{ padding: '6px 8px' }}><code>lucide/video_off</code></td>
-          <td style={{ padding: '6px 8px' }}><code>video-off</code></td>
-        </tr>
-        <tr>
-          <td style={{ padding: '6px 8px' }}><code>Lucide:VideoOff</code></td>
-          <td style={{ padding: '6px 8px' }}><code>video-off</code></td>
-        </tr>
-        <tr>
-          <td style={{ padding: '6px 8px' }}><code>video off</code></td>
-          <td style={{ padding: '6px 8px' }}><code>video-off</code></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h3>Color & size</h3>
-    <p>
-      Lucide components accept standard SVG props. Use <code>size</code> (number) and <code>color</code> (CSS color):
-    </p>
-    <pre style={{ background: '#0f111a', color: '#e6e6e6', padding: 16, borderRadius: 8, overflow: 'auto' }}>
-      <code>{`<Icon name="lucide:heart" size={28} color="#e91e63" />
-<Icon name="lucide:star" size={20} color="gold" />
-`}</code>
-    </pre>
-    <p>
-      Tip: Material UI icons use <code>htmlColor</code> instead of <code>color</code>. Example:
-    </p>
-    <pre style={{ background: '#0f111a', color: '#e6e6e6', padding: 16, borderRadius: 8, overflow: 'auto' }}>
-      <code>{`<Icon name="mui:CameraAlt" htmlColor="#ff9800" />
-`}</code>
-    </pre>
-
-    <h3>Lazy loading & tree-shaking</h3>
-    <p>
-      Each Lucide icon is loaded on demand from <code>lucide-react/icons/&lt;slug&gt;</code> via <code>React.lazy</code>. This
-      keeps bundles small: only the icons you actually render are fetched.
-    </p>
-
-    <h3>Fallback behavior</h3>
-    <p>
-      If an icon name is wrong or unavailable, the registry renders a neutral placeholder instead of
-      crashing. Check the console for the attempted slug.
-    </p>
   </div>
 );
 
 export const MaterialDocs = () => (
   <div style={{ maxWidth: 920, padding: 24, lineHeight: 1.55 }}>
-    <h2 style={{ marginTop: 0 }}>Material UI Icons (MUI) — Usage & Catalog</h2>
+    <h2 style={{ marginTop: 0 }}>Material Symbols — Usage & Catalog</h2>
     <p>
-      <strong>All Material UI icons</strong> are available by using the <code>mui:</code> prefix with the icon name.
-      The icon names correspond to the official Material UI icon component names.
+      <strong>All Material Symbols icons</strong> are available by using their icon names directly.
+      The icon names correspond to the official Material Symbols icon names.
     </p>
 
     <p>
-      Full catalog: <a href="https://mui.com/material-ui/material-icons/" target="_blank" rel="noreferrer">https://mui.com/material-ui/material-icons/</a>
+      Full catalog: <a href="https://fonts.google.com/icons" target="_blank" rel="noreferrer">https://fonts.google.com/icons</a>
     </p>
 
     <h3>Basic usage</h3>
@@ -287,20 +175,20 @@ export const MaterialDocs = () => (
 import Icon from '../../icons/Icon';
 
 // Use in your components
-<Icon name="mui:CameraAlt" fontSize="medium" htmlColor="#ff9800" />
-<Icon name="mui:BarChart" fontSize="small" />
+<Icon name="camera_alt" fontSize={24} iconColor="#ff9800" />
+<Icon name="bar_chart" fontSize={20} />
 `}</code>
     </pre>
 
     <h3>Important props</h3>
     <ul>
-      <li><code>htmlColor</code>: sets the icon color (preferred over <code>color</code> for Material UI icons)</li>
-      <li><code>fontSize</code>: controls size with values like <code>small</code>, <code>medium</code>, <code>large</code>, etc.</li>
+      <li><code>iconColor</code>: sets the icon color (preferred over <code>color</code> for Material Symbols icons)</li>
+      <li><code>fontSize</code>: controls size with numeric values like <code>20</code>, <code>24</code>, <code>32</code>, etc.</li>
     </ul>
 
     <h3>Lazy loading & tree-shaking</h3>
     <p>
-      Each Material UI icon is loaded on demand from <code>@mui/icons-material/&lt;IconName&gt;</code> via <code>React.lazy</code>,
+      Each Material Symbols icon is loaded on demand from <code>@mui/icons-material/&lt;IconName&gt;</code> via <code>React.lazy</code>,
       ensuring your bundles include only the icons you use.
     </p>
 

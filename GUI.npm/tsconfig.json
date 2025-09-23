@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist",
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "bundler",

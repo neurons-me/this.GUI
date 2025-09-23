@@ -3,8 +3,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import Stack from './Stack';
 import Paper from '../Paper/Paper';
 import Link from '../Link/Link';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
 
 const meta: Meta<typeof Stack> = {
   title: 'Atoms/Stack',
@@ -12,13 +10,9 @@ const meta: Meta<typeof Stack> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ padding: 16, minHeight: 240 }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+        <div style={{ padding: 16, minHeight: 240 }}>
+          <Story />
+        </div>
     ),
   ],
   parameters: {

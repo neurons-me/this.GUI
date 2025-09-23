@@ -3,21 +3,16 @@ import type { Meta, StoryObj } from '@storybook/react';
 import MenuItem from './MenuItem';
 import Menu from '../Menu/Menu';
 import Button from '@mui/material/Button';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
+import Icon from '@/themes/Icon/Icon';
 const meta: Meta<typeof MenuItem> = {
   title: 'Atoms/MenuItem',
   component: MenuItem,
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ padding: 16, minHeight: 260 }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+        <div style={{ padding: 16, minHeight: 260 }}>
+          <Story />
+        </div>
     ),
   ],
   parameters: {
@@ -92,6 +87,7 @@ const DemoMenu: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
           <>
             <MenuItem onClick={handleClose}>Profile</MenuItem>
             <MenuItem onClick={handleClose} selected dense>
+              <Icon name="settings" weight={400} fill={0} style={{ marginRight: 8 }} />
               Settings
             </MenuItem>
             <MenuItem onClick={handleClose} disabled>

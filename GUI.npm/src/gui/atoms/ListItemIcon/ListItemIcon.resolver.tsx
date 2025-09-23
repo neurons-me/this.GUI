@@ -1,7 +1,7 @@
 // src/gui/atoms/ListItemIcon/ListItemIcon.resolver.tsx
 import * as React from 'react';
 import ListItemIcon from './ListItemIcon';
-import Icon from '@/themes/icons/Icon';
+import Icon from '@/themes/Icon/Icon';
 import type { RegistryEntry, ResolveCtx } from '@/registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { ensureNodeId } from '@/gui/utils/nodeID';
@@ -61,7 +61,7 @@ const ListItemIconResolver: RegistryEntry = {
     if (content == null && icon) {
       content =
         typeof icon === 'string'
-          ? <Icon name={normalizeToken(icon)} iconColor={iconColor} size={size} {...iconProps} />
+          ? <Icon name={normalizeToken(icon)} iconColor={iconColor} fontSize={size} {...iconProps} />
           : icon;
     }
 

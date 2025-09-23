@@ -1,8 +1,6 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Collapse from './Collapse';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
 
 const meta: Meta<typeof Collapse> = {
   title: 'Atoms/Collapse',
@@ -10,13 +8,9 @@ const meta: Meta<typeof Collapse> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ padding: 16, minHeight: 220 }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+        <div style={{ padding: 16, minHeight: 220 }}>
+          <Story />
+        </div>
     ),
   ],
   parameters: {

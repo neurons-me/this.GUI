@@ -2,7 +2,7 @@
 import * as React from 'react';
 import ListItemButton from './ListItemButton';
 import Link from '../Link/Link';
-import Icon from '@/themes/icons/Icon';
+import Icon from '@/themes/Icon/Icon';
 // Use our own thin wrappers for consistency & display names
 import ListItemIcon from '../ListItemIcon/ListItemIcon';
 import ListItemText from '../ListItemText/ListItemText';
@@ -91,7 +91,13 @@ const normalizeToken = (s: string) => s.trim().toLowerCase();
 function renderIcon(node: React.ReactNode | string | undefined, color?: string, size = 20) {
   if (!node) return null;
   return typeof node === 'string'
-    ? <Icon name={normalizeToken(node)} iconColor={color} size={size} />
+    ? (
+      <Icon
+        name={normalizeToken(node)}
+        iconColor={color}
+        fontSize={size}
+      />
+    )
     : node;
 }
 

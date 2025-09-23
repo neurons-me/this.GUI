@@ -1,8 +1,6 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Drawer, Box, Button, Typography } from '@/gui/atoms';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
 // ======================= Meta =======================
 const meta: Meta<typeof Drawer> = {
   title: 'Atoms/Drawer',
@@ -10,13 +8,9 @@ const meta: Meta<typeof Drawer> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ padding: 16, minHeight: 320 }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+        <div style={{ padding: 16, minHeight: 320 }}>
+          <Story />
+        </div>
     ),
   ],
   parameters: {

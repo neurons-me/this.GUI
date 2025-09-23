@@ -1,5 +1,5 @@
 import React from "react";
-import Icon from "../../../../themes/icons/Icon";
+import Icon from "@/themes/Icon/Icon";
 import {
   Drawer,
   List,
@@ -128,7 +128,7 @@ function DrawerContent({ rightContext, headerSx, contentSx }: { rightContext?: R
                   {item.icon ? (
                     <ListItemIcon sx={{ minWidth: 24, mr: 1 }}>
                       {typeof item.icon === "string" ? (
-                        <Icon name={item.icon} iconColor={item.iconColor} size={18} />
+                        <Icon name={item.icon} iconColor={item.iconColor} fontSize={18} />
                       ) : typeof item.icon === "function" ? (
                         React.createElement(item.icon as ReactTypes.ComponentType<any>)
                       ) : (
@@ -139,9 +139,9 @@ function DrawerContent({ rightContext, headerSx, contentSx }: { rightContext?: R
                   <ListItemText primary={item.label} />
                   {hasChildren &&
                     (isOpen ? (
-                      <Icon name="mui:ExpandLess" size={18} />
+                      <Icon name="mui:ExpandLess" fontSize={18} />
                     ) : (
-                      <Icon name="mui:ExpandMore" size={18} />
+                      <Icon name="mui:ExpandMore" fontSize={18} />
                     ))}
                 </ListItemButton>
               </ListItem>
@@ -169,7 +169,7 @@ function DrawerContent({ rightContext, headerSx, contentSx }: { rightContext?: R
                                 <Icon
                                   name={child.icon}
                                   iconColor={child.iconColor}
-                                  size={18}
+                                  fontSize={18}
                                 />
                               ) : typeof child.icon === "function" ? (
                                 React.createElement(

@@ -2,7 +2,6 @@
 import * as React from 'react';
 import List from './List';
 import ListSubheader from '@mui/material/ListSubheader';
-import Link from '../Link/Link';
 import type { RegistryEntry, ResolveCtx } from '@/registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { ensureNodeId } from '@/gui/utils/nodeID';

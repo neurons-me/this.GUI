@@ -3,11 +3,9 @@ import type { Meta, StoryObj } from '@storybook/react';
 import ListItemButton from './ListItemButton';
 import ListItemIcon from '../ListItemIcon/ListItemIcon';
 import ListItemText from '../ListItemText/ListItemText';
-import Icon from '@/themes/icons/Icon';
+import Icon from '@/themes/Icon/Icon';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
 
 const meta: Meta<typeof ListItemButton> = {
   title: 'Atoms/ListItemButton',
@@ -15,13 +13,9 @@ const meta: Meta<typeof ListItemButton> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ padding: 16, minHeight: 260, maxWidth: 560 }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+        <div style={{ padding: 16, minHeight: 260, maxWidth: 560 }}>
+          <Story />
+        </div>
     ),
   ],
   parameters: {
@@ -106,7 +100,7 @@ export const Playground: Story = {
     <DemoList>
       <ListItemButton {...args}>
         <ListItemIcon>
-          <Icon name="lucide:mail" />
+          <Icon name="mail" />
         </ListItemIcon>
         <ListItemText primary="Inbox" secondary="Messages" />
       </ListItemButton>
@@ -119,11 +113,11 @@ export const WithTrailingIcon: Story = {
     <DemoList>
       <ListItemButton>
         <ListItemIcon>
-          <Icon name="mui:settings" />
+          <Icon name="settings" />
         </ListItemIcon>
         <ListItemText primary="Settings" secondary="Preferences" />
         <span style={{ marginLeft: 'auto', display: 'inline-flex' }}>
-          <Icon name="lucide:chevron-right" />
+          <Icon name="chevron_right" />
         </span>
       </ListItemButton>
     </DemoList>
@@ -135,7 +129,7 @@ export const AsAnchorLink: Story = {
     <DemoList>
       <ListItemButton component="a" href="https://neurons.me">
         <ListItemIcon>
-          <Icon name="lucide:link" />
+          <Icon name="link" />
         </ListItemIcon>
         <ListItemText primary="neurons.me" secondary="External link" />
       </ListItemButton>
@@ -148,12 +142,12 @@ export const WithSx: Story = {
     <DemoList>
       <ListItemButton sx={{ py: 1.25 }}>
         <ListItemIcon sx={{ minWidth: 40 }}>
-          <Icon name="lucide:user" />
+          <Icon name="person" />
         </ListItemIcon>
         <ListItemText
           primary="Profile"
           secondary="Account"
-          secondaryTypographyProps={{ color: 'text.secondary' }}
+          slotProps={{ secondary: { sx: { color: 'text.secondary' } } }}
         />
       </ListItemButton>
     </DemoList>

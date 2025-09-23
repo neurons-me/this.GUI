@@ -2,7 +2,7 @@
 // src/themes/theme.d.ts
 // ---------- This.GUI Theme Manifest types (library-level, not part of MUI) ----------
 export type ThemeIcon =
-  | { type: 'mui' | 'lucide'; value: string }    // icon token from a known set
+  | { type: 'mui' | 'lucide' | 'material-symbol'; value: string }    // icon token from a known set
   | { type: 'url'; value: string }               // URL to an image (svg/png)
   | { type: 'svg'; value: string }               // inline SVG markup
   | { type: 'data'; value: string };             // data URI
@@ -25,6 +25,7 @@ export type ThemeManifest = {
   tags?: string[];
   createdAt?: string;
   updatedAt?: string;
+  defaultMode?: 'light' | 'dark';
   icon?: ThemeIcon;  // Optional theme icon for listings
   modes: {
     light: { path: string };

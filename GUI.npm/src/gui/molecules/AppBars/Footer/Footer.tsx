@@ -1,6 +1,6 @@
 import { Box, Typography, Link } from "@/gui/atoms";
 import { useGuiTheme, useGuiMediaQuery } from "@/gui";
-import Icon from "@/themes/icons/Icon";
+import Icon from "@/themes/Icon/Icon";
 import type * as React from 'react';
 import type { SxProps, Theme } from '@mui/material/styles';
 // Utility: normalize optional SxProps into a single SxProps (filters out undefined)
@@ -13,7 +13,7 @@ export type LinkItem = {
 };
 
 export type SocialLink = {
-  icon: string | React.ReactNode;
+  icon: string;
   href: string;
   iconColor?: string;
 };
@@ -199,20 +199,13 @@ export default function Footer({
 
   const renderIcon = (item: SocialLink): React.ReactNode => {
     const { icon, iconColor } = item || {};
-    if (!icon) return null;
-    if (typeof icon === "string") {
-      // Declarative via registry
-      return (
-        <Icon
-          name={icon}
-          iconColor={iconColor}
-          size={20}
-          {...iconProps}
-        />
-      );
-    }
-    // React element provided directly
-    return icon;
+    return (
+      <Icon
+        name={icon}
+        iconColor={iconColor}
+        {...iconProps}
+      />
+    );
   };
 
   const { sx: linkPropsSx, ...restLinkProps } = linkProps || ({} as any);

@@ -1,7 +1,4 @@
-import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
 import { AppBar, Toolbar, Typography, Box, Button } from '@/gui/atoms';
 
 // ======================= Meta =======================
@@ -11,13 +8,9 @@ const meta: Meta<typeof AppBar> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ padding: 0, minHeight: 240 }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+        <div style={{ padding: 0, minHeight: 240 }}>
+          <Story />
+        </div>
     ),
   ],
   parameters: {

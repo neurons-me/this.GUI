@@ -4,9 +4,8 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '../ListItemText/ListItemText';
 import ListItemIcon from './ListItemIcon';
-import Icon from '@/themes/icons/Icon';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
+import Icon from '@/themes/Icon/Icon';
+import GuiProvider from '@/themes/GuiProvider';
 
 const meta: Meta<typeof ListItemIcon> = {
   title: 'Atoms/ListItemIcon',
@@ -14,13 +13,11 @@ const meta: Meta<typeof ListItemIcon> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ padding: 16, minHeight: 260, maxWidth: 520 }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+      <GuiProvider>
+        <div style={{ padding: 16, minHeight: 260, maxWidth: 520 }}>
+          <Story />
+        </div>
+      </GuiProvider>
     ),
   ],
   parameters: {
@@ -105,7 +102,7 @@ export const WithTokenViaResolverExample: Story = {
     <DemoList>
       {/* Emula el resultado del resolver al usar icon="lucide:mail" */}
       <ListItemIcon sx={{ minWidth: 36 }}>
-        <Icon name="lucide:mail" size={20} />
+        <Icon name="mail" fontSize={20} />
       </ListItemIcon>
       <ListItemText primary="Inbox (token)" />
     </DemoList>

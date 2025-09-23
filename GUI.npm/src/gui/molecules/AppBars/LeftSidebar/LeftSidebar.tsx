@@ -2,12 +2,10 @@ import * as React from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText, IconButton, Tooltip, Collapse } from '@/gui/atoms';
-import Icon from '../../../../themes/icons/Icon';
+import Icon from '@/themes/Icon/Icon';
 import { memo, useCallback, useState } from 'react';
 import SidebarToggleButton from './SidebarToggleButton';
-
 const MemoizedListItemButton = memo(ListItemButton);
-
 /**
  * LeftSidebar — single-file implementation (reset)
  *
@@ -42,6 +40,14 @@ export type LeftSidebarProps = {
   /** Optional id/class for .MuiDrawer-root */
   id?: string;
   className?: string;
+  /** Whether to show the sidebar toggle button (from layout context/prop) */
+  shouldShowToggle?: boolean;
+  /** If true, forces "rail" (collapsed) mode visually on desktop */
+  railMode?: boolean;
+  /** Where to show the sidebar toggle button */
+  toggleLocation?: 'topbar' | 'sidebar' | 'none';
+  /** Optional component or element to display at the top of the sidebar */
+  header?: React.ReactNode;
 };
 
 // -------------------- Component --------------------
@@ -54,10 +60,14 @@ export default function LeftSidebar({
   onClose,
   id,
   className,
+  shouldShowToggle = false,
+  railMode = false,
+  toggleLocation = 'sidebar',
+  header,
 }: LeftSidebarProps) {
   // Simple media query using window width to avoid external hooks
   const isMobile = typeof window !== 'undefined' ? window.matchMedia('(max-width: 959.95px)').matches : false;
-
+  const location = useLocation();
   const [internalOpen, setInternalOpen] = React.useState(false);
   const open = typeof openProp === 'boolean' ? openProp : internalOpen;
   const toggleMobile = () => {
@@ -66,25 +76,12 @@ export default function LeftSidebar({
   };
 
   const [expanded, setExpanded] = React.useState(!!expandedProp);
-  React.useEffect(() => {
-    if (typeof expandedProp === 'boolean') setExpanded(expandedProp);
-  }, [expandedProp]);
-
+  // Removed CSS variable logic for sidebar toggle location
   // Top inset (reads CSS var set by TopBar) so the sidebar starts below it
   const navHeightVar = 'var(--gui-nav-height, 0px)';
-
-  React.useEffect(() => {
-    const hasTopbar = getComputedStyle(document.body).getPropertyValue('--has-topbar').trim();
-    const location = hasTopbar === '1' ? 'none' : 'leftsidebar';
-    document.body.style.setProperty('--sidebar-toggle-location', location);
-  }, []);
-
   const navigate = useNavigate();
-  const location = useLocation();
-
   // State to track which groups are open in expanded mode
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
-
   const toggleGroup = (label: string) => {
     setOpenGroups((prev) => ({ ...prev, [label]: !prev[label] }));
   };
@@ -102,7 +99,7 @@ export default function LeftSidebar({
   // -------------------- Render helpers --------------------
   const renderIcon = (node?: RouteItem['icon'], color?: string, size = 20) => {
     if (!node) return null;
-    if (typeof node === 'string') return <Icon name={node} iconColor={color} size={size} />;
+    if (typeof node === 'string') return <Icon name={node} iconColor={color} fontSize={size} />;
     if (typeof node === 'function') return React.createElement(node as React.ComponentType<any>);
     return node as React.ReactElement;
   };
@@ -114,7 +111,6 @@ export default function LeftSidebar({
       const isSelected = !!(route.href && location.pathname === route.href);
       const hasChildren = Array.isArray(route.children) && route.children.length > 0;
       const isOpen = openGroups[route.label] || false;
-
       if (hasChildren) {
         if (!expanded) {
           // railview behavior: clicking a parent shows nested items as a separate floating menu (keep current behavior)
@@ -163,7 +159,7 @@ export default function LeftSidebar({
               >
                 <ListItemIcon sx={{ minWidth: 24, mr: 1 }}>{renderIcon(route.icon, route.iconColor, 20)}</ListItemIcon>
                 <ListItemText primary={route.label} />
-                <Icon name={isOpen ? "mui:ExpandLess" : "mui:ExpandMore"} size={18} />
+                <Icon name={isOpen ? "mui:ExpandLess" : "mui:ExpandMore"} fontSize={18} />
               </ListItemButton>
               <Collapse in={isOpen} timeout="auto" unmountOnExit>
                 <List disablePadding>
@@ -188,7 +184,7 @@ export default function LeftSidebar({
               >
                 <ListItemIcon sx={{ minWidth: 24, mr: 1 }}>{renderIcon(route.icon, route.iconColor, 20)}</ListItemIcon>
                 <ListItemText primary={route.label} />
-                <Icon name={isOpen ? "mui:ExpandLess" : "mui:ExpandMore"} size={18} />
+                <Icon name={isOpen ? "mui:ExpandLess" : "mui:ExpandMore"} fontSize={18} />
               </ListItemButton>
               <Collapse in={isOpen} timeout="auto" unmountOnExit>
                 <List disablePadding>
@@ -252,7 +248,6 @@ export default function LeftSidebar({
       const toProps: any = route.external
         ? { component: 'a', href: route.href, target: '_blank', rel: 'noopener noreferrer' }
         : { component: RouterLink, to: route.href || '#' };
-
       return (
         <ListItemButton
           key={route.label}
@@ -304,7 +299,6 @@ export default function LeftSidebar({
 
   // Floating menu for railview: track anchor position for each open group
   const [anchorEls, setAnchorEls] = useState<Record<string, HTMLElement | null>>({});
-
   // Helper to handle outside click for floating menus
   React.useEffect(() => {
     const handleClick = (event: MouseEvent) => {
@@ -327,13 +321,11 @@ export default function LeftSidebar({
       return () => document.removeEventListener('mousedown', handleClick);
     }
   }, [openGroups, anchorEls]);
-
   const RailList = (
     <List disablePadding sx={{ py: 1, '& .MuiListItemButton-root': { justifyContent: 'center' }, position: 'relative' }}>
       {drawerLinks.map((route) => {
         const hasChildren = Array.isArray(route.children) && route.children.length > 0;
         const isSelected = !!(route.href && location.pathname === route.href);
-
         if (hasChildren) {
           // Floating menu for railview
           return (
@@ -421,7 +413,6 @@ export default function LeftSidebar({
         const toProps: any = route.external
           ? { component: 'a', href: route.href, target: '_blank', rel: 'noopener noreferrer' }
           : { component: RouterLink, to: route.href || '#' };
-
         return (
           <MemoizedListItemButton
             key={route.label}
@@ -443,13 +434,11 @@ export default function LeftSidebar({
       })}
     </List>
   );
-
   const ExpandedList = (
     <List disablePadding sx={{ py: 1, '& .MuiListItemButton-root': { px: 2, minHeight: 44 } }}>
       {renderExpandedItems(drawerLinks)}
     </List>
   );
-
   // --------------- Layout ----------------
   // Drawer paper is the rail column with fixed width on desktop.
   const paperSx: SxProps<Theme> = {
@@ -460,7 +449,14 @@ export default function LeftSidebar({
       left: 0,
       // Height subtracts nav height and 1px for border
       height: 'calc(100vh - var(--gui-nav-height, 48px) - 1px)',
-      width: isMobile ? expandedWidth : expanded ? expandedWidth : collapsedWidth,
+      width: isMobile
+        ? expandedWidth
+        : railMode
+          ? collapsedWidth
+          : expanded
+            ? expandedWidth
+            : collapsedWidth,
+      transition: 'width 0.3s',
       overflowY: 'auto',
       boxSizing: 'border-box',
       backgroundColor: (theme: any) => theme.palette.background.nav || theme.palette.background.paper,
@@ -469,14 +465,18 @@ export default function LeftSidebar({
       '--has-left-sidebar': 1,
     },
   } as const;
-
   return (
     <>
       {/* Rail Drawer */}
       {isMobile ? (
         <Drawer variant="temporary" open={open} onClose={toggleMobile} sx={paperSx} ModalProps={{ keepMounted: true }}>
           {/* Mobile content: show full list inside drawer */}
-          <Box sx={{ width: expandedWidth }}>{ExpandedList}</Box>
+          <Box sx={{ width: expandedWidth }}>
+            {header && (
+              <Box sx={{ px: 2, py: 1 }}>{header}</Box>
+            )}
+            {ExpandedList}
+          </Box>
         </Drawer>
       ) : (
         <Drawer
@@ -486,13 +486,20 @@ export default function LeftSidebar({
           id={id}
           className={className}
         >
-          <SidebarToggleButton
-            expanded={expanded}
-            onToggle={() => setExpanded((v) => !v)}
-            location="sidebar"
-            sx={{ mt: 1, ml: 1 }}
-          />
-          {expanded ? ExpandedList : RailList}
+          <>
+            {shouldShowToggle && !railMode && (
+              <SidebarToggleButton
+                expanded={expanded}
+                onToggle={() => setExpanded((v) => !v)}
+                location={toggleLocation}
+                sx={{ mt: 0.5, mx: 1 }}
+              />
+            )}
+            {header && (
+              <Box sx={{ px: 2, py: 1 }}>{header}</Box>
+            )}
+            {railMode ? RailList : expanded ? ExpandedList : RailList}
+          </>
         </Drawer>
       )}
     </>

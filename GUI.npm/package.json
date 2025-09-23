@@ -1,7 +1,7 @@
 {
   "name": "this.gui",
   "private": false,
-  "version": "0.1.0",
+  "version": "1.1.0",
   "type": "module",
   "main": "dist/this-gui.umd.js",
   "module": "dist/this-gui.es.js",
@@ -38,7 +38,7 @@
     "file-saver": "^2.0.5",
     "js-cookie": "^3.0.5",
     "lexical": "^0.33.1",
-    "lucide-react": "^0.542.0",
+    "material-symbols": "^0.35.2",
     "react-draggable": "^4.4.6",
     "react-feather": "^2.0.10",
     "react-syntax-highlighter": "^15.6.6"
@@ -46,7 +46,6 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.1",
     "@eslint/js": "^9.21.0",
-    "@mui/icons-material": "^6.5.0",
     "@storybook/addon-a11y": "^9.1.4",
     "@storybook/addon-onboarding": "^9.1.4",
     "@storybook/addon-themes": "^9.1.4",

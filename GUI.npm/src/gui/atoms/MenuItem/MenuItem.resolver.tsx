@@ -2,7 +2,7 @@
 import * as React from 'react';
 import MenuItem from './MenuItem';
 import Link from '../Link/Link';
-import Icon from '@/themes/icons/Icon';
+import Icon from '@/themes/Icon/Icon';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import type { RegistryEntry, ResolveCtx } from '@/registry/types';
@@ -79,7 +79,7 @@ export type MenuItemSpec = {
 
 function renderDeclarativeIcon(node: React.ReactNode | string | undefined, iconColor?: string) {
   if (!node) return null;
-  if (typeof node === 'string') return <Icon name={node} iconColor={iconColor} size={20} />;
+  if (typeof node === 'string') return <Icon name={node} iconColor={iconColor} fontSize={20} />;
   return node;
 }
 

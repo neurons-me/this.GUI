@@ -1,8 +1,8 @@
 // src/gui/molecules/AppBars/Footer/Footer.resolver.tsx
-import * as React from 'react';
 import Footer from './Footer';
 import type { RegistryEntry, ResolveCtx } from '@/registry/types';
 import { Link as GuiLink } from '@/gui/atoms';
+import Icon from '@/themes/Icon/Icon';
 
 export type FooterSpec = {
   type: 'Footer';
@@ -47,6 +47,9 @@ export type FooterSpec = {
     id?: string;
     className?: string;
     'data-testid'?: string;
+
+    // Added renderIcon prop to allow override
+    renderIcon?: (item: any) => React.ReactNode;
   };
 };
 

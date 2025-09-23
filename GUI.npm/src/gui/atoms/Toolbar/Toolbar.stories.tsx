@@ -1,11 +1,7 @@
-import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
-
 // Atoms used in the examples
 import { Toolbar, AppBar, Box, IconButton, Typography, Button } from '@/gui/atoms';
-import Icon from '@/themes/icons/Icon';
+import Icon from '@/themes/Icon/Icon';
 
 // ======================= Meta =======================
 const meta: Meta<typeof Toolbar> = {
@@ -14,13 +10,9 @@ const meta: Meta<typeof Toolbar> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ padding: 16, minHeight: 240 }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+        <div style={{ padding: 16, minHeight: 240 }}>
+          <Story />
+        </div>
     ),
   ],
   parameters: {
@@ -123,10 +115,10 @@ export const WithActions: Story = {
     <Toolbar sx={{ display: 'flex', gap: 8 }}>
       <Typography sx={{ flex: 1 }} variant="h6">Title</Typography>
       <IconButton aria-label="search">
-        <Icon name="lucide:Search" size={20} />
+        <Icon name="search" fontSize={20} />
       </IconButton>
       <IconButton aria-label="user">
-        <Icon name="lucide:user" size={20} />
+        <Icon name="person" fontSize={20} />
       </IconButton>
       <Button variant="contained" size="small">Action</Button>
     </Toolbar>

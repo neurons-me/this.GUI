@@ -1,9 +1,9 @@
-// src/components/generics/AppBars/StickyOptions/StickyOptionsTop.stories.tsx
 import React from 'react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { Box, Paper, Typography } from '@mui/material';
+import Box from '@/gui/atoms/Box/Box';
+import Paper from '@/gui/atoms/Paper/Paper';
+import Typography from '@/gui/atoms/Typography/Typography';
 import StickyOptionsTop from './StickyOptionsTop';
-import Icon from '../../../../themes/icons/Icon'; // just for the ReactNode example
+import Icon from '@/themes/Icon/Icon'; 
 import NavBar from '../TopBar/TopBar';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -240,44 +240,44 @@ type ItemType = {
 };
 
 const ITEMS_BASE: ItemType[] = [
-  { icon: 'mui:Settings', label: 'Settings', href: '/settings' },
-  { icon: 'lucide:camera', label: 'Capture', href: '/capture' },
-  { icon: 'mui:Help',     label: 'Help',    href: 'https://help.neurons.me' },
+  { icon: <Icon name="Settings" />, label: 'Settings', href: '/settings' },
+  { icon: <Icon name="camera" />, label: 'Capture', href: '/capture' },
+  { icon: <Icon name="Help" />, label: 'Help', href: 'https://help.neurons.me' },
 ];
 
 const ITEMS_BASE_MOBILE: ItemType[] = [
-  { icon: 'mui:Settings', href: '/settings' },
-  { icon: 'lucide:camera', href: '/capture' },
-  { icon: 'mui:Help', href: 'https://help.neurons.me' },
+  { icon: <Icon name="Settings" />, href: '/settings' },
+  { icon: <Icon name="camera" />, href: '/capture' },
+  { icon: <Icon name="Help" />, href: 'https://help.neurons.me' },
 ];
 
 const ITEMS_WITH_COLORS: ItemType[] = [
-  { icon: 'mui:BarChart',   label: 'Stats',   href: '/stats',   iconColor: 'primary' },
-  { icon: 'lucide:bolt',    label: 'Power',   href: '/power',   iconColor: '#ff9800' },
-  { icon: 'mui:Insights',   label: 'Insights',href: '/insights',iconColor: 'info' },
-  { icon: 'lucide:settings',label: 'Config',  href: '/config' },
+  { icon: <Icon name="BarChart" iconColor="primary" />, label: 'Stats', href: '/stats' },
+  { icon: <Icon name="bolt" iconColor="#ff9800" />, label: 'Power', href: '/power' },
+  { icon: <Icon name="Insights" iconColor="info" />, label: 'Insights', href: '/insights' },
+  { icon: <Icon name="settings" />, label: 'Config', href: '/config' },
 ];
 
 const ITEMS_WITH_COLORS_MOBILE: ItemType[] = [
-  { icon: 'mui:BarChart', href: '/stats',   iconColor: 'primary' },
-  { icon: 'lucide:bolt',  href: '/power',   iconColor: '#ff9800' },
-  { icon: 'mui:Insights', href: '/insights', iconColor: 'info' },
-  { icon: 'lucide:settings', href: '/config' },
+  { icon: <Icon name="BarChart" iconColor="primary" />, href: '/stats' },
+  { icon: <Icon name="bolt" iconColor="#ff9800" />, href: '/power' },
+  { icon: <Icon name="Insights" iconColor="info" />, href: '/insights' },
+  { icon: <Icon name="settings" />, href: '/config' },
 ];
 
 const ITEMS_REACT_NODES: ItemType[] = [
   {
-    icon: <Icon name="mui:AttachMoney" htmlColor="#43a047" />,
+    icon: <Icon name="AttachMoney" iconColor="#43a047" />,
     label: 'Billing',
     href: '/billing',
   },
   {
-    icon: <Icon name="lucide:message-circle" color="#1976d2" />,
+    icon: <Icon name="message-circle" iconColor="#1976d2" />,
     label: 'Support',
     href: '/support',
   },
   {
-    icon: <Icon name="mui:CalendarMonth" />,
+    icon: <Icon name="CalendarMonth" />,
     label: 'Calendar',
     href: '/calendar',
   },
@@ -448,26 +448,15 @@ export const WithNavBar: StoryObj<typeof StickyOptionsTop> = {
     mobileVersion: 'pill',
   },
   render: (args) => (
-    <MemoryRouter initialEntries={['/']}>
-      <PageScaffold>
-        <NavBar title="Demo App" />
-        <Box sx={(theme) => ({ pt: `${theme?.layout?.insets?.nav ?? 0}px` })}>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <>
-                  <StickyOptionsTop {...args} />
-                  <Box sx={{ p: 2 }}>
-                    {"Lorem ipsum dolor sit amet, consectetur adipiscing elit. ".repeat(100)}
-                  </Box>
-                </>
-              }
-            />
-          </Routes>
+    <PageScaffold>
+      <NavBar title="Demo App" />
+      <Box sx={(theme) => ({ pt: `${theme?.layout?.insets?.nav ?? 0}px` })}>
+        <StickyOptionsTop {...args} />
+        <Box sx={{ p: 2 }}>
+          {"Lorem ipsum dolor sit amet, consectetur adipiscing elit. ".repeat(100)}
         </Box>
-      </PageScaffold>
-    </MemoryRouter>
+      </Box>
+    </PageScaffold>
   ),
   parameters: {
     docs: {

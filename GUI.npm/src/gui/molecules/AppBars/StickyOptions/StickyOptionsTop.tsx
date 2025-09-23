@@ -1,7 +1,7 @@
 import type * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useGuiTheme, type GuiTheme } from '@/gui';
-import Icon from '../../../../themes/icons/Icon';
+import Icon from '@/themes/Icon/Icon';
 export type StickyItem = {
   icon: React.ReactNode | string;
   label?: string;
@@ -168,7 +168,11 @@ const StickyOptionsTop = ({
       ? (isMui ? { htmlColor: colorInfo.css } : { color: colorInfo.css })
       : {};
 
-    return <Icon name={icon} size={16} {...colorProps} />;
+    // Refactor: use fontSize and iconColor props per new IconProps interface
+    const newColorProps = colorInfo.css
+      ? { iconColor: colorInfo.css }
+      : {};
+    return <Icon name={icon} fontSize={16} {...newColorProps} />;
   };
 
   // ---- Spacer measurement (optional content push)

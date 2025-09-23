@@ -1,8 +1,6 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Paper from './Paper';
-import { MemoryRouter } from 'react-router-dom';
-import GuiProvider from '@/context/GuiProvider';
 
 const meta: Meta<typeof Paper> = {
   title: 'Atoms/Paper',
@@ -10,13 +8,9 @@ const meta: Meta<typeof Paper> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <GuiProvider>
-          <div style={{ padding: 16, minHeight: 240, background: 'var(--mui-palette-background-default)' }}>
-            <Story />
-          </div>
-        </GuiProvider>
-      </MemoryRouter>
+        <div style={{ padding: 16, minHeight: 240, background: 'var(--mui-palette-background-default)' }}>
+          <Story />
+        </div>
     ),
   ],
   parameters: {

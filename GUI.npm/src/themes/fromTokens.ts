@@ -291,25 +291,11 @@ export function makeMuiTheme(globalTokens: any, themeTokens: any, mode: 'light' 
             '--gui-spacing': typeof theme.spacing === 'function' ? theme.spacing(1) : `${(theme as any).spacing}px`,
             '--gui-inset-left': theme.layout.insets.left + 'px',
             '--gui-inset-right': theme.layout.insets.right + 'px',
-            // App layout CSS variables
-            '--has-left-sidebar': 0,
-            '--has-topbar': 0,
-            '--sidebar-toggle-location': 'none',
           },
           body: {
             fontFamily: theme.typography.fontFamily,
             backgroundColor: theme.palette.background.default,
             color: theme.palette.text.primary,
-            // Conditional sidebar toggle location rules
-            '&[style*="--has-left-sidebar: 1"][style*="--has-topbar: 1"]': {
-              '--sidebar-toggle-location': 'topbar',
-            },
-            '&[style*="--has-left-sidebar: 1"][style*="--has-topbar: 0"]': {
-              '--sidebar-toggle-location': 'sidebar',
-            },
-            '&[style*="--has-left-sidebar: 0"]': {
-              '--sidebar-toggle-location': 'none',
-            },
           },
           a: {
             color: theme.palette.link.main,
