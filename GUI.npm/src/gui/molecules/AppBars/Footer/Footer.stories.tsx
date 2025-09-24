@@ -5,7 +5,6 @@ import { useTheme } from '@mui/material/styles';
 import LeftDrawer, { type RouteItem } from '../LeftSidebar/LeftSidebar';
 import { Box, Drawer } from '@mui/material';
 import NavBar from '../TopBar/TopBar';
-
 const demoLinks: RouteItem[] = [
   { label: 'Home', href: '/' },
   { label: 'Docs', href: '/docs' },
@@ -206,11 +205,8 @@ There's also a story that mounts a real LeftDrawer next to the Footer to verify 
     },
   },
 } satisfies Meta<typeof Footer>;
-
 export default meta;
-
 type Story = StoryObj<typeof Footer>;
-
 export const Default: Story = {
   args: {
     title: 'neurons.me',
@@ -282,7 +278,7 @@ export const WithInsets: Story = {
     leftInset: 240,
     rightInset: 280,
     socialLinks: [
-      { icon: 'mui:GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
+      { icon: 'GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
     ],
   },
 };
@@ -347,8 +343,8 @@ export const WithLeftDrawer: Story = {
       { label: 'About', href: '/about' },
     ],
     socialLinks: [
-      { icon: 'mui:GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
-      { icon: 'lucide:twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
+      { icon: 'GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
+      { icon: 'twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
     ],
   },
 };
@@ -367,8 +363,8 @@ export const WithRightDrawer: Story = {
       { label: 'Changelog', href: '/changelog' },
     ],
     socialLinks: [
-      { icon: 'mui:GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
-      { icon: 'lucide:twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
+      { icon: 'GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
+      { icon: 'twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
     ],
   },
 };
@@ -387,8 +383,8 @@ export const WithBothDrawers: Story = {
       { label: 'Contact', href: '/contact' },
     ],
     socialLinks: [
-      { icon: 'mui:GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
-      { icon: 'lucide:twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
+      { icon: 'GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
+      { icon: 'twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
     ],
   },
 };
@@ -412,8 +408,8 @@ export const WithLeftDrawerLayout: Story = {
           title="neurons.me"
           links={[{ label: 'Docs', href: '/docs' }, { label: 'Contact', href: '/contact' }]}
           socialLinks={[
-            { icon: 'mui:GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
-            { icon: 'lucide:twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
+            { icon: 'GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
+            { icon: 'twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
           ]}
         />
       </Box>
@@ -453,8 +449,8 @@ export const WithRightDrawerLayout: Story = {
           title="neurons.me"
           links={[{ label: 'Docs', href: '/docs' }, { label: 'Contact', href: '/contact' }]}
           socialLinks={[
-            { icon: 'mui:GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
-            { icon: 'lucide:twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
+            { icon: 'GitHub', href: 'https://github.com/neurons-me', iconColor: 'primary' },
+            { icon: 'twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
           ]}
         />
       </Box>
@@ -480,8 +476,8 @@ export const WithBothDrawersLayout: Story = {
           title="neurons.me"
           links={[{ label: 'Docs', href: '/docs' }, { label: 'Contact', href: '/contact' }]}
           socialLinks={[
-            { icon: 'lucide:facebook', href: 'https://github.com/neurons-me', iconColor: 'primary' },
-            { icon: 'lucide:twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
+            { icon: 'facebook', href: 'https://github.com/neurons-me', iconColor: 'primary' },
+            { icon: 'twitter', href: 'https://twitter.com/neurons_me', iconColor: '#1DA1F2' },
           ]}
         />
       </Box>

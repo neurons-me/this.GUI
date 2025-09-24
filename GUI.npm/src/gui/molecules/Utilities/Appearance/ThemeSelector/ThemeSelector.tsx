@@ -1,4 +1,4 @@
-// src/gui/molecules/Utilities/ThemeSelector.tsx
+// src/gui/molecules/Utilities/Appearance/ThemeSelector/ThemeSelector.tsx
 import React from 'react';
 import {
   IconButton, // .yes
@@ -14,13 +14,13 @@ import {
 import MuiSwitch from '@mui/material/Switch';
 import Icon from '@/themes/Icon/Icon';
 import * as Icons from '@/themes/Icon/Icon';
-import { useThemeContext } from '@/themes/GuiProvider';
+import { useThemeContext } from '@/themes';
 import { AVAILABLE_THEMES } from '@/themes';
 import { useTheme, SxProps, Theme } from '@mui/material/styles';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 // Icons ---------------------------------------------------------------
 interface IconSpec {
-  type: 'mui' | 'url' | 'data' | 'svg';
+  type: 'mui' | 'url' | 'data' | 'svg' | 'lucide' | 'material-symbol';
   value: string;
 }
 
@@ -70,7 +70,7 @@ interface Manifest {
   homepage?: string;
   license?: string;
   tags?: string[];
-  modes?: Record<string, any>;
+  modes?: Record<string, { path: string }>;
 }
 
 export interface ThemeItem {
@@ -156,7 +156,7 @@ function coerceToIconSpec(icon: any): string | IconSpec | undefined {
   if (!icon) return undefined;
   if (typeof icon === 'string') return icon;
   if (typeof icon === 'object' && typeof icon.type === 'string' && typeof icon.value === 'string') {
-    const validTypes = ['mui', 'url', 'data', 'svg'];
+    const validTypes = ['mui', 'url', 'data', 'svg', 'lucide', 'material-symbol'];
     if (validTypes.includes(icon.type)) {
       return icon as IconSpec;
     }

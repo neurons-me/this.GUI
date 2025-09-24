@@ -22,7 +22,7 @@ const meta = {
 - **Custom actions:** Theme toggle, hamburger menu, etc.
 - **Responsive:** Adapts to mobile layouts.
 - **Inset-aware:** Reads global left/right/nav insets from the theme to align with permanent drawers.
-- **Icon support:** Via the This.GUI icon registry (declarative strings) or direct React elements.
+- **Icon support:** Via the This.GUI icon registry (declarative strings).
 
 ---
 
@@ -40,15 +40,15 @@ Each link can specify:
 <TopBar
   logo="https://neurons.me/neurons.me.png"
   TopBarLinks={[
-    { label: 'Home', href: '/', icon: 'BarChart', iconColor: 'primary' },
-    { label: 'Docs', href: '/docs', icon: 'Insights', iconColor: 'secondary' },
+    { label: 'Home', href: '/', icon: 'home', iconColor: 'primary' },
+    { label: 'Docs', href: '/docs', icon: 'insights', iconColor: 'secondary' },
     {
       label: 'More',
-      icon: 'lucide:Info',
+      icon: 'info',
       iconColor: '#00aa96',
       children: [
-        { label: 'About', href: '/about', icon: 'Message', iconColor: 'info' },
-        { label: 'Contact', href: '/contact', icon: 'Mail', iconColor: '#4caf50' },
+        { label: 'About', href: '/about', icon: 'message', iconColor: 'info' },
+        { label: 'Contact', href: '/contact', icon: 'mail', iconColor: '#4caf50' },
       ],
     },
   ]}
@@ -67,7 +67,7 @@ Each link can specify:
   TopBarLinks={[
     {
       label: 'More',
-      icon: 'lucide:Info',
+      icon: 'info',
       children: [
         { label: 'About', href: '/about' },
         { label: 'Contact', href: '/contact' },
@@ -80,36 +80,33 @@ Each link can specify:
 ---
 
 #### Icon Usage
-- **Material UI:** Use \`IconName\` (e.g. \`Insights\`). See [MUI Icons Catalog](https://mui.com/material-ui/material-icons/).
-- **Lucide:** Use \`IconName\` (e.g. \`Mail\`). See [Lucide Icons Catalog](https://lucide.dev/icons/).
-- **Color:** Use \`iconColor\` prop for theme colors (\`primary\`, \`secondary\`, \`info\`) or any CSS color (e.g. \`#4caf50\`).
+- **Material Symbols:** Use icon names directly (e.g. \`bar_chart\`, \`mail\`, \`insights\`). See [Material Symbols Catalog](https://fonts.google.com/icons?icon.set=Material+Symbols).
+- Icon rendering is handled by the \`<Icon />\` component, which supports font variation settings like \`weight\`, \`fill\`, \`grade\`, \`opticalSize\`, and standard props like \`iconColor\` and \`fontSize\`.
 
 ---
 
 ### React Component Mode (Advanced)
-You may also use TopBar as a React component and manually import icons, passing them into \`TopBarLinks\`:
+You may also use TopBar as a React component and pass icon names as strings in \`TopBarLinks\`:
 
 ~~~jsx
 import TopBar from './TopBar';
-import { BarChart, Insights } from '@mui/icons-material';
-import { Mail, Info } from 'lucide-react';
 
 <TopBar
   TopBarLinks={[
-    { label: 'Home', href: '/', icon: <BarChart color="primary" /> },
-    { label: 'Docs', href: '/docs', icon: <Insights htmlColor="#f50057" /> },
+    { label: 'Home', href: '/', icon: 'bar_chart', iconColor: 'primary' },
+    { label: 'Docs', href: '/docs', icon: 'insights', iconColor: '#f50057' },
     {
       label: 'More',
-      icon: <Info color="success" />,
+      icon: 'info',
       children: [
-        { label: 'About', href: '/about', icon: <Mail htmlColor="#4caf50" /> },
+        { label: 'About', href: '/about', icon: 'mail', iconColor: '#4caf50' },
       ],
     },
   ]}
   position="static"
 />
 ~~~
-- **Note:** When using this mode, you can pass any valid React element as the \`icon\` property. For Material UI icons, use the \`color\` or \`htmlColor\` prop to customize color. For Lucide icons, use the \`color\` prop.
+- **Note:** The \`icon\` property accepts icon names as strings. Color and style are controlled via \`iconColor\` and other props handled by the \`<Icon />\` component.
 
 ---
 
@@ -168,14 +165,14 @@ export const Default: Story = {
     title: 'neurons.me',
     logo: 'https://neurons.me/neurons.me.png',
     TopBarLinks: [
-      { label: 'Home', href: '/', icon: 'BarChart' },
-      { label: 'Docs', href: '/docs', icon: 'Insights' },
+      { label: 'Home', href: '/', icon: 'home' },
+      { label: 'Docs', href: '/docs', icon: 'insights' },
       {
         label: 'More',
-        icon: 'Info',
+        icon: 'info',
         children: [
-          { label: 'About', href: '/about', icon: 'Message' },
-          { label: 'Contact', href: '/contact', icon: 'Mail' },
+          { label: 'About', href: '/about', icon: 'message' },
+          { label: 'Contact', href: '/contact', icon: 'mail' },
         ],
       },
     ],
@@ -199,16 +196,16 @@ export const WithIcons: Story = {
       {
         label: 'Docs',
         href: '/docs',
-        icon: 'Insights',
+        icon: 'insights',
         iconColor: 'secondary',
       },
       {
         label: 'More',
-        icon: 'Info',
+        icon: 'info',
         iconColor: '#00aa96',
         children: [
-          { label: 'About', href: '/about', icon: 'Message', iconColor: 'info' },
-          { label: 'Contact', href: '/contact', icon: 'Mail', iconColor: '#4caf50' },
+          { label: 'About', href: '/about', icon: 'message', iconColor: 'info' },
+          { label: 'Contact', href: '/contact', icon: 'mail', iconColor: '#4caf50' },
         ],
       },
     ],
@@ -224,14 +221,14 @@ export const FixedTopBar = () => (
       title="neurons.me"
       logo="https://neurons.me/neurons.me.png"
       TopBarLinks={[
-        { label: 'Home', href: '/', icon: 'BarChart' },
-        { label: 'Docs', href: '/docs', icon: 'Insights' },
+        { label: 'Home', href: '/', icon: 'home' },
+        { label: 'Docs', href: '/docs', icon: 'insights' },
         {
           label: 'More',
-          icon: 'Info',
+          icon: 'info',
           children: [
-            { label: 'About', href: '/about', icon: 'Message' },
-            { label: 'Contact', href: '/contact', icon: 'Mail' },
+            { label: 'About', href: '/about', icon: 'message' },
+            { label: 'Contact', href: '/contact', icon: 'mail' },
           ],
         },
       ]}
@@ -261,14 +258,14 @@ export const StaticTopBar = () => (
       title="neurons.me"
       logo="https://neurons.me/neurons.me.png"
       TopBarLinks={[
-        { label: 'Home', href: '/', icon: 'BarChart' },
-        { label: 'Docs', href: '/docs', icon: 'Insights' },
+        { label: 'Home', href: '/', icon: 'home' },
+        { label: 'Docs', href: '/docs', icon: 'insights' },
         {
           label: 'More',
-          icon: 'Info',
+          icon: 'info',
           children: [
-            { label: 'About', href: '/about', icon: 'Message' },
-            { label: 'Contact', href: '/contact', icon: 'Mail' },
+            { label: 'About', href: '/about', icon: 'message' },
+            { label: 'Contact', href: '/contact', icon: 'mail' },
           ],
         },
       ]}

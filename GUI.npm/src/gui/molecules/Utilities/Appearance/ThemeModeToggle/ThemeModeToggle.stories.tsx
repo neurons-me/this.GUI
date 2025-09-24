@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box, Stack, Typography, Paper } from "@/gui/atoms";
 import ThemeModeToggle from './ThemeModeToggle';
-
 // ======================= Meta =======================
 const meta: Meta<typeof ThemeModeToggle> = {
   title: 'Molecules/Utilities/ThemeModeToggle',

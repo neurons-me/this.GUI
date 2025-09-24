@@ -1,4 +1,6 @@
 // src/themes/theme.d.ts
+
+export type ThemeMode = 'light' | 'dark';
 // src/themes/theme.d.ts
 // ---------- This.GUI Theme Manifest types (library-level, not part of MUI) ----------
 export type ThemeIcon =
@@ -95,6 +97,10 @@ declare module '@mui/material/styles' {
     };
     /** (Optional) legacy insets for backwards compatibility. */
     insets?: { left?: number; right?: number; nav?: number };
+    GUI: {
+      // This was changed from `thisGui` to `GUI` as per instructions
+      [key: string]: unknown;
+    };
   }
 
   interface ThemeOptions {
@@ -111,7 +117,53 @@ declare module '@mui/material/styles' {
       [key: string]: unknown;
     };
     insets?: Partial<{ left: number; right: number; nav: number }>;
+    GUI?: {
+      // This was changed from `thisGui` to `GUI` as per instructions
+      [key: string]: unknown;
+    };
   }
 }
+
+export type Insets = {
+  left: number;
+  right: number;
+  nav: number;
+};
+
+// ThemeEntry, ThemeFamilyGroup, and GuiContextValue types (from GuiProvider)
+export type ThemeEntry = {
+  id: string;
+  family: string;
+  name: string;
+  mode: 'light' | 'dark';
+  manifest: ThemeManifest;
+};
+
+export type ThemeFamilyGroup = {
+  family: string;
+  name: string;
+  manifest: ThemeManifest;
+  modes: ('light' | 'dark')[];
+};
+
+export type GuiContextValue = {
+  themeKey: string;
+  setThemeKey: (key: string) => void;
+  toggleMode: () => void;
+  mode: 'light' | 'dark';
+  setMode: (mode: 'light' | 'dark') => void;
+  selectedFamily: string;
+  setSelectedFamily: (family: string) => void;
+  available: {
+    flat: ThemeEntry[];
+    grouped: ThemeFamilyGroup[];
+  };
+  // New fields
+  family: string;
+  availableFlat: ThemeEntry[];
+  availableFamilies: ThemeFamilyGroup[];
+  getManifestForFamily: (family: string) => ThemeManifest | undefined;
+  setFamilyAndMode: (family: string, mode: 'light' | 'dark') => void;
+};
 
 export {};

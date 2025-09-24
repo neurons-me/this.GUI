@@ -1,5 +1,4 @@
 import ThemeModeToggle from './ThemeModeToggle';
-
 /**
  * Resolver for ThemeModeToggle
  * ----------------------------

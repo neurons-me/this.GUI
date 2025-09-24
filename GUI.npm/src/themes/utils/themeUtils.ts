@@ -1,6 +1,5 @@
 import { Theme } from '@mui/material/styles';
-import type { Insets } from '../../context/GuiProvider';
-
+export type Insets = { left: number; right: number; nav: number };
 // Helper to get CSS variable from theme
 export const getCssVar = (theme: Theme, name: string) => {
   return getComputedStyle(document.documentElement).getPropertyValue(`--${name}`) || theme.palette?.[name as keyof typeof theme.palette];
@@ -9,7 +8,6 @@ export const getCssVar = (theme: Theme, name: string) => {
 // Generates a string of CSS custom properties based on theme.palette
 export const generatePaletteCssVars = (theme: Theme) => {
   const cssVars: Record<string, string> = {};
-
   Object.entries(theme.palette).forEach(([key, value]) => {
     if (typeof value === 'object' && value !== null) {
       Object.entries(value).forEach(([subKey, subVal]) => {
@@ -42,7 +40,7 @@ export const injectInsetsIntoTheme = (
 ): Theme => {
   return {
     ...theme,
-    thisGui: {
+    GUI: {
       insets,
       updateInsets: updateInsetsCb,
     },

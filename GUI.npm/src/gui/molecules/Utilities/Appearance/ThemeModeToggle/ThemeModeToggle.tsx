@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconButton, Switch } from '@/gui/atoms';
 import Icon from '@/themes/Icon/Icon';
-import { useThemeContext } from '@/themes/GuiProvider';
+import { useThemeContext } from '@/themes';
 import { Typography, Box } from '@/gui/atoms';
 import type { SxProps, Theme } from '@mui/material/styles';
 type ThemeModeToggleProps = {
