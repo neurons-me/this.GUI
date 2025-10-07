@@ -1,3 +1,4 @@
+//src/gui/atoms/Link/Link.tsx
 import React, { forwardRef } from 'react';
 import { Link as MuiLink, LinkProps as MuiLinkProps } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';

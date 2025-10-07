@@ -1,18 +1,27 @@
 // src/themes/index.ts
 // Global tokens shared by all themes (radius, spacing, zIndex, etc.)
 export type { Theme } from '@mui/material/styles';
-export { createThemeFromTokens, createThemeFromManifest, getTheme  } from './utils/themeFactories';
-// src/themes/utils/index.ts
-export { AVAILABLE_THEMES } from './utils/catalog';
-// Full export surface for theme utilities
-export { resolveActiveTheme } from './utils/themeResolver';
-export { getInitialThemeKey, usePersistentThemeKey } from './utils/persistence';
-export { ThemeContext, useThemeContext } from './utils/themeContext';
+// Theme persistence utilities
+export { getInitialThemeId, usePersistentThemeId } from './utils/persistence';
+// Theme context and provider
+export { ThemeContext, useThemeContext } from './contexts/themeContext';
 export { default as GuiProvider } from './GuiProvider';
+
+// Theme types
 export type {
-  ThemeEntry,
-  ThemeFamilyGroup,
+  GuiTheme,
+  FlatGuiTheme,
   ThemeManifest,
-  ThemeMode,
-  ThemeIcon
+  Insets,
+  GuiContextValue,
 } from './theme.d.ts';
+
+// Theme catalog access
+export {
+  GuiThemes,
+  FlatGuiThemes,
+  getGuiThemes,
+  getFlatGuiThemes,
+  getGuiTheme,
+  getFlatGuiTheme,
+} from './utils/catalog';

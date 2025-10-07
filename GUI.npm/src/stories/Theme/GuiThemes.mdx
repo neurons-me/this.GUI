@@ -1,0 +1,25 @@
+ GuiTheme (el tema completo)
+Representa un solo tema (ej. neurons.me), el cual siempre incluye sus dos modos (light y dark), agrupados.
+	•	Este es el objeto base que representa un manifest resuelto, estructurado.
+	•	Está compuesto por:
+	•	themeId
+	•	themeName
+	•	modes: un objeto con:
+	•	light:  tokens, mode, manifest 
+	•	dark: tokens, mode, manifest 
+
+✔️ Este es el tipo de elemento dentro de GuiThemes[], que es tu colección de todos los temas agrupados.
+
+ FlatGuiThemes[] (modos individuales)
+
+❗ Aquí cada item es independiente.
+Representa una lista de modos, donde cada entrada es un modo específico (light o dark) de un GuiTheme.
+	•	Cada objeto incluye:
+	•	themeId
+	•	themeName
+	•	mode: 'light' | 'dark'
+	•	tokens: de ese modo específico
+	•	manifest: el manifest del tema al que pertenece
+
+✔️ Este se genera recorriendo los GuiThemes y desarmando los modos.
+

@@ -5,7 +5,7 @@ import Paper from '../Paper/Paper';
 import Link from '../Link/Link';
 
 const meta: Meta<typeof Stack> = {
-  title: 'Atoms/Stack',
+  title: 'Atoms/Containers/Stack',
   component: Stack,
   tags: ['autodocs'],
   decorators: [

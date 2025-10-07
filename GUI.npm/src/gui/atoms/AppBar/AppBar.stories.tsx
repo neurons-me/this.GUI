@@ -3,7 +3,7 @@ import { AppBar, Toolbar, Typography, Box, Button } from '@/gui/atoms';
 
 // ======================= Meta =======================
 const meta: Meta<typeof AppBar> = {
-  title: 'Atoms/AppBar',
+  title: 'Atoms/Containers/AppBar',
   component: AppBar,
   tags: ['autodocs'],
   decorators: [

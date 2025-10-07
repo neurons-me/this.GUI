@@ -8,7 +8,7 @@ import Icon from '@/themes/Icon/Icon';
 import ListSubheader from '@mui/material/ListSubheader';
 
 const meta: Meta<typeof List> = {
-  title: 'Atoms/List',
+  title: 'Atoms/Organization/List',
   component: List,
   tags: ['autodocs'],
   decorators: [

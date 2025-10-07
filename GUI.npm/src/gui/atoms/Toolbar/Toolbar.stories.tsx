@@ -5,7 +5,7 @@ import Icon from '@/themes/Icon/Icon';
 
 // ======================= Meta =======================
 const meta: Meta<typeof Toolbar> = {
-  title: 'Atoms/Toolbar',
+  title: 'Atoms/Containers/Toolbar',
   component: Toolbar,
   tags: ['autodocs'],
   decorators: [

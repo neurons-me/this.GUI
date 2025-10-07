@@ -3,42 +3,7 @@ import type { SxProps, Theme } from '@mui/material/styles';
 import AppBar from './AppBar';
 import type { RegistryEntry } from '@/registry/types';
 import { ensureNodeId } from '@/gui/utils/nodeID';
-
-/**
- * Declarative spec for AppBar.
- * This is the JSON-friendly shape your renderer/LLM can emit.
- */
-type AppBarSpec = {
-  type: 'AppBar';
-  props?: {
-    /** Content inside the AppBar (text, Toolbar, actions, etc.) */
-    children?: React.ReactNode;
-
-    /** Visual props (passthrough to MUI AppBar) */
-    position?: 'fixed' | 'absolute' | 'sticky' | 'static' | 'relative';
-    color?:
-      | 'inherit'
-      | 'default'
-      | 'primary'
-      | 'secondary'
-      | 'transparent'
-      | 'info'
-      | 'success'
-      | 'warning'
-      | 'error';
-    elevation?: number;
-    enableColorOnDark?: boolean;
-    sx?: SxProps<Theme>;
-
-    /** Polymorphism passthrough (AppBar extends Paper → supports `component`) */
-    component?: React.ElementType;
-
-    /** Common DOM props */
-    id?: string;
-    className?: string;
-    'data-testid'?: string;
-  };
-};
+import type { AppBarResolverSpec as AppBarSpec } from './AppBar.types';
 
 /**
  * AppBarResolver
@@ -50,7 +15,6 @@ const AppBarResolver: RegistryEntry = {
   type: 'AppBar',
   resolve(spec: AppBarSpec) {
     const p = spec.props ?? {};
-
     const rootProps: any = {
       position: p.position ?? 'fixed',
       color: p.color ?? 'default',

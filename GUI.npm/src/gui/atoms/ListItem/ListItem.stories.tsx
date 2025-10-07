@@ -6,7 +6,7 @@ import ListItemIcon from '../ListItemIcon/ListItemIcon';
 import ListItemText from '../ListItemText/ListItemText';
 import Icon from '@/themes/Icon/Icon';
 const meta: Meta<typeof ListItem> = {
-  title: 'Atoms/ListItem',
+  title: 'Atoms/Organization/ListItem',
   component: ListItem,
   tags: ['autodocs'],
   decorators: [

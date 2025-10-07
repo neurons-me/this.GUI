@@ -8,7 +8,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 
 const meta: Meta<typeof ListItemButton> = {
-  title: 'Atoms/ListItemButton',
+  title: 'Atoms/Organization/ListItemButton',
   component: ListItemButton,
   tags: ['autodocs'],
   decorators: [

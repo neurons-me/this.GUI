@@ -5,7 +5,7 @@ import Menu from '../Menu/Menu';
 import Button from '@mui/material/Button';
 import Icon from '@/themes/Icon/Icon';
 const meta: Meta<typeof MenuItem> = {
-  title: 'Atoms/MenuItem',
+  title: 'Atoms/Navigation/MenuItem',
   component: MenuItem,
   tags: ['autodocs'],
   decorators: [

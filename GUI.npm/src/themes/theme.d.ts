@@ -1,39 +1,70 @@
 // src/themes/theme.d.ts
-
-export type ThemeMode = 'light' | 'dark';
-// src/themes/theme.d.ts
-// ---------- This.GUI Theme Manifest types (library-level, not part of MUI) ----------
-export type ThemeIcon =
-  | { type: 'mui' | 'lucide' | 'material-symbol'; value: string }    // icon token from a known set
-  | { type: 'url'; value: string }               // URL to an image (svg/png)
-  | { type: 'svg'; value: string }               // inline SVG markup
-  | { type: 'data'; value: string };             // data URI
-
-/**
- * ThemeManifest
- * Describes a theme package and the paths to its light/dark token files.
- * This is metadata for discovery/marketplace; it is intentionally separate
- * from the runtime MUI Theme type augmentation below.
- */
 export type ThemeManifest = {
-  id: string;
-  name: string;
+  themeId?: string;
+  themeName?: string;
   description?: string;
   author?: string;
   version?: string;
   license?: string;
   homepage?: string;
-  repository?: { type: string; url: string };
   tags?: string[];
   createdAt?: string;
   updatedAt?: string;
+  badgeUrl: string;
+  mode: {
+    light?: Record<string, any> | string; 
+    dark?: Record<string, any> | string;
+  };
   defaultMode?: 'light' | 'dark';
-  icon?: ThemeIcon;  // Optional theme icon for listings
-  modes: {
-    light: { path: string };
-    dark: { path: string };
+};
+
+export type GuiTheme = {
+  themeId: string;           // unique identifier (e.g. UUID)
+  themeName: string;         // human-readable name
+  // top-level manifest metadata (copied from ThemeManifest)
+  description?: string;
+  author?: string;
+  version?: string;
+  license?: string;
+  homepage?: string;
+  tags?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+  badgeUrl?: string;
+  // group of modes for this theme
+  mode: {
+    light?: Record<string, any>;
+    dark?: Record<string, any>;
   };
 };
+
+export interface FlatGuiTheme {
+  themeId: string;
+  themeName: string;
+  description?: string;
+  author?: string;
+  version?: string;
+  license?: string;
+  homepage?: string;
+  tags?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+  badgeUrl?: string;
+  mode: 'light' | 'dark';
+  tokens: string | Record<string, any>;
+}
+
+// GuiContextValue types (from GuiProvider)
+export type GuiContextValue = {
+  themeId: string;
+  setThemeId: (id: string) => void;
+  themeName: string;
+  mode: 'light' | 'dark';
+  toggleMode: () => void;
+  setMode: (mode: 'light' | 'dark') => void;
+};
+
+// Augment MUI Theme to include custom tokens and insets
 import '@mui/material/styles';
 declare module '@mui/material/styles' {
   // -----------------------------
@@ -82,10 +113,10 @@ declare module '@mui/material/styles' {
   interface Theme {
     /** Runtime layout insets coordinated by NavBar/Drawers (pixels). */
     layout: {
-      insets: { left: number; right: number; nav: number };
+      insets: { left: number; right: number; top: number; bottom: number };
     };
     /** Callback exposed by GuiProvider to update insets at runtime. */
-    updateInsets?: (v: Partial<{ left: number; right: number; nav: number }>) => void;
+    updateInsets?: (v: Partial<{ left: number; right: number; top: number; bottom: number }>) => void;
     /** Bag for tokens that don't map 1:1 to MUI. */
     custom?: {
       border?: string;
@@ -96,7 +127,7 @@ declare module '@mui/material/styles' {
       [key: string]: unknown;
     };
     /** (Optional) legacy insets for backwards compatibility. */
-    insets?: { left?: number; right?: number; nav?: number };
+    insets?: { left?: number; right?: number; top?: number; bottom?: number };
     GUI: {
       // This was changed from `thisGui` to `GUI` as per instructions
       [key: string]: unknown;
@@ -105,9 +136,9 @@ declare module '@mui/material/styles' {
 
   interface ThemeOptions {
     layout?: {
-      insets?: Partial<{ left: number; right: number; nav: number }>;
+      insets?: Partial<{ left: number; right: number; top: number; bottom: number }>;
     };
-    updateInsets?: (v: Partial<{ left: number; right: number; nav: number }>) => void;
+    updateInsets?: (v: Partial<{ left: number; right: number; top: number; bottom: number }>) => void;
     custom?: {
       border?: string;
       gradients?: unknown;
@@ -116,7 +147,7 @@ declare module '@mui/material/styles' {
       lineHeights?: Record<string, unknown>;
       [key: string]: unknown;
     };
-    insets?: Partial<{ left: number; right: number; nav: number }>;
+    insets?: Partial<{ left: number; right: number; top: number; bottom: number }>;
     GUI?: {
       // This was changed from `thisGui` to `GUI` as per instructions
       [key: string]: unknown;
@@ -127,43 +158,8 @@ declare module '@mui/material/styles' {
 export type Insets = {
   left: number;
   right: number;
-  nav: number;
-};
-
-// ThemeEntry, ThemeFamilyGroup, and GuiContextValue types (from GuiProvider)
-export type ThemeEntry = {
-  id: string;
-  family: string;
-  name: string;
-  mode: 'light' | 'dark';
-  manifest: ThemeManifest;
-};
-
-export type ThemeFamilyGroup = {
-  family: string;
-  name: string;
-  manifest: ThemeManifest;
-  modes: ('light' | 'dark')[];
-};
-
-export type GuiContextValue = {
-  themeKey: string;
-  setThemeKey: (key: string) => void;
-  toggleMode: () => void;
-  mode: 'light' | 'dark';
-  setMode: (mode: 'light' | 'dark') => void;
-  selectedFamily: string;
-  setSelectedFamily: (family: string) => void;
-  available: {
-    flat: ThemeEntry[];
-    grouped: ThemeFamilyGroup[];
-  };
-  // New fields
-  family: string;
-  availableFlat: ThemeEntry[];
-  availableFamilies: ThemeFamilyGroup[];
-  getManifestForFamily: (family: string) => ThemeManifest | undefined;
-  setFamilyAndMode: (family: string, mode: 'light' | 'dark') => void;
+  top: number;
+  bottom: number;
 };
 
 export {};

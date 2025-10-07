@@ -5,7 +5,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 
 const meta: Meta<typeof ListItemText> = {
-  title: 'Atoms/ListItemText',
+  title: 'Atoms/Organization/ListItemText',
   component: ListItemText,
   tags: ['autodocs'],
   decorators: [

@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import Paper from './Paper';
 
 const meta: Meta<typeof Paper> = {
-  title: 'Atoms/Paper',
+  title: 'Atoms/Containers/Paper',
   component: Paper,
   tags: ['autodocs'],
   decorators: [

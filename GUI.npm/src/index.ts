@@ -4,11 +4,11 @@ console.log("[this.gui] loaded.");
 // THEME
 import { GuiProvider, useThemeContext } from "./themes/GuiProvider";
 // APPBARS
-import TopBar from "@/gui/molecules/AppBars/TopBar/TopBar";
-import Footer from "@/gui/molecules/AppBars/Footer/Footer";
-import LeftSidebar from "@/gui/molecules/AppBars/LeftSidebar/LeftSidebar";
-import RightSidebar from "@/gui/molecules/AppBars/RightSidebar/RightSidebar";
-import StickyOptionsTop from "@/gui/molecules/AppBars/StickyOptions/StickyOptionsTop";
+import TopBar from "@/gui/Layout/TopBar/TopBar";
+import Footer from "@/gui/Layouts/ResponsiveUI/Footer/Footer";
+import LeftSidebar from "@/gui/Layouts/ResponsiveUI/Sidebars/LeftSidebar/LeftSidebar";
+import RightSidebar from "@/gui/Layouts/ResponsiveUI/RightSidebar/RightSidebar";
+import StickyOptionsTop from "@/gui/Layouts/ResponsiveUI/StickyOptions/StickyOptionsTop";
 // TEXT
 import TextTitle from "./components/generics/Text/TextTitle";
 import TextParagraph from "./components/generics/Text/TextParagraph";

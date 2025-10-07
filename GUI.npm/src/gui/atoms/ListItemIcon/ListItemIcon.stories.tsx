@@ -8,7 +8,7 @@ import Icon from '@/themes/Icon/Icon';
 import GuiProvider from '@/themes/GuiProvider';
 
 const meta: Meta<typeof ListItemIcon> = {
-  title: 'Atoms/ListItemIcon',
+  title: 'Atoms/Organization/ListItemIcon',
   component: ListItemIcon,
   tags: ['autodocs'],
   decorators: [

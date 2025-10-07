@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 
 const meta: Meta<typeof Menu> = {
-  title: 'Atoms/Menu',
+  title: 'Atoms/Navigation/Menu',
   component: Menu,
   tags: ['autodocs'],
   decorators: [

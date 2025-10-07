@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import Collapse from './Collapse';
 
 const meta: Meta<typeof Collapse> = {
-  title: 'Atoms/Collapse',
+  title: 'Atoms/Content/Collapse',
   component: Collapse,
   tags: ['autodocs'],
   decorators: [

@@ -6,7 +6,7 @@ import { FormControlLabel } from '@mui/material';
 
 // ======================= Meta =======================
 const meta: Meta<typeof Switch> = {
-  title: 'Atoms/Switch',
+  title: 'Atoms/Forms & Inputs/Switch',
   component: Switch,
   tags: ['autodocs'],
   decorators: [

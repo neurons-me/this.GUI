@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Tooltip, Button, Typography } from '@/gui/atoms';
 
 const meta: Meta<typeof Tooltip> = {
-  title: 'Atoms/Tooltip',
+  title: 'Atoms/Content/Tooltip',
   component: Tooltip,
   tags: ['autodocs'],
   parameters: {

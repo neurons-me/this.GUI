@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Link, Button } from '@/gui/atoms';
 // ======================= Meta =======================
 const meta: Meta<typeof Link> = {
-  title: 'Atoms/Link',
+  title: 'Atoms/Navigation/Link',
   component: Link,
   tags: ['autodocs'],
   decorators: [

@@ -3,7 +3,7 @@ import Typography from './Typography';
 import Link from '../Link/Link';
 
 const meta = {
-  title: 'Atoms/Typography',
+  title: 'Atoms/Content/Typography',
   component: Typography,
   tags: ['autodocs'],
   decorators: [

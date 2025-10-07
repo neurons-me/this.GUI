@@ -41,7 +41,8 @@
     "material-symbols": "^0.35.2",
     "react-draggable": "^4.4.6",
     "react-feather": "^2.0.10",
-    "react-syntax-highlighter": "^15.6.6"
+    "react-syntax-highlighter": "^15.6.6",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.1",

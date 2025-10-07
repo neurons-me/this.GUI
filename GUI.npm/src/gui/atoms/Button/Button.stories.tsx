@@ -4,7 +4,7 @@ import Icon from '@/themes/Icon/Icon';
 
 // ======================= Meta =======================
 const meta: Meta<typeof Button> = {
-  title: 'Atoms/Button',
+  title: 'Atoms/Forms & Inputs/Button',
   component: Button,
   tags: ['autodocs'],
   decorators: [

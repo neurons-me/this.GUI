@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Box, Link, Typography, Button } from '@/gui/atoms';
 // ======================= Meta =======================
 const meta: Meta<typeof Box> = {
-  title: 'Atoms/Box',
+  title: 'Atoms/Containers/Box',
   component: Box,
   tags: ['autodocs'],
   decorators: [
