@@ -45,9 +45,9 @@ Each element can specify:
 ~~~jsx
 <TopBar
   logo="https://neurons.me/neurons.me.png"
-  elements={[
-    {  'Home', href: '/', icon: 'home', iconColor: 'primary' },
-    { 'Docs', href: '/docs', icon: 'insights', iconColor: 'secondary' },
+  elementsCenter={[
+    { type: 'link', props: { label: 'Home', href: '/', icon: 'home', iconColor: 'primary' } },
+    { type: 'link', props: { label: 'Docs', href: '/docs', icon: 'insights', iconColor: 'secondary' } },
     {
       type: 'menu',
       props: {
@@ -73,7 +73,7 @@ Each element can specify:
 
 ~~~jsx
 <TopBar
-  elements={[
+  elementsCenter={[
     {
       type: 'menu',
       props: {
@@ -97,15 +97,15 @@ Each element can specify:
 
 ---
 ### React Component Mode (Advanced)
-You may also use TopBar as a React component and pass elements as an array of objects with \`type\` and \`props\`:
+You may also use TopBar as a React component and pass elements as arrays of objects with \`type\` and \`props\`:
 
 ~~~jsx
 import TopBar from './TopBar';
 
 <TopBar
-  elements={[
-    { label: 'Home', href: '/', icon: 'bar_chart', iconColor: 'primary' },
-    { label: 'Docs', href: '/docs', icon: 'insights', iconColor: '#f50057' },
+  elementsCenter={[
+    { type: 'link', props: { label: 'Home', href: '/', icon: 'bar_chart', iconColor: 'primary' } },
+    { type: 'link', props: { label: 'Docs', href: '/docs', icon: 'insights', iconColor: '#f50057' } },
     {
       type: 'menu',
       props: {
@@ -128,7 +128,7 @@ import TopBar from './TopBar';
 - TopBar uses \`react-router-dom\` internally. Stories wrap it in a \`MemoryRouter\` for demo purposes.
 - Dropdown menus are created by providing a \`children\` array for any menu element.
 - Icon colors can be set with theme color keys (\`primary\`, \`secondary\`, \`info\`, etc.) or any valid CSS color string.
-- \`elements\` accepts objects with \`type\` and \`props\`, supporting nested menus.
+- \`elementsCenter\` and \`elementsRight\` accept objects with \`type\` and \`props\`, supporting nested menus.
 - Toggles like showThemeToggle and homeTo/position.
 Inset handling:
   - Measure Toolbar with toolbarRef, call theme.updateInsets({ nav: h }), and clean up in return → this updates theme.layout.insets.nav in GuiProvider and also the CSS vars (--gui-nav-height).
@@ -148,8 +148,12 @@ Theme integration:
       description: 'Logo image URL shown in the top-left.',
       control: 'text',
     },
-    elements: {
-      description: 'Array of navigation elements, e.g. [{ type: "link", props: { label: string, href?: string, icon?: string, iconColor?: string } }, { type: "menu", props: { label: string, icon?: string, iconColor?: string, children: elements[] } }]. Supports nested dropdown menus.',
+    elementsCenter: {
+      description: 'Array of navigation elements for center alignment, e.g. [{ type: "link", props: { label: string, href?: string, icon?: string, iconColor?: string } }, { type: "menu", props: { label: string, icon?: string, iconColor?: string, children: elements[] } }]. Supports nested dropdown menus.',
+      control: 'object',
+    },
+    elementsRight: {
+      description: 'Array of navigation elements for right alignment, similar structure as elementsCenter.',
       control: 'object',
     },
     homeTo: {
@@ -160,11 +164,12 @@ Theme integration:
 } satisfies Meta<typeof TopBar>;
 export default meta;
 export type Story = StoryObj<typeof TopBar>;
+
 export const Default: Story = {
   args: {
     title: 'neurons.me',
     logo: 'https://neurons.me/neurons.me.png',
-    elements: [
+    elementsCenter: [
       { type: 'link', props: { label: 'Home', href: '/', icon: 'home' } },
       { type: 'link', props: { label: 'Docs', href: '/docs', icon: 'insights' } },
       {
@@ -183,42 +188,13 @@ export const Default: Story = {
   },
 };
 
-export const WithIcons: Story = {
-  args: {
-    title: 'neurons.me',
-    logo: 'https://neurons.me/neurons.me.png',
-    elements: [
-      {
-        type: 'link',
-        props: { label: 'Home', href: '/', icon: 'bar_chart', iconColor: 'primary' },
-      },
-      {
-        type: 'link',
-        props: { label: 'Docs', href: '/docs', icon: 'insights', iconColor: 'secondary' },
-      },
-      {
-        type: 'menu',
-        props: {
-          label: 'More',
-          icon: 'info',
-          iconColor: '#00aa96',
-          items: [
-            { label: 'About', href: '/about', icon: 'message', iconColor: 'info'  },
-            {  label: 'Contact', href: '/contact', icon: 'mail', iconColor: '#4caf50' },
-          ],
-        },
-      },
-    ],
-    homeTo: '/',
-  },
-};
 
 export const FixedTopBar = () => (
   <>
     <TopBar
       title="neurons.me"
       logo="https://neurons.me/neurons.me.png"
-      elements={[
+      elementsCenter={[
         { type: 'link', props: { label: 'Home', href: '/', icon: 'home' } },
         { type: 'link', props: { label: 'Docs', href: '/docs', icon: 'insights' } },
         {
@@ -256,7 +232,7 @@ export const StaticTopBar = () => (
     <TopBar
       title="neurons.me"
       logo="https://neurons.me/neurons.me.png"
-      elements={[
+      elementsCenter={[
         { type: 'link', props: { label: 'Home', href: '/', icon: 'home' } },
         { type: 'link', props: { label: 'Docs', href: '/docs', icon: 'insights' } },
         {
@@ -286,5 +262,89 @@ StaticTopBar.parameters = {
     description: {
       story: 'Demonstrates the TopBar with `position="static"`. Scroll down to see the TopBar scroll with the page.',
     },
+  },
+};
+
+export const CenterElements: Story = {
+  args: {
+    title: 'neurons.me',
+    logo: 'https://neurons.me/neurons.me.png',
+    elementsCenter: [
+      { type: 'link', props: { label: 'Home', href: '/', icon: 'home', iconColor: 'primary' } },
+      { type: 'link', props: { label: 'Blog', href: '/blog', icon: 'article', iconColor: 'secondary' } },
+      {
+        type: 'menu',
+        props: {
+          label: 'Services',
+          icon: 'build',
+          iconColor: '#00796b',
+          items: [
+            { label: 'Consulting', href: '/consulting', icon: 'support_agent', iconColor: 'info' },
+            { label: 'Development', href: '/development', icon: 'code', iconColor: '#4caf50' },
+          ],
+        },
+      },
+    ],
+    homeTo: '/',
+  },
+};
+
+export const RightElements: Story = {
+  args: {
+    title: 'neurons.me',
+    logo: 'https://neurons.me/neurons.me.png',
+    elementsRight: [
+      { type: 'link', props: { label: 'Login', href: '/login', icon: 'login', iconColor: 'primary' } },
+      { type: 'link', props: { label: 'Register', href: '/register', icon: 'person_add', iconColor: 'secondary' } },
+      {
+        type: 'menu',
+        props: {
+          label: 'Profile',
+          icon: 'account_circle',
+          iconColor: '#3f51b5',
+          items: [
+            { label: 'Settings', href: '/settings', icon: 'settings', iconColor: 'info' },
+            { label: 'Logout', href: '/logout', icon: 'logout', iconColor: '#f44336' },
+          ],
+        },
+      },
+    ],
+    homeTo: '/',
+  },
+};
+
+export const CenterAndRightElements: Story = {
+  args: {
+    title: 'neurons.me',
+    logo: 'https://neurons.me/neurons.me.png',
+    elementsCenter: [
+      { type: 'link', props: { label: 'Dashboard', href: '/dashboard', icon: 'dashboard', iconColor: 'primary' } },
+      { type: 'link', props: { label: 'Reports', href: '/reports', icon: 'bar_chart', iconColor: 'secondary' } },
+    ],
+    elementsRight: [
+      {
+        type: 'menu',
+        props: {
+          label: 'User',
+          icon: 'account_circle',
+          iconColor: '#3f51b5',
+          items: [
+            { label: 'Profile', href: '/profile', icon: 'person', iconColor: 'info' },
+            { label: 'Logout', href: '/logout', icon: 'logout', iconColor: '#f44336' },
+          ],
+        },
+      },
+    ],
+    homeTo: '/',
+  },
+};
+
+export const NoElements: Story = {
+  args: {
+    title: 'neurons.me',
+    logo: 'https://neurons.me/neurons.me.png',
+    elementsCenter: [],
+    elementsRight: [],
+    homeTo: '/',
   },
 };

@@ -4,7 +4,10 @@ export type TopBarMenuProps = {
   label: string;
   icon?: ReactNode;
   iconColor?: string;
-  items?: TopBarMenuItemProps[];};
+  /** Whether to display the label next to the icon in the top-level menu trigger. Defaults to true. */
+  showLabel?: boolean;
+  items?: TopBarMenuItemProps[];
+};
 
 export type TopBarMenuItemProps = {
   label: string;

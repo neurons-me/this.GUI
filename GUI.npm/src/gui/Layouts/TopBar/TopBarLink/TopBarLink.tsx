@@ -2,7 +2,7 @@ import React from 'react';
 import Link from '@/gui/atoms/Link/Link'; // Adjust import path if necessary
 import Icon from '@/themes/Icon/Icon'; // Import Icon component
 import type { TopBarLinkProps } from './TopBarLink.types';
-const TopBarLink: React.FC<TopBarLinkProps> = ({ label, href, icon, iconColor, external }) => {
+const TopBarLink: React.FC<TopBarLinkProps> = ({ label, href, icon, iconColor, external, showLabel = true }) => {
   const content = (
     <>
       {icon && (
@@ -12,7 +12,7 @@ const TopBarLink: React.FC<TopBarLinkProps> = ({ label, href, icon, iconColor, e
           style={{ marginRight: 3, fontSize: 20, position: 'relative', top: -1 }}
         />
       )}
-      {label}
+      {showLabel && <span>{label}</span>}
     </>
   );
 

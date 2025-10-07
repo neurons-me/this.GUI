@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Box } from '@mui/material';
 import LeftSidebar from './LeftSidebar';
 import TopBar from '@/gui/Layouts/TopBar/TopBar';
-import Layout from '@/gui/Layouts/ResponsiveUI/Layout';
+import Layout from '@/gui/Layouts/ResponsiveUI/Layout/Layout';
 // Demo routes with icons + nested items
 const sampleLinks = [
   { label: 'Home', href: '/', icon: 'home', iconColor: '#1976d2' },

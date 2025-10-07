@@ -7,11 +7,12 @@ import type { TopBarActionProps } from './TopBarAction/TopBarAction.types';
 export interface TopBarProps extends AppBarProps {
   title?: string;
   logo?: string;
-  elementsLeft?: TopBarElement[];
   elementsCenter?: TopBarElement[];
   elementsRight?: TopBarElement[];
-  /** @deprecated Use elementsLeft, elementsCenter, and elementsRight instead */
-  elements?: TopBarElement[];
+  /** Icon name used when center elements are collapsed (mobile). Default: "settings". */
+  collapsedIconCenter?: string;
+  /** Icon name used when right elements are collapsed (mobile). Default: "more_horiz". */
+  collapsedIconRight?: string;
   homeTo?: string;
   sx?: SxProps<Theme>;
   appBarSx?: SxProps<Theme>;
