@@ -45,11 +45,17 @@ const renderMenuItems = (
               style={{ fontSize: 20, position: 'relative', top: -1, marginLeft: 1 }}
             />
           </MenuItem>
-          {isExpanded && (
-            <div style={{ paddingLeft: 16 }}>
-              {renderMenuItems(subItems, handleClose, expandedItems, toggleExpand)}
-            </div>
-          )}
+          <div
+            style={{
+              maxHeight: isExpanded ? '500px' : '0px',
+              opacity: isExpanded ? 1 : 0,
+              overflow: 'hidden',
+              transition: 'max-height 0.2s ease-out, opacity 0.2s ease-out',
+              paddingLeft: 16,
+            }}
+          >
+            {renderMenuItems(subItems, handleClose, expandedItems, toggleExpand)}
+          </div>
         </React.Fragment>
       );
     }
