@@ -1,6 +1,6 @@
 import { Box, Typography, Link } from "@/gui/components/atoms";
 import { useGuiTheme, useGuiMediaQuery } from "@/gui";
-import Icon from "@/themes/Icon/Icon";
+import Icon from "@/gui/Theme/Icon/Icon";
 import type * as React from 'react';
 import type { SxProps, Theme } from '@mui/material/styles';
 // Utility: normalize optional SxProps into a single SxProps (filters out undefined)

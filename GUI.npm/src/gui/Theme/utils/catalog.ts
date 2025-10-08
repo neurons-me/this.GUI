@@ -8,7 +8,7 @@ import PrinceOfDarknessManifest from '../catalog/PrinceOfDarkness/manifest';
 import muiManifest from '../catalog/MUI/manifest';
 import lunaManifest from '../catalog/LunaHex/manifest';
 import cherryByteManifest from '../catalog/CherryByte/manifest';
-import { FlatGuiTheme } from '../theme'; //definiciones de tipos
+import { FlatGuiTheme } from '@/types/theme'; //definiciones de tipos
 export const GuiThemes = [neuronsManifest, ghostShellManifest, PrinceOfDarknessManifest, muiManifest, lunaManifest, cherryByteManifest];
 /*
  FlatGuiThemes (plano)

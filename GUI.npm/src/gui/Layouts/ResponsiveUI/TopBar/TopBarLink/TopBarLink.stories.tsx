@@ -42,7 +42,6 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import TopBarLink from './TopBarLink';
-
 // ======================= Meta =======================
 const meta: Meta<typeof TopBarLink> = {
   title: 'Layouts/ResponsiveUI/TopBar/TopBarLink',

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import TopBarAction from './TopBarAction';
-import Icon from '@/themes/Icon/Icon';
+import Icon from '@/gui/Theme/Icon/Icon';
 
 const meta: Meta<typeof TopBarAction> = {
   title: 'Layouts/ResponsiveUI/TopBar/TopBarAction',

@@ -1,7 +1,6 @@
 // src/themes/fromTokens.ts
 import { createTheme, type Theme } from '@mui/material/styles';
 import { buildShadows } from '@/gui/Theme/styles/buildShadows';
-// import type { ThemeManifest } from '@/themes/theme.d.ts';
 // Helpers ------------------------------------------------------------
 export const pxToRem = (n: number): string => `${n / 16}rem`;
 const pick = <T = any,>(obj: any, path: Array<string | number>, fallback?: T): T => {

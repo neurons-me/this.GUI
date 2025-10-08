@@ -6,16 +6,6 @@ export { getInitialThemeId, usePersistentThemeId } from './utils/persistence';
 // Theme context and provider
 export { ThemeContext, useThemeContext } from '@/gui/contexts/themeContext';
 export { default as GuiProvider } from './GuiProvider';
-
-// Theme types
-export type {
-  GuiTheme,
-  FlatGuiTheme,
-  ThemeManifest,
-  Insets,
-  GuiContextValue,
-} from './theme';
-
 // Theme catalog access
 export {
   GuiThemes,

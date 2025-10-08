@@ -1,7 +1,6 @@
 //src/themes/utils/persistence.ts
 // Utility to persist user's themeId using localStorage.
 import { useState, useEffect } from 'react';
-
 /**
  * Retrieves the initial themeId from localStorage.
  * Falls back to the provided default if not found or on error.
@@ -16,7 +15,6 @@ export function getInitialThemeId(fallback: string): string {
     return fallback;
   }
 }
-
 /**
  * React hook to persist and manage the themeId using localStorage.
  * Returns a [themeId, setThemeId] tuple just like useState.

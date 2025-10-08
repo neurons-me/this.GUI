@@ -1,7 +1,7 @@
-import Icon from '@/themes/Icon/Icon';
+import Icon from '@/gui/Theme/Icon/Icon';
 import React, { useState } from 'react';
 import { Menu, MenuItem, Typography } from '@mui/material';
-import Link from '@/gui/atoms/Link/Link';
+import Link from '@/gui/components/atoms/Link/Link';
 import type { TopBarMenuProps, TopBarMenuItemProps } from './TopBarMenu.types';
 
 const renderMenuItems = (

@@ -8,7 +8,6 @@ import TopBarMenu from './TopBarMenu/TopBarMenu';
 import TopBarAction from './TopBarAction/TopBarAction';
 import { AppBar, Toolbar, Typography, Box } from '@/gui/components/atoms';
 import { useGuiTheme, useGuiMediaQuery } from '@/gui';
-import Icon from '@/themes/Icon/Icon';
 const sxN = (...parts: Array<SxProps<Theme> | undefined>): SxProps<Theme> => (parts.filter(Boolean) as unknown) as SxProps<Theme>;
 
 const buildCollapsedItems = (elements: TopBarElement[]): TopBarMenuItemProps[] => {

@@ -11,9 +11,8 @@ import { GuiThemes, getGuiTheme } from './utils/catalog';
 import { InsetsProvider } from '@/gui/contexts/InsetsContext';
 // -------------------------------- Types --------------------------------
 import type {
-  Insets,
   GuiContextValue,
-} from './theme';
+} from '@/types/theme';
 export type GuiProviderProps = {
   initialThemeId?: string;
   initialMode?: 'light' | 'dark'; // <-- añadido

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import Footer, { FooterProps } from './Footer';
+import Footer from './Footer';
 
 const meta: Meta<typeof Footer> = {
   title: 'Layouts/ResponsiveUI/Footer',
