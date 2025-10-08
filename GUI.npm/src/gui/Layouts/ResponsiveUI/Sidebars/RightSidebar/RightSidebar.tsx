@@ -10,7 +10,7 @@ import {
   Box,
   Typography,
   Collapse,
-} from "@/gui/atoms";
+} from "@/gui/components/atoms";
 import { Link as RouterLink } from "react-router-dom";
 import { useGuiTheme, useGuiMediaQuery } from "@/gui";
 import type { GuiTheme } from "@/gui";

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box } from '@mui/material';
 import LeftSidebar from './LeftSidebar';
-import TopBar from '@/gui/Layouts/TopBar/TopBar';
+import TopBar from '@/gui/Layouts/ResponsiveUI/TopBar/TopBar';
 import Layout from '@/gui/Layouts/ResponsiveUI/Layout/Layout';
 // Demo routes with icons + nested items
 const sampleLinks = [
@@ -39,7 +39,9 @@ export const SidebarOnly: Story = {
   render: () => (
     <Layout leftSidebarConfig={{}}>
       <LeftSidebar railMode drawerLinks={sampleLinks} />
-      <Box sx={{ flex: 1, bgcolor: 'background.default' }} />
+      <Box sx={{ flex: 1, bgcolor: 'background.default', p: 2 }}>
+        No TopBar — Sidebar should start from top edge.
+      </Box>
     </Layout>
   ),
 };
@@ -47,9 +49,11 @@ export const SidebarOnly: Story = {
 export const SidebarWithTopbar: Story = {
   render: () => (
     <Layout topBarConfig={{}} leftSidebarConfig={{}}>
-      <TopBar showMenuButton={false} />
+      <TopBar title="With TopBar" />
       <LeftSidebar railMode={false} drawerLinks={sampleLinks} />
-      <Box sx={{ flex: 1, bgcolor: 'background.default' }} />
+      <Box sx={{ flex: 1, bgcolor: 'background.default', p: 2 }}>
+        With TopBar — Sidebar should start below TopBar inset.
+      </Box>
     </Layout>
   ),
 };

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box } from '@/gui/atoms';
-import TopBar from '@/gui/Layouts/TopBar/TopBar';
+import { Box } from '@/gui/components/atoms';
+import TopBar from '@/gui/Layouts/ResponsiveUI/TopBar/TopBar';
 import LeftSidebar from '@/gui/Layouts/ResponsiveUI/Sidebars/LeftSidebar/LeftSidebar';
 import Footer from '@/gui/Layouts/ResponsiveUI/Footer/Footer';
 import { Outlet } from 'react-router-dom';

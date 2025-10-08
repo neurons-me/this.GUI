@@ -1,7 +1,7 @@
 // src/gui/molecules/AppBars/Footer/Footer.resolver.tsx
 import Footer from './Footer';
 import type { RegistryEntry, ResolveCtx } from '@/registry/types';
-import { Link as GuiLink } from '@/gui/atoms';
+import { Link as GuiLink } from '@/gui/components/atoms';
 export type FooterSpec = {
   type: 'Footer';
   props?: {

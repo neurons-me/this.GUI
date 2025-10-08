@@ -1,4 +1,4 @@
-import { Box, Typography, Link } from "@/gui/atoms";
+import { Box, Typography, Link } from "@/gui/components/atoms";
 import { useGuiTheme, useGuiMediaQuery } from "@/gui";
 import Icon from "@/themes/Icon/Icon";
 import type * as React from 'react';

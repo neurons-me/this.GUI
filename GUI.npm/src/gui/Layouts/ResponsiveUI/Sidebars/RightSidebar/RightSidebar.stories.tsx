@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import RightSidebar from './RightSidebar';
-import NavBar from '../../../TopBar/TopBar';
+import NavBar from '../../TopBar/TopBar';
 
 const meta = {
   title: 'Layouts/ResponsiveUI/Sidebars/RightSidebar',

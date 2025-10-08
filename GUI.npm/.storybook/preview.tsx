@@ -1,8 +1,8 @@
 // .storybook/preview.tsx
 import React from 'react'
 import { CssBaseline } from '@mui/material'
-import { GuiProvider } from '../src/themes'
-import { getFlatGuiThemes } from '../src/themes/utils/catalog';
+import { GuiProvider } from '../src/gui/Theme/GuiProvider';
+import { getFlatGuiThemes } from '../src/gui/Theme/utils/catalog';
 import { themes } from 'storybook/internal/theming';
 import { MemoryRouter } from 'react-router-dom';
 

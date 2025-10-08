@@ -4,7 +4,7 @@ import Paper from '@/gui/atoms/Paper/Paper';
 import Typography from '@/gui/atoms/Typography/Typography';
 import StickyOptionsTop from './StickyOptionsTop';
 import Icon from '@/themes/Icon/Icon'; 
-import NavBar from '../../TopBar/TopBar';
+import NavBar from '../TopBar/TopBar';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof StickyOptionsTop> = {
