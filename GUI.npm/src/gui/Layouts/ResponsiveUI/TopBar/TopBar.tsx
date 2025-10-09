@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, MouseEvent } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import type { SxProps, Theme } from '@mui/material/styles';
 import type { TopBarProps, TopBarElement } from './TopBar.types';
@@ -9,7 +9,6 @@ import TopBarAction from './TopBarAction/TopBarAction';
 import { AppBar, Toolbar, Typography, Box } from '@/gui/components/atoms';
 import { useGuiTheme, useGuiMediaQuery } from '@/gui/hooks';
 const sxN = (...parts: Array<SxProps<Theme> | undefined>): SxProps<Theme> => (parts.filter(Boolean) as unknown) as SxProps<Theme>;
-
 const buildCollapsedItems = (elements: TopBarElement[]): TopBarMenuItemProps[] => {
   const items: TopBarMenuItemProps[] = [];
   elements.forEach((el) => {
@@ -143,7 +142,6 @@ export default function TopBar(props: TopBarProps) {
     }),
     boxSizing: 'border-box',
   } as const;
-
   return (
     <AppBar
       id={id}
@@ -193,7 +191,6 @@ export default function TopBar(props: TopBarProps) {
             {title}
           </Typography>
         </Box>
-
         {/* Center Elements */}
         {!isMobile && (
           <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none', color: theme.palette.text.secondary }}>
@@ -207,7 +204,6 @@ export default function TopBar(props: TopBarProps) {
             </Box>
           </Box>
         )}
-
         {/* Right Elements */}
         <Box sx={sxN({ display: 'flex', alignItems: 'center', flexShrink: 0, marginLeft: 'auto', gap: 1.25, pr: 1.5, color: theme.palette.text.secondary, transition: 'color 0.2s ease', '&:hover': { color: theme.palette.text.primary } }, linksSx)}>
           {isMobile ? (

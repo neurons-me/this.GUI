@@ -1,11 +1,11 @@
 //@/gui/hooks/useInsets.ts
-import { useTheme } from '@mui/material/styles';
+import { useGuiTheme } from '@/gui/hooks';
 /**
  * Returns the current insets from the extended theme (top, nav, left, right).
  * If not defined, returns zeros.
  */
 export function useInsets() {
-  const theme = useTheme();
+  const theme = useGuiTheme();
   return theme.layout?.insets ?? { top: 0, nav: 0, left: 0, right: 0 };
 }
 /**
@@ -13,7 +13,7 @@ export function useInsets() {
  * If not available, returns a no-op function.
  */
 export function useUpdateInsets() {
-  const theme = useTheme();
+  const theme = useGuiTheme();
   return theme.updateInsets ?? (() => {});
 }
 

@@ -1,5 +1,5 @@
 import React from "react";
-import Icon from "@/themes/Icon/Icon";
+import Icon from "@/gui/Theme/Icon/Icon";
 import {
   Drawer,
   List,
@@ -13,7 +13,7 @@ import {
 } from "@/gui/components/atoms";
 import { Link as RouterLink } from "react-router-dom";
 import { useGuiTheme, useGuiMediaQuery } from "@/gui/hooks";
-import type { GuiTheme } from "@/gui/hooks";
+import type { GuiTheme } from "@/types/theme";
 import type * as ReactTypes from "react";
 export type RightSidebarIcon =
   | string

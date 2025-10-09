@@ -1,6 +1,6 @@
 import React from 'react';
 import IconButton from '@mui/material/IconButton';
-import Icon from '@/themes/Icon/Icon';
+import Icon from '@/gui/Theme/Icon/Icon';
 
 type LeftSidebarToggleButtonProps = {
   expanded: boolean;

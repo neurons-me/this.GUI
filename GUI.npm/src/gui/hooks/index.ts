@@ -7,3 +7,4 @@ export * from './useIsMobile';
 export * from './useIsTouchDevice';
 export * from './useViewportKey';
 export * from './useViewportProp';
+export * from './useLeftSidebar';

@@ -1,3 +1,3 @@
 export * from './InsetsContext';
-export * from './SidebarContext';
+export * from './LeftSidebarContext';
 export * from './ThemeContext';

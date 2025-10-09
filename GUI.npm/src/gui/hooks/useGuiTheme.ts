@@ -1,18 +1,18 @@
 //@/gui/hooks/useTheme.ts
 /**
  * React hook wrapper for MUI's `useTheme`.
- * 
- * Provides access to the current MUI theme, typically used for
- * styling decisions or accessing theme tokens (e.g., breakpoints, palette).
+ *
+ * This wrapper ensures consistent typing across your app by casting the returned theme
+ * as the expected MUI `Theme`. It allows your components to remain decoupled from direct MUI imports,
+ * making future migration or customization easier.
  */
 import { useTheme } from '@mui/material/styles';
 import type { Theme } from '@mui/material/styles';
 /**
- * Wrapper around MUI's useTheme.
- * Keeps your components decoupled from MUI for future flexibility.
+ * Returns the current theme typed as MUI's `Theme`.
  */
 export function useGuiTheme(): Theme {
-  return useTheme();
+  return useTheme() as Theme;
 }
 
 export default useGuiTheme;
