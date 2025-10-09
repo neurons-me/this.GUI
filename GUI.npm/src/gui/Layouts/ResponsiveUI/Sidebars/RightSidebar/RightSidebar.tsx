@@ -12,8 +12,8 @@ import {
   Collapse,
 } from "@/gui/components/atoms";
 import { Link as RouterLink } from "react-router-dom";
-import { useGuiTheme, useGuiMediaQuery } from "@/gui";
-import type { GuiTheme } from "@/gui";
+import { useGuiTheme, useGuiMediaQuery } from "@/gui/hooks";
+import type { GuiTheme } from "@/gui/hooks";
 import type * as ReactTypes from "react";
 export type RightSidebarIcon =
   | string

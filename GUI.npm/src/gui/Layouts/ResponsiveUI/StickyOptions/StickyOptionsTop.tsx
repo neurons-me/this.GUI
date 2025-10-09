@@ -1,6 +1,6 @@
 import type * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useGuiTheme, type GuiTheme } from '@/gui';
+import { useGuiTheme, type GuiTheme } from '@/gui/hooks';
 import Icon from '@/themes/Icon/Icon';
 export type StickyItem = {
   icon: React.ReactNode | string;
