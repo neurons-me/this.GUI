@@ -1,6 +1,6 @@
 //src/themes/utils/themeContext.ts
 import React, { createContext, useContext } from 'react';
-import type { GuiContextValue } from '../Theme/theme.js';
+import type { GuiContextValue } from '@/types/theme';
 /**
  * ThemeContext
  * ------------
