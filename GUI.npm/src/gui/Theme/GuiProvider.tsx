@@ -1,7 +1,7 @@
 // src/themes/GuiProvider.tsx
 import React, { useEffect, useMemo, useState } from 'react';
 import { generatePaletteCssVars } from './utils/themeUtils';
-import { ThemeContext } from '@/gui/contexts/themeContext';
+import { ThemeContext } from '@/gui/contexts/ThemeContext';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import type { Theme } from '@mui/material/styles';
 import { themeTokens } from '@/gui/Theme/styles/theme.tokens';

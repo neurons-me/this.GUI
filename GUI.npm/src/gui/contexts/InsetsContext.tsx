@@ -19,10 +19,3 @@ export const InsetsProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   );
 };
 
-export const useInsets = (): InsetsContextType => {
-  const context = useContext(InsetsContext);
-  if (!context) {
-    throw new Error('useInsets must be used within an InsetsProvider');
-  }
-  return context;
-};

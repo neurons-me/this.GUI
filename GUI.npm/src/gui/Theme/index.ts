@@ -4,7 +4,7 @@ export type { Theme } from '@mui/material/styles';
 // Theme persistence utilities
 export { getInitialThemeId, usePersistentThemeId } from './utils/persistence';
 // Theme context and provider
-export { ThemeContext, useThemeContext } from '@/gui/contexts/themeContext';
+export { ThemeContext, useThemeContext } from '@/gui/contexts/ThemeContext';
 export { default as GuiProvider } from './GuiProvider';
 // Theme catalog access
 export {

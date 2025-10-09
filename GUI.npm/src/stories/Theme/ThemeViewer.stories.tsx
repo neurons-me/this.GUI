@@ -18,8 +18,8 @@
  */
 import type { Meta } from '@storybook/react';
 import { useTheme } from '@mui/material/styles';
-import { useThemeContext } from '@/themes';
-import { useInsets } from '@/themes/contexts/InsetsContext';
+import { useThemeContext } from '@/gui/contexts/ThemeContext';
+import { useInsets } from '@/gui/contexts/InsetsContext';
 
 /**
  * Story: CurrentThemeState
