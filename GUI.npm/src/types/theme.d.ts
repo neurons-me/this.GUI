@@ -32,7 +32,6 @@ declare module '@mui/material/styles' {
   }
 }
 
-// src/themes/theme.d.ts
 export type ThemeManifest = {
   themeId?: string;
   themeName?: string;

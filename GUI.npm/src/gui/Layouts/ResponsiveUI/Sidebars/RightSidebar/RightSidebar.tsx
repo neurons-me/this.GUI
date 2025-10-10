@@ -12,7 +12,7 @@ import {
   Collapse,
 } from "@/gui/components/atoms";
 import { Link as RouterLink } from "react-router-dom";
-import { useGuiTheme, useGuiMediaQuery } from "@/gui/hooks";
+import { useGuiTheme, useGuiMediaQuery, useInsets, useUpdateInsets } from "@/gui/hooks";
 import type { GuiTheme } from "@/types/theme";
 import type * as ReactTypes from "react";
 export type RightSidebarIcon =
@@ -215,6 +215,8 @@ export default function RightSidebar({
   const [internalOpen, setInternalOpen] = React.useState(false);
   const effectiveOpen = isControlled ? open! : internalOpen;
   const isPermanent = !isMobile;
+  const insets = useInsets();
+  const setInsets = useUpdateInsets();
 
   React.useEffect(() => {
     if (!isControlled) {
@@ -223,19 +225,18 @@ export default function RightSidebar({
   }, [isMobile, isControlled]);
 
   React.useEffect(() => {
-    const setInsets = theme?.updateInsets;
-    const currentRight = theme?.layout?.insets?.right ?? 0;
+    const currentRight = insets?.right ?? 0;
     if (typeof setInsets === "function") {
       const desired = isPermanent ? drawerWidth : 0;
       if (currentRight !== desired) {
         setInsets({ right: desired });
       }
       return () => {
-        const rightOnCleanup = theme?.layout?.insets?.right ?? 0;
+        const rightOnCleanup = insets?.right ?? 0;
         if (rightOnCleanup !== 0) setInsets({ right: 0 });
       };
     }
-  }, [isPermanent, drawerWidth]);
+  }, [drawerWidth, insets?.right, isPermanent, setInsets]);
 
   if (!rightContext || !rightContext.items?.length) return null;
 

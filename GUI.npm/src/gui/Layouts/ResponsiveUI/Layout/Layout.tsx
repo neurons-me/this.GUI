@@ -8,21 +8,20 @@ import type { LayoutProps } from './Layout.types';
 function Layout({ topBarConfig = false, leftSidebarConfig = false, footerConfig = false, children }: LayoutProps) {
   const hasTopBar = Boolean(topBarConfig);
   const hasLeftSidebar = Boolean(leftSidebarConfig);
-  const sidebarToggleLocation: 'topbar' | 'sidebar' | 'none' =
-  hasLeftSidebar ? (hasTopBar ? 'topbar' : 'sidebar') : 'none';
   return (
     <LeftSidebarProvider>
       <Box id="layout-root" display="contents">
         {hasTopBar && (
           <TopBar
-            showMenuButton={hasLeftSidebar}
-            toggleLocation={sidebarToggleLocation}
-            {...(typeof topBarConfig === 'object' ? topBarConfig : {})}
+            {...(typeof topBarConfig === 'object' ? (() => {
+              const { showMenuButton, ...rest } = topBarConfig;
+              return rest;
+            })() : {})}
           />
         )}
         {hasLeftSidebar && (
           <LeftSidebar
-            toggleLocation={sidebarToggleLocation}
+            elements={[]}
             {...(typeof leftSidebarConfig === 'object' ? leftSidebarConfig : {})}
           />
         )}

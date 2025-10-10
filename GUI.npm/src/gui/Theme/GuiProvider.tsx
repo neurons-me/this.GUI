@@ -8,7 +8,7 @@ import { themeTokens } from '@/gui/Theme/styles/theme.tokens';
 import { usePersistentThemeId, usePersistentThemeMode } from './utils/persistence';
 import { makeMuiTheme } from '@/gui/Theme/fromTokens';
 import { GuiThemes, getGuiTheme } from './utils/catalog';
-import { InsetsProvider } from '@/gui/contexts/InsetsContext';
+import { InsetsProvider, useInsetsContext } from '@/gui/contexts/InsetsContext';
 // -------------------------------- Types --------------------------------
 import type {
   GuiContextValue,
@@ -80,12 +80,32 @@ export function GuiProvider({
 
   return (
     <InsetsProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <ThemeContext.Provider value={ctxValue}>{children}</ThemeContext.Provider>
-      </ThemeProvider>
+      <GuiThemeBridge theme={theme} ctxValue={ctxValue}>
+        {children}
+      </GuiThemeBridge>
     </InsetsProvider>
   );
 }
+
+const GuiThemeBridge: React.FC<{ theme: Theme; ctxValue: GuiContextValue; children?: React.ReactNode }> = ({ theme, ctxValue, children }) => {
+  const { insets, updateInsets } = useInsetsContext();
+  const themeWithInsets = useMemo(() => {
+    return {
+      ...theme,
+      layout: {
+        ...(theme as any).layout,
+        insets,
+      },
+      updateInsets,
+    } as Theme & { layout: any; updateInsets: typeof updateInsets };
+  }, [insets, theme, updateInsets]);
+
+  return (
+    <ThemeProvider theme={themeWithInsets}>
+      <CssBaseline />
+      <ThemeContext.Provider value={ctxValue}>{children}</ThemeContext.Provider>
+    </ThemeProvider>
+  );
+};
 
 export default GuiProvider;

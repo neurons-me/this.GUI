@@ -1,8 +1,8 @@
 import type { SxProps, Theme } from '@mui/material/styles';
 import type { AppBarProps } from '@mui/material/AppBar';
-import type { TopBarLinkProps } from './TopBarLink/TopBarLink.types';
-import type { TopBarMenuProps } from './TopBarMenu/TopBarMenu.types';
-import type { TopBarActionProps } from './TopBarAction/TopBarAction.types';
+import type { TopBarLinkProps } from './components/TopBarLink/TopBarLink.types';
+import type { TopBarMenuProps } from './components/TopBarMenu/TopBarMenu.types';
+import type { TopBarActionProps } from './components/TopBarAction/TopBarAction.types';
 
 export interface TopBarProps extends AppBarProps {
   title?: string;

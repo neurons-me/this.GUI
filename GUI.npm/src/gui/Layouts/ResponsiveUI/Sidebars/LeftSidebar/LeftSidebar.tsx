@@ -1,62 +1,200 @@
-//@/gui/layouts/ResponsiveUI/Sidebars/LeftSidebar/LeftSidebar.tsx
-import React from 'react';
+// LeftSidebar.tsx
 import clsx from 'clsx';
-import type { LeftSidebarProps } from './LeftSidebar.types';
-import LeftSidebarHeader from './LeftSidebarHeader/LeftSidebarHeader';
-import LeftSidebarContent from './LeftSidebarContent/LeftSidebarContent';
-import LeftSidebarFooter from './LeftSidebarFooter/LeftSidebarFooter';
-import LeftSidebarToggleButton from './LeftSidebarToggleButton/LeftSidebarToggleButton';
-import { useGuiMediaQuery, useSidebar } from '@/gui/hooks';
-const LeftSidebar: React.FC<LeftSidebarProps> & {
-  Header: typeof LeftSidebarHeader;
-  Content: typeof LeftSidebarContent;
-  Footer: typeof LeftSidebarFooter;
-} = ({
-  children,
-  collapsedWidth = 72,
-  expandedWidth = 264,
-  expanded: expandedProp,
-  open: openProp,
-  onClose,
-  id = 'LeftSidebar',
-  className,
-  shouldShowToggle = false,
-  railMode = false,
-  toggleLocation = 'sidebar',
+import { LeftSidebarElement } from './LeftSidebar.types';
+import LeftSidebarLink from './components/LeftSidebarLink/LeftSidebarLink';
+import LeftSidebarMenu from './components/LeftSidebarMenu/LeftSidebarMenu';
+import LeftSidebarAction from './components/LeftSidebarAction/LeftSidebarAction';
+import LeftSidebarToggleButton from './components/LeftSidebarToggleButton/LeftSidebarToggleButton';
+import { useLeftSidebar, useUpdateInsets } from '@/gui/hooks';
+import { Box } from '@/gui/components/atoms';
+import { useEffect } from 'react';
+
+const LeftSidebar = ({
+  elements = [],
+  className
+}: {
+  elements: LeftSidebarElement[];
+  className?: string;
 }) => {
-  const isMobile = useGuiMediaQuery(((theme: any) => theme.breakpoints.down('sm')) as any);
-  const { expanded, setExpanded } = useSidebar();
-  const isRail = railMode || (isMobile ? false : !expanded);
-  const sidebarStyle: React.CSSProperties = {
-    width: isRail ? collapsedWidth : expandedWidth,
-    top: 0, // fallback without UIInsets
-    height: `100vh`,
-  };
+  const { view, setView } = useLeftSidebar();
 
-  const sidebarClass = clsx(
-    'LeftSidebar',
-    { 'LeftSidebar--rail': isRail },
-    className
-  );
+  const setInsets = useUpdateInsets();
 
+  useEffect(() => {
+    if (typeof setInsets !== 'function') return;
+    const desired = view === 'expanded' ? 264 : view === 'rail' ? 72 : 0;
+    setInsets({ left: desired });
+    return () => setInsets({ left: 0 });
+  }, [setInsets, view]);
+
+  const renderElements = () =>
+    elements.map((el, idx) => {
+      if (el.type === 'link') return <LeftSidebarLink key={idx} view={view} {...el.props} />;
+      if (el.type === 'menu') return <LeftSidebarMenu key={idx} view={view} {...el.props} />;
+      if (el.type === 'action') return <LeftSidebarAction key={idx} view={view} {...el.props} />;
+      return null;
+    });
+
+  if (view === 'rail') {
+    return (
+      <Box
+        component="aside"
+        className={clsx('LeftSidebar', className)}
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          bottom: 0,
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          width: '72px',
+          overflow: 'hidden',
+          borderRight: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
+        <Box
+          component="header"
+          sx={{
+            flexShrink: 0,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            height: 'var(--gui-nav-height, 48px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            px: 1.5,
+            py: 0,
+            gap: 1.25,
+          }}
+        >
+          <LeftSidebarToggleButton
+            expanded={view === ('expanded' as any)}
+            onToggle={() => setView(view === 'rail' ? 'expanded' : 'rail')}
+          />
+        </Box>
+        <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>{renderElements()}</Box>
+        <Box
+          component="footer"
+          sx={{
+            flexShrink: 0,
+            p: '1rem',
+            borderTop: '1px solid',
+            borderColor: 'divider',
+          }}
+        />
+      </Box>
+    );
+  }
+
+  if (view === 'mobile') {
+    return (
+      <Box
+        component="aside"
+        className={clsx('LeftSidebar', className)}
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          bottom: 0,
+          height: '100vh',
+          width: '100vw',
+          bgcolor: 'background.paper',
+          display: 'flex',
+          flexDirection: 'column',
+          zIndex: 1000,
+          boxShadow: 3,
+          overflow: 'hidden',
+          borderRight: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
+        <Box
+          component="header"
+          sx={{
+            flexShrink: 0,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            height: 'var(--gui-nav-height, 48px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            px: 1.5,
+            py: 0,
+            gap: 1.25,
+          }}
+        >
+          <LeftSidebarToggleButton
+            expanded={view === ('expanded' as any)}
+            onToggle={() => setView(view === 'mobile' ? 'rail' : 'mobile')}
+          />
+        </Box>
+        <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>{renderElements()}</Box>
+        <Box
+          component="footer"
+          sx={{
+            flexShrink: 0,
+            p: '1rem',
+            borderTop: '1px solid',
+            borderColor: 'divider',
+          }}
+        />
+      </Box>
+    );
+  }
+
+  // Default to 'expanded' view
   return (
-    <aside className={sidebarClass} style={sidebarStyle}>
-      <LeftSidebarHeader>
-        {shouldShowToggle && toggleLocation === 'sidebar' && (
-          <LeftSidebarToggleButton expanded={expanded} onToggle={() => setExpanded(!expanded)} />
-        )}
-      </LeftSidebarHeader>
-      <LeftSidebarContent>
-        {/* You can render nav items or content here */}
-      </LeftSidebarContent>
-      <LeftSidebarFooter>
-        {/* Optional footer content here */}
-      </LeftSidebarFooter>
-    </aside>
+    <Box
+      component="aside"
+      className={clsx('LeftSidebar', className)}
+      sx={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        width: '264px',
+        overflow: 'hidden',
+        borderRight: '1px solid',
+        borderColor: 'divider',
+      }}
+    >
+      <Box
+        component="header"
+        sx={{
+          flexShrink: 0,
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+        height: 'var(--gui-nav-height, 48px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          px: 1.5,
+          py: 0,
+          gap: 1.25,
+        }}
+      >
+        <LeftSidebarToggleButton
+          expanded={view === ('expanded' as any)}
+          onToggle={() => setView(view === 'expanded' ? 'rail' : 'expanded')}
+        />
+      </Box>
+      <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>{renderElements()}</Box>
+      <Box
+        component="footer"
+        sx={{
+          flexShrink: 0,
+          p: '1rem',
+          borderTop: '1px solid',
+          borderColor: 'divider',
+        }}
+      />
+    </Box>
   );
 };
 
-LeftSidebar.Header = LeftSidebarHeader;
-LeftSidebar.Content = LeftSidebarContent;
-LeftSidebar.Footer = LeftSidebarFooter;
 export default LeftSidebar;

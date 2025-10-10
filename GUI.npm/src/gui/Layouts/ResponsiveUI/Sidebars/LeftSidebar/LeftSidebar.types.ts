@@ -1,3 +1,4 @@
+import { LeftSidebarView } from '@/gui/contexts';
 import { ReactNode } from 'react';
 export type LeftSidebarMode = 'rail' | 'expanded' | 'mobile';
 
@@ -24,6 +25,11 @@ export type LeftSidebarProps = {
   toggleLocation?: 'sidebar' | 'topbar' | 'none';
   header?: ReactNode;
 };
+
+export type LeftSidebarElement =
+  | { type: 'link'; props: Record<string, any> }
+  | { type: 'menu'; props: Record<string, any> }
+  | { type: 'action'; props: Record<string, any> };
 
 export type SidebarMode = LeftSidebarMode;
 export type SidebarSection = {

@@ -1,16 +1,16 @@
 // src/gui/contexts/LeftSidebarContext.tsx
 import React, { createContext, useState } from 'react';
-
+export type LeftSidebarView = 'rail' | 'expanded' | 'mobile';
 export type LeftSidebarContextType = {
-  expanded: boolean;
-  setExpanded: (val: boolean) => void;
+  view: LeftSidebarView;
+  setView: (view: LeftSidebarView) => void;
 };
 
 export const LeftSidebarContext = createContext<LeftSidebarContextType | undefined>(undefined);
 export const LeftSidebarProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [expanded, setExpanded] = useState(true);
+  const [view, setView] = useState<LeftSidebarView>('expanded');
   return (
-    <LeftSidebarContext.Provider value={{ expanded, setExpanded }}>
+    <LeftSidebarContext.Provider value={{ view, setView }}>
       {children}
     </LeftSidebarContext.Provider>
   );

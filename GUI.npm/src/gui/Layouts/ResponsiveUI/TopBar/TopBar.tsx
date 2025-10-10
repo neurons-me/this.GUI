@@ -2,12 +2,12 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import type { SxProps, Theme } from '@mui/material/styles';
 import type { TopBarProps, TopBarElement } from './TopBar.types';
-import type { TopBarMenuItemProps } from './TopBarMenu/TopBarMenu.types';
-import TopBarLink from './TopBarLink/TopBarLink';
-import TopBarMenu from './TopBarMenu/TopBarMenu';
-import TopBarAction from './TopBarAction/TopBarAction';
+import type { TopBarMenuItemProps } from './components/TopBarMenu/TopBarMenu.types';
+import TopBarLink from './components/TopBarLink/TopBarLink';
+import TopBarMenu from './components/TopBarMenu/TopBarMenu';
+import TopBarAction from './components/TopBarAction/TopBarAction';
 import { AppBar, Toolbar, Typography, Box } from '@/gui/components/atoms';
-import { useGuiTheme, useGuiMediaQuery } from '@/gui/hooks';
+import { useGuiTheme, useGuiMediaQuery, useInsets, useUpdateInsets } from '@/gui/hooks';
 const sxN = (...parts: Array<SxProps<Theme> | undefined>): SxProps<Theme> => (parts.filter(Boolean) as unknown) as SxProps<Theme>;
 const buildCollapsedItems = (elements: TopBarElement[]): TopBarMenuItemProps[] => {
   const items: TopBarMenuItemProps[] = [];
@@ -101,29 +101,44 @@ export default function TopBar(props: TopBarProps) {
   const isTablet = useGuiMediaQuery(theme.breakpoints.between('sm', 'md')); // 600–899px
   const isDesktop = useGuiMediaQuery(theme.breakpoints.up('md')); // ≥900px
   const toolbarRef = useRef<HTMLDivElement | null>(null);
+  const appBarRef = useRef<HTMLDivElement | null>(null);
+  const insets = useInsets();
+  const updateInsets = useUpdateInsets();
+  const insetLeft = Math.max(0, Number(insets?.left ?? 0));
+  const insetRight = Math.max(0, Number(insets?.right ?? 0));
+  const horizontalInset = insetLeft + insetRight;
   // Sync nav inset with real rendered height (idempotent via provider)
   useEffect(() => {
-    const setInsets = theme?.updateInsets;
-    if (typeof setInsets !== 'function') return;
+    if (typeof updateInsets !== 'function') return;
     const measure = () => {
-      const h = (toolbarRef.current?.offsetHeight ?? 48);
-      setInsets({ top: h });
+      const target = appBarRef.current ?? toolbarRef.current;
+      const h = target?.offsetHeight ?? 48;
+      updateInsets({ top: h, nav: h });
     };
 
     // initial measure
     measure();
     // observe toolbar size changes (density, breakpoints, etc.)
     let ro: ResizeObserver | undefined;
-    if (typeof ResizeObserver !== 'undefined' && toolbarRef.current) {
-      ro = new ResizeObserver(() => measure());
-      ro.observe(toolbarRef.current);
+    if (typeof ResizeObserver !== 'undefined') {
+      const target = appBarRef.current ?? toolbarRef.current;
+      if (target) {
+        ro = new ResizeObserver(() => measure());
+        ro.observe(target);
+      }
     }
 
     return () => {
       if (ro) ro.disconnect();
-      setInsets({ top: 0 });
+      updateInsets({ top: 0, nav: 0 });
     };
-  }, [isMobile, theme.updateInsets]);
+  }, [isMobile, updateInsets]);
+  // Sync insets.left with global CSS variable for layout
+  useEffect(() => {
+    if (insets && typeof insets.left === 'number') {
+      document.documentElement.style.setProperty('--gui-inset-left', `${insets.left}px`);
+    }
+  }, [insets.left]);
   // Determine if the TopBar is fixed or sticky for styling
   const isFixed = position === 'fixed' || position === 'sticky';
   // Indentation handled by Toolbar padding-left via --gui-inset-left CSS variable
@@ -136,19 +151,35 @@ export default function TopBar(props: TopBarProps) {
     zIndex: (theme as any)?.zIndex?.appBar ?? 1100,
     ...(isFixed && {
       top: 0,
-      left: 0,
-      right: 0,
-      width: '100%',
+      left: `${insetLeft}px`,
+      right: `${insetRight}px`,
+      width: `calc(100% - ${horizontalInset}px)`,
+      transition: 'left 0.3s ease, right 0.3s ease, width 0.3s ease',
     }),
     boxSizing: 'border-box',
   } as const;
+  const flowAppBarSx = !isFixed
+    ? ({
+        ml: `${insetLeft}px`,
+        mr: `${insetRight}px`,
+        width: `calc(100% - ${horizontalInset}px)`,
+        transition: 'margin-left 0.3s ease, margin-right 0.3s ease, width 0.3s ease',
+      } as SxProps<Theme>)
+    : undefined;
   return (
     <AppBar
       id={id}
       className={className}
       position={position}
       elevation={0}
-      sx={sxN(baseAppBarSx as SxProps<Theme>, { '--has-topbar': 1 } as any, sx, appBarSx)}
+      ref={appBarRef}
+      sx={sxN(
+        baseAppBarSx as SxProps<Theme>,
+        { '--has-topbar': 1 } as any,
+        flowAppBarSx,
+        sx,
+        appBarSx
+      )}
     >
       <Toolbar
         ref={toolbarRef}
@@ -158,8 +189,8 @@ export default function TopBar(props: TopBarProps) {
           isFixed
             ? {
                 minHeight: 48,
-                pl: 'var(--gui-rail-width, 0px)',
-                pr: 'var(--gui-inset-right, 0px)',
+                pl: 1.5,
+                pr: 1.5,
                 py: 0,
                 display: 'flex',
                 alignItems: 'center',

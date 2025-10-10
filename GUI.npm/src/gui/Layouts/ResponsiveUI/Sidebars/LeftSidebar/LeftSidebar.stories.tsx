@@ -1,59 +1,42 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Box } from '@mui/material';
-import LeftSidebar from './LeftSidebar';
-import TopBar from '@/gui/Layouts/ResponsiveUI/TopBar/TopBar';
-import Layout from '@/gui/Layouts/ResponsiveUI/Layout/Layout';
-// Demo routes with icons + nested items
-const sampleLinks = [
-  { label: 'Home', href: '/', icon: 'home', iconColor: '#1976d2' },
-  { label: 'Sockets', href: '/sockets', icon: 'power', iconColor: '#388e3c' },
-  {
-    label: 'Settings',
-    icon: 'settings',
-    iconColor: '#f57c00',
-    children: [
-      { label: 'Profile', href: '/settings/profile', icon: 'person', iconColor: '#7b1fa2' },
-      { label: 'Billing', href: '/settings/billing', icon: 'credit_card', iconColor: '#d32f2f' },
+import { StoryFn } from "@storybook/react";
+import Layout from "@/gui/Layouts/ResponsiveUI/Layout/Layout";
+import TopBar from "@/gui/Layouts/ResponsiveUI/TopBar/TopBar";
+import LeftSidebar from "@/gui/Layouts/ResponsiveUI/Sidebars/LeftSidebar/LeftSidebar";
+
+export default {
+  title: "Layouts/ResponsiveUI/TopBar + LeftSidebar",
+  component: Layout,
+};
+
+const Template: StoryFn<React.ComponentProps<typeof Layout>> = (args) => (
+  <Layout {...args} />
+);
+
+export const Default = Template.bind({});
+Default.args = {
+  topBarConfig: {
+    title: "My Application",
+    elementsRight: [
+      { type: "link", props: { label: "Profile", icon: "account_circle" } },
+      { type: "action", props: { label: "Logout", icon: "logout" } },
     ],
   },
-  { label: 'Docs (ext)', href: 'https://neurons.me', external: true, icon: 'menu_book', iconColor: '#0288d1' },
-];
-
-const meta: Meta<typeof LeftSidebar> = {
-  title: 'Layouts/ResponsiveUI/Sidebars/LeftSidebar',
-  component: LeftSidebar,
-  parameters: {
-    layout: 'fullscreen',
+  leftSidebarConfig: {
+    elements: [
+      { type: "link", props: { label: "Dashboard", icon: "dashboard" } },
+      { type: "link", props: { label: "Analytics", icon: "bar_chart" } },
+      {
+        type: "menu",
+        props: {
+          label: "Projects",
+          icon: "folder",
+          items: [
+            { label: "Project A", icon: "work" },
+            { label: "Project B", icon: "assignment" },
+          ],
+        },
+      },
+      { type: "action", props: { label: "Logout", icon: "logout", action: "handleLogout" } },
+    ],
   },
-  decorators: [
-    (Story) => (
-        <div>
-          <Story />
-        </div>
-    ),
-  ],
-};
-export default meta;
-type Story = StoryObj<typeof LeftSidebar>;
-export const SidebarOnly: Story = {
-  render: () => (
-    <Layout leftSidebarConfig={{}}>
-      <LeftSidebar railMode drawerLinks={sampleLinks} />
-      <Box sx={{ flex: 1, bgcolor: 'background.default', p: 2 }}>
-        No TopBar — Sidebar should start from top edge.
-      </Box>
-    </Layout>
-  ),
-};
-
-export const SidebarWithTopbar: Story = {
-  render: () => (
-    <Layout topBarConfig={{}} leftSidebarConfig={{}}>
-      <TopBar title="With TopBar" />
-      <LeftSidebar railMode={false} drawerLinks={sampleLinks} />
-      <Box sx={{ flex: 1, bgcolor: 'background.default', p: 2 }}>
-        With TopBar — Sidebar should start below TopBar inset.
-      </Box>
-    </Layout>
-  ),
 };

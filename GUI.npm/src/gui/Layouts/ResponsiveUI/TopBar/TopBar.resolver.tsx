@@ -29,13 +29,10 @@ type TopBarSpec = {
     showThemeToggle?: boolean;
     homeTo?: string;
     position?: 'fixed' | 'static' | 'sticky';
-
     /** Optional event id to resolve from ctx.actions (e.g., 'openLeftDrawer') */
     onMenuClickId?: string;
-
     /** Pass-through styling slot (sx forwarded to AppBar/Toolbar usage inside) */
     sx?: any;
-
     /** Misc passthroughs */
     id?: string;
     className?: string;
@@ -63,10 +60,17 @@ const TopBarResolver: RegistryEntry = {
       <TopBar
         title={p.title ?? 'neurons.me'}
         logo={p.logo ?? 'https://neurons.me/neurons.me.png'}
-        TopBarLinks={p.NavBarLinks ?? []}
-        showMenuButton={p.showMenuButton ?? false}
-        onMenuClick={onMenuClick}
-        showThemeToggle={p.showThemeToggle ?? true}
+        elementsCenter={(p.NavBarLinks ?? []).map(link => ({
+          type: 'link',
+          props: {
+            label: link.label ?? '',
+            href: link.href ?? '',
+            external: link.external ?? false,
+            icon: link.icon,
+            iconColor: link.iconColor,
+            children: link.children ?? [],
+          }
+        }))}
         homeTo={p.homeTo ?? '/'}
         position={p.position ?? 'fixed'}
         // passthroughs

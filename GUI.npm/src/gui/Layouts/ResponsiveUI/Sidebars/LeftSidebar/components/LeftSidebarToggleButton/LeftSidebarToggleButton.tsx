@@ -1,3 +1,4 @@
+//@/gui/Layouts/ResponsiveUI/Sidebars/LeftSidebar/components/LeftSidebarToggleButton/LeftSidebarToggleButton.tsx
 import React from 'react';
 import IconButton from '@mui/material/IconButton';
 import Icon from '@/gui/Theme/Icon/Icon';
@@ -14,7 +15,7 @@ const LeftSidebarToggleButton: React.FC<LeftSidebarToggleButtonProps> = ({ expan
       onClick={onToggle}
       sx={{ margin: 1 }}
     >
-      <Icon name={expanded ? 'ChevronLeft' : 'ChevronRight'} />
+      <Icon name={expanded ? 'chevron_left' : 'chevron_right'} />
     </IconButton>
   );
 };

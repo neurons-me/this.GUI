@@ -19,7 +19,7 @@
 import type { Meta } from '@storybook/react';
 import { useTheme } from '@mui/material/styles';
 import { useThemeContext } from '@/gui/contexts/ThemeContext';
-import { useInsets } from '@/gui/contexts/InsetsContext';
+import { useInsets } from '@/gui/hooks';
 
 /**
  * Story: CurrentThemeState
