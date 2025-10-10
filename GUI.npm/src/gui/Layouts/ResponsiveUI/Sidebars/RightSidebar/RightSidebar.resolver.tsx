@@ -1,95 +1,32 @@
-import Icon from '@/themes/Icon/Icon';
+import * as React from 'react';
+import type { RegistryEntry } from '@/registry/types';
 import RightSidebar from './RightSidebar';
-import type { RegistryEntry, ResolveCtx } from '@/registry/types';
+import type { RightSidebarElement } from './RightSidebar.types';
 
-/**
- * RightSidebar (resolver)
- * -----------------------
- * Declarative spec → React props mapper for the contextual right sidebar.
- *
- * Goals:
- * - Keep it faithful to the underlying component (no opinionated transforms).
- * - Allow JSON/registry usage with a minimal, stable surface.
- * - Leave room for granular styling slots as the component evolves.
- *
- * Notes:
- * - `rightContext` is passed through as-is (owner defines shape).
- * - `drawerWidth` controls the permanent width in desktop mode (if applicable).
- * - Any `*Sx` props are forwarded and may be ignored if the component doesn't implement them yet.
- */
-
-export type RightSidebarSpec = {
+type RightSidebarSpec = {
   type: 'RightSidebar';
   props?: {
-    // Core behavior
-    rightContext?: any;
-    drawerWidth?: number;
-    // Optional control (future-friendly; forwarded if supported)
-    open?: boolean;
-    onClose?: (...args: any[]) => void;
-    // Granular styling (passthrough; component may use or ignore)
-    sx?: any;
-    paperSx?: any;
-    headerSx?: any;
-    contentSx?: any;
-    footerSx?: any;
-    // Misc passthrough
-    id?: string;
+    elements?: RightSidebarElement[];
+    footerElements?: RightSidebarElement[];
+    initialView?: 'rail' | 'expanded' | 'mobile';
     className?: string;
+    id?: string;
     'data-testid'?: string;
-    // Allow arbitrary passthrough for future props without changing the spec
-    [key: string]: any;
   };
 };
 
 const RightSidebarResolver: RegistryEntry = {
   type: 'RightSidebar',
-  resolve(spec: RightSidebarSpec, _ctx?: ResolveCtx) {
-    const p = spec.props ?? {};
-    // Extract known props and avoid leaking resolver-only keys if we add any
-    const {
-      rightContext,
-      drawerWidth,
-      open,
-      onClose,
-      sx,
-      paperSx,
-      headerSx,
-      contentSx,
-      footerSx,
-      id,
-      className,
-      'data-testid': dataTestId,
-      ...rest
-    } = p;
-
-    // Normalize icon fields in rightContext
-    const normalizeIcon = (icon: any) => {
-      if (typeof icon === 'string') return <Icon name={icon} />;
-      if (icon && typeof icon === 'object' && icon.name) return <Icon {...icon} />;
-      return icon;
-    };
-    const normalizedRightContext = Array.isArray(rightContext)
-      ? rightContext.map((item) =>
-          item && item.icon ? { ...item, icon: normalizeIcon(item.icon) } : item
-        )
-      : rightContext;
-
+  resolve(spec: RightSidebarSpec) {
+    const props = spec.props ?? {};
     return (
       <RightSidebar
-        rightContext={normalizedRightContext}
-        drawerWidth={drawerWidth}
-        open={open}
-        onClose={onClose}
-        sx={sx}
-        paperSx={paperSx}
-        headerSx={headerSx}
-        contentSx={contentSx}
-        footerSx={footerSx}
-        id={id}
-        className={className}
-        data-testid={dataTestId}
-        {...rest}
+        elements={props.elements ?? []}
+        footerElements={props.footerElements ?? []}
+        initialView={props.initialView}
+        className={props.className}
+        id={props.id}
+        data-testid={props['data-testid']}
       />
     );
   },

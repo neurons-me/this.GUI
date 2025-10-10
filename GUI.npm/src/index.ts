@@ -7,7 +7,7 @@ import { GuiProvider, useThemeContext } from "./themes/GuiProvider";
 import TopBar from "@/gui/Layout/TopBar/TopBar";
 import Footer from "@/gui/Layouts/ResponsiveUI/Footer/Footer";
 import LeftSidebar from "@/gui/Layouts/ResponsiveUI/Sidebars/LeftSidebar/LeftSidebar";
-import RightSidebar from "@/gui/Layouts/ResponsiveUI/RightSidebar/RightSidebar";
+import RightSidebar from "@/gui/Layouts/ResponsiveUI/Sidebars/RightSidebar/RightSidebar";
 import StickyOptionsTop from "@/gui/Layouts/ResponsiveUI/StickyOptions/StickyOptionsTop";
 // TEXT
 import TextTitle from "./components/generics/Text/TextTitle";

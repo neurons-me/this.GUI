@@ -8,6 +8,10 @@ export interface LeftSidebarConfig {
   [key: string]: any;
 }
 
+export interface RightSidebarConfig {
+  [key: string]: any;
+}
+
 export interface FooterConfig {
   title?: string;
   logoSrc?: string;
@@ -28,6 +32,7 @@ export interface FooterConfig {
 export interface LayoutProps {
   topBarConfig?: TopBarConfig | boolean;
   leftSidebarConfig?: LeftSidebarConfig | boolean;
+  rightSidebarConfig?: RightSidebarConfig | boolean;
   footerConfig?: FooterConfig | boolean;
   children?: React.ReactNode;
 }

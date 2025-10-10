@@ -1,296 +1,322 @@
-import React from "react";
-import Icon from "@/gui/Theme/Icon/Icon";
-import {
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Box,
-  Typography,
-  Collapse,
-} from "@/gui/components/atoms";
-import { Link as RouterLink } from "react-router-dom";
-import { useGuiTheme, useGuiMediaQuery, useInsets, useUpdateInsets } from "@/gui/hooks";
-import type { GuiTheme } from "@/types/theme";
-import type * as ReactTypes from "react";
-export type RightSidebarIcon =
-  | string
-  | ReactTypes.ComponentType<any>
-  | React.ReactNode;
-export type RightSidebarItem = {
-  type?: "label";
-  label?: string;
-  href?: string;
-  external?: boolean;
-  onClick?: () => void;
-  icon?: RightSidebarIcon;
-  iconColor?: string;
-  children?: RightSidebarItem[];
-};
+import clsx from 'clsx';
+import { useEffect, useState, useRef } from 'react';
+import IconButton from '@mui/material/IconButton';
+import Icon from '@/gui/Theme/Icon/Icon';
+import { Box, Drawer } from '@/gui/components/atoms';
+import { useRightSidebar, useGuiTheme, useGuiMediaQuery, useUpdateInsets, useInsets } from '@/gui/hooks';
+import type { RightSidebarView } from '@/gui/contexts';
+import type { RightSidebarElement, RightSidebarProps } from './RightSidebar.types';
+import RightSidebarLink from './components/RightSidebarLink/RightSidebarLink';
+import RightSidebarMenu from './components/RightSidebarMenu/RightSidebarMenu';
+import RightSidebarAction from './components/RightSidebarAction/RightSidebarAction';
+import RightSidebarToggleButton from './components/RightSidebarToggleButton/RightSidebarToggleButton';
 
-export type RightContext = {
-  title?: string;
-  items: RightSidebarItem[];
-};
+const RAIL_WIDTH = 72;
+const EXPANDED_WIDTH = 264;
 
-export type RightSidebarProps = {
-  rightContext?: RightContext;
-  drawerWidth?: number;
-  open?: boolean;
-  onClose?: (event?: any) => void;
-  sx?: any;
-  paperSx?: any;
-  headerSx?: any;
-  contentSx?: any;
-  footerSx?: any;
-  id?: string;
-  className?: string;
-  "data-testid"?: string;
-};
-
-const drawerStyles = (
-  theme: GuiTheme,
-  width: number
-) => ({
-  width,
-  backgroundColor:
-    theme.palette.mode === "light"
-      ? theme.palette.background.paper
-      : theme.palette.background.default,
-  top: "var(--gui-nav-height, 48px)",
-  height: "calc(100vh - var(--gui-nav-height, 48px))",
-});
-
-function DrawerContent({ rightContext, headerSx, contentSx }: { rightContext?: RightContext; headerSx?: any; contentSx?: any }) {
-  const { title, items: contextItems } = rightContext || {};
-  const items = Array.isArray(contextItems) ? contextItems : [];
-  const [openItems, setOpenItems] = React.useState<Record<number, boolean>>({});
-  const toggleOpen = (index: number) => {
-    setOpenItems((prev) => ({ ...prev, [index]: !prev[index] }));
-  };
-
-  return (
-    <Box role="presentation">
-      {title && (
-        <Box
-          sx={{ px: 2, pt: 2, pb: 2, borderBottom: "1px solid", borderColor: "divider", ...headerSx }}
-        >
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            {title}
-          </Typography>
-        </Box>
-      )}
-      <List sx={contentSx}>
-        {items.map((item, index) => {
-          if (item.type === "label") {
-            return (
-              <ListItem key={index} sx={{ px: 2, py: 1.5, justifyContent: "center" }}>
-                <Typography
-                  variant="subtitle2"
-                  color="text.secondary"
-                  sx={{
-                    fontWeight: 600,
-                    fontSize: "0.85rem",
-                    textAlign: "center",
-                    backgroundColor: (theme) => theme.palette.action.hover,
-                    px: 1.5,
-                    py: 0.5,
-                    borderRadius: 1,
-                    width: "100%",
-                  }}
-                >
-                  {item.label}
-                </Typography>
-              </ListItem>
-            );
-          }
-          const hasChildren = Array.isArray(item.children) && item.children.length > 0;
-          const isOpen = openItems[index] || false;
-          return (
-            <React.Fragment key={index}>
-              <ListItem disablePadding>
-                <ListItemButton
-                  component={item.href ? RouterLink : "div"}
-                  to={item.href}
-                  onClick={
-                    hasChildren
-                      ? () => toggleOpen(index)
-                      : !item.href && item.onClick
-                      ? item.onClick
-                      : undefined
-                  }
-                  sx={{
-                    "& .MuiListItemText-primary": { fontWeight: 400 },
-                  }}
-                >
-                  {item.icon ? (
-                    <ListItemIcon sx={{ minWidth: 24, mr: 1 }}>
-                      {typeof item.icon === "string" ? (
-                        <Icon name={item.icon} iconColor={item.iconColor} fontSize={18} />
-                      ) : typeof item.icon === "function" ? (
-                        React.createElement(item.icon as ReactTypes.ComponentType<any>)
-                      ) : (
-                        item.icon
-                      )}
-                    </ListItemIcon>
-                  ) : null}
-                  <ListItemText primary={item.label} />
-                  {hasChildren &&
-                    (isOpen ? (
-                      <Icon name="mui:ExpandLess" fontSize={18} />
-                    ) : (
-                      <Icon name="mui:ExpandMore" fontSize={18} />
-                    ))}
-                </ListItemButton>
-              </ListItem>
-              {hasChildren && (
-                <Collapse in={isOpen} timeout="auto" unmountOnExit>
-                  <Box sx={{ mr: 2, borderRight: "1px dashed", pr: 2 }}>
-                    {(item.children ?? []).map((child, childIndex) => (
-                      <ListItem key={childIndex} disablePadding>
-                        <ListItemButton
-                          component={child.href ? RouterLink : "div"}
-                          to={child.href}
-                          onClick={!child.href && child.onClick ? child.onClick : undefined}
-                          sx={{
-                            justifyContent: "flex-end",
-                            textAlign: "right",
-                            "& .MuiListItemText-primary": {
-                              fontWeight: 400,
-                              textAlign: "right",
-                            },
-                          }}
-                        >
-                          {child.icon ? (
-                            <ListItemIcon sx={{ minWidth: 24, mr: 1 }}>
-                              {typeof child.icon === "string" ? (
-                                <Icon
-                                  name={child.icon}
-                                  iconColor={child.iconColor}
-                                  fontSize={18}
-                                />
-                              ) : typeof child.icon === "function" ? (
-                                React.createElement(
-                                  child.icon as ReactTypes.ComponentType<any>
-                                )
-                              ) : (
-                                child.icon
-                              )}
-                            </ListItemIcon>
-                          ) : null}
-                          <ListItemText primary={child.label} />
-                        </ListItemButton>
-                      </ListItem>
-                    ))}
-                  </Box>
-                </Collapse>
-              )}
-            </React.Fragment>
-          );
-        })}
-      </List>
-    </Box>
-  );
-}
-
-export default function RightSidebar({
-  rightContext,
-  drawerWidth = 260,
-  open,
-  onClose,
-  sx,
-  paperSx,
-  headerSx,
-  contentSx,
-  footerSx,
-  id,
+const RightSidebar = ({
+  elements = [],
+  footerElements = [],
   className,
-  "data-testid": dataTestId,
-}: RightSidebarProps) {
+  initialView = 'rail',
+  id,
+  style,
+  'data-testid': dataTestId,
+}: RightSidebarProps) => {
+  const { view, setView } = useRightSidebar();
   const theme = useGuiTheme();
-  const isMobile = useGuiMediaQuery(theme.breakpoints.down("md"));
-  const isControlled = typeof open === "boolean";
-  const [internalOpen, setInternalOpen] = React.useState(false);
-  const effectiveOpen = isControlled ? open! : internalOpen;
-  const isPermanent = !isMobile;
-  const insets = useInsets();
+  const isMobile = useGuiMediaQuery(theme.breakpoints.down('sm'));
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [lastNonMobileView, setLastNonMobileView] = useState<RightSidebarView>(
+    view === 'mobile' ? 'expanded' : view
+  );
   const setInsets = useUpdateInsets();
+  const insets = useInsets();
+  const navInset = Math.max(0, Number(insets?.nav ?? insets?.top ?? 0));
+  const headerHeight = navInset > 0 ? navInset : 48;
+  const toggleOffset = (navInset > 0 ? navInset : 0) + 12;
+  const hasFooterElements = Array.isArray(footerElements) && footerElements.length > 0;
+  const initialViewApplied = useRef(false);
 
-  React.useEffect(() => {
-    if (!isControlled) {
-      setInternalOpen(!isMobile);
-    }
-  }, [isMobile, isControlled]);
+  useEffect(() => {
+    if (typeof setInsets !== 'function') return;
+    const desired =
+      isMobile || view === 'mobile' ? 0 : view === 'expanded' ? EXPANDED_WIDTH : RAIL_WIDTH;
+    setInsets({ right: desired });
+    return () => setInsets({ right: 0 });
+  }, [isMobile, setInsets, view]);
 
-  React.useEffect(() => {
-    const currentRight = insets?.right ?? 0;
-    if (typeof setInsets === "function") {
-      const desired = isPermanent ? drawerWidth : 0;
-      if (currentRight !== desired) {
-        setInsets({ right: desired });
+  useEffect(() => {
+    initialViewApplied.current = false;
+  }, [initialView]);
+
+  useEffect(() => {
+    if (initialViewApplied.current) return;
+    if (initialView !== 'mobile') {
+      if (lastNonMobileView !== initialView) setLastNonMobileView(initialView);
+      if (!isMobile && view !== initialView) {
+        setView(initialView);
       }
-      return () => {
-        const rightOnCleanup = insets?.right ?? 0;
-        if (rightOnCleanup !== 0) setInsets({ right: 0 });
-      };
+    } else if (view !== 'mobile') {
+      setView('mobile');
     }
-  }, [drawerWidth, insets?.right, isPermanent, setInsets]);
+    initialViewApplied.current = true;
+  }, [initialView, isMobile, lastNonMobileView, setView, view]);
 
-  if (!rightContext || !rightContext.items?.length) return null;
+  useEffect(() => {
+    if (view === 'expanded' || view === 'rail') {
+      setLastNonMobileView(view);
+    }
+  }, [view]);
 
-  return (
-    <>
-      {!isControlled && isMobile && !effectiveOpen && (
-        <Box
-          sx={{
-            position: "fixed",
-            top: "50%",
-            right: 0,
-            transform: "translateY(-50%)",
-            zIndex: theme.zIndex.drawer + 1,
-          }}
-        >
-          <Box
-            onClick={() => setInternalOpen(true)}
-            sx={{
-              backgroundColor: theme.palette.primary.main,
-              color: "#fff",
-              p: 1,
-              borderRadius: "8px 0 0 8px",
-              cursor: "pointer",
-              width: drawerWidth,
-            }}
-          >
-            &gt;
-          </Box>
-        </Box>
-      )}
-      <Drawer
+  useEffect(() => {
+    if (isMobile && view !== 'mobile') {
+      setView('mobile');
+    } else if (!isMobile && view === 'mobile') {
+      setView(lastNonMobileView);
+    }
+  }, [isMobile, lastNonMobileView, setView, view]);
+
+  useEffect(() => {
+    if (view !== 'mobile' && mobileOpen) {
+      setMobileOpen(false);
+    }
+  }, [mobileOpen, view]);
+
+  const renderElements = (items: RightSidebarElement[]) =>
+    items.map((el, idx) => {
+      if (el.type === 'link') return <RightSidebarLink key={idx} {...el.props} />;
+      if (el.type === 'menu') return <RightSidebarMenu key={idx} view={view} {...el.props} />;
+      if (el.type === 'action') return <RightSidebarAction key={idx} view={view} {...el.props} />;
+      return null;
+    });
+
+  const renderFooterItems = (items: RightSidebarElement[]) =>
+    items.map((el, idx) => {
+      if (el.type === 'link') return <RightSidebarLink key={`footer-link-${idx}`} {...el.props} />;
+      if (el.type === 'menu')
+        return <RightSidebarMenu key={`footer-menu-${idx}`} view={view} {...el.props} />;
+      if (el.type === 'action')
+        return <RightSidebarAction key={`footer-action-${idx}`} view={view} {...el.props} />;
+      return null;
+    });
+
+  if (view === 'rail') {
+    return (
+      <Box
+        component="aside"
+        className={clsx('RightSidebar', className)}
         id={id}
-        className={className}
         data-testid={dataTestId}
-        anchor="right"
-        open={effectiveOpen}
-        onClose={() => {
-          if (isControlled) {
-            onClose?.();
-          } else {
-            setInternalOpen(false);
-          }
-        }}
-        variant={isMobile ? "temporary" : "persistent"}
+        style={style}
         sx={{
-          ...sx,
-          "& .MuiDrawer-paper": {
-            ...drawerStyles(theme, drawerWidth),
-            ...paperSx,
-          },
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          bottom: 0,
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          width: `${RAIL_WIDTH}px`,
+          overflow: 'hidden',
+          borderLeft: '1px solid',
+          borderColor: 'divider',
+          backgroundColor: 'background.paper',
         }}
       >
-        <DrawerContent rightContext={rightContext} headerSx={headerSx} contentSx={contentSx} />
-      </Drawer>
-    </>
+        <Box
+          component="header"
+          sx={{
+            flexShrink: 0,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            height: `${headerHeight}px`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            px: 1.5,
+            py: 0,
+            gap: 1.25,
+          }}
+        >
+            <RightSidebarToggleButton
+              expanded={view === ('expanded' as any)}
+              onToggle={() => setView(view === 'rail' ? 'expanded' : 'rail')}
+          />
+        </Box>
+        <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>{renderElements(elements)}</Box>
+        {hasFooterElements && (
+          <Box
+            component="footer"
+            sx={{
+              flexShrink: 0,
+              px: 1,
+              py: 1.5,
+              borderTop: '1px solid',
+              borderColor: 'divider',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 0.5,
+            }}
+          >
+            {renderFooterItems(footerElements)}
+          </Box>
+        )}
+      </Box>
+    );
+  }
+
+  if (view === 'mobile') {
+    return (
+      <>
+        <Box
+          sx={{
+            position: 'fixed',
+            top: `${toggleOffset}px`,
+            right: 0,
+            zIndex: ((theme as any)?.zIndex?.drawer ?? 1200) + 1,
+            display: mobileOpen ? 'none' : 'flex',
+          }}
+        >
+          <IconButton
+            aria-label="Open right sidebar"
+            onClick={() => setMobileOpen(true)}
+            sx={{
+              borderRadius: '16px 0 0 16px',
+              border: '1px solid',
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+              color: 'text.secondary',
+              boxShadow: 3,
+              '&:hover': {
+                bgcolor: 'background.nav',
+                color: 'text.primary',
+              },
+            }}
+          >
+            <Icon name="menu" />
+          </IconButton>
+        </Box>
+        <Drawer
+          anchor="right"
+          open={mobileOpen}
+          onClose={() => setMobileOpen(false)}
+          variant="temporary"
+          ModalProps={{ keepMounted: true }}
+          sx={{
+            '& .MuiDrawer-paper': {
+              width: EXPANDED_WIDTH,
+              top: `${navInset}px`,
+              height: `calc(100vh - ${navInset}px)`,
+              display: 'flex',
+              flexDirection: 'column',
+              borderLeft: '1px solid',
+              borderColor: 'divider',
+            },
+          }}
+          PaperProps={{ id, 'data-testid': dataTestId, style, className }}
+        >
+          <Box
+            component="header"
+            sx={{
+              flexShrink: 0,
+              borderBottom: '1px solid',
+              borderColor: 'divider',
+              height: `${headerHeight}px`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              px: 1.5,
+              gap: 1.25,
+            }}
+          >
+            <RightSidebarToggleButton expanded onToggle={() => setMobileOpen(false)} />
+          </Box>
+          <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>{renderElements(elements)}</Box>
+          {hasFooterElements && (
+            <Box
+              component="footer"
+              sx={{
+                flexShrink: 0,
+                px: 1.5,
+                py: 1.5,
+                borderTop: '1px solid',
+                borderColor: 'divider',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 0.75,
+              }}
+            >
+              {renderFooterItems(footerElements)}
+            </Box>
+          )}
+        </Drawer>
+      </>
+    );
+  }
+
+  return (
+    <Box
+      component="aside"
+      className={clsx('RightSidebar', className)}
+      id={id}
+      data-testid={dataTestId}
+      style={style}
+      sx={{
+        position: 'fixed',
+        top: 0,
+        right: 0,
+        bottom: 0,
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        width: `${EXPANDED_WIDTH}px`,
+        overflow: 'hidden',
+        borderLeft: '1px solid',
+        borderColor: 'divider',
+        backgroundColor: 'background.paper',
+      }}
+    >
+      <Box
+        component="header"
+        sx={{
+          flexShrink: 0,
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          height: `${headerHeight}px`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          px: 1.5,
+          py: 0,
+          gap: 1.25,
+        }}
+      >
+        <RightSidebarToggleButton
+          expanded={view === ('expanded' as any)}
+          onToggle={() => setView(view === 'expanded' ? 'rail' : 'expanded')}
+        />
+      </Box>
+      <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>{renderElements(elements)}</Box>
+      {hasFooterElements && (
+        <Box
+          component="footer"
+          sx={{
+            flexShrink: 0,
+            px: 1.5,
+            py: 1.5,
+            borderTop: '1px solid',
+            borderColor: 'divider',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 0.75,
+          }}
+        >
+          {renderFooterItems(footerElements)}
+        </Box>
+      )}
+    </Box>
   );
-}
+};
+
+export default RightSidebar;
