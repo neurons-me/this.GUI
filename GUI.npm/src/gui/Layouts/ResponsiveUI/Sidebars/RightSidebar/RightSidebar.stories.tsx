@@ -6,6 +6,7 @@ import ThemeModeToggle from "@/gui/components/molecules/Theme/ThemeModeToggle/Th
 export default {
   title: "Layouts/ResponsiveUI/Sidebars/RightSidebar",
   component: Layout,
+  tags: ['autodocs'],
   parameters: {
     docs: {
       description: {
@@ -177,6 +178,63 @@ WithFooter.args = {
     footerElements: [
       { type: "link", props: { label: "Settings", icon: "settings", iconColor: "var(--gui-secondary)" } },
       { type: "action", props: { label: "Support", icon: "help", iconColor: "var(--gui-success)" } },
+    ],
+  },
+};
+
+export const WithBothSidebars = Template.bind({});
+WithBothSidebars.args = {
+  topBarConfig: {
+    title: "Analytics",
+    elementsRight: [
+      {
+        type: "action",
+        props: {
+          element: <ThemeModeToggle variant="minimal" show="icons" iconSize="small" />,
+        },
+      },
+      { type: "action", props: { label: "Share", icon: "ios_share", iconColor: "var(--gui-primary)" } },
+    ],
+  },
+  leftSidebarConfig: {
+    elements: [
+      { type: "link", props: { label: "Dashboard", icon: "dashboard", iconColor: "var(--gui-primary)" } },
+      {
+        type: "menu",
+        props: {
+          label: "Projects",
+          icon: "folder",
+          iconColor: "var(--gui-secondary)",
+          items: [
+            { label: "Project A", icon: "folder_open" },
+            { label: "Project B", icon: "folder_open" },
+          ],
+        },
+      },
+      { type: "action", props: { label: "Create", icon: "add_circle", iconColor: "var(--gui-success)" } },
+    ],
+    footerElements: [
+      { type: "link", props: { label: "Settings", icon: "settings", iconColor: "var(--gui-secondary)" } },
+      { type: "action", props: { label: "Help", icon: "help_outline", iconColor: "var(--gui-info)" } },
+    ],
+  },
+  rightSidebarConfig: {
+    elements: [
+      { type: "link", props: { label: "Notifications", icon: "notifications", iconColor: "var(--gui-warning)" } },
+      { type: "link", props: { label: "Activity", icon: "history", iconColor: "var(--gui-secondary)" } },
+      {
+        type: "menu",
+        props: {
+          label: "Views",
+          icon: "view_cozy",
+          iconColor: "var(--gui-primary)",
+          items: [
+            { label: "Timeline", icon: "timeline", iconColor: "var(--gui-success)" },
+            { label: "JSON", icon: "code", iconColor: "var(--gui-info)" },
+          ],
+        },
+      },
+      { type: "action", props: { label: "Download", icon: "download", iconColor: "var(--gui-primary)" } },
     ],
   },
 };
