@@ -10,6 +10,7 @@ export type LeftSidebarProps = {
   children?: ReactNode;
   brand?: ReactNode;
   footer?: ReactNode;
+  footerElements?: LeftSidebarElement[];
   style?: React.CSSProperties;
   className?: string;
   enableCollapse?: boolean;

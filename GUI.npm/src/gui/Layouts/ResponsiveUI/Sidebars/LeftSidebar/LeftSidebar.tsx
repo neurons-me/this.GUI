@@ -16,10 +16,12 @@ const LeftSidebar = ({
   elements = [],
   className,
   initialView = 'rail',
+  footerElements = [],
 }: {
   elements: LeftSidebarElement[];
   className?: string;
   initialView?: LeftSidebarView;
+  footerElements?: LeftSidebarElement[];
 }) => {
   const { view, setView } = useLeftSidebar();
   const theme = useGuiTheme();
@@ -31,6 +33,7 @@ const LeftSidebar = ({
   const navInset = Math.max(0, Number(insets?.nav ?? insets?.top ?? 0));
   const headerHeight = navInset > 0 ? navInset : 48;
   const toggleOffset = (navInset > 0 ? navInset : 0) + 12;
+  const hasFooterElements = Array.isArray(footerElements) && footerElements.length > 0;
   const initialViewApplied = useRef(false);
 
   useEffect(() => {
@@ -39,6 +42,23 @@ const LeftSidebar = ({
     setInsets({ left: desired });
     return () => setInsets({ left: 0 });
   }, [setInsets, view]);
+
+  useEffect(() => {
+    initialViewApplied.current = false;
+  }, [initialView]);
+
+  useEffect(() => {
+    if (initialViewApplied.current) return;
+    if (initialView !== 'mobile') {
+      if (lastNonMobileView !== initialView) setLastNonMobileView(initialView);
+      if (!isMobile && view !== initialView) {
+        setView(initialView);
+      }
+    } else if (view !== 'mobile') {
+      setView('mobile');
+    }
+    initialViewApplied.current = true;
+  }, [initialView, isMobile, lastNonMobileView, setView, view]);
 
   useEffect(() => {
     if (view === 'expanded' || view === 'rail') {
@@ -65,6 +85,13 @@ const LeftSidebar = ({
       if (el.type === 'link') return <LeftSidebarLink key={idx} view={view} {...el.props} />;
       if (el.type === 'menu') return <LeftSidebarMenu key={idx} view={view} {...el.props} />;
       if (el.type === 'action') return <LeftSidebarAction key={idx} view={view} {...el.props} />;
+      return null;
+    });
+  const renderFooterItems = () =>
+    footerElements.map((el, idx) => {
+      if (el.type === 'link') return <LeftSidebarLink key={`footer-link-${idx}`} view={view} {...el.props} />;
+      if (el.type === 'menu') return <LeftSidebarMenu key={`footer-menu-${idx}`} view={view} {...el.props} />;
+      if (el.type === 'action') return <LeftSidebarAction key={`footer-action-${idx}`} view={view} {...el.props} />;
       return null;
     });
 
@@ -108,15 +135,23 @@ const LeftSidebar = ({
           />
         </Box>
         <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>{renderElements()}</Box>
-        <Box
-          component="footer"
-          sx={{
-            flexShrink: 0,
-            p: '1rem',
-            borderTop: '1px solid',
-            borderColor: 'divider',
-          }}
-        />
+        {hasFooterElements && (
+          <Box
+            component="footer"
+            sx={{
+              flexShrink: 0,
+              px: 1,
+              py: 1.5,
+              borderTop: '1px solid',
+              borderColor: 'divider',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 0.5,
+            }}
+          >
+            {renderFooterItems()}
+          </Box>
+        )}
       </Box>
     );
   }
@@ -187,15 +222,23 @@ const LeftSidebar = ({
             <LeftSidebarToggleButton expanded onToggle={() => setMobileOpen(false)} />
           </Box>
           <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>{renderElements()}</Box>
-          <Box
-            component="footer"
-            sx={{
-              flexShrink: 0,
-              p: '1rem',
-              borderTop: '1px solid',
-              borderColor: 'divider',
-            }}
-          />
+          {hasFooterElements && (
+            <Box
+              component="footer"
+              sx={{
+                flexShrink: 0,
+                px: 1.5,
+                py: 1.5,
+                borderTop: '1px solid',
+                borderColor: 'divider',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 0.75,
+              }}
+            >
+              {renderFooterItems()}
+            </Box>
+          )}
         </Drawer>
       </>
     );
@@ -241,15 +284,23 @@ const LeftSidebar = ({
         />
       </Box>
       <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>{renderElements()}</Box>
-      <Box
-        component="footer"
-        sx={{
-          flexShrink: 0,
-          p: '1rem',
-          borderTop: '1px solid',
-          borderColor: 'divider',
-        }}
-      />
+      {hasFooterElements && (
+        <Box
+          component="footer"
+          sx={{
+            flexShrink: 0,
+            px: 1.5,
+            py: 1.5,
+            borderTop: '1px solid',
+            borderColor: 'divider',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 0.75,
+          }}
+        >
+          {renderFooterItems()}
+        </Box>
+      )}
     </Box>
   );
 };
