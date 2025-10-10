@@ -1,13 +1,16 @@
 // LeftSidebar.tsx
 import clsx from 'clsx';
+import { useEffect, useState } from 'react';
+import IconButton from '@mui/material/IconButton';
+import Icon from '@/gui/Theme/Icon/Icon';
 import { LeftSidebarElement } from './LeftSidebar.types';
 import LeftSidebarLink from './components/LeftSidebarLink/LeftSidebarLink';
 import LeftSidebarMenu from './components/LeftSidebarMenu/LeftSidebarMenu';
 import LeftSidebarAction from './components/LeftSidebarAction/LeftSidebarAction';
 import LeftSidebarToggleButton from './components/LeftSidebarToggleButton/LeftSidebarToggleButton';
-import { useLeftSidebar, useUpdateInsets } from '@/gui/hooks';
-import { Box } from '@/gui/components/atoms';
-import { useEffect } from 'react';
+import { useLeftSidebar, useGuiTheme, useGuiMediaQuery, useUpdateInsets, useInsets } from '@/gui/hooks';
+import { Box, Drawer } from '@/gui/components/atoms';
+import type { LeftSidebarView } from '@/gui/contexts';
 
 const LeftSidebar = ({
   elements = [],
@@ -17,8 +20,15 @@ const LeftSidebar = ({
   className?: string;
 }) => {
   const { view, setView } = useLeftSidebar();
-
+  const theme = useGuiTheme();
+  const isMobile = useGuiMediaQuery(theme.breakpoints.down('sm'));
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [lastNonMobileView, setLastNonMobileView] = useState<LeftSidebarView>(view === 'mobile' ? 'expanded' : view);
   const setInsets = useUpdateInsets();
+  const insets = useInsets();
+  const navInset = Math.max(0, Number(insets?.nav ?? insets?.top ?? 0));
+  const headerHeight = navInset > 0 ? navInset : 48;
+  const toggleOffset = (navInset > 0 ? navInset : 0) + 12;
 
   useEffect(() => {
     if (typeof setInsets !== 'function') return;
@@ -26,6 +36,26 @@ const LeftSidebar = ({
     setInsets({ left: desired });
     return () => setInsets({ left: 0 });
   }, [setInsets, view]);
+
+  useEffect(() => {
+    if (view === 'expanded' || view === 'rail') {
+      setLastNonMobileView(view);
+    }
+  }, [view]);
+
+  useEffect(() => {
+    if (isMobile && view !== 'mobile') {
+      setView('mobile');
+    } else if (!isMobile && view === 'mobile') {
+      setView(lastNonMobileView);
+    }
+  }, [isMobile, lastNonMobileView, setView, view]);
+
+  useEffect(() => {
+    if (view !== 'mobile' && mobileOpen) {
+      setMobileOpen(false);
+    }
+  }, [mobileOpen, view]);
 
   const renderElements = () =>
     elements.map((el, idx) => {
@@ -60,7 +90,7 @@ const LeftSidebar = ({
             flexShrink: 0,
             borderBottom: '1px solid',
             borderColor: 'divider',
-            height: 'var(--gui-nav-height, 48px)',
+            height: `${headerHeight}px`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-end',
@@ -90,57 +120,81 @@ const LeftSidebar = ({
 
   if (view === 'mobile') {
     return (
-      <Box
-        component="aside"
-        className={clsx('LeftSidebar', className)}
-        sx={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          bottom: 0,
-          height: '100vh',
-          width: '100vw',
-          bgcolor: 'background.paper',
-          display: 'flex',
-          flexDirection: 'column',
-          zIndex: 1000,
-          boxShadow: 3,
-          overflow: 'hidden',
-          borderRight: '1px solid',
-          borderColor: 'divider',
-        }}
-      >
+      <>
         <Box
-          component="header"
           sx={{
-            flexShrink: 0,
-            borderBottom: '1px solid',
-            borderColor: 'divider',
-            height: 'var(--gui-nav-height, 48px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            px: 1.5,
-            py: 0,
-            gap: 1.25,
+            position: 'fixed',
+            top: `${toggleOffset}px`,
+            left: 0,
+            zIndex: ((theme as any)?.zIndex?.drawer ?? 1200) + 1,
+            display: mobileOpen ? 'none' : 'flex',
           }}
         >
-          <LeftSidebarToggleButton
-            expanded={view === ('expanded' as any)}
-            onToggle={() => setView(view === 'mobile' ? 'rail' : 'mobile')}
-          />
+          <IconButton
+            aria-label="Abrir navegación"
+            onClick={() => setMobileOpen(true)}
+            sx={{
+              borderRadius: '0 16px 16px 0',
+              border: '1px solid',
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+              color: 'text.secondary',
+              boxShadow: 3,
+              '&:hover': {
+                bgcolor: 'background.nav',
+                color: 'text.primary',
+              },
+            }}
+          >
+            <Icon name="menu" />
+          </IconButton>
         </Box>
-        <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>{renderElements()}</Box>
-        <Box
-          component="footer"
+        <Drawer
+          anchor="left"
+          open={mobileOpen}
+          onClose={() => setMobileOpen(false)}
+          variant="temporary"
+          ModalProps={{ keepMounted: true }}
           sx={{
-            flexShrink: 0,
-            p: '1rem',
-            borderTop: '1px solid',
-            borderColor: 'divider',
+            '& .MuiDrawer-paper': {
+              width: 264,
+              top: `${navInset}px`,
+              height: `calc(100vh - ${navInset}px)`,
+              display: 'flex',
+              flexDirection: 'column',
+              borderRight: '1px solid',
+              borderColor: 'divider',
+            },
           }}
-        />
-      </Box>
+        >
+          <Box
+            component="header"
+            sx={{
+              flexShrink: 0,
+              borderBottom: '1px solid',
+              borderColor: 'divider',
+              height: `${headerHeight}px`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              px: 1.5,
+              gap: 1.25,
+            }}
+          >
+            <LeftSidebarToggleButton expanded onToggle={() => setMobileOpen(false)} />
+          </Box>
+          <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>{renderElements()}</Box>
+          <Box
+            component="footer"
+            sx={{
+              flexShrink: 0,
+              p: '1rem',
+              borderTop: '1px solid',
+              borderColor: 'divider',
+            }}
+          />
+        </Drawer>
+      </>
     );
   }
 
@@ -169,7 +223,7 @@ const LeftSidebar = ({
           flexShrink: 0,
           borderBottom: '1px solid',
           borderColor: 'divider',
-        height: 'var(--gui-nav-height, 48px)',
+          height: `${headerHeight}px`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'flex-end',

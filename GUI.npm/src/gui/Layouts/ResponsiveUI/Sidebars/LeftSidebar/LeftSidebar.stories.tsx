@@ -4,7 +4,7 @@ import TopBar from "@/gui/Layouts/ResponsiveUI/TopBar/TopBar";
 import LeftSidebar from "@/gui/Layouts/ResponsiveUI/Sidebars/LeftSidebar/LeftSidebar";
 
 export default {
-  title: "Layouts/ResponsiveUI/TopBar + LeftSidebar",
+  title: "Layouts/ResponsiveUI/Sidebars/LeftSidebar",
   component: Layout,
 };
 
@@ -21,6 +21,28 @@ Default.args = {
       { type: "action", props: { label: "Logout", icon: "logout" } },
     ],
   },
+  leftSidebarConfig: {
+    elements: [
+      { type: "link", props: { label: "Dashboard", icon: "dashboard" } },
+      { type: "link", props: { label: "Analytics", icon: "bar_chart" } },
+      {
+        type: "menu",
+        props: {
+          label: "Projects",
+          icon: "folder",
+          items: [
+            { label: "Project A", icon: "work" },
+            { label: "Project B", icon: "assignment" },
+          ],
+        },
+      },
+      { type: "action", props: { label: "Logout", icon: "logout", action: "handleLogout" } },
+    ],
+  },
+};
+
+export const WithoutTopBar = Template.bind({});
+WithoutTopBar.args = {
   leftSidebarConfig: {
     elements: [
       { type: "link", props: { label: "Dashboard", icon: "dashboard" } },

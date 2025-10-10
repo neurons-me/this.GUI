@@ -211,7 +211,19 @@ export default function TopBar(props: TopBarProps) {
         )}
       >
         <Box
-          sx={sxN({ display: 'flex', alignItems: 'center', flexShrink: 0, textDecoration: 'none', ml: 0, pl: 1.5, gap: 1.25 }, brandSx)}
+          sx={sxN(
+            {
+              display: 'flex',
+              alignItems: 'center',
+              flexShrink: 0,
+              textDecoration: 'none',
+              ml: 0,
+              pl: 1.5,
+              gap: 1.25,
+              '&:hover': { textDecoration: 'none' },
+            },
+            brandSx
+          )}
           component={Link}
           to={homeTo}
         >
