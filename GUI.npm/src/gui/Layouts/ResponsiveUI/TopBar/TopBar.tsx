@@ -6,7 +6,7 @@ import type { TopBarMenuItemProps } from './components/TopBarMenu/TopBarMenu.typ
 import TopBarLink from './components/TopBarLink/TopBarLink';
 import TopBarMenu from './components/TopBarMenu/TopBarMenu';
 import TopBarAction from './components/TopBarAction/TopBarAction';
-import { AppBar, Toolbar, Typography, Box } from '@/gui/components/atoms';
+import { AppBar, Toolbar, Typography, Box, Avatar } from '@/gui/components/atoms';
 import { useGuiTheme, useGuiMediaQuery, useInsets, useUpdateInsets } from '@/gui/hooks';
 const sxN = (...parts: Array<SxProps<Theme> | undefined>): SxProps<Theme> => (parts.filter(Boolean) as unknown) as SxProps<Theme>;
 const buildCollapsedItems = (elements: TopBarElement[]): TopBarMenuItemProps[] => {
@@ -107,6 +107,13 @@ export default function TopBar(props: TopBarProps) {
   const insetLeft = Math.max(0, Number(insets?.left ?? 0));
   const insetRight = Math.max(0, Number(insets?.right ?? 0));
   const horizontalInset = insetLeft + insetRight;
+  const showBrandLabel = !(isMobile || isTablet);
+  const brandInitial = (title ?? '').trim().charAt(0)?.toUpperCase() || '';
+  const brandVisual = logo ? (
+    <Box component="img" src={logo} alt={title ? `${title} logo` : 'Brand logo'} sx={sxN({ height: 28 }, logoSx)} />
+  ) : (
+    <Avatar sx={sxN({ width: 28, height: 28, fontSize: '0.875rem' }, logoSx)}>{brandInitial || '?'}</Avatar>
+  );
   // Sync nav inset with real rendered height (idempotent via provider)
   useEffect(() => {
     if (typeof updateInsets !== 'function') return;
@@ -219,7 +226,7 @@ export default function TopBar(props: TopBarProps) {
               textDecoration: 'none',
               ml: 0,
               pl: 1.5,
-              gap: 1.25,
+              gap: showBrandLabel ? 1.25 : 0.75,
               '&:hover': { textDecoration: 'none' },
             },
             brandSx
@@ -227,12 +234,12 @@ export default function TopBar(props: TopBarProps) {
           component={Link}
           to={homeTo}
         >
-          {logo && (
-            <Box component="img" src={logo} alt={`${title} logo`} sx={sxN({ height: 28 }, logoSx)} />
+          {brandVisual}
+          {showBrandLabel && title && (
+            <Typography variant="h6" noWrap component="div" sx={sxN({ color: theme.palette.text.secondary, fontWeight: 500 }, titleSx)}>
+              {title}
+            </Typography>
           )}
-          <Typography variant="h6" noWrap component="div" sx={sxN({ color: theme.palette.text.secondary, fontWeight: 500 }, titleSx)}>
-            {title}
-          </Typography>
         </Box>
         {/* Center Elements */}
         {!isMobile && (

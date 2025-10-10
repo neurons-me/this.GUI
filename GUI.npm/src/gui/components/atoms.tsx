@@ -21,6 +21,10 @@ export { default as AppBar } from './atoms/AppBar/AppBar';
 import Box, { type BoxProps } from './atoms/Box/Box';
 export { default as Box } from './atoms/Box/Box';
 export type { BoxProps } from './atoms/Box/Box';
+// Avatar is not polymorphic so we wrap it with forwardRef
+import Avatar, { type AvatarProps } from './atoms/Avatar/Avatar';
+export { default as Avatar } from './atoms/Avatar/Avatar';
+export type { AvatarProps } from './atoms/Avatar/Avatar';
 //Button is polymorphic so we re-export it directly
 import Button from './atoms/Button/Button';
 export { default as Button } from './atoms/Button/Button';
@@ -125,5 +129,6 @@ export const Atoms = {
   Tooltip,
   Switch,
   Paper,
+  Avatar,
 } as const;
 export default Atoms;
