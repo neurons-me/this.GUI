@@ -62,3 +62,29 @@ WithoutTopBar.args = {
     ],
   },
 };
+
+export const WithFooter = Template.bind({});
+WithFooter.args = {
+  leftSidebarConfig: {
+    elements: [
+      { type: "link", props: { label: "Dashboard", icon: "dashboard" } },
+      { type: "link", props: { label: "Analytics", icon: "bar_chart" } },
+      {
+        type: "menu",
+        props: {
+          label: "Projects",
+          icon: "folder",
+          items: [
+            { label: "Project A", icon: "work" },
+            { label: "Project B", icon: "assignment" },
+          ],
+        },
+      },
+      { type: "action", props: { label: "Logout", icon: "logout", action: "handleLogout" } },
+    ],
+    footerElements: [
+      { type: "link", props: { label: "Settings", icon: "settings" } },
+      { type: "action", props: { label: "Help", icon: "help" } },
+    ],
+  },
+};

@@ -98,7 +98,6 @@ export default function TopBar(props: TopBarProps) {
   const theme = useGuiTheme();
   // Adjusted breakpoints for later collapse:
   const isMobile = useGuiMediaQuery(theme.breakpoints.down('sm')); // <600px
-  const isTablet = useGuiMediaQuery(theme.breakpoints.between('sm', 'md')); // 600–899px
   const isDesktop = useGuiMediaQuery(theme.breakpoints.up('md')); // ≥900px
   const toolbarRef = useRef<HTMLDivElement | null>(null);
   const appBarRef = useRef<HTMLDivElement | null>(null);
@@ -107,7 +106,7 @@ export default function TopBar(props: TopBarProps) {
   const insetLeft = Math.max(0, Number(insets?.left ?? 0));
   const insetRight = Math.max(0, Number(insets?.right ?? 0));
   const horizontalInset = insetLeft + insetRight;
-  const showBrandLabel = !(isMobile || isTablet);
+  const showBrandLabel = !isMobile;
   const brandInitial = (title ?? '').trim().charAt(0)?.toUpperCase() || '';
   const brandVisual = logo ? (
     <Box component="img" src={logo} alt={title ? `${title} logo` : 'Brand logo'} sx={sxN({ height: 28 }, logoSx)} />

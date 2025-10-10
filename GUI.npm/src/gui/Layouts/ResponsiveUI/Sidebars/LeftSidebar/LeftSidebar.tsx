@@ -1,6 +1,6 @@
 // LeftSidebar.tsx
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Icon from '@/gui/Theme/Icon/Icon';
 import { LeftSidebarElement } from './LeftSidebar.types';
@@ -14,10 +14,12 @@ import type { LeftSidebarView } from '@/gui/contexts';
 
 const LeftSidebar = ({
   elements = [],
-  className
+  className,
+  initialView = 'rail',
 }: {
   elements: LeftSidebarElement[];
   className?: string;
+  initialView?: LeftSidebarView;
 }) => {
   const { view, setView } = useLeftSidebar();
   const theme = useGuiTheme();
@@ -29,6 +31,7 @@ const LeftSidebar = ({
   const navInset = Math.max(0, Number(insets?.nav ?? insets?.top ?? 0));
   const headerHeight = navInset > 0 ? navInset : 48;
   const toggleOffset = (navInset > 0 ? navInset : 0) + 12;
+  const initialViewApplied = useRef(false);
 
   useEffect(() => {
     if (typeof setInsets !== 'function') return;

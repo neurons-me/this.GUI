@@ -7,8 +7,11 @@ export type LeftSidebarContextType = {
 };
 
 export const LeftSidebarContext = createContext<LeftSidebarContextType | undefined>(undefined);
-export const LeftSidebarProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [view, setView] = useState<LeftSidebarView>('expanded');
+export const LeftSidebarProvider: React.FC<{ children: React.ReactNode; initialView?: LeftSidebarView }> = ({
+  children,
+  initialView = 'rail',
+}) => {
+  const [view, setView] = useState<LeftSidebarView>(initialView);
   return (
     <LeftSidebarContext.Provider value={{ view, setView }}>
       {children}
