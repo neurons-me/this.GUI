@@ -96,6 +96,9 @@ export type { TooltipProps } from './atoms/Tooltip/Tooltip';
 import Typography, { type TypographyProps } from './atoms/Typography/Typography';
 export { default as Typography } from './atoms/Typography/Typography';
 export type { TypographyProps } from './atoms/Typography/Typography';
+import Section from './atoms/Section/Section';
+export { default as Section } from './atoms/Section/Section';
+export type { SectionProps } from './atoms/Section/Section.types';
 
 /* -------------------------------------------------------------------------------------------------
  * GuiSx — re-export of MUI’s SxProps<Theme>
@@ -130,5 +133,6 @@ export const Atoms = {
   Switch,
   Paper,
   Avatar,
+  Section,
 } as const;
 export default Atoms;

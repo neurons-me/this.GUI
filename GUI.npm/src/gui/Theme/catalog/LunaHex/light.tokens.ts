@@ -1,24 +1,24 @@
-// src/themes/catalog/neurons/light.tokens.ts
+// src/themes/catalog/LunaHex/light.tokens.ts
 const lightTokens = {
-  "$description": "Mui Light Theme theme — part of This.GUI ecosystem",
-  "id": "neurons-light",
+  "$description": "Luna Hex Light Theme — part of This.GUI ecosystem",
+  "id": "LunaHex-light",
   "extends": "global.tokens.json",
   "color": {
     "primary": {
       "$type": "color",
-      "$value": "#0a3a42"
+      "$value": "#6a4cc2"
     },
     "secondary": {
       "$type": "color",
-      "$value": "#e5396f"
+      "$value": "#e08bcf"
     },
     "icon": {
       "$type": "color",
-      "$value": "#5e5e5e"
+      "$value": "#9fa4b7"
     },
     "default": {
       "$type": "color",
-      "$value": "#f8f9fa"
+      "$value": "#f4f5fa"
     },
     "paper": {
       "$type": "color",
@@ -26,27 +26,47 @@ const lightTokens = {
     },
     "nav": {
       "$type": "color",
-      "$value": "#fdfdfd"
+      "$value": "#f9f9fb"
     },
     "textPrimary": {
       "$type": "color",
-      "$value": "#111111"
+      "$value": "#2b244d"
     },
     "textSecondary": {
       "$type": "color",
-      "$value": "#444444"
+      "$value": "#5c5470"
     },
     "link": {
       "$type": "color",
-      "$value": "#008c7d"
+      "$value": "#a67be9"
     },
     "linkVisited": {
       "$type": "color",
-      "$value": "#006e64"
+      "$value": "#8b5be0"
     },
     "border": {
       "$type": "color",
-      "$value": "rgba(0,0,0,0.08)"
+      "$value": "rgba(160,160,190,0.2)"
+    },
+    "section": {
+      "default": {
+        "$type": "color",
+        "$value": "#f6f5ff"
+      },
+      "subtle": {
+        "$type": "color",
+        "$value": "#ffffff"
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "#e9e6fa"
+      }
+    },
+    "blur": {
+      "light": { "$type": "color", "$value": "rgba(255, 255, 255, 0.25)" },
+      "medium": { "$type": "color", "$value": "rgba(255, 255, 255, 0.45)" },
+      "heavy": { "$type": "color", "$value": "rgba(245, 240, 255, 0.65)" },
+      "all": { "$type": "color", "$value": "rgba(250, 245, 255, 0.8)" }
     }
   }
 };

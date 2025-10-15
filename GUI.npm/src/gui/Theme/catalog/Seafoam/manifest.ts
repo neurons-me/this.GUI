@@ -1,12 +1,12 @@
-// src/themes/catalog/neurons/manifest.ts
+// src/themes/tokens/Seafoam/manifest.ts
 import type { ThemeManifest } from '@/types/theme';
-import badgeImage from './LunaHex.png';
+import badgeImage from './seaFoam.png';
 import lightTokens from './light.tokens';
 import darkTokens from './dark.tokens';
-const lunaManifest: ThemeManifest = {
-  themeId: 'luna',
-  themeName: 'LunaHex',
-  description: 'Luna Hex theme with light and dark modes.',
+const SeafoamManifest: ThemeManifest = {
+  themeId: 'seafoam',
+  themeName: 'Seafoam',
+  description: 'A refreshing theme inspired by the colors of the sea, perfect for a calm and serene coding experience.',
   author: 'suiGn',
   version: '1.0.0',
   license: 'MIT',
@@ -21,4 +21,4 @@ const lunaManifest: ThemeManifest = {
   },
   defaultMode: 'dark'
 };
-export default lunaManifest;
+export default SeafoamManifest;

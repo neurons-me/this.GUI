@@ -47,6 +47,26 @@ const lightTokens = {
     "border": {
       "$type": "color",
       "$value": "rgba(0,0,0,0.08)"
+    },
+    "section": {
+      "default": {
+        "$type": "color",
+        "$value": "#f9f9fb"
+      },
+      "subtle": {
+        "$type": "color",
+        "$value": "#ffffff"
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "#f0f2f5"
+      }
+    },
+    "blur": {
+      "light": { "$type": "color", "$value": "rgba(255, 255, 255, 0.3)" },
+      "medium": { "$type": "color", "$value": "rgba(255, 255, 255, 0.45)" },
+      "heavy": { "$type": "color", "$value": "rgba(240, 240, 240, 0.65)" },
+      "all": { "$type": "color", "$value": "rgba(250, 250, 250, 0.8)" }
     }
   }
 };

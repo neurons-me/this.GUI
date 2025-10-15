@@ -2,6 +2,36 @@
 import { createTheme, type Theme } from '@mui/material/styles';
 import { buildShadows } from '@/gui/Theme/styles/buildShadows';
 // Helpers ------------------------------------------------------------
+
+declare module '@mui/material/styles' {
+  interface Palette {
+    section: {
+      default: string;
+      subtle: string;
+      strong: string;
+    };
+    blur: {
+      light: string;
+      medium: string;
+      heavy: string;
+      all: string;
+    };
+  }
+  interface PaletteOptions {
+    section?: {
+      default?: string;
+      subtle?: string;
+      strong?: string;
+    };
+    blur?: {
+      light?: string;
+      medium?: string;
+      heavy?: string;
+      all?: string;
+    };
+  }
+}
+
 export const pxToRem = (n: number): string => `${n / 16}rem`;
 const pick = <T = any,>(obj: any, path: Array<string | number>, fallback?: T): T => {
   // Safely read nested token value supporting multiple token shapes
@@ -82,6 +112,28 @@ export function makeMuiTheme(themeTokens: any, modeTokens: any, mode: 'light' | 
         focusOpacity:     readNumber(pick(opacity, ['focus'],     0.12), 0.12),
         activatedOpacity: readNumber(pick(opacity, ['activated'], 0.12), 0.12),
       },
+      section: mode === 'dark' ? {
+        default: '#121212',
+        subtle: '#1a1a1a',
+        strong: '#202020',
+      } : {
+        default: '#f9f9fb',
+        subtle: '#ffffff',
+        strong: '#f0f2f5',
+      },
+      blur: mode === 'dark'
+        ? {
+            light: 'rgba(25, 37, 36, 0.25)',
+            medium: 'rgba(25, 37, 36, 0.45)',
+            heavy: 'rgba(25, 37, 36, 0.6)',
+            all: 'rgba(25, 37, 36, 0.75)',
+          }
+        : {
+            light: 'rgba(255, 245, 250, 0.25)',
+            medium: 'rgba(255, 240, 245, 0.45)',
+            heavy: 'rgba(255, 235, 240, 0.65)',
+            all: 'rgba(255, 220, 230, 0.75)',
+          },
     },
     // All tokens exposed under theme.custom for easy access
     custom: {

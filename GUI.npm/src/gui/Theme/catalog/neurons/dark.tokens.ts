@@ -10,7 +10,7 @@ const darkTokens = {
     },
     "secondary": {
       "$type": "color",
-      "$value": "#f48fb1"
+      "$value": "#6FC7B5"
     },
     "icon": {
       "$type": "color",
@@ -40,6 +40,17 @@ const darkTokens = {
     "border": {
       "$type": "color",
       "$value": "rgb(45,45,55)"
+    },
+    "section": {
+      "default": { "$type": "color", "$value": "#121212" },
+      "subtle": { "$type": "color", "$value": "#1a1a1a" },
+      "strong": { "$type": "color", "$value": "#202020" }
+    },
+    "blur": {
+      "light": { "$type": "color", "$value": "rgba(18, 18, 20, 0.25)" },
+      "medium": { "$type": "color", "$value": "rgba(18, 18, 20, 0.4)" },
+      "heavy": { "$type": "color", "$value": "rgba(18, 18, 20, 0.6)" },
+      "all": { "$type": "color", "$value": "rgba(18, 18, 20, 0.75)" }
     }
   }
 };

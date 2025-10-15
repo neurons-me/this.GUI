@@ -1,7 +1,7 @@
-// src/themes/catalog/neurons/light.tokens.ts
+// src/themes/catalog/MUI/light.tokens.ts
 const lightTokens = {
   "$description": "Mui Light Theme theme — part of This.GUI ecosystem",
-  "id": "neurons-light",
+  "id": "MUI-light",
   "extends": "global.tokens.json",
   "color": {
     "primary": {
@@ -13,7 +13,7 @@ const lightTokens = {
       "$value": "#e5396f"
     },
     "icon": {
-      "$type": "color",
+      "$type": "color", 
       "$value": "#5e5e5e"
     },
     "default": {
@@ -47,6 +47,26 @@ const lightTokens = {
     "border": {
       "$type": "color",
       "$value": "rgba(0,0,0,0.08)"
+    },
+    "section": {
+      "default": {
+        "$type": "color",
+        "$value": "#f8f9fa"
+      },
+      "subtle": {
+        "$type": "color",
+        "$value": "#ffffff"
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "#e9ecef"
+      }
+    },
+    "blur": {
+      "light": { "$type": "color", "$value": "rgba(255, 255, 255, 0.3)" },
+      "medium": { "$type": "color", "$value": "rgba(255, 255, 255, 0.45)" },
+      "heavy": { "$type": "color", "$value": "rgba(240, 240, 240, 0.65)" },
+      "all": { "$type": "color", "$value": "rgba(250, 250, 250, 0.8)" }
     }
   }
 };

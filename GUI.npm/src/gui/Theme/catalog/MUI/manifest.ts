@@ -1,5 +1,5 @@
 // src/themes/catalog/neurons/manifest.ts
-import type { ThemeManifest } from '@/themes';
+import type { ThemeManifest } from '@/types/theme';
 import badgeImage from './MUI.png';
 import lightTokens from './light.tokens';
 import darkTokens from './dark.tokens';

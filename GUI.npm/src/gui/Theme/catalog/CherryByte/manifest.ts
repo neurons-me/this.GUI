@@ -1,12 +1,12 @@
 // src/themes/catalog/neurons/manifest.ts
-import type { ThemeManifest } from '@/themes';
+import type { ThemeManifest } from '@/types/theme';
 import badgeImage from './CherryByte.png';
 import lightTokens from './light.tokens';
 import darkTokens from './dark.tokens';
 const cherryByteManifest: ThemeManifest = {
   themeId: 'cherrybyte',
   themeName: 'Cherry Byte',
-  description: 'Cherry Byte is a sleek theme with vibrant cherry red accents, designed to reduce eye strain and enhance focus during extended coding sessions.',
+  description: 'Vibrant cherry red accents, designed to reduce eye strain.',
   author: 'suiGn',
   version: '1.0.0',
   license: 'MIT',

@@ -1,11 +1,11 @@
 // src/themes/catalog/GhostShell/manifest.ts
-import type { ThemeManifest } from '@/themes';
+import type { ThemeManifest } from '@/types/theme';
 import badgeImage from './ghost.png';
 import lightTokens from './light.tokens';
 import darkTokens from './dark.tokens';
 const ghostShellManifest: ThemeManifest = {
   themeId: 'ghost.shell',
-  themeName: 'Ghost Shell',
+  themeName: 'GhostShell',
   description: 'A sleek, modern theme with a dark aesthetic, perfect for late-night sessions.',
   author: 'suiGn',
   version: '1.0.0',

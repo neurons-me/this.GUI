@@ -8,8 +8,9 @@ import PrinceOfDarknessManifest from '../catalog/PrinceOfDarkness/manifest';
 import muiManifest from '../catalog/MUI/manifest';
 import lunaManifest from '../catalog/LunaHex/manifest';
 import cherryByteManifest from '../catalog/CherryByte/manifest';
+import SeafoamManifest from '../catalog/Seafoam/manifest';
 import { FlatGuiTheme } from '@/types/theme'; //definiciones de tipos
-export const GuiThemes = [neuronsManifest, ghostShellManifest, PrinceOfDarknessManifest, muiManifest, lunaManifest, cherryByteManifest];
+export const GuiThemes = [neuronsManifest, ghostShellManifest, PrinceOfDarknessManifest, muiManifest, lunaManifest, cherryByteManifest, SeafoamManifest];
 /*
  FlatGuiThemes (plano)
 	•	Es un array plano de modos individuales.

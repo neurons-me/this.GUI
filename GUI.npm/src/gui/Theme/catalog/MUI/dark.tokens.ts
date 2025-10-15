@@ -1,7 +1,7 @@
-// src/themes/catalog/neurons/dark.tokens.ts
-// Neurons Dark Theme Tokens — overrides applied on top of global.tokens.json
+// src/themes/catalog/MUI/dark.tokens.ts
+// MUI Dark Theme Tokens — overrides applied on top of global.tokens.json
 const darkTokens = {
-  "id": "neurons-dark",
+  "id": "MUI-dark",
   "$description": "MUI Dark Theme Tokens — overrides applied on top of global.tokens.json",
   "color": {
     "primary": {
@@ -40,6 +40,17 @@ const darkTokens = {
     "border": {
       "$type": "color",
       "$value": "rgb(45,45,55)"
+    },
+    "section": {
+      "default": { "$type": "color", "$value": "#181818" },
+      "subtle": { "$type": "color", "$value": "#1c1c1c" },
+      "strong": { "$type": "color", "$value": "#222" }
+    },
+    "blur": {
+      "light": { "$type": "color", "$value": "rgba(18, 18, 20, 0.25)" },
+      "medium": { "$type": "color", "$value": "rgba(18, 18, 20, 0.4)" },
+      "heavy": { "$type": "color", "$value": "rgba(18, 18, 20, 0.6)" },
+      "all": { "$type": "color", "$value": "rgba(18, 18, 20, 0.75)" }
     }
   }
 };
