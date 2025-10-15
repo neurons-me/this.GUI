@@ -38,7 +38,7 @@ const LeftSidebar = ({
 
   useEffect(() => {
     if (typeof setInsets !== 'function') return;
-    const desired = view === 'expanded' ? 220 : view === 'rail' ? 60 : 0;
+    const desired = view === 'expanded' ? 220 : view === 'rail' ? 72 : 0;
     setInsets({ left: desired });
     return () => setInsets({ left: 0 });
   }, [setInsets, view]);
@@ -108,10 +108,13 @@ const LeftSidebar = ({
           height: '100vh',
           display: 'flex',
           flexDirection: 'column',
-          width: '60px',
-          overflow: 'hidden',
+          width: '72px',
+          overflow: 'visible',
           borderRight: '1px solid',
           borderColor: 'divider',
+          '--gui-rail-width': '72px',
+          zIndex: (theme) => theme.zIndex.drawer + 2,
+          backgroundColor: 'background.nav',
         }}
       >
         <Box
@@ -257,10 +260,13 @@ const LeftSidebar = ({
         height: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        width: '203px',
-        overflow: 'hidden',
+        width: '220px',
+        overflow: 'visible',
         borderRight: '1px solid',
         borderColor: 'divider',
+        '--gui-expanded-width': '220px',
+        backgroundColor: 'background.nav',
+        zIndex: (theme) => theme.zIndex.drawer + 2,
       }}
     >
       <Box
