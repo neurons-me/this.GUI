@@ -56,6 +56,7 @@ const readNumber = (v: unknown, fb: number): number => {
 export function makeMuiTheme(themeTokens: any, modeTokens: any, mode: 'light' | 'dark' = 'light'): Theme {
   const g = themeTokens || {};
   const c = modeTokens?.color || {};
+  const blurTokens = pick(c, ['blur'], undefined);
   // Core primitives
   const radius = readNumber(pick(g, ['radius', 'md'], 10), 10);
   const spacing = readNumber(pick(g, ['spacing', 'base'], 8), 8);
@@ -121,19 +122,21 @@ export function makeMuiTheme(themeTokens: any, modeTokens: any, mode: 'light' | 
         subtle: '#ffffff',
         strong: '#f0f2f5',
       },
-      blur: mode === 'dark'
-        ? {
-            light: 'rgba(25, 37, 36, 0.25)',
-            medium: 'rgba(25, 37, 36, 0.45)',
-            heavy: 'rgba(25, 37, 36, 0.6)',
-            all: 'rgba(25, 37, 36, 0.75)',
-          }
-        : {
-            light: 'rgba(255, 245, 250, 0.25)',
-            medium: 'rgba(255, 240, 245, 0.45)',
-            heavy: 'rgba(255, 235, 240, 0.65)',
-            all: 'rgba(255, 220, 230, 0.75)',
-          },
+      blur: blurTokens ?? (
+        mode === 'dark'
+          ? {
+              light: 'rgba(25, 37, 36, 0.25)',
+              medium: 'rgba(25, 37, 36, 0.45)',
+              heavy: 'rgba(25, 37, 36, 0.6)',
+              all: 'rgba(25, 37, 36, 0.75)',
+            }
+          : {
+              light: 'rgba(255, 245, 250, 0.25)',
+              medium: 'rgba(255, 240, 245, 0.45)',
+              heavy: 'rgba(255, 235, 240, 0.65)',
+              all: 'rgba(255, 220, 230, 0.75)',
+            }
+      ),
     },
     // All tokens exposed under theme.custom for easy access
     custom: {
