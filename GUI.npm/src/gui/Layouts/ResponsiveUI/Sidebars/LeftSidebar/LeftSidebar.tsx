@@ -38,7 +38,7 @@ const LeftSidebar = ({
 
   useEffect(() => {
     if (typeof setInsets !== 'function') return;
-    const desired = view === 'expanded' ? 264 : view === 'rail' ? 72 : 0;
+    const desired = view === 'expanded' ? 220 : view === 'rail' ? 60 : 0;
     setInsets({ left: desired });
     return () => setInsets({ left: 0 });
   }, [setInsets, view]);
@@ -108,7 +108,7 @@ const LeftSidebar = ({
           height: '100vh',
           display: 'flex',
           flexDirection: 'column',
-          width: '72px',
+          width: '60px',
           overflow: 'hidden',
           borderRight: '1px solid',
           borderColor: 'divider',
@@ -195,7 +195,7 @@ const LeftSidebar = ({
           ModalProps={{ keepMounted: true }}
           sx={{
             '& .MuiDrawer-paper': {
-              width: 264,
+              width: 220,
               top: `${navInset}px`,
               height: `calc(100vh - ${navInset}px)`,
               display: 'flex',
@@ -257,7 +257,7 @@ const LeftSidebar = ({
         height: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        width: '264px',
+        width: '203px',
         overflow: 'hidden',
         borderRight: '1px solid',
         borderColor: 'divider',

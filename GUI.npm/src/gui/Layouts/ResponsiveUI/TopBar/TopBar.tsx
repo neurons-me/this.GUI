@@ -119,7 +119,7 @@ export default function TopBar(props: TopBarProps) {
     const measure = () => {
       const target = appBarRef.current ?? toolbarRef.current;
       const h = target?.offsetHeight ?? 48;
-      updateInsets({ top: h, nav: h });
+      updateInsets({ nav: h });
     };
 
     // initial measure

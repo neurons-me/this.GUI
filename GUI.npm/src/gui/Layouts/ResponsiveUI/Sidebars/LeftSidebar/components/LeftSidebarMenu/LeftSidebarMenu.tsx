@@ -73,13 +73,13 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({ label, icon, items, v
           <Box
             sx={{
               position: 'fixed',
-              left: 'var(--gui-rail-width, 72px)',
+              left: 'calc(var(--gui-rail-width, 60px) + 8px)',
               top: anchorTop ?? 0,
               backgroundColor: 'background.paper',
               color: 'text.primary',
               borderRadius: 1,
               boxShadow: 3,
-              zIndex: 1300,
+              zIndex: 1500,
               border: '1px solid',
               borderColor: 'divider',
               minWidth: 180,
