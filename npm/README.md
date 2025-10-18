@@ -1,8 +1,4 @@
 # This.GUI
-A declarative UI library for **neurons.me**, designed to render and manage graphical interfaces through a consistent, theme-driven design system.
-
----
-
 ## 🚀 Installation
 Install the library via npm:
 
