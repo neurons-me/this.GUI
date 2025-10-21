@@ -2,18 +2,21 @@
 console.log("[this.gui] loaded.");
 // TEMPLATES
 // THEME
-import { GuiProvider, useThemeContext } from "./themes/GuiProvider";
-// APPBARS
-import TopBar from "@/gui/Layout/TopBar/TopBar";
-import Footer from "@/gui/Layouts/ResponsiveUI/Footer/Footer";
-import LeftSidebar from "@/gui/Layouts/ResponsiveUI/Sidebars/LeftSidebar/LeftSidebar";
-import RightSidebar from "@/gui/Layouts/ResponsiveUI/Sidebars/RightSidebar/RightSidebar";
-import StickyOptionsTop from "@/gui/Layouts/ResponsiveUI/StickyOptions/StickyOptionsTop";
-//import component RootDomain 
+import useThemeContext, { GuiProvider } from "./gui/Theme/GuiProvider";
+// APPBARS & LAYOUT
+import TopBar from "./gui/Layouts/ResponsiveUI/TopBar/TopBar";
+import Footer from "./gui/Layouts/ResponsiveUI/Footer/Footer";
+import LeftSidebar from "./gui/Layouts/ResponsiveUI/Sidebars/LeftSidebar/LeftSidebar";
+import RightSidebar from "./gui/Layouts/ResponsiveUI/Sidebars/RightSidebar/RightSidebar";
+import StickyOptionsTop from "./gui/Layouts/ResponsiveUI/StickyOptions/StickyOptionsTop";
+// HOOKS
+import useCodeGen from "./gui/hooks/useCodeGen";
+// DOMAIN
 import RootDomain from "./components/RootDomain/RootDomain";
 // TEXTURE
 
 // TEXT
+import TextField from "./gui/components/atoms/TextField/TextField";
 import TextTitle from "./components/generics/Text/TextTitle";
 import TextParagraph from "./components/generics/Text/TextParagraph";
 import TextList from "./components/generics/Text/TextList";
@@ -44,6 +47,7 @@ export {
   GuiProvider, 
   useThemeContext,
   TopBar, 
+  useCodeGen,
   Footer, 
   StickyOptionsTop, 
   LeftSidebar, 
@@ -52,6 +56,7 @@ export {
   TextParagraph,
   TextList,
   TextQuote,  
+  TextField,
   RootDomain,
   Img,
   VideoEmbed,
@@ -75,9 +80,11 @@ type GUIType = {
   GuiProvider: typeof GuiProvider;
   useThemeContext: typeof useThemeContext;
   TopBar: typeof TopBar;
+  useCodeGen: typeof useCodeGen;
   LeftSidebar: typeof LeftSidebar;
   RightSidebar: typeof RightSidebar;
   StickyOptionsTop: typeof StickyOptionsTop;
+  RootDomain: typeof RootDomain;
   TextTitle: typeof TextTitle;
   TextParagraph: typeof TextParagraph;
   TextList: typeof TextList;
@@ -104,9 +111,11 @@ const GUI: GUIType = {
   GuiProvider,
   useThemeContext,
   TopBar,
+  useCodeGen,
   LeftSidebar,
   RightSidebar,
   StickyOptionsTop,
+  RootDomain,
   TextTitle,
   TextParagraph,
   TextList,
