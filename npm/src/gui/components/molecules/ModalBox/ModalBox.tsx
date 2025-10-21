@@ -21,6 +21,8 @@ interface ModalBoxProps {
   width?: number | string;
   height?: number | string;
   blurBackground?: boolean;
+  xyz?: { x?: number; y?: number; z?: number };
+  insets?: { top?: number; right?: number; bottom?: number; left?: number };
 }
 
 const ModalBox: React.FC<ModalBoxProps> = ({
@@ -31,6 +33,8 @@ const ModalBox: React.FC<ModalBoxProps> = ({
   width = 400,
   height = "auto",
   blurBackground = true,
+  xyz,
+  insets,
 }) => {
   if (!open) return null;
 
@@ -60,11 +64,19 @@ const ModalBox: React.FC<ModalBoxProps> = ({
           background: "rgba(255,255,255,0.9)",
           borderRadius: 4,
           boxShadow: "0 0 30px rgba(0,0,0,0.3)",
-          position: "relative",
+          position: "absolute",
           padding: 3,
           color: "#222",
           backdropFilter: "blur(8px)",
           animation: "fadeIn 0.25s ease",
+          top: insets?.top ?? "50%",
+          left: insets?.left ?? "50%",
+          right: insets?.right,
+          bottom: insets?.bottom,
+          transform: `translate(-50%, -50%) ${
+            xyz ? `translate3d(${xyz.x || 0}px, ${xyz.y || 0}px, ${xyz.z || 0}px)` : ""
+          }`,
+          transformStyle: "preserve-3d",
         }}
         onClick={(e) => e.stopPropagation()}
       >

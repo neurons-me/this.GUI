@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Box } from "@mui/material";
 import { GlobalStyles } from "@mui/system";
-import VerbsBubbles from "./actions/verbs";
+import VerbsBubbles from "./fundamentals/verbs/verbs";
 
 function Me() {
   const [open, setOpen] = useState(false);
@@ -120,21 +120,12 @@ function Me() {
           top: pos.y,
           width: 80,
           height: 80,
-          position: "relative",
           pointerEvents: "none",
         }}
       >
         <VerbsBubbles
           verbs={["be", "have", "do", "relate", "communicate", "react", "at"]}
           visible={open}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            pointerEvents: "none",
-          }}
         />
         <Box
           onClick={() => {

@@ -1,6 +1,7 @@
 import React from "react";
 import type { Meta, StoryFn, StoryObj } from "@storybook/react";
 import Layout from "./Layout";
+import Page from '@/gui/components/molecules/Page/Page';
 import ThemeModeToggle from "@/gui/components/molecules/Theme/ThemeModeToggle/ThemeModeToggle";
 
 const meta: Meta<typeof Layout> = {
@@ -252,4 +253,38 @@ export const ContentOnly: Story = {
     rightSidebarConfig: false,
     footerConfig: false,
   },
+};
+
+
+export const LayoutWithPage: Story = {
+  render: () => (
+    <Layout
+      topBarConfig={{ title: 'Neuroverse Workspace' }}
+      leftSidebarConfig={{
+        elements: [
+          { type: 'link', props: { label: 'Home', icon: 'home' } },
+          { type: 'link', props: { label: 'Analytics', icon: 'insights' } },
+        ],
+      }}
+      rightSidebarConfig={{
+        elements: [
+          { type: 'link', props: { label: 'Chat', icon: 'chat' } },
+        ],
+      }}
+      footerConfig={{
+        brandLabel: 'Neuroverse',
+        centerElements: [
+          { type: 'link', props: { label: 'Docs', icon: 'menu_book' } },
+        ],
+      }}
+    >
+      <Page background="linear-gradient(135deg, #0a192f, #172a45)" padding={4}>
+        <h2 style={{ color: 'white', marginBottom: 16 }}>Page inside Layout</h2>
+        <p style={{ color: 'white', maxWidth: 600 }}>
+          This example shows how a Page component can be used inside the responsive Layout,
+          automatically adapting to inset updates from the TopBar, sidebars, and Footer.
+        </p>
+      </Page>
+    </Layout>
+  ),
 };

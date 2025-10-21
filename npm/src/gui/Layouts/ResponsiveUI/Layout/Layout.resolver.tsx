@@ -2,7 +2,6 @@ import React from 'react';
 import Layout from './Layout';
 import type { RegistryEntry } from '@/registry/types';
 import type { LayoutSpec } from './Layout.types';
-
 /**
  * The LayoutResolver dynamically constructs a responsive layout
  * using declarative JSON configuration.
@@ -15,7 +14,6 @@ const LayoutResolver: RegistryEntry = {
   resolve(spec: LayoutSpec) {
     const props = spec.props ?? {};
     const contentSections = spec.Content ?? [];
-
     return (
       <Layout
         {...props}

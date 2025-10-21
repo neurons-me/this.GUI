@@ -1,0 +1,66 @@
+// ---------- STATIC REGISTRY (seed) ----------
+const STATIC_SERVICES /** @type {Service[]} */ = [
+  {
+    id: "cleaker",
+    title: "Cleaker",
+    description: "Identity & login (dApp-ready)",
+    url: "https://cleaker.me",
+    tags: ["identity", "auth"],
+    status: "unknown",
+    protected: true,
+    icon: "unknown",
+  },
+  {
+    id: "neurons",
+    title: "neurons.me",
+    description: "Neural systems & models",
+    url: "https://neurons.me",
+    tags: ["ai", "models"],
+    status: "unknown",
+    protected: false,
+    icon: "unknown" ,
+  },
+  {
+    id: "netget",
+    title: "Netget",
+    description: "Domain/route manager & relays",
+    url: "https://netget.me",
+    tags: ["infra", "routing"],
+    status: "unknown",
+    protected: false,
+    icon: "unknown",
+  },
+];
+
+export const staticServices = [
+  {
+    id: "cleaker",
+    title: "Cleaker",
+    description: "Identity & login (dApp-ready)",
+    url: "https://cleaker.me",
+    tags: ["identity", "auth"],
+    status: "unknown",
+    protected: true,
+    icon: "unknown",
+  },
+  {
+    id: "neurons",
+    title: "neurons.me",
+    description: "Neural systems & models",
+    url: "https://neurons.me",
+    tags: ["ai", "models"],
+    status: "unknown",
+    protected: false,
+    icon: "unknown",
+  },
+  {
+    id: "netget",
+    title: "Netget",
+    description: "Domain/route manager & relays",
+    url: "https://netget.me",
+    tags: ["infra", "routing"],
+    status: "unknown",
+    protected: false,
+    icon: "unknown",
+  },
+];
