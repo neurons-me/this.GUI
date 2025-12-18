@@ -1,7 +1,7 @@
 import * as React from 'react';
-import type { SxProps, Theme } from '@mui/material/styles';
+// (types not needed in resolver)
 import AppBar from './AppBar';
-import type { RegistryEntry } from '@/registry/types';
+import type { RegistryEntry } from '@/gui/registry/types';
 import { ensureNodeId } from '@/gui/utils/nodeID';
 import type { AppBarResolverSpec as AppBarSpec } from './AppBar.types';
 
@@ -15,10 +15,15 @@ const AppBarResolver: RegistryEntry = {
   type: 'AppBar',
   resolve(spec: AppBarSpec) {
     const p = spec.props ?? {};
+    const variant = typeof (p as any).variant === 'string' ? (p as any).variant : 'mui';
     const rootProps: any = {
-      position: p.position ?? 'fixed',
-      color: p.color ?? 'default',
-      elevation: p.elevation,
+      // semantic preset
+      variant,
+
+      // defaults depend on variant
+      position: p.position ?? (variant === 'glass' ? 'fixed' : 'fixed'),
+      color: p.color ?? (variant === 'glass' ? 'transparent' : 'default'),
+      elevation: p.elevation ?? (variant === 'glass' ? 0 : undefined),
       enableColorOnDark: p.enableColorOnDark,
       sx: p.sx,
       id: ensureNodeId('appbar', p.id),

@@ -28,9 +28,11 @@ The **AppBar** atom is a thin wrapper around MUI's \`AppBar\` that keeps the ori
 - Elevation & dark-mode override with \`enableColorOnDark\`.
 - Accepts any children (e.g., \`<Toolbar/>\`, actions, brand, etc.).
 - Fully themeable via **This.GUI** tokens and \`sx\`.
+- Variant semantic presets: \`mui\` (default) behaves like MUI AppBar, \`glass\` for floating blurred panel style.
 
 ---
 ## Key Props
+- \`variant?: 'mui' | 'glass'\` — semantic preset.
 - \`position?: 'fixed' | 'absolute' | 'sticky' | 'static' | 'relative'\`.
 - \`color?: 'default' | 'inherit' | 'primary' | 'secondary' | 'transparent'\` — AppBar **only supports** these values.
 - \`success\`, \`info\`, \`warning\`, and \`error\` are **not supported** by \`color\`; use \`sx={{ bgcolor: '...' }}\` instead.
@@ -82,6 +84,11 @@ This GUI's **resolver** lets you describe an app bar via a config object. Exampl
     },
   },
   argTypes: {
+    variant: {
+      control: { type: 'select' },
+      options: ['mui', 'glass'],
+      description: 'Semantic preset. mui (default): behaves like MUI AppBar. glass: floating blurred panel style.',
+    },
     position: {
       control: { type: 'select' },
       options: ['fixed', 'absolute', 'sticky', 'static', 'relative'],
@@ -96,6 +103,7 @@ This GUI's **resolver** lets you describe an app bar via a config object. Exampl
     component: { table: { disable: true } },
   },
   args: {
+    variant: undefined,
     position: 'fixed',
     elevation: 0,
     enableColorOnDark: false,
@@ -221,5 +229,23 @@ export const EnableColorOnDark: Story = {
         <Button variant="text">Action</Button>
       </Toolbar>
     </AppBar>
+  ),
+};
+
+export const Variants: Story = {
+  args: { position: 'static', color: 'default', variant: undefined },
+  render: (args) => (
+    <div style={{ display: 'grid', gap: 12 }}>
+      {(['mui', 'glass'] as const).map((v) => (
+        <AppBar key={v} {...args} variant={v as any}>
+          <Toolbar variant="dense">
+            <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
+              variant = {v}
+            </Typography>
+            <Button variant="text">Action</Button>
+          </Toolbar>
+        </AppBar>
+      ))}
+    </div>
   ),
 };

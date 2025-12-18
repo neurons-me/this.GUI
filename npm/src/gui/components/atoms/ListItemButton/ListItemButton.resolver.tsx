@@ -1,12 +1,12 @@
 // src/gui/atoms/ListItemButton/ListItemButton.resolver.tsx
 import * as React from 'react';
 import ListItemButton from './ListItemButton';
-import Link from '@/gui/components/atoms/Link/Link';
+import Link from '@/gui/atoms/Link/Link';
 import Icon from '@/gui/Theme/Icon/Icon';
 // Use our own thin wrappers for consistency & display names
-import ListItemIcon from '@/gui/components/atoms/ListItemIcon/ListItemIcon';
-import ListItemText from '@/gui/components/atoms/ListItemText/ListItemText';
-import type { RegistryEntry, ResolveCtx } from '@/registry/types';
+import ListItemIcon from '@/gui/atoms/ListItemIcon/ListItemIcon';
+import ListItemText from '@/gui/atoms/ListItemText/ListItemText';
+import type { RegistryEntry, ResolveCtx } from '@/gui/registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
 import Box from '../Box/Box';
 import { ensureNodeId } from '@/gui/utils/nodeID';

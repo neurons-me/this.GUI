@@ -1,9 +1,10 @@
 // src/gui/atoms/Link/Link.resolver.tsx
 import * as React from 'react';
-import type { RegistryEntry } from '@/registry/types';
+import type { RegistryEntry } from '@/gui/registry/types';
 import Link, { LinkProps as GuiLinkProps } from './Link';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { ensureNodeId } from '@/gui/utils/nodeID';
+import { useInRouterContext } from 'react-router-dom';
 
 /** Declarative spec for Link (JSON-friendly) */
 type LinkSpec = {
@@ -11,12 +12,10 @@ type LinkSpec = {
   props?: {
     label?: React.ReactNode;              // convenience: text content
     children?: React.ReactNode;           // explicit children (wins over label)
-
     href?: string;                        // external
     to?: string;                          // internal (react-router)
     external?: boolean;                   // force anchor + target/rel
     underline?: 'none' | 'hover' | 'always';
-
     // pass-through styling/attrs
     sx?: SxProps<Theme>;
     className?: string;
@@ -26,7 +25,6 @@ type LinkSpec = {
     color?: GuiLinkProps['color'];
     variant?: GuiLinkProps['variant'];
     // ...cualquier otro prop permitido por tu Link
-
     'data-testid'?: string;
     ariaLabel?: string;
   };
@@ -37,6 +35,7 @@ const LinkResolver: RegistryEntry = {
   resolve(spec: LinkSpec) {
     const p = spec.props ?? {};
     const nodeId = ensureNodeId('link', p.id as string | undefined);
+    const hasRouter = useInRouterContext();
 
     // Routing / destino
     const routingProps: Partial<GuiLinkProps> =
@@ -46,7 +45,7 @@ const LinkResolver: RegistryEntry = {
             ...(p.target ? { target: p.target } : { target: '_blank' }),
             ...(p.rel ? { rel: p.rel } : { rel: 'noopener noreferrer' }),
           }
-        : p.to
+        : p.to && hasRouter
         ? { to: p.to }
         : p.href
         ? { href: p.href }

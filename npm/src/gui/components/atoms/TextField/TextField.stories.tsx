@@ -1,11 +1,8 @@
-
-
-import React from "react";
 import TextField from "./TextField";
 import { Stack } from "@/gui/components/atoms";
 
 export default {
-  title: "Atoms/TextField",
+  title: "Atoms/Elements/TextField",
   component: TextField,
   parameters: {
     layout: "centered",

@@ -7,8 +7,10 @@ type InsetsContextType = {
 };
 
 export const InsetsContext = createContext<InsetsContextType | undefined>(undefined);
+
 export const InsetsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [insets, setInsets] = useState<Insets>({ top: 0, right: 0, bottom: 0, left: 0, nav: 0 });
+
   const updateInsets = useCallback((next: Partial<Insets>) => {
     setInsets((prev) => ({ ...prev, ...next }));
   }, []);

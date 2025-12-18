@@ -2,7 +2,7 @@ import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemText from '@/gui/components/atoms/ListItemText/ListItemText';
+import ListItemText from '@/gui/atoms/ListItemText/ListItemText';
 import ListItemIcon from './ListItemIcon';
 import Icon from '@/gui/Theme/Icon/Icon';
 import GuiProvider from '@/gui/Theme/GuiProvider';

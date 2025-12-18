@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import MenuItem from './MenuItem';
-import Menu from '@/gui/components/atoms/Menu/Menu';
+import Menu from '@/gui/atoms/Menu/Menu';
 import Button from '@mui/material/Button';
 import Icon from '@/gui/Theme/Icon/Icon';
 const meta: Meta<typeof MenuItem> = {

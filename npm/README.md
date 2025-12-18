@@ -1,21 +1,45 @@
-# This.GUI
-## 🚀 Installation
-Install the library via npm:
+# .GUI
+
+###### A collection of components and building blocks enabling GUI generation.
+<img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1761276578/this.gui.npm.png" alt="This.GUI logo" style="zoom:34%;" />
+
+**Install** via:
 
 ```bash
 npm install this.gui
 ```
 
-or with yarn:
+**Use** as an **exportable React library**:
 
-```bash
-yarn add this.gui
+```ts
+import { TopBar } from 'this.gui'
 ```
 
----
+**.GUI** provides a rich collection of **atomic** and **composite** **components**  ready to use:
 
-## ⚙️ Initialization
-To initialize **This.GUI** in your project, wrap your application with the `GuiProvider` and optionally set a theme:
+```tsx
+import { Button, Card, Text } from 'this.gui';
+export function Example() {
+  return (
+    <Card>
+      <Text size="lg" weight="bold">Welcome!</Text>
+      <Button onClick={() => alert('Clicked!')}>Click me</Button>
+    </Card>
+  );
+}
+```
+
+### Or
+
+```ts
+import GUI from 'this.gui';
+```
+
+All components are theme-aware and automatically inherit styles and tokens from the `GuiProvider`
+<img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1761281165/geometry_shapes-removebg-preview_anrdke.png" alt="Geometry shapes" style="zoom:33%;" />
+
+## Initialization
+To initialize **This.GUI** in your project, wrap your application with the`GuiProvider` and optionally set a theme:
 
 ```tsx
 import { GuiProvider } from 'this.gui';
@@ -34,87 +58,33 @@ function App() {
 export default App;
 ```
 
-This structure sets up the reactive theme system, context, and global styles needed by all This.GUI components.
+This structure sets up the reactive theme system, context, and global styles  
+needed by all This.GUI components.
 
 ---
 
-## 🧩 Using Components
-This.GUI provides a rich collection of atomic and composite components ready to use:
+## Declarative Rendering (Advanced)
+Under the hood **This.GUI** ships a resolver registry (`src/registry`) so teams  
+can plug a JSON → React renderer into the design system. The npm package does  
+**not** expose a ready-made `<RenderGUI />` helper yet; if you want declarative  
+rendering you need to wire it yourself:
 
 ```tsx
-import { Button, Card, Text } from 'this.gui';
+import { GuiRegistry } from 'this.gui/registry';
+import type { ResolveCtx } from 'this.gui/registry';
 
-export function Example() {
-  return (
-    <Card>
-      <Text size="lg" weight="bold">Welcome!</Text>
-      <Button onClick={() => alert('Clicked!')}>Click me</Button>
-    </Card>
-  );
+function renderSpec(spec: { type: string; props?: any }, ctx?: ResolveCtx) {
+  const entry = GuiRegistry[spec.type];
+  if (!entry) throw new Error(`Unknown component type: ${spec.type}`);
+  return entry.resolve(spec as any, ctx);
 }
 ```
 
-All components are theme-aware and automatically inherit styles and tokens from the `GuiProvider`.
-
----
-
-## 🎨 Customizing Themes
-You can override tokens and themes by passing a `theme` object or token map to `GuiProvider`:
-
-```tsx
-import { GuiProvider, tokens } from 'this.gui';
-
-const myTheme = {
-  ...tokens,
-  color: {
-    ...tokens.color,
-    primary: '#FF006E'
-  }
-};
-
-function App() {
-  return (
-    <GuiProvider theme={myTheme}>
-      <MyInterface />
-    </GuiProvider>
-  );
-}
-```
-
----
-
-## 🧠 Declarative Rendering
-This.GUI allows components to be rendered declaratively using JSON structures:
-
-```tsx
-import { RenderGUI } from 'this.gui';
-
-const layout = {
-  type: 'Card',
-  props: { padding: 'md' },
-  children: [
-    { type: 'Text', props: { content: 'Dynamic content' } },
-    { type: 'Button', props: { label: 'Continue' } }
-  ]
-};
-
-<RenderGUI schema={layout} />;
-```
-
----
-
-## 🧰 CLI Integration
-If you have the CLI installed (`npx thisgui`), you can quickly scaffold a demo project:
-
-```bash
-npx thisgui my-app
-cd my-app
-npm run storybook
-```
-
-This will start a local Storybook environment with your components ready to explore.
+With that in place you can traverse a schema and render children as you prefer.  
+Until an official renderer is published, consume the React components directly  
+or build a thin wrapper like the example above.
 
 ---
 
 ## 🪐 License
-MIT © [Neuroverse](https://neurons.me)
+MIT © [neurons.me](https://neurons.me)

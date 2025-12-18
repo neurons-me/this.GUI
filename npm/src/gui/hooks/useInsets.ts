@@ -10,8 +10,8 @@ export function useInsets() {
   const theme = useGuiTheme();
   const context = useContext(InsetsContext);
   if (context) return context.insets;
-  const fallback = theme.layout?.insets ?? { top: 0, right: 0, bottom: 0, left: 0 };
-  return { nav: 0, ...fallback };
+  const fallback = theme.layout?.insets ?? { top: 0, right: 0, bottom: 0, left: 0, nav: 0 };
+  return { ...fallback, nav: fallback.nav ?? 0 };
 }
 /**
  * Returns the updater function for insets, defaulting to a no-op if unavailable.

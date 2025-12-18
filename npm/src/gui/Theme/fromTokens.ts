@@ -2,7 +2,6 @@
 import { createTheme, type Theme } from '@mui/material/styles';
 import { buildShadows } from '@/gui/Theme/styles/buildShadows';
 // Helpers ------------------------------------------------------------
-
 declare module '@mui/material/styles' {
   interface Palette {
     section: {

@@ -1,11 +1,11 @@
 // src/gui/atoms/MenuItem/MenuItem.resolver.tsx
 import * as React from 'react';
 import MenuItem from './MenuItem';
-import Link from '@/gui/components/atoms/Link/Link';
+import Link from '@/gui/atoms/Link/Link';
 import Icon from '@/gui/Theme/Icon/Icon';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import type { RegistryEntry, ResolveCtx } from '@/registry/types';
+import type { RegistryEntry, ResolveCtx } from '@/gui/registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
 import type { ListItemIconProps as MuiListItemIconProps } from '@mui/material/ListItemIcon';
 import type { ListItemTextProps as MuiListItemTextProps } from '@mui/material/ListItemText';

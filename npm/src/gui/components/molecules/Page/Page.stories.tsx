@@ -1,6 +1,6 @@
-import Layout from '@/gui/Layouts/ResponsiveUI/Layout/Layout';
-import { HeroSection } from '@/gui/components/molecules/HeroSection/HeroSection';
+import { Hero } from '@/gui/components/molecules/Hero/Hero';
 import { InsetsProvider } from '@/gui/contexts/InsetsContext';
+import Layout from '@/gui/Theme/Layout/Layout/Layout';
 import type { Meta, StoryObj } from '@storybook/react';
 import Page from './Page';
 
@@ -110,7 +110,7 @@ export const LayoutWithPageAndHero: Story = {
         rightSidebarConfig={{ initialView: 'chat' }}
       >
         <Page background="linear-gradient(135deg, #0a192f, #172a45)" padding={4}>
-          <HeroSection
+          <Hero
             backgroundSrc="https://images.unsplash.com/photo-1522202195463-8f34a5fa1d15"
             backgroundType="image"
             overlayColor="rgba(10, 25, 47, 0.6)"
@@ -127,7 +127,7 @@ export const LayoutWithPageAndHero: Story = {
             >
               Layout with TopBar, LeftSidebar and a HeroSection inside Page
             </div>
-          </HeroSection>
+          </Hero>
         </Page>
       </Layout>
     </InsetsProvider>

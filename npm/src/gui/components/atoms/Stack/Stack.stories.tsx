@@ -1,8 +1,8 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Stack from './Stack';
-import Paper from '@/gui/components/atoms/Paper/Paper';
-import Link from '@/gui/components/atoms/Link/Link';
+import Paper from '@/gui/atoms/Paper/Paper';
+import Link from '@/gui/atoms/Link/Link';
 
 const meta: Meta<typeof Stack> = {
   title: 'Atoms/Containers/Stack',

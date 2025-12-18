@@ -1,8 +1,8 @@
 // src/gui/atoms/Stack/Stack.resolver.tsx
 import * as React from 'react';
 import Stack from './Stack';
-import Link from '@/gui/components/atoms/Link/Link';
-import type { RegistryEntry, ResolveCtx } from '@/registry/types';
+import Link from '@/gui/atoms/Link/Link';
+import type { RegistryEntry, ResolveCtx } from '@/gui/registry/types';
 import { ensureNodeId } from '@/gui/utils/nodeID';
 /**
  * Declarative spec for Stack (layout primitive)

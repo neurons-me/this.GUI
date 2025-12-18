@@ -2,8 +2,8 @@ import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import List from './List';
 import ListItem from '../ListItem/ListItem';
-import ListItemIcon from '@/gui/components/atoms/ListItemIcon/ListItemIcon';
-import ListItemText from '@/gui/components/atoms/ListItemText/ListItemText';
+import ListItemIcon from '@/gui/atoms/ListItemIcon/ListItemIcon';
+import ListItemText from '@/gui/atoms/ListItemText/ListItemText';
 import Icon from '@/gui/Theme/Icon/Icon';
 import ListSubheader from '@mui/material/ListSubheader';
 

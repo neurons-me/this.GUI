@@ -8,6 +8,7 @@ declare module '@mui/material/styles' {
     right: number;
     top: number;
     bottom: number;
+    nav: number;
   }
 
   /** Runtime theme (what useTheme() returns) */
@@ -146,10 +147,10 @@ declare module '@mui/material/styles' {
   interface Theme {
     /** Runtime layout insets coordinated by NavBar/Drawers (pixels). */
     layout: {
-      insets: { left: number; right: number; top: number; bottom: number };
+      insets: { left: number; right: number; top: number; bottom: number; nav: number };
     };
     /** Callback exposed by GuiProvider to update insets at runtime. */
-    updateInsets?: (v: Partial<{ left: number; right: number; top: number; bottom: number }>) => void;
+    updateInsets?: (v: Partial<{ left: number; right: number; top: number; bottom: number; nav: number }>) => void;
     /** Bag for tokens that don't map 1:1 to MUI. */
     custom?: {
       border?: string;
@@ -160,7 +161,7 @@ declare module '@mui/material/styles' {
       [key: string]: unknown;
     };
     /** (Optional) legacy insets for backwards compatibility. */
-    insets?: { left?: number; right?: number; top?: number; bottom?: number };
+    insets?: { left?: number; right?: number; top?: number; bottom?: number; nav?: number };
     GUI: {
       // This was changed from `thisGui` to `GUI` as per instructions
       [key: string]: unknown;
@@ -169,9 +170,9 @@ declare module '@mui/material/styles' {
 
   interface ThemeOptions {
     layout?: {
-      insets?: Partial<{ left: number; right: number; top: number; bottom: number }>;
+      insets?: Partial<{ left: number; right: number; top: number; bottom: number; nav: number }>;
     };
-    updateInsets?: (v: Partial<{ left: number; right: number; top: number; bottom: number }>) => void;
+    updateInsets?: (v: Partial<{ left: number; right: number; top: number; bottom: number; nav: number }>) => void;
     custom?: {
       border?: string;
       gradients?: unknown;
@@ -180,7 +181,7 @@ declare module '@mui/material/styles' {
       lineHeights?: Record<string, unknown>;
       [key: string]: unknown;
     };
-    insets?: Partial<{ left: number; right: number; top: number; bottom: number }>;
+    insets?: Partial<{ left: number; right: number; top: number; bottom: number; nav: number }>;
     GUI?: {
       // This was changed from `thisGui` to `GUI` as per instructions
       [key: string]: unknown;

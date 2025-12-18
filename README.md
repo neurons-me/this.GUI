@@ -7,10 +7,8 @@
 
 <p align="center">
   A collection of components and building blocks for the <strong>neurons.me</strong> environment,<br/>
-  enabling declarative GUI generation powered by AI.
+  enabling <strong>GUI </strong> generation powered by AI.
 </p>
-
-
 
 
 
