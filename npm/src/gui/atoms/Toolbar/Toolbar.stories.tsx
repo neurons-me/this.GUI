@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 // Atoms used in the examples
-import { Toolbar, AppBar, Box, IconButton, Typography, Button } from '@/gui/components/atoms';
+import { Toolbar, Bar, Box, IconButton, Typography, Button } from '@/gui/atoms';
 import Icon from '@/gui/Theme/Icon/Icon';
 
 // ======================= Meta =======================
@@ -28,7 +28,7 @@ The **Toolbar** atom is a thin wrapper over MUI's \`MuiToolbar\`.
 - Density via \`variant\`: \`'regular'\` | \`'dense'\`.
 - Optional gutters removal with \`disableGutters\`.
 - Full **\`sx\`** support for styling.
-- Plays nicely inside **AppBar** and custom layouts.
+- Plays nicely inside **Bar** and custom layouts.
 
 ---
 ## Key Props
@@ -46,15 +46,15 @@ import { Toolbar } from '@/gui/atoms';
 </Toolbar>
 ~~~
 
-## In an AppBar
+## In an Bar
 ~~~tsx
-import { AppBar, Toolbar, Typography } from '@/gui/atoms';
+import { Bar, Toolbar, Typography } from '@/gui/atoms';
 
-<AppBar position="static">
+<Bar position="static">
   <Toolbar>
     <Typography variant="h6">Title</Typography>
   </Toolbar>
-</AppBar>
+</Bar>
 ~~~
 
 ## Change semantic element with Box
@@ -125,14 +125,14 @@ export const WithActions: Story = {
   ),
 };
 
-export const InAppBar: Story = {
+export const InBar: Story = {
   render: () => (
-    <AppBar position="static">
+    <Bar position="static">
       <Toolbar>
         <Typography variant="h6" sx={{ flex: 1 }}>App Bar + Toolbar</Typography>
         <Button color="inherit" size="small">Login</Button>
       </Toolbar>
-    </AppBar>
+    </Bar>
   ),
 };
 

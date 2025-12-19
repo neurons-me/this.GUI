@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Footer from "./Footer";
-import Layout from "@/gui/Theme/Layout/Layout";
-import ThemeModeToggle from '@/gui/components/molecules/Theme/ToggleMode/ToggleMode';
+import Layout from "@/gui/Layout/Layout";
+import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 
 const meta: Meta<typeof Footer> = {
   title: "GUI/Layout/Footer",

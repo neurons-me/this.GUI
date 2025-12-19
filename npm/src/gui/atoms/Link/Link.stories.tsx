@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Link, Button } from '@/gui/components/atoms';
+import { Link, Button } from '@/gui/atoms';
 // ======================= Meta =======================
 const meta: Meta<typeof Link> = {
   title: 'Atoms/Navigation/Link',

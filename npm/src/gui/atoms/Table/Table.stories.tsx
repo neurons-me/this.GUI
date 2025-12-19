@@ -6,7 +6,7 @@ import { Box,
       TableRow, 
       TableCell, 
       TableBody, 
-      Typography } from '@/gui/components/atoms';
+      Typography } from '@/gui/atoms';
 
 const meta: Meta<typeof Table> = {
   title: 'Atoms/DataDisplay/Table',
@@ -84,7 +84,6 @@ import { Table, TableHead, TableBody, TableRow, TableCell } from '@/gui/componen
     padding: { control: { type: 'select' }, options: ['default', 'checkbox', 'none'] },
     stickyHeader: { control: { type: 'boolean' } },
     sx: { control: 'object' },
-    component: { table: { disable: true } },
   },
   args: {
     size: 'small',

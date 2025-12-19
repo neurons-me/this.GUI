@@ -31,7 +31,7 @@
 //
 // Notes:
 // - Keep the default export SMALL (core primitives + a few top-level components) to protect tree-shaking.
-// - Large aggregates (GUI.atoms / GUI.molecules / GUI.organisms) should live in a separate
+// - Large aggregates (GUI.atoms / GUI.molecules / GUI.Components) should live in a separate
 //   entrypoint (e.g. `this.gui/full`) if you decide to offer that convenience.
 // =========================================
 // 1) constants

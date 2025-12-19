@@ -1,15 +1,15 @@
 /*
- * This.GUI — Organisms registry
+ * This.GUI — Components registry
  * High-level UI compositions built from molecules and atoms.
  * Exported here so consumers can import from a single namespace.
  */
 
 
-const Organisms = {
+const Components = {
 };
 
 export {
-  Organisms,
+  Components,
 };
 
-export default Organisms;
+export default Components;
