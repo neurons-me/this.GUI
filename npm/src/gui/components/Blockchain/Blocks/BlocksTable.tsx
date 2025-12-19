@@ -6,7 +6,7 @@ import {
     TableRow, 
     TableCell, 
     TableBody,
-    Typography } from '@/gui/components/atoms';
+    Typography } from '@/gui/atoms';
 
 export interface BlocksTableEntry {
   id: number;

@@ -3,7 +3,6 @@ import React from 'react'
 import { CssBaseline } from '@mui/material'
 import 'material-symbols/rounded.css';
 import { GuiProvider } from '../src/gui/Theme/GuiProvider';
-import { getFlatGuiThemes } from '../src/gui/Theme/utils/catalog';
 import { themes } from 'storybook/internal/theming';
 import { MemoryRouter } from 'react-router-dom';
 export const decorators = [
@@ -21,7 +20,6 @@ export const parameters = {
   controls: { matchers: { color: /(background|color)$/i, date: /Date$/i } },
   backgrounds: { disable: true },
   docs: { page: null, theme: themes.dark },
-
   // Sidebar ordering
   options: {
     storySort: {
@@ -31,10 +29,9 @@ export const parameters = {
         'gui',
         'Layout',
         'Theme',
-        'components',
         'atoms',
         'molecules',
-        'organisms',
+        'components',
       ],
     },
   },

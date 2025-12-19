@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import * as React from 'react';
 import Noise from './Noise';
-import { Box, Button, Typography } from '@/gui/components/atoms';
+import { Box, Button, Typography } from '@/gui/atoms';
 // A tiny in-memory ME mock so stories can run without app kernel wiring.
 // It supports the two calling forms we need:
 //   me(pathString) -> get

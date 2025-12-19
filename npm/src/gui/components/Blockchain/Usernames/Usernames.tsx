@@ -1,6 +1,6 @@
 // UsersTable.tsx — Cleaker / Blockchain Viewer
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, IconButton, Avatar } from "@/gui/components/atoms";
+import { Box, Typography, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, IconButton, Avatar } from "@/gui/atoms";
 import Icon from "@/gui/Theme/Icon/Icon";
 import QR from "./QR";
 

@@ -48,7 +48,7 @@ export const EnsureMaterialSymbols = () => {
 
 export default function Home() {
   return (
-    <GuiProvider>
+  <GuiProvider>
   <EnsureMaterialSymbols />
   <Box
     sx={{
@@ -69,7 +69,7 @@ export default function Home() {
       }}
     >
       <img
-        src="/GUI.png"
+        src="GUI.png"
         alt="This.GUI"
         style={{ width: '320px', height: 'auto', imageRendering: 'auto', marginBottom: '14px' }}
       />
@@ -80,14 +80,20 @@ export default function Home() {
         Designed by neurons.me in Veracruz.
       </Typography>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-        <Button variant="contained" color="primary" startIcon={<Icon name="widgets" />}>
+        <Button 
+        variant="contained" 
+        color="primary" 
+        startIcon={<Icon name="widgets" />} 
+        component={Link} 
+        href="https://neurons-me.github.io/GUI-storybook/">
           window.GUI 
         </Button>
+
        <Button
   variant="outlined"
   color="secondary"
   component={Link}
-  href="https://neurons.me"
+  href="https://google.com"
   startIcon={
     <img
       src="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760629056/neurons-grey_hxjcom.png"

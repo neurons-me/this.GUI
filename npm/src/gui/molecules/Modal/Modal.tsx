@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, IconButton } from "@/gui/components/atoms";
+import { Box, Typography, IconButton } from "@/gui/atoms";
 import { useGuiTheme } from "@/gui/hooks";
 // Try importing CloseIcon from MUI; fallback to a local SVG if missing
 let CloseIcon: any;

@@ -1,6 +1,6 @@
-import { Hero } from '@/gui/components/molecules/Hero/Hero';
+import { Hero } from '@/gui/molecules/Hero/Hero';
 import { InsetsProvider } from '@/gui/contexts/InsetsContext';
-import Layout from '@/gui/Theme/Layout/Layout/Layout';
+import Layout from '@/gui/Layout/Layout';
 import type { Meta, StoryObj } from '@storybook/react';
 import Page from './Page';
 

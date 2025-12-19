@@ -1,7 +1,7 @@
 import { StoryFn } from "@storybook/react";
 import React from "react";
-import Layout from "@/gui/Theme/Layout/Layout";
-import ThemeModeToggle from "@/gui/components/molecules/Theme/ToggleMode/ToggleMode";
+import Layout from "@/gui/Layout/Layout";
+import ThemeModeToggle from "@/gui/Theme/ToggleMode/ToggleMode";
 export default {
   title: "GUI/Layout/RightSidebar",
   component: Layout,

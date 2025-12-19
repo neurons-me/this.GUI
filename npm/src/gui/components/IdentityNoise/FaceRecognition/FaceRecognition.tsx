@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import Webcam from 'react-webcam';
-import { Box, Button, Typography } from '@/gui/components/atoms/atoms';
+import { Box, Button, Typography } from '@/gui/atoms/atoms';
 import { Modal } from '@/gui/molecules/molecules';
 import { useFaceLandmarker } from './modules/useFaceLandmarker';
 import { useFaceCameraPermission } from './modules/useFaceCameraPermission';

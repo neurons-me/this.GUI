@@ -9,7 +9,7 @@ import LeftSidebarMenu from './components/LeftSidebarMenu/LeftSidebarMenu';
 import LeftSidebarAction from './components/LeftSidebarAction/LeftSidebarAction';
 import LeftSidebarToggleButton from './components/LeftSidebarToggleButton/LeftSidebarToggleButton';
 import { useLeftSidebar, useGuiTheme, useGuiMediaQuery, useUpdateInsets, useInsets } from '@/gui/hooks';
-import { Box, Drawer } from '@/gui/components/atoms';
+import { Box, Drawer } from '@/gui/atoms';
 import type { LeftSidebarView } from '@/gui/contexts';
 
 const LeftSidebar = ({

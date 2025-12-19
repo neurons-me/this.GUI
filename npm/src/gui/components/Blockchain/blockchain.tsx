@@ -7,7 +7,7 @@
 // No fetching, no table markup.
 //@/gui/components/organisms/IdentityNoise/Triad/Blockchain/blockchain.tsx
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Button, IconButton, Tooltip, Typography } from '@/gui/components/atoms';
+import { Box, Button, IconButton, Tooltip, Typography } from '@/gui/atoms';
 import Icon from '@/gui/Theme/Icon/Icon';
 import { useGuiTheme, useGuiMediaQuery } from '@/gui/hooks';
 import UsersTable from './Usernames/Usernames';

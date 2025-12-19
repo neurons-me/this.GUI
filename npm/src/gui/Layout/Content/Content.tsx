@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@/gui/components/atoms';
+import { Box } from '@/gui/atoms';
 import { useInsets } from '@/gui/hooks';
 import type { ContentProps } from './Content.types';
 

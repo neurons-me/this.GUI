@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useGuiTheme } from '@/gui/hooks';
 import Box from '@/gui/atoms/Box/Box';
-import TextField from "@/gui/components/atoms/TextField/TextField";
+import TextField from "@/gui/atoms/TextField/TextField";
 import Icon from "@/gui/Theme/Icon/Icon";
-import Button from '@/gui/components/atoms/Button/Button';
-import Tooltip from '@/gui/components/atoms/Tooltip/Tooltip';
-import { useBlockchainConnection } from "@/gui/components/organisms/Blockchain/scripts/connection";
+import Button from '@/gui/atoms/Button/Button';
+import Tooltip from '@/gui/atoms/Tooltip/Tooltip';
+import { useBlockchainConnection } from "@/gui/components/Blockchain/scripts/connection";
 import { deriveIdentity } from "./identity";
 import QR from "./QR";
 import ME from "this.me";

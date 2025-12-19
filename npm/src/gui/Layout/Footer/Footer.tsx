@@ -1,15 +1,13 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { AppBar, Box, Toolbar, Typography, Avatar, Tooltip } from '@/gui/components/atoms';
+import { Bar, Box, Toolbar, Typography, Avatar, Tooltip } from '@/gui/atoms';
 import { Link as RouterLink } from 'react-router-dom';
 import Icon from '@/gui/Theme/Icon/Icon';
 import { useGuiTheme, useGuiMediaQuery, useInsets, useUpdateInsets } from '@/gui/hooks';
 import type { FooterProps, FooterElement } from './Footer.types';
 import type { FooterLinkProps, FooterActionProps } from './Footer.types';
 import type { SxProps, Theme } from '@mui/material/styles';
-
 const sxN = (...parts: Array<SxProps<Theme> | undefined>): SxProps<Theme> =>
   (parts.filter(Boolean) as unknown) as SxProps<Theme>;
-
 type FooterLinkRenderProps = FooterLinkProps & {
   showLabel: boolean;
 };
@@ -176,7 +174,7 @@ export default function Footer(props: FooterProps) {
   const insets = useInsets();
   const updateInsets = useUpdateInsets();
   const toolbarRef = useRef<HTMLDivElement | null>(null);
-  const appBarRef = useRef<HTMLDivElement | null>(null);
+  const BarRef = useRef<HTMLDivElement | null>(null);
 
   const insetLeft = Math.max(0, Number(insets?.left ?? 0));
   const insetRight = Math.max(0, Number(insets?.right ?? 0));
@@ -193,7 +191,7 @@ export default function Footer(props: FooterProps) {
   useEffect(() => {
     if (typeof updateInsets !== 'function') return;
     const measure = () => {
-      const target = appBarRef.current ?? toolbarRef.current;
+      const target = BarRef.current ?? toolbarRef.current;
       const h = target?.offsetHeight ?? 56;
       updateInsets({ bottom: position === 'fixed' || position === 'sticky' ? h : 0 });
     };
@@ -201,7 +199,7 @@ export default function Footer(props: FooterProps) {
 
     let ro: ResizeObserver | undefined;
     if (typeof ResizeObserver !== 'undefined') {
-      const target = appBarRef.current ?? toolbarRef.current;
+      const target = BarRef.current ?? toolbarRef.current;
       if (target) {
         ro = new ResizeObserver(() => measure());
         ro.observe(target);
@@ -215,7 +213,7 @@ export default function Footer(props: FooterProps) {
   }, [position, updateInsets, isMobile, isTablet]);
 
   const isFixed = position === 'fixed' || position === 'sticky';
-  const baseAppBarSx = {
+  const baseBarSx = {
     top: 'auto',
     bottom: 0,
     backgroundColor: theme.palette.background.paper ?? theme.palette.grey[900],
@@ -241,7 +239,7 @@ export default function Footer(props: FooterProps) {
         }),
   } as const;
 
-  const flowAppBarSx = !isFixed
+  const flowBarSx = !isFixed
     ? ({
         ml: `${insetLeft}px`,
         mr: `${insetRight}px`,
@@ -251,14 +249,14 @@ export default function Footer(props: FooterProps) {
     : undefined;
 
   return (
-    <AppBar
-      ref={appBarRef}
+    <Bar
+      ref={BarRef}
       id={id}
       className={className}
       data-testid={dataTestId}
       position={position}
       elevation={elevation}
-      sx={sxN(baseAppBarSx as SxProps<Theme>, flowAppBarSx, sx, appBarSx)}
+      sx={sxN(baseBarSx as SxProps<Theme>, flowBarSx, sx, appBarSx)}
     >
       <Toolbar
         ref={toolbarRef}
@@ -332,6 +330,6 @@ export default function Footer(props: FooterProps) {
           </Box>
         </Box>
       </Toolbar>
-    </AppBar>
+    </Bar>
   );
 }

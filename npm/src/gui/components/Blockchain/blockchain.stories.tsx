@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import Blockchain from "./blockchain";
 
 const meta: Meta<typeof Blockchain> = {
-  title: "Organisms/Blockchain",
+  title: "Components/Blockchain",
   component: Blockchain,
 };
 

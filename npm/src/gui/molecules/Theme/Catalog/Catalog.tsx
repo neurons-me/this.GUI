@@ -1,5 +1,4 @@
 // ThemesCatalog.tsx
-import type { SxProps, Theme } from '@mui/material/styles';
 import type { ThemesCatalogProps } from './Catalog.types';
 import { getGuiThemes } from '@/gui/Theme/utils/catalog';
 import type { ThemeManifest } from '@/types/theme';

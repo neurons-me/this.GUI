@@ -1,4 +1,3 @@
-import * as React from 'react';
 import type { RegistryEntry } from '@/gui/registry/types';
 import { ensureNodeId } from '@/gui/utils/nodeID';
 import Modal from './Modal';
@@ -28,9 +27,9 @@ const ModalResolver: RegistryEntry = {
     };
 
     return (
-      <ModalBox {...rootProps}>
+      <Modal {...rootProps}>
         {p.children}
-      </ModalBox>
+      </Modal>
     );
   },
 };

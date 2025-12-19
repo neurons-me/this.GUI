@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { Box, Typography, Tooltip } from '@/gui/components/atoms';
+import { Box, Typography, Tooltip } from '@/gui/atoms';
 import Icon from '@/gui/Theme/Icon/Icon';
 import type { RightSidebarView } from '../../RightSidebar.types';
 

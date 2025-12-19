@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Collapse, Typography } from '@/gui/components/atoms';
+import { Box, Collapse, Typography } from '@/gui/atoms';
 import Icon from '@/gui/Theme/Icon/Icon';
 
 type RightSidebarMenuItem = {

@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import HighLighter, {
   type HighLighterProps,
   DEFAULT_COLORS,
-} from '@/gui/components/organisms/HighLighter/HighLighter';
+} from '@/gui/widgets/HighLighter/HighLighter';
 
 const meta: Meta<typeof HighLighter> = {
   title: 'Organisms/HighLighter',

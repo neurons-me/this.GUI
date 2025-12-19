@@ -1,11 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import React, { useState } from "react";
-import ModalBox from "./Modal";
-import { Button } from "@mui/material";
+import { useState } from "react";
+import Modal from "./Modal";
 
-const meta: Meta<typeof ModalBox> = {
+const meta: Meta<typeof Modal> = {
   title: "Molecules/Display/ModalBox",
-  component: ModalBox,
+  component: Modal,
   tags: ["autodocs"],
   decorators: [
     (Story) => (
@@ -43,7 +42,7 @@ const meta: Meta<typeof ModalBox> = {
   },
 };
 export default meta;
-type Story = StoryObj<typeof ModalBox>;
+type Story = StoryObj<typeof Modal>;
 
 export const Default: Story = {
   render: (args) => {
@@ -61,7 +60,7 @@ export const Default: Story = {
           justifyContent: "center",
         }}
       >
-        <ModalBox
+        <Modal
           {...args}
           open={open}
           onClose={() => setOpen(false)}
@@ -69,7 +68,7 @@ export const Default: Story = {
         >
           <p style={{ color: "#fff" }}>This is an example modal content.</p>
           <p style={{ color: "#ccc" }}>If you see this text, the modal is visible.</p>
-        </ModalBox>
+        </Modal>
       </div>
     );
   },

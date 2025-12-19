@@ -7,7 +7,7 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Icon from '@/gui/Theme/Icon/Icon';
 import Tooltip from '@/gui/atoms/Tooltip/Tooltip';
 import Drawer from '@/gui/atoms/Drawer/Drawer';
-import HighLightsDrawer from '@/gui/components/organisms/HighLighter/HighLightsDrawer';
+import HighLightsDrawer from '@/gui/widgets/HighLighter/HighLightsDrawer';
 
 export type HighLighterColor = string;
 

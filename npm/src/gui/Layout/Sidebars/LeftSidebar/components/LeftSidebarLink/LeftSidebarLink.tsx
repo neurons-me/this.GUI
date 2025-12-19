@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Tooltip } from '@/gui/components/atoms';
+import { Box, Typography, Tooltip } from '@/gui/atoms';
 import Icon from '@/gui/Theme/Icon/Icon';
 import type { LeftSidebarItemProps } from './LeftSidebarLink.types';
 import { useLeftSidebar } from '@/gui/hooks';

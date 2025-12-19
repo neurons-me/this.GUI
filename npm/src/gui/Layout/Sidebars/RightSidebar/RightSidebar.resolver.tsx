@@ -1,4 +1,3 @@
-import * as React from 'react';
 import type { RegistryEntry } from '@/gui/registry/types';
 import RightSidebar from './RightSidebar';
 import type { RightSidebarElement } from './RightSidebar.types';

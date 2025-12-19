@@ -19,7 +19,7 @@
  */
 
 import * as React from 'react';
-import { Box, Button, IconButton, Switch, Typography } from '@/gui/components/atoms';
+import { Box, Button, IconButton, Switch, Typography } from '@/gui/atoms';
 import Modal from '@/gui/molecules/Modal/Modal';
 import Icon from '@/gui/Theme/Icon/Icon';
 
