@@ -54,6 +54,7 @@ export { default as Icon } from '@/gui/Theme/Icon/Icon';
 export { default as ThemeModeToggle } from '@/gui/Theme/ToggleMode/ToggleMode';
 export { default as Blockchain } from '@/gui/components/Blockchain/blockchain';
 export { default as HighLighter } from '@/gui/widgets/HighLighter/HighLighter';
+export { ThemesCatalog, Catalog } from '@/gui/Theme';
 // 3) imports for the default surface
 import GuiProvider from '@/gui/Theme/GuiProvider';
 import Box from '@/gui/atoms/Box/Box';
@@ -67,6 +68,7 @@ import Icon from '@/gui/Theme/Icon/Icon';
 import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 import Blockchain from '@/gui/components/Blockchain/blockchain';
 import HighLighter from '@/gui/widgets/HighLighter/HighLighter';
+import { ThemesCatalog } from '@/gui/Theme';
 // 4) default surface export
 // Keep this object SMALL (core primitives + a few top-level components) to avoid harming tree-shaking for named imports.
 // (If you later want GUI.atoms / GUI.molecules, do it via a separate entrypoint.)
@@ -84,6 +86,8 @@ const GUI = {
   ThemeModeToggle,
   Blockchain,
   HighLighter,
+  ThemesCatalog,
+  Catalog: ThemesCatalog,
 } as const;
 
 export default GUI;

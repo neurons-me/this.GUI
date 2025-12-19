@@ -23,15 +23,13 @@ import { Hero } from './Hero/Hero';
 import Modal from './Modal/Modal';
 import Page from './Page/Page';
 import ThemeModeToggle from '../Theme/ToggleMode/ToggleMode';
-import ThemesCatalog from './Theme/Catalog/Catalog';
+import ThemesCatalog from '../Theme/Catalog/Catalog';
 
 // Types
 import type { ComponentType } from 'react';
 import type { DialogProps } from './Dialog/Dialog';
 import type { HeroProps } from './Hero/Hero.types';
 import type PageProps from './Page/Page';
-import type { ThemeModeToggleProps } from '../Theme/ToggleMode/ToggleMode.types';
-import type { ThemesCatalogProps } from './Theme/Catalog/Catalog.types';
 
 const Theme = {
   ThemeModeToggle,
@@ -67,9 +65,7 @@ export {
 export type {
   DialogProps,
   PageProps,
-  HeroProps,
-  ThemeModeToggleProps,
-  ThemesCatalogProps,
+  HeroProps
 };
 
 export default Molecules;
