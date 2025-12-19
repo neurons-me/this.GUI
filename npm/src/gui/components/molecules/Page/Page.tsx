@@ -1,15 +1,9 @@
 // Page.tsx
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Box } from '@/gui/components/atoms';
 import { useInsetsContext } from '@/gui/contexts/InsetsContext';
 import { useGuiTheme } from '@/gui/hooks';
-export interface PageProps {
-  children?: React.ReactNode;
-  padding?: number | string;
-  background?: string;
-  sx?: any;
-  insetsAware?: boolean;
-}
+import type { PageProps } from './Page.types';
 /**
  * Page
  * ----------

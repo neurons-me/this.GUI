@@ -5,7 +5,7 @@ import Box from '@/gui/atoms/Box/Box';
 import Typography from '@/gui/atoms/Typography/Typography';
 
 const meta: Meta<typeof Layout> = {
-  title: 'Layout/Content/Content',
+  title: 'GUI/Layout/Content',
   component: Layout,
   parameters: { layout: 'fullscreen' },
 };

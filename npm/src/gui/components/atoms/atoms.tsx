@@ -29,6 +29,10 @@ export type { AvatarProps } from './Avatar/Avatar';
 import Button from './Button/Button';
 export { default as Button } from './Button/Button';
 export type { GuiButtonProps as ButtonProps } from './Button/Button';
+// Grid is polymorphic so we re-export it directly
+import Grid from './Grid/Grid';
+export { default as Grid } from './Grid/Grid';
+export type { GridProps } from './Grid/Grid.types';
 // Collapse is not polymorphic so we wrap it with forwardRef
 import Collapse, { type CollapseProps } from './Collapse/Collapse';
 export { default as Collapse } from './Collapse/Collapse';
@@ -146,6 +150,7 @@ export const atoms = {
   ListItemText,
   Collapse,
   Button,
+  Grid,
   Tooltip,
   Switch,
   Paper,

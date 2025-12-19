@@ -55,7 +55,7 @@ export { default as Input } from '@/gui/components/atoms/TextField/TextField';
 export { default as GuiProvider } from '@/gui/Theme/GuiProvider';
 export { default as Layout } from '@/gui/Theme/Layout/Layout/Layout';
 export { default as Icon } from '@/gui/Theme/Icon/Icon';
-export { default as ThemeModeToggle } from '@/gui/components/molecules/Theme/ThemeModeToggle/ThemeModeToggle';
+export { default as ThemeModeToggle } from '@/gui/molecules/Theme/ToggleMode/ToggleMode';
 export { default as Blockchain } from '@/gui/components/organisms/Blockchain/blockchain';
 export { default as HighLighter } from '@/gui/components/organisms/HighLighter/HighLighter';
 
@@ -69,7 +69,7 @@ import TextField from '@/gui/components/atoms/TextField/TextField';
 import Typography from '@/gui/components/atoms/Typography/Typography';
 import Layout from '@/gui/Theme/Layout/Layout/Layout';
 import Icon from '@/gui/Theme/Icon/Icon';
-import ThemeModeToggle from '@/gui/components/molecules/Theme/ThemeModeToggle/ThemeModeToggle';
+import ThemeModeToggle from '@/gui/molecules/Theme/ToggleMode/ToggleMode';
 import Blockchain from '@/gui/components/organisms/Blockchain/blockchain';
 import HighLighter from '@/gui/components/organisms/HighLighter/HighLighter';
 

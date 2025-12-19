@@ -2,7 +2,7 @@
 import * as React from 'react';
 import type { RegistryEntry, ResolveCtx } from '@/gui/registry/types';
 import LeftSidebar from './LeftSidebar';
-import Icon from '@/themes/Icon/Icon';
+import Icon from '@/gui/Theme/Icon/Icon';
 /**
  * Declarative spec for LeftSidebar.
  * This is the JSON-friendly shape your renderer/LLM can emit.
@@ -56,29 +56,22 @@ const LeftSidebarResolver: RegistryEntry = {
       (p.onCloseId && ctx?.handlers && typeof ctx.handlers[p.onCloseId] === 'function')
         ? ctx.handlers[p.onCloseId]
         : undefined;
+    // Convert drawerLinks to elements format expected by LeftSidebar
+    const elements = (p.drawerLinks ?? []).map((link) => ({
+      type: 'link' as const,
+      props: {
+        label: link.label,
+        href: link.href,
+        icon: link.icon,
+        iconColor: link.iconColor,
+        children: link.children,
+      },
+    }));
+
     return (
       <LeftSidebar
-        open={p.open}
-        onClose={onClose}
-        header={
-          p.header ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.5rem 1rem' }}>
-              {typeof p.header.icon === 'string'
-                ? <Icon name={p.header.icon} iconColor={p.header.iconColor} />
-                : React.isValidElement(p.header.icon)
-                  ? p.header.icon
-                  : typeof p.header.icon === 'function'
-                    ? React.createElement(p.header.icon)
-                    : null}
-              {p.header.title && <span>{p.header.title}</span>}
-            </div>
-          ) : undefined
-        }
-        drawerLinks={p.drawerLinks ?? []}
-        // style/misc passthrough
-        id={p.id}
+        elements={elements}
         className={p.className}
-        data-testid={p['data-testid']}
       />
     );
   },

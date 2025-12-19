@@ -22,16 +22,16 @@ import Dialog from './Dialog/Dialog';
 import { Hero } from './Hero/Hero';
 import Modal from './Modal/Modal';
 import Page from './Page/Page';
-import ThemeModeToggle from './Theme/ThemeModeToggle/ThemeModeToggle';
-import ThemesCatalog from './Theme/ThemesCatalog/ThemesCatalog';
+import ThemeModeToggle from './Theme/ToggleMode/ToggleMode';
+import ThemesCatalog from './Theme/Catalog/Catalog';
 
 // Types
 import type { ComponentType } from 'react';
 import type { DialogProps } from './Dialog/Dialog';
 import type { HeroProps } from './Hero/Hero.types';
-import type { PageProps } from './Page/Page';
-import type { ThemeModeToggleProps } from './Theme/ThemeModeToggle/ThemeModeToggle.types';
-import type { ThemesCatalogProps } from './Theme/ThemesCatalog/ThemesCatalog.types';
+import type PageProps from './Page/Page';
+import type { ThemeModeToggleProps } from './Theme/ToggleMode/ToggleMode.types';
+import type { ThemesCatalogProps } from './Theme/Catalog/Catalog.types';
 
 const Theme = {
   ThemeModeToggle,

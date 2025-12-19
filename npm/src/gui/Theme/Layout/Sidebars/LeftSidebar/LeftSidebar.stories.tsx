@@ -4,7 +4,7 @@ import Layout from "@/gui/Theme/Layout/Layout/Layout";
 import ThemeModeToggle from "@/gui/components/molecules/Theme/ThemeModeToggle/ThemeModeToggle";
 
 export default {
-  title: "Layout/Sidebars/LeftSidebar",
+  title: "GUI/Layout/LeftSidebar",
   component: Layout,
   tags: ['autodocs'],
   parameters: {

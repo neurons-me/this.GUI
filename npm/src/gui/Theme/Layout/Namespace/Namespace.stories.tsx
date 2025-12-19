@@ -17,7 +17,7 @@ function withPath(path: string) {
 }
 
 const meta: Meta<typeof Namespace> = {
-  title: "Layout/Namespace",
+  title: "Namespace/Namespace",
   component: Namespace,
   tags: ["autodocs"],
   parameters: {

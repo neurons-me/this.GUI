@@ -3,7 +3,7 @@ import React from "react";
 import Layout from "@/gui/Theme/Layout/Layout/Layout";
 import ThemeModeToggle from "@/gui/components/molecules/Theme/ThemeModeToggle/ThemeModeToggle";
 export default {
-  title: "Layout/Sidebars/RightSidebar",
+  title: "GUI/Layout/RightSidebar",
   component: Layout,
   tags: ['autodocs'],
   parameters: {

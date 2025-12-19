@@ -4,7 +4,7 @@ import Layout from "@/gui/Theme/Layout/Layout/Layout";
 import ThemeModeToggle from "@/gui/components/molecules/Theme/ThemeModeToggle/ThemeModeToggle";
 
 const meta: Meta<typeof Footer> = {
-  title: "Layout/Footer/Footer",
+  title: "GUI/Layout/Footer",
   component: Footer,
   tags: ['autodocs'],
   parameters: {

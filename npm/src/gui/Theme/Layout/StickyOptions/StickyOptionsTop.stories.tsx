@@ -8,7 +8,7 @@ import NavBar from '../TopBar/TopBar';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof StickyOptionsTop> = {
-  title: 'Layout/StickyOptions/StickyOptionsTop',
+  title: 'GUI/Layout/StickyOptionsTop',
   component: StickyOptionsTop,
   tags: ['autodocs'],
   parameters: {
