@@ -1,7 +1,7 @@
 # .GUI
 
 ###### A collection of components and building blocks enabling GUI generation.
-<img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1761276578/this.gui.npm.png" alt="This.GUI logo" style="zoom:34%;" />
+<img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/w_180/v1761276578/this.gui.npm.png" alt="This.GUI logo" width="180" />
 
 **Install** via:
 
@@ -36,7 +36,7 @@ import GUI from 'this.gui';
 ```
 
 All components are theme-aware and automatically inherit styles and tokens from the `GuiProvider`
-<img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1761281165/geometry_shapes-removebg-preview_anrdke.png" alt="Geometry shapes" style="zoom:33%;" />
+<img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/w_320/v1761281165/geometry_shapes-removebg-preview_anrdke.png" alt="Geometry shapes" width="320" />
 
 ## Initialization
 To initialize **This.GUI** in your project, wrap your application with the`GuiProvider` and optionally set a theme:

@@ -22,106 +22,127 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Some ESM bundles (and their deps) still read process.env.NODE_ENV.
+      // Provide a minimal shim for browser runtimes.
+      window.process = window.process || { env: {} };
+      window.process.env = window.process.env || {};
+      window.process.env.NODE_ENV = window.process.env.NODE_ENV || 'production';
+    </script>
     <script type="module">
       // IMPORTANT: ensure a single React instance.
       // We load React/ReactDOM first, and ask esm.sh to EXTERNALIZE them from this.gui.
       // Otherwise this.gui may ship its own React copy and hooks will crash.
       import React from "react";
       import ReactDOMClient from "react-dom/client";
-      import GUI_NS from "https://esm.sh/this.gui@latest?external=react,react-dom";
-      const GUI = GUI_NS?.default ?? GUI_NS;
-      const GuiProvider = GUI.GuiProvider || GUI.default?.GuiProvider;
-      const Layout = GUI.Layout || GUI.default?.Layout || null;
 
-      const ThemeModeToggle =
-        GUI.ThemeModeToggle ||
-        GUI.default?.ThemeModeToggle ||
-        GUI.Theme?.ThemeModeToggle ||
-        GUI.default?.Theme?.ThemeModeToggle ||
-        null;
+      (async () => {
+        const rootEl = document.getElementById("root");
+        if (!rootEl) throw new Error("#root not found");
 
-      // Optional widget (exported at root and/or under GUI.widgets)
-      const HighLighter =
-        GUI.HighLighter ||
-        GUI.widgets?.HighLighter ||
-        GUI.default?.HighLighter ||
-        GUI.default?.widgets?.HighLighter ||
-        null;
-      const tools = GUI.menus?.["GUI-Tools"];
-      const leftSidebarConfig = tools?.leftSidebarConfig ?? false;
+        // Show something immediately so a blank page is never "silent".
+        rootEl.innerHTML = '<div style="font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; padding: 16px; opacity: 0.75;">Booting this.GUI…</div>';
 
-      // Right sidebar: a single "Highlights" action.
-      // We use the same "action" element-shape shown in Layout stories.
-      // The registry should resolve `element: "HighLighter"` to the widget.
-      const rightSidebarConfig = {
-        initialView: "rail",
-        elements: [
-          ThemeModeToggle
-            ? {
-                type: "action",
-                props: {
-                  element: React.createElement(ThemeModeToggle, {
-                    variant: "minimal",
-                    show: "icons",
-                    iconSize: "small",
-                  }),
-                },
-              }
-            : null,
-          HighLighter
-            ? {
-                type: "action",
-                props: {
-                  element: React.createElement(HighLighter, {
-                    title: "Highlights",
-                    placement: "left",
-                    tooltipSize: "md",
-                    iconName: "ink_marker",
-                  }),
-                },
-              }
-            : null,
-        ].filter(Boolean),
-      };
+        let GUI_NS;
+        try {
+          GUI_NS = await import("https://esm.sh/this.gui@latest?external=react,react-dom");
+        } catch (err) {
+          console.error('[GUI.html] Import failed:', err);
+          rootEl.innerHTML = `
+            <div style="font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; padding: 20px;">
+              <div style="font-size: 16px; font-weight: 800;">❌ Failed to import this.gui</div>
+              <div style="margin-top: 8px; opacity: 0.8;">This usually means importmap/bare-specifier issues, or the CDN returned an error.</div>
+              <pre style="margin-top: 12px; padding: 12px; border-radius: 12px; background: #0b1020; color: #e6edf6; border: 1px solid rgba(255,255,255,0.12); overflow:auto;">${String(err && (err.stack || err.message || err))}</pre>
+            </div>
+          `;
+          return;
+        }
 
-      const hasRightSidebar = (rightSidebarConfig.elements || []).length > 0;
+        const GUI = GUI_NS?.default ?? GUI_NS;
+        const GuiProvider = GUI.GuiProvider || GUI.default?.GuiProvider;
+        const Layout = GUI.Layout || GUI.default?.Layout || null;
+        const ThemeModeToggle =
+          GUI.ThemeModeToggle ||
+          GUI.default?.ThemeModeToggle ||
+          GUI.Theme?.ThemeModeToggle ||
+          GUI.default?.Theme?.ThemeModeToggle ||
+          null;
+        // Optional widget (exported at root and/or under GUI.widgets)
+        const HighLighter =
+          GUI.HighLighter ||
+          GUI.widgets?.HighLighter ||
+          GUI.default?.HighLighter ||
+          GUI.default?.widgets?.HighLighter ||
+          null;
+        const tools = GUI.menus?.["GUI-Tools"];
+        const leftSidebarConfig = tools?.leftSidebarConfig ?? false;
+        // Right sidebar: a single "Highlights" action.
+        // We use the same "action" element-shape shown in Layout stories.
+        // The registry should resolve `element: "HighLighter"` to the widget.
+        const rightSidebarConfig = {
+          initialView: "rail",
+          elements: [
+            ThemeModeToggle
+              ? {
+                  type: "action",
+                  props: {
+                    element: React.createElement(ThemeModeToggle, {
+                      variant: "minimal",
+                      show: "icons",
+                      iconSize: "small",
+                    }),
+                  },
+                }
+              : null,
+            HighLighter
+              ? {
+                  type: "action",
+                  props: {
+                    element: React.createElement(HighLighter, {
+                      title: "Highlights",
+                      placement: "left",
+                      tooltipSize: "md",
+                      iconName: "ink_marker",
+                    }),
+                  },
+                }
+              : null,
+          ].filter(Boolean),
+        };
 
-      const Page = React.createElement(
-        "div",
-        { style: { padding: 24 } },
-        "Hello .GUI"
-      );
+        const hasRightSidebar = (rightSidebarConfig.elements || []).length > 0;
+        const Page = React.createElement(
+          "div",
+          { style: { padding: 24 } },
+          "Hello .GUI"
+        );
 
-      const WithLayout = Layout
-        ? React.createElement(Layout, {
-            leftSidebarConfig,
-            rightSidebarConfig: hasRightSidebar ? rightSidebarConfig : false,
-            children: Page,
-          })
-        : Page;
+        const WithLayout = Layout
+          ? React.createElement(Layout, {
+              leftSidebarConfig,
+              rightSidebarConfig: hasRightSidebar ? rightSidebarConfig : false,
+              children: Page,
+            })
+          : Page;
+        const App = GuiProvider
+          ? React.createElement(GuiProvider, { theme: "dark" }, WithLayout)
+          : WithLayout;
 
-      const App = GuiProvider
-        ? React.createElement(GuiProvider, { theme: "dark" }, WithLayout)
-        : WithLayout;
-
-      const rootEl = document.getElementById("root");
-      if (!rootEl) throw new Error("#root not found");
-
-      // Debug helpers
-      console.log('[GUI.html] GUI keys:', Object.keys(GUI || {}));
-      console.log('[GUI.html] menus:', GUI?.menus);
-
-      try {
-        ReactDOMClient.createRoot(rootEl).render(App);
-      } catch (err) {
-        console.error('[GUI.html] Render error:', err);
-        rootEl.innerHTML = `
-          <div style="font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; padding: 20px;">
-            <div style="font-size: 16px; font-weight: 800;">❌ this.GUI runtime failed to render</div>
-            <pre style="margin-top: 12px; padding: 12px; border-radius: 12px; background: #0b1020; color: #e6edf6; border: 1px solid rgba(255,255,255,0.12); overflow:auto;">${String(err && (err.stack || err.message || err))}</pre>
-          </div>
-        `;
-      }
+        // Debug helpers
+        console.log('[GUI.html] GUI keys:', Object.keys(GUI || {}));
+        console.log('[GUI.html] menus:', GUI?.menus);
+        try {
+          ReactDOMClient.createRoot(rootEl).render(App);
+        } catch (err) {
+          console.error('[GUI.html] Render error:', err);
+          rootEl.innerHTML = `
+            <div style="font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; padding: 20px;">
+              <div style="font-size: 16px; font-weight: 800;">❌ this.GUI runtime failed to render</div>
+              <pre style="margin-top: 12px; padding: 12px; border-radius: 12px; background: #0b1020; color: #e6edf6; border: 1px solid rgba(255,255,255,0.12); overflow:auto;">${String(err && (err.stack || err.message || err))}</pre>
+            </div>
+          `;
+        }
+      })();
     </script>
   </body>
 </html>
