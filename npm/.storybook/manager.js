@@ -9,7 +9,7 @@ addons.setConfig({
     base: 'dark', // o 'light'
     brandTitle: 'This.GUI - Storybook',
     brandUrl: 'https://neurons.me',
-    brandImage: '/GUI.png',  // served from project ./public/logo.svg
+    brandImage: 'GUI.png',
     brandTarget: '_self',
   }),
 });
