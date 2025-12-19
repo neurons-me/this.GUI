@@ -62,7 +62,7 @@ export const guiToolsElements: GUIToolsElements = [
     props: {
       label: 'Themes',
       icon: 'palette',
-      href: 'https://neurons-me.github.io/this.GUI/themes/',
+      href: 'https://neurons-me.github.io/themes.html',
     },
   },
   {

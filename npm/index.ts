@@ -54,6 +54,7 @@ export { default as Icon } from '@/gui/Theme/Icon/Icon';
 export { default as ThemeModeToggle } from '@/gui/Theme/ToggleMode/ToggleMode';
 export { default as Blockchain } from '@/gui/components/Blockchain/blockchain';
 export { default as HighLighter } from '@/gui/widgets/HighLighter/HighLighter';
+export { default as CodeBlock } from '@/gui/molecules/CodeBlock/CodeBlock';
 export { ThemesCatalog, Catalog } from '@/gui/Theme';
 export {
   default as GUITools,
@@ -73,6 +74,7 @@ import Icon from '@/gui/Theme/Icon/Icon';
 import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 import Blockchain from '@/gui/components/Blockchain/blockchain';
 import HighLighter from '@/gui/widgets/HighLighter/HighLighter';
+import CodeBlock from '@/gui/molecules/CodeBlock/CodeBlock';
 import { ThemesCatalog } from '@/gui/Theme';
 import GUITools, {
   guiToolsElements,
@@ -95,6 +97,7 @@ const GUI = {
   ThemeModeToggle,
   Blockchain,
   HighLighter,
+  CodeBlock,
   ThemesCatalog,
   Catalog: ThemesCatalog,
 } as const;
@@ -108,5 +111,10 @@ _GUI_ANY.menus['GUI-Tools'] = {
   elements: guiToolsElements,
   leftSidebarConfig: guiToolsLeftSidebarConfig,
 };
+
+// Also attach CodeBlock under GUI.molecules for the UMD/global runtime.
+// (If GUI.molecules is already an aggregate object elsewhere, we simply add the leaf.)
+_GUI_ANY.molecules = _GUI_ANY.molecules || {};
+_GUI_ANY.molecules.CodeBlock = CodeBlock;
 
 export default GUI;

@@ -3,17 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 <title>this.GUI — Runtime</title>
 <link rel="icon" href="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1761276578/this.gui.npm.png" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.css" />
-<style>
-  /* Improve legibility when the Hero background image is used */
-  body { margin: 0; }
-  #root { min-height: 100vh; }
-  .onboard-shadow {
-    text-shadow: 0 2px 14px rgba(0,0,0,0.55);
-  }
-</style>
 </head>
 <body>
 <div id="root"></div>
@@ -30,6 +23,10 @@
   };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.umd.js"></script>
+
+
+
+
 <script>
   (function () {
     const GUI = window.GUI;
@@ -261,8 +258,8 @@
                 { type: 'link', props: { label: 'Home', icon: 'home', href: 'https://neurons-me.github.io/' } },
                 { type: 'link', props: { label: 'all.this', icon: 'hub', href: 'https://neurons-me.github.io/all.this' } },
                 { type: 'link', props: { label: '.GUI', icon: 'widgets', href: 'https://neurons-me.github.io/this.GUI' } },
-                { type: 'link', props: { label: 'Storybook', icon: 'auto_stories', href: 'https://neurons-me.github.io/storybook-static/' } },
                 { type: 'link', props: { label: 'Themes', icon: 'palette', href: 'https://neurons-me.github.io/themes.html' } },
+                { type: 'link', props: { label: 'Storybook', icon: 'auto_stories', href: 'https://neurons-me.github.io/storybook-static/' } },
                 { type: 'link', props: { label: 'GitHub', icon: 'code', href: 'https://github.com/neurons-me/this.GUI' } },
                 { type: 'link', props: { label: 'npm', icon: 'package_2', href: 'https://www.npmjs.com/package/this.gui' } }
               ]
