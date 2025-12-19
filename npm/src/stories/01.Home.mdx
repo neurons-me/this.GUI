@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import GuiProvider from '@/gui/Theme/GuiProvider';
 import Icon from '@/gui/Theme/Icon/Icon';
-import ThemeModeToggle from '@/gui/components/molecules/Theme/ToggleMode/ToggleMode';
+import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 import {
   Avatar,
   Box,
@@ -25,18 +25,16 @@ import {
   TableRow,
   Tooltip,
   Typography,
-} from '@/gui/components/atoms';
-import Card from '@/gui/components/atoms/Card/Card';
-import CardActions from '@/gui/components/atoms/CardActions/CardActions';
-import CardContent from '@/gui/components/atoms/CardContent/CardContent';
-import CardHeader from '@/gui/components/atoms/CardHeader/CardHeader';
-import TextField from '@/gui/components/atoms/TextField/TextField';
-
+} from '@/gui/atoms';
+import Card from '@/gui/molecules/Card/Card';
+import CardActions from '@/gui/molecules/Card/CardActions/CardActions';
+import CardContent from '@/gui/molecules/Card/CardContent/CardContent';
+import CardHeader from '@/gui/molecules/Card/CardHeader/CardHeader';
+import TextField from '@/gui/atoms/TextField/TextField';
 export const EnsureMaterialSymbols = () => {
   useEffect(() => {
     const existing = document.querySelector('link[data-gui-material-symbols="1"]');
     if (existing) return;
-
     const link = document.createElement('link');
     link.setAttribute('data-gui-material-symbols', '1');
     link.rel = 'stylesheet';
@@ -79,15 +77,29 @@ export default function Home() {
         .GUI
       </Typography>
       <Typography sx={{ maxWidth: 640, fontSize: '1.1rem', lineHeight: 1.4, mb: 3 }}>
-        made by neurons.me in Veracruz.
+        Designed by neurons.me in Veracruz.
       </Typography>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-        <Button variant="contained" color="primary" startIcon={<Icon name="auto_awesome" />}>
+        <Button variant="contained" color="primary" startIcon={<Icon name="widgets" />}>
           window.GUI 
         </Button>
-        <Button variant="outlined" color="secondary" component={Link} href="https://neurons.me">
-          Visit neurons.me
-        </Button>
+       <Button
+  variant="outlined"
+  color="secondary"
+  component={Link}
+  href="https://neurons.me"
+  startIcon={
+    <img
+      src="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760629056/neurons-grey_hxjcom.png"
+      alt="neurons.me"
+      width={32}
+      height={34}
+      style={{ opacity: 0.9, filter: 'grayscale(1)' }}
+    />
+  }
+>
+  neurons.me
+</Button>
       </Stack>
     </Box>
 
@@ -151,7 +163,7 @@ export default function Home() {
               <CardHeader title="Hero / Page" subheader="Core molecules" />
               <CardContent>
                 <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                  Compose sections with cards, grids, and layout-aware spacing.
+                  Compose sections with Cards, Grids, and layout-aware spacing.
                 </Typography>
               </CardContent>
               <CardActions>

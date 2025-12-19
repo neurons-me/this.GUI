@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { Box, Typography, AppBar, Toolbar } from '@/gui/components/atoms';
+import { Box, Typography, Toolbar, Bar } from '@/gui/atoms';
 import Icon from '@/gui/Theme/Icon/Icon';
 import { useGuiTheme } from '@/gui/hooks';
 
@@ -27,14 +27,14 @@ const PaletteViewer: React.FC = () => {
         overflow: 'hidden',
       }}
     >
-      <AppBar position="sticky" elevation={0} color="transparent" sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
+      <Bar position="sticky" elevation={0} color="transparent" sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
         <Toolbar sx={{ gap: 1 }}>
           <Icon name="palette" fontSize={20} />
           <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
             GUI.Palette
           </Typography>
         </Toolbar>
-      </AppBar>
+      </Bar>
 
       <Box
         sx={{
