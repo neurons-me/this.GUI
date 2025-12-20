@@ -1,7 +1,7 @@
 {
   "name": "this.gui",
   "private": false,
-  "version": "1.3.56",
+  "version": "1.3.61",
   "type": "module",
   "main": "./dist/this.gui.cjs",
   "module": "./dist/this.gui.es.js",
@@ -30,10 +30,12 @@
     "gui": "./dist/bin/cli.js"
   },
   "scripts": {
-    "build": "vite build && npm run build:types && npm run build:cli && npm run build:copy-init",
+    "build": "vite build && npm run build:types && npm run build:cli && npm run build:copy-init && npm run build:umd",
+    "build:all": "npm run build && npm run build:umd",
     "build:types": "tsc -p tsconfig.build.json",
     "build:cli": "tsc --project tsconfig.cli.json && node -e \"import('./vite.config.js').then(m => (m.buildFinished ? m.buildFinished() : Promise.reject(new Error('buildFinished() not exported from vite.config.js')))).catch(e => { console.error(e); process.exit(1); })\"",
     "build:copy-init": "node -e \"const fs=require('fs-extra'); if(!fs.existsSync('init')){throw new Error('init directory missing at project root');} fs.removeSync('dist/init'); fs.copySync('init','dist/init');\"",
+    "build:umd": "UMD=true vite build",
     "pack:local": "npm run build && npm pack",
     "prepublishOnly": "npm run build",
     "dev": "vite",

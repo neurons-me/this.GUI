@@ -24,6 +24,7 @@
     "lib": ["ES2020", "DOM"],
     // Path aliases used by this.gui source
     "baseUrl": "src",
+    
     "paths": {
       "@/gui/atoms": ["gui/atoms"],
       "@/gui/atoms/*": ["gui/atoms/*"],

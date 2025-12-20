@@ -13,6 +13,7 @@ const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(file
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 const isDemo = process.env.DEMO === 'true';
 const isStorybook = process.env.STORYBOOK === 'true';
+const isUMD = process.env.UMD === 'true';
 export default defineConfig({
   plugins: [
     ...(isStorybook ? [] : [mdx({ include: ['**/*.mdx', '**/*.md'] })]),
@@ -28,27 +29,45 @@ export default defineConfig({
       '@/gui/components': resolve(__dirname, 'src/gui/components'),
       '@': resolve(__dirname, 'src'),
     },
-    dedupe: ['react', 'react-dom', 'react-router-dom']
+    dedupe: ['react', 'react-dom', 'react-router', 'react-router-dom']
   },
   build: isDemo ? undefined : {
-    lib: {
-      entry: {
-        index: resolve(__dirname, 'index.ts'),
-        atoms: resolve(__dirname, 'src/gui/atoms/index.ts'),
-      },
-      name: 'GUI',
-      fileName: (format, entryName) => {
-        const name = entryName === 'index' ? 'this.gui' : entryName;
-        if (format === 'cjs') return `${name}.cjs`;
-        return `${name}.${format}.js`;
-      },
-      formats: ['es', 'cjs']
-    },
+    lib: isUMD
+      ? {
+          // UMD/IIFE bundles must be single-entry; this is used for browser runtime via <script>.
+          entry: resolve(__dirname, 'index.ts'),
+          name: 'GUI',
+          fileName: (format) => {
+            // Keep the historical filename for browser usage.
+            if (format === 'umd') return 'this.gui.umd.js';
+            if (format === 'iife') return 'this.gui.iife.js';
+            return `this.gui.${format}.js`;
+          },
+          // Prefer UMD for widest compatibility. (Optionally you can add 'iife' too.)
+          formats: ['umd'],
+        }
+      : {
+          entry: {
+            index: resolve(__dirname, 'index.ts'),
+            atoms: resolve(__dirname, 'src/gui/atoms/index.ts'),
+          },
+          name: 'GUI',
+          fileName: (format, entryName) => {
+            const name = entryName === 'index' ? 'this.gui' : entryName;
+            if (format === 'cjs') return `${name}.cjs`;
+            return `${name}.${format}.js`;
+          },
+          formats: ['es', 'cjs'],
+        },
     rollupOptions: {
       external: (id) => {
         // IMPORTANT:
         // - Keep React and ReactDOM external (peer deps)
         // - Keep the automatic JSX runtime helpers external as well (they ship with React).
+        //
+        // For UMD browser runtime: we also EXTERNALIZE react-router* by default.
+        // If you want a more "robust" single-file UMD, remove react-router/react-router-dom
+        // from this set when isUMD === true.
         const externalIds = new Set([
           'react',
           'react-dom',
@@ -70,6 +89,7 @@ export default defineConfig({
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
+          'react-router': 'ReactRouter',
           'react-router-dom': 'ReactRouterDOM',
           'react-dom/client': 'ReactDOM',
           'react/jsx-runtime': 'ReactJSXRuntime',
@@ -78,7 +98,7 @@ export default defineConfig({
         exports: 'named',
         banner: '/* this.GUI — Neurons.me embeddable UI system */',
       },
-    }
+    },
   },
   optimizeDeps: isStorybook ? {} : {
     include: ['@uiw/react-md-editor', '@uiw/react-markdown-preview']

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { RegistryEntry, ResolveCtx } from '@/gui/registry/types';
+import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
 import { ensureNodeId } from '@/gui/utils/nodeID';
 import CodeBlock from './CodeBlock';
 export type CodeBlockSpec = {

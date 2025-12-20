@@ -55,6 +55,7 @@ export { default as ThemeModeToggle } from '@/gui/Theme/ToggleMode/ToggleMode';
 export { default as Blockchain } from '@/gui/components/Blockchain/blockchain';
 export { default as HighLighter } from '@/gui/widgets/HighLighter/HighLighter';
 export { default as CodeBlock } from '@/gui/molecules/CodeBlock/CodeBlock';
+export { default as Modal } from '@/gui/molecules/Modal/Modal';
 export { ThemesCatalog, Catalog } from '@/gui/Theme';
 export {
   default as GUITools,
@@ -74,15 +75,48 @@ import Icon from '@/gui/Theme/Icon/Icon';
 import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 import Blockchain from '@/gui/components/Blockchain/blockchain';
 import HighLighter from '@/gui/widgets/HighLighter/HighLighter';
+import HighLightsDrawer from '@/gui/widgets/HighLighter/HighLightsDrawer';
 import CodeBlock from '@/gui/molecules/CodeBlock/CodeBlock';
+import Dialog from '@/gui/molecules/Dialog/Dialog';
+import { Hero } from '@/gui/molecules/Hero/Hero';
+import Modal from '@/gui/molecules/Modal/Modal';
+import Page from '@/gui/molecules/Page/Page';
 import { ThemesCatalog } from '@/gui/Theme';
 import GUITools, {
   guiToolsElements,
   guiToolsLeftSidebarConfig,
 } from '@/gui/molecules/menus/GUI-Tools/GUI-Tools';
+import IdentityNoise from '@/gui/components/IdentityNoise/IdentityNoise';
 // 4) default surface export
-// Keep this object SMALL (core primitives + a few top-level components) to avoid harming tree-shaking for named imports.
-// (If you later want GUI.atoms / GUI.molecules, do it via a separate entrypoint.)
+// Runtime aggregates for UMD/introspection (avoid relying on directory barrels in the root entry)
+// Keep these small and explicit.
+const Atoms = {
+  Box,
+  Button,
+  Link,
+  Paper,
+  TextField,
+  Typography,
+} as const;
+
+const Molecules = {
+  Dialog,
+  Hero,
+  Modal,
+  Page,
+  CodeBlock,
+} as const;
+
+const Widgets = {
+  HighLighter,
+  HighLightsDrawer,
+} as const;
+
+const Components = {
+  Blockchain,
+  IdentityNoise,
+} as const;
+
 const GUI = {
   version,
   Box,
@@ -98,13 +132,25 @@ const GUI = {
   Blockchain,
   HighLighter,
   CodeBlock,
+  Modal,
   ThemesCatalog,
   Catalog: ThemesCatalog,
+  Components,
+  Widgets,
+  Atoms,
+  Molecules,
 } as const;
 
 // Attach GUI Tools to the default/UMD surface under: GUI.menus['GUI-Tools']
 // (Use a string key because of the hyphen.)
 const _GUI_ANY = GUI as any;
+
+// Lowercase aliases for explorer/runtime conventions
+_GUI_ANY.components = Components;
+_GUI_ANY.widgets = Widgets;
+_GUI_ANY.atoms = Atoms;
+_GUI_ANY.molecules = Molecules;
+
 _GUI_ANY.menus = _GUI_ANY.menus || {};
 _GUI_ANY.menus['GUI-Tools'] = {
   GUITools,
@@ -116,5 +162,6 @@ _GUI_ANY.menus['GUI-Tools'] = {
 // (If GUI.molecules is already an aggregate object elsewhere, we simply add the leaf.)
 _GUI_ANY.molecules = _GUI_ANY.molecules || {};
 _GUI_ANY.molecules.CodeBlock = CodeBlock;
+_GUI_ANY.molecules.Modal = Modal;
 
 export default GUI;

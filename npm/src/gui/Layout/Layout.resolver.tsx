@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from './Layout';
-import type { RegistryEntry } from '@/gui/registry/types';
+import type { RegistryEntry } from '@/Registry/types';
 import type { LayoutSpec } from './Layout.types';
 /**
  * The LayoutResolver dynamically constructs a responsive layout

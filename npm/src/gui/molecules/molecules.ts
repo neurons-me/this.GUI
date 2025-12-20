@@ -21,6 +21,7 @@
 import Dialog from './Dialog/Dialog';
 import { Hero } from './Hero/Hero';
 import Modal from './Modal/Modal';
+import type { ModalProps } from './Modal/Modal.types';
 import Page from './Page/Page';
 import CodeBlock from './CodeBlock/CodeBlock';
 
@@ -36,7 +37,7 @@ type MoleculesRegistry = {
   Hero: typeof Hero;
   // NOTE: We intentionally widen Modal here to avoid TS4023 (`ModalProps` cannot be named)
   // when generating .d.ts for the registry object.
-  Modal: ComponentType<any>;
+  Modal: ComponentType<ModalProps>;
   Page: typeof Page;
   CodeBlock: typeof CodeBlock;
 };
@@ -61,7 +62,8 @@ export type {
   DialogProps,
   PageProps,
   HeroProps,
-  CodeBlockProps
+  CodeBlockProps,
+  ModalProps
 };
 
 export default Molecules;

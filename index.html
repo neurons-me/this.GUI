@@ -23,10 +23,6 @@
   };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.umd.js"></script>
-
-
-
-
 <script>
   (function () {
     const GUI = window.GUI;
@@ -102,6 +98,12 @@
       GUI.default?.Layout ||
       GUI.Theme?.Layout ||
       GUI.default?.Theme?.Layout ||
+      null;
+    const CodeBlock =
+      GUI.CodeBlock ||
+      GUI.molecules?.CodeBlock ||
+      GUI.default?.CodeBlock ||
+      GUI.default?.molecules?.CodeBlock ||
       null;
 
     // Basic fallback wrapper (no dependency on MUI components being present).
@@ -193,6 +195,59 @@
     }
 
    function Content() {
+      const snippet = `import React from "react";
+import { createRoot } from "react-dom/client";
+import GUI, { GuiProvider, Layout, ThemeModeToggle, HighLighter } from "this.gui";
+
+function App() {
+  const rightSidebarConfig = {
+    initialView: "rail",
+    elements: [
+      { type: "action", props: { element: <ThemeModeToggle variant="minimal" show="icons" iconSize="small" /> } },
+      { type: "action", props: { element: <HighLighter title="Highlights" placement="left" tooltipSize="md" iconName="ink_marker" /> } },
+    ],
+  };
+
+  return (
+    <GuiProvider theme="dark">
+      <Layout rightSidebarConfig={rightSidebarConfig}>
+        <div style={{ padding: 24 }}>Hello .GUI</div>
+      </Layout>
+    </GuiProvider>
+  );
+}
+
+const root = createRoot(document.getElementById("root")!);
+root.render(<App />);`;
+
+      const codeBlock = CodeBlock
+        ? React.createElement(CodeBlock, {
+            code: snippet,
+            language: 'tsx',
+            variant: 'dark',
+            title: 'Quickstart: this.GUI UMD',
+            showLineNumbers: true,
+            wrapLongLines: true,
+            style: { marginTop: 14 },
+          })
+        : React.createElement(
+            'pre',
+            {
+              style: {
+                marginTop: 14,
+                padding: 14,
+                borderRadius: 12,
+                background: '#0b1020',
+                color: '#e6edf6',
+                border: '1px solid rgba(255,255,255,0.10)',
+                overflow: 'auto',
+                fontSize: 12.5,
+                lineHeight: 1.55,
+              },
+            },
+            snippet
+          );
+
       const inner = React.createElement(
         CenterCard,
         null,
@@ -217,7 +272,8 @@
           'UMD build as ',
           React.createElement('code', { style: { color: '#9ece6a' } }, 'window.GUI')
         ),
-        React.createElement(DebugKeys, null)
+        React.createElement(DebugKeys, null),
+        codeBlock
       );
 
       // Prefer using GUI Hero if available, but keep it optional.

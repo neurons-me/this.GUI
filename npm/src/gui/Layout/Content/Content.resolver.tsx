@@ -1,5 +1,5 @@
 import React from 'react';
-import type { RegistryEntry } from '@/gui/registry/types';
+import type { RegistryEntry } from '@/Registry/types';
 import Content from './Content';
 import type { ContentProps, ContentSection } from './Content.types';
 
