@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>this.GUI — UMD Exports</title>
+  <style>
+    body { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; background:#0b1020; color:#e6edf6; }
+    .wrap { padding: 16px; max-width: 1100px; margin: 0 auto; }
+    h1 { font-size: 16px; margin: 0 0 10px; }
+    .meta { opacity: .85; font-size: 12px; margin-bottom: 12px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+    .card { border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: rgba(255,255,255,.04); padding: 10px; }
+    .title { font-weight: 800; font-size: 12px; opacity: .9; margin-bottom: 8px; }
+    pre { margin: 0; white-space: pre-wrap; word-break: break-word; font-size: 12px; line-height: 1.5; }
+    .pill { display:inline-block; padding: 2px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); font-size: 11px; margin-left: 8px; opacity:.9; }
+    .err { color: #ffb4ab; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>this.GUI — UMD exports</h1>
+    <div class="meta" id="meta">Loading…</div>
+    <div class="grid" id="grid"></div>
+  </div>
+  <!-- React externals required by this.gui UMD -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react-jsx-runtime.production.min.js"></script>
+
+  <!-- process.env shim (some bundles read process.env.NODE_ENV) -->
+  <script>
+    window.process = window.process || { env: {} };
+    window.process.env = window.process.env || {};
+    if (!('NODE_ENV' in window.process.env)) window.process.env.NODE_ENV = 'production';
+  </script>
+
+  <!-- Your local UMD (keep this path local) -->
+<script src="this.gui.umd.js"></script>
+  <script>
+    (function () {
+      const grid = document.getElementById('grid');
+      const meta = document.getElementById('meta');
+      function keysOf(x) {
+        try { return x && typeof x === 'object' ? Object.keys(x).sort() : null; }
+        catch { return null; }
+      }
+
+      function describeValue(v) {
+        if (v == null) return String(v);
+        if (Array.isArray(v)) return 'array';
+        const t = typeof v;
+        if (t === 'function') return 'function';
+        if (t === 'object') {
+          // detect react things
+          try {
+            const $$ = v.$$typeof;
+            if ($$) return 'react(' + String($$) + ')';
+          } catch {}
+          return 'object';
+        }
+        return t;
+      }
+
+      function renderCard(title, obj) {
+        const ks = keysOf(obj);
+        const count = ks ? ks.length : 0;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const head = document.createElement('div');
+        head.className = 'title';
+        head.textContent = title;
+
+        const pill = document.createElement('span');
+        pill.className = 'pill';
+        pill.textContent = String(count);
+        head.appendChild(pill);
+
+        const pre = document.createElement('pre');
+
+        if (!ks) {
+          pre.innerHTML = '<span class="err">null / not an object</span>';
+        } else {
+          // Show "key : type" lines so you can spot weird ones quickly
+          const lines = ks.map(k => `${k}: ${describeValue(obj[k])}`);
+          pre.textContent = lines.join('\n');
+        }
+
+        card.appendChild(head);
+        card.appendChild(pre);
+        grid.appendChild(card);
+
+        // also log raw
+        console.log(`[UMD] ${title} keys:`, ks);
+      }
+
+      const GUI = window.GUI;
+      // If the bundle crashed early (e.g. missing externals), GUI might exist but be empty.
+      // We'll still render cards, but surface that in the meta line.
+
+      if (!GUI) {
+        meta.innerHTML = '<span class="err">❌ window.GUI not found. Check your UMD script path.</span>';
+        console.error('[UMD] window.GUI not found');
+        return;
+      }
+
+      // Common surfaces to inspect
+      const surfaces = [
+        ['window.GUI (root)', GUI],
+        ['window.GUI.default', GUI.default],
+        ['window.GUI.default.atoms', GUI.default?.atoms],
+        ['window.GUI.default.molecules', GUI.default?.molecules],
+        ['window.GUI.atoms', GUI.atoms],
+        ['window.GUI.Atoms', GUI.Atoms],
+        ['window.GUI.molecules', GUI.molecules],
+        ['window.GUI.Molecules', GUI.Molecules],
+        ['window.GUI.components', GUI.components],
+        ['window.GUI.Components', GUI.Components],
+        ['window.GUI.widgets', GUI.widgets],
+        ['window.GUI.Widgets', GUI.Widgets],
+        ['window.GUI.menus', GUI.menus],
+        ['window.GUI.Menus', GUI.Menus]];
+      // Meta summary
+      const rootCount = (keysOf(GUI) || []).length;
+      const defCount = (keysOf(GUI.default) || []).length;
+      const version =
+        GUI.version || GUI.VERSION || GUI.__version || GUI.__VERSION__ ||
+        GUI.default?.version || GUI.default?.VERSION || null;
+      const ok = rootCount > 0;
+      meta.textContent =
+        `${ok ? '✅' : '⚠️'} window.GUI ${ok ? 'loaded' : 'present but empty (bundle likely crashed)'}` +
+        (version ? ` · version: ${version}` : '') +
+        ` · root keys: ${rootCount}` +
+        ` · default keys: ${defCount}`;
+      // Render cards
+      grid.innerHTML = '';
+      for (const [name, obj] of surfaces) renderCard(name, obj);
+      // Also print a condensed flat list (root only)
+      console.log('[UMD] window.GUI:', GUI);
+    })();
+  </script>
+</body>
+</html>

@@ -62,28 +62,30 @@ export default defineConfig({
     rollupOptions: {
       external: (id) => {
         // IMPORTANT:
-        // - Keep React and ReactDOM external (peer deps)
-        // - Keep the automatic JSX runtime helpers external as well (they ship with React).
-        //
-        // For UMD browser runtime: we also EXTERNALIZE react-router* by default.
-        // If you want a more "robust" single-file UMD, remove react-router/react-router-dom
-        // from this set when isUMD === true.
-        const externalIds = new Set([
+        // - Always keep React and ReactDOM external (peer deps) for both UMD and ESM/CJS.
+        // - For UMD browser runtime, we BUNDLE router + JSX runtime so the UMD works
+        //   without global shims like ReactJSXRuntime / ReactRouterDOM.
+
+        const baseExternalIds = new Set([
           'react',
           'react-dom',
-          'react-router',
-          'react-router-dom',
+          'react-dom/client',
           'fs',
           'path',
           'url',
           'child_process',
           'fs-extra',
-          'react-dom/client',
-          'react/jsx-runtime',
-          'react/jsx-dev-runtime',
         ]);
 
-        return externalIds.has(id);
+        // In non-UMD builds, keep these as externals (peer deps / helpers).
+        if (!isUMD) {
+          baseExternalIds.add('react-router');
+          baseExternalIds.add('react-router-dom');
+          baseExternalIds.add('react/jsx-runtime');
+          baseExternalIds.add('react/jsx-dev-runtime');
+        }
+
+        return baseExternalIds.has(id);
       },
       output: {
         globals: {
