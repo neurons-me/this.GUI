@@ -10,9 +10,9 @@
     />
 
     <!-- Local CSS (expects this.gui.css next to this file in dist/) -->
-    <link rel="stylesheet" href="./this.gui.css" />
-    <link rel="stylesheet" href="./material-symbols.css" />
-    <link rel="preload" href="./material-symbols-rounded.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="../dist/this.gui.css" />
+    <link rel="stylesheet" href="../dist/material-symbols.css" />
+    <link rel="preload" href="../dist/material-symbols-rounded.woff2" as="font" type="font/woff2" crossorigin />
 
     <style>
       html,
@@ -48,7 +48,7 @@
     <script src="https://unpkg.com/react@18/umd/react-jsx-runtime.production.min.js"></script>
 
     <!-- Local UMD build (expects this.gui.umd.js next to this file in dist/) -->
-    <script src="./this.gui.umd.js"></script>
+    <script src="../dist/this.gui.umd.js"></script>
 
     <script>
       (function () {
@@ -84,6 +84,14 @@
             // Local runtime demos (work when browsing the /dist folder)
             { type: 'link', props: { label: 'Catalog (local)', icon: 'palette', href: './catalog.html' } },
             // Hosted pages
+            {
+              type: 'link',
+              props: {
+                label: 'Exports (local)',
+                icon: 'code',
+                href: './exports.html',
+              },
+            },
             { type: 'link', props: { label: 'Storybook', icon: 'auto_stories', href: 'https://neurons-me.github.io/GUI/storybook-static/' } },
           ],
         };

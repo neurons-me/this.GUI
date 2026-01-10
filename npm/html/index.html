@@ -10,7 +10,7 @@
     />
 
     <!-- Local CSS (preferred for repo demo). If you want CDN, swap to jsDelivr like your standalone. -->
-    <link rel="stylesheet" href="this.gui.css" />
+    <link rel="stylesheet" href="../dist/this.gui.css" />
 
     <style>
       html,
@@ -34,7 +34,7 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/react@18/umd/react-jsx-runtime.production.min.js"></script>
     <!-- Local UMD build -->
-    <script src="./this.gui.umd.js"></script>
+    <script src="../dist/this.gui.umd.js"></script>
 
     <script>
       (function () {
@@ -64,6 +64,14 @@
             // Local runtime demos (work when browsing the /dist folder)
             { type: 'link', props: { label: 'Catalog (local)', icon: 'palette', href: './catalog.html' } },
             // Hosted pages
+            {
+              type: 'link',
+              props: {
+                label: 'Exports (local)',
+                icon: 'code',
+                href: './exports.html',
+              },
+            },
             { type: 'link', props: { label: 'Storybook', icon: 'auto_stories', href: 'https://neurons-me.github.io/storybook-static/' } },
           ],
         };
@@ -110,8 +118,9 @@
                         sx: {
                           p: 2,
                           borderRadius: 2,
-                          border: '1px dashed rgba(0,0,0,0.25)',
-                          background: 'rgba(255,255,255,0.6)',
+                          border: '1px dashed',
+                          borderColor: 'divider',
+                          backgroundColor: 'background.paper',
                         },
                       },
                       children: [
@@ -137,7 +146,7 @@
                         },
                         {
                           type: 'Typography',
-                          props: { variant: 'caption', sx: { display: 'block', mt: 1.5, opacity: 0.8 } },
+                          props: { variant: 'caption', sx: { display: 'block', mt: 1.5, color: 'text.secondary' } },
                           children: [
                             'This panel proves the renderer is mapping "type" → window.GUI exports (Atoms/Molecules/etc.).',
                           ],

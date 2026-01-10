@@ -19,7 +19,6 @@ const ContentResolver: RegistryEntry = {
   resolve(spec: ContentSpec) {
     const props = spec.props ?? {};
     const sections = props.sections ?? [];
-
     const renderSections = (items: ContentSection[]) =>
       items.map((section, idx) => (
         <React.Fragment key={idx}>
@@ -31,12 +30,7 @@ const ContentResolver: RegistryEntry = {
       ));
 
     return (
-      <Content
-        id={props.id}
-        className={props.className}
-        sx={props.sx}
-        data-testid={props['data-testid']}
-      >
+      <Content sx={props.sx as any}>
         {props.children}
         {renderSections(sections)}
       </Content>

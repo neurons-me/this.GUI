@@ -102,17 +102,20 @@ export default defineConfig({
           baseExternalIds.add('react/jsx-dev-runtime');
         }
 
+        // In UMD, ensure JSX runtime is bundled (no global ReactJSXRuntime requirement).
+        if (isUMD && (id === 'react/jsx-runtime' || id === 'react/jsx-dev-runtime')) {
+          return false;
+        }
+
         return baseExternalIds.has(id);
       },
       output: {
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
+          'react-dom/client': 'ReactDOM',
           'react-router': 'ReactRouter',
           'react-router-dom': 'ReactRouterDOM',
-          'react-dom/client': 'ReactDOM',
-          'react/jsx-runtime': 'ReactJSXRuntime',
-          'react/jsx-dev-runtime': 'ReactJSXRuntime',
         },
         exports: 'named',
         banner: `;(function(){
@@ -121,6 +124,16 @@ export default defineConfig({
             if (!g.process) g.process = { env: {} };
             if (!g.process.env) g.process.env = {};
             if (!g.process.env.NODE_ENV) g.process.env.NODE_ENV = 'production';
+
+            // Fallback: if a consumer accidentally externalizes jsx-runtime, provide a minimal shim
+            // so UMD can still execute (it maps jsx/jsxs to React.createElement).
+            if (!g.ReactJSXRuntime && g.React && typeof g.React.createElement === 'function') {
+              g.ReactJSXRuntime = {
+                jsx: g.React.createElement,
+                jsxs: g.React.createElement,
+                Fragment: g.React.Fragment,
+              };
+            }
           } catch (e) {}
         })();
         /* this.GUI — Neurons.me embeddable UI system */`,
