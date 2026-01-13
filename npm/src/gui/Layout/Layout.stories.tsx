@@ -1,8 +1,9 @@
-import React from "react";
-import type { Meta, StoryFn, StoryObj } from "@storybook/react";
-import Layout from "./Layout";
-import Page from "@/gui//molecules/Page/Page";
-import ThemeModeToggle from "@/gui/Theme/ToggleMode/ToggleMode";
+import React from 'react';
+import type { Meta, StoryFn, StoryObj } from '@storybook/react';
+import Layout from './Layout';
+import Page from '@/gui/molecules/Page/Page';
+import { Box, Typography } from '@/gui/atoms';
+import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 const meta: Meta<typeof Layout> = {
   title: "GUI/Layout",
   component: Layout,
@@ -145,21 +146,65 @@ export default meta;
 
 const Template: StoryFn<React.ComponentProps<typeof Layout>> = (args) => (
   <Layout {...args}>
-    <div
-      style={{
-        minHeight: "120vh",
-        padding: "72px 24px 120px",
-        display: "flex",
-        flexDirection: "column",
-        gap: 16,
+    <Box
+      sx={{
+        minHeight: '120vh',
+        p: 3,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
       }}
     >
-      <h2>Responsive Layout Demo</h2>
-      <p>
+      <Typography variant="h5" sx={{ fontWeight: 700 }}>
+        Responsive Layout Demo
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 720 }}>
         Resize the viewport or toggle sidebars to observe how insets are coordinated.
-        The content block is intentionally tall to show how fixed bars interact with scrolling.
-      </p>
-    </div>
+        This content is intentionally tall to show how fixed bars interact with scrolling.
+      </Typography>
+
+      <Box
+        sx={{
+          mt: 1,
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))', lg: 'repeat(3, minmax(0, 1fr))' },
+          gap: 2,
+        }}
+      >
+        <Box sx={{ p: 2, borderRadius: 2, border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
+            Insets-aware
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            This block uses theme tokens and lets Layout/Content handle spacing.
+          </Typography>
+        </Box>
+        <Box sx={{ p: 2, borderRadius: 2, border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
+            Sidebar coordination
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            Expand/collapse sidebars and confirm content stays aligned.
+          </Typography>
+        </Box>
+        <Box sx={{ p: 2, borderRadius: 2, border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
+            Scroll behavior
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            Layout keeps the main area scrollable without manual padding hacks.
+          </Typography>
+        </Box>
+      </Box>
+
+      <Box sx={{ mt: 2 }}>
+        {Array.from({ length: 18 }).map((_, i) => (
+          <Typography key={i} variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            Row {i + 1} — filler content to demonstrate scrolling within the Layout content area.
+          </Typography>
+        ))}
+      </Box>
+    </Box>
   </Layout>
 );
 
@@ -275,14 +320,17 @@ export const LayoutWithPage: Story = {
         centerElements: [
           { type: 'link', props: { label: 'Docs', icon: 'menu_book' } },
         ],
+        position: 'fixed',
       }}
     >
-      <Page background="linear-gradient(135deg, #0a192f, #172a45)" padding={4}>
-        <h2 style={{ color: 'white', marginBottom: 16 }}>Page inside Layout</h2>
-        <p style={{ color: 'white', maxWidth: 600 }}>
+      <Page padding={4}>
+        <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
+          Page inside Layout
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 720 }}>
           This example shows how a Page component can be used inside the responsive Layout,
           automatically adapting to inset updates from the TopBar, sidebars, and Footer.
-        </p>
+        </Typography>
       </Page>
     </Layout>
   ),
