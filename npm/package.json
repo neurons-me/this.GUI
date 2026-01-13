@@ -46,7 +46,7 @@
     "preview": "DEMO=true vite preview",
     "storybook": "STORYBOOK=true storybook dev -p 6006",
     "build-storybook": "STORYBOOK=true storybook build",
-    "chromatic": "STORYBOOK=true chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
+    "chromatic": "STORYBOOK=true chromatic"
   
   },
   "dependencies": {
