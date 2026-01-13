@@ -3,7 +3,7 @@ import React from 'react'
 import { CssBaseline } from '@mui/material'
 import 'material-symbols/rounded.css';
 import { GuiProvider } from '../src/gui/Theme/GuiProvider';
-import { themes } from 'storybook/internal/theming';
+import { themes } from 'storybook/theming';
 import { MemoryRouter } from 'react-router-dom';
 export const decorators = [
   (Story: React.FC) => (
@@ -20,6 +20,7 @@ export const parameters = {
   controls: { matchers: { color: /(background|color)$/i, date: /Date$/i } },
   backgrounds: { disable: true },
   docs: { page: null, theme: themes.dark },
+
   // Sidebar ordering
   options: {
     storySort: {
@@ -35,4 +36,11 @@ export const parameters = {
       ],
     },
   },
+
+  a11y: {
+    // 'todo' - show a11y violations in the test UI only
+    // 'error' - fail CI on a11y violations
+    // 'off' - skip a11y checks entirely
+    test: 'todo'
+  }
 };

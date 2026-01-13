@@ -101,18 +101,6 @@
                   },
                   children: [
                     {
-                      type: 'CodeBlock',
-                      props: {
-                        title: 'spec.json',
-                        language: 'json',
-                        variant: 'dark',
-                        showLineNumbers: true,
-                        wrapLongLines: true,
-                        // placeholder (filled below)
-                        code: '',
-                      },
-                    },
-                    {
                       type: 'Box',
                       props: {
                         sx: {
@@ -126,32 +114,215 @@
                       children: [
                         {
                           type: 'Typography',
-                          props: { variant: 'subtitle2', sx: { mb: 1 } },
-                          children: ['Rendered components (from JSON)'],
-                        },
-                        {
-                          type: 'Button',
-                          props: { variant: 'contained' },
-                          children: ['Button'],
-                        },
-                        {
-                          type: 'Box',
-                          props: { sx: { mt: 1.5 } },
-                          children: [
-                            {
-                              type: 'TextField',
-                              props: { label: 'Input', placeholder: 'Type here…', fullWidth: true },
-                            },
-                          ],
+                          props: { variant: 'overline', sx: { letterSpacing: 0.6, color: 'text.secondary' } },
+                          children: ['Examples'],
                         },
                         {
                           type: 'Typography',
-                          props: { variant: 'caption', sx: { display: 'block', mt: 1.5, color: 'text.secondary' } },
+                          props: { variant: 'h5', sx: { fontWeight: 800, lineHeight: 1.15 } },
+                          children: ['this.GUI — Building Blocks'],
+                        },
+                        {
+                          type: 'Typography',
+                          props: { variant: 'body2', sx: { mt: 0.75, color: 'text.secondary' } },
                           children: [
-                            'This panel proves the renderer is mapping "type" → window.GUI exports (Atoms/Molecules/etc.).',
+                            'A small gallery of atoms and molecules rendered from JSON. Use this to verify exports + theme wiring.',
+                          ],
+                        },
+
+                        // Quick actions row
+                        {
+                          type: 'Box',
+                          props: {
+                            sx: {
+                              mt: 2,
+                              display: 'flex',
+                              gap: 1,
+                              flexWrap: 'wrap',
+                              alignItems: 'center',
+                            },
+                          },
+                          children: [
+                            { type: 'Button', props: { variant: 'contained' }, children: ['Primary'] },
+                            { type: 'Button', props: { variant: 'outlined' }, children: ['Outlined'] },
+                            { type: 'Button', props: { variant: 'text' }, children: ['Text'] },
+                            {
+                              type: 'Link',
+                              props: { href: 'https://www.npmjs.com/package/this.gui', target: '_blank', rel: 'noreferrer' },
+                              children: ['Open npm'],
+                            },
+                          ],
+                        },
+
+                        // Cards / Papers grid
+                        {
+                          type: 'Box',
+                          props: {
+                            sx: {
+                              mt: 2,
+                              display: 'grid',
+                              gap: 1.5,
+                              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                            },
+                          },
+                          children: [
+                            {
+                              type: 'Paper',
+                              props: { sx: { p: 1.5, borderRadius: 2 } },
+                              children: [
+                                { type: 'Typography', props: { variant: 'subtitle1', sx: { fontWeight: 700 } }, children: ['Typography'] },
+                                {
+                                  type: 'Typography',
+                                  props: { variant: 'body2', sx: { mt: 0.5, color: 'text.secondary' } },
+                                  children: ['h1/h2/h3 → body → caption. All theme-aware.'],
+                                },
+                                {
+                                  type: 'Box',
+                                  props: { sx: { mt: 1 } },
+                                  children: [
+                                    { type: 'Typography', props: { variant: 'h6' }, children: ['Header (h6)'] },
+                                    { type: 'Typography', props: { variant: 'body2' }, children: ['Body text example.'] },
+                                    {
+                                      type: 'Typography',
+                                      props: { variant: 'caption', sx: { color: 'text.secondary' } },
+                                      children: ['Caption • secondary'],
+                                    },
+                                  ],
+                                },
+                              ],
+                            },
+                            {
+                              type: 'Paper',
+                              props: { sx: { p: 1.5, borderRadius: 2 } },
+                              children: [
+                                { type: 'Typography', props: { variant: 'subtitle1', sx: { fontWeight: 700 } }, children: ['Inputs'] },
+                                {
+                                  type: 'Box',
+                                  props: { sx: { mt: 1, display: 'flex', flexDirection: 'column', gap: 1 } },
+                                  children: [
+                                    {
+                                      type: 'TextField',
+                                      props: { label: 'Username', placeholder: 'sui.gn', fullWidth: true },
+                                    },
+                                    {
+                                      type: 'TextField',
+                                      props: { label: 'Email', placeholder: 'jabellae@gmail.com', fullWidth: true },
+                                    },
+                                    {
+                                      type: 'TextField',
+                                      props: { label: 'Message', placeholder: 'Write something…', fullWidth: true, multiline: true, rows: 3 },
+                                    },
+                                  ],
+                                },
+                              ],
+                            },
+                            {
+                              type: 'Paper',
+                              props: { sx: { p: 1.5, borderRadius: 2 } },
+                              children: [
+                                { type: 'Typography', props: { variant: 'subtitle1', sx: { fontWeight: 700 } }, children: ['Avatars'] },
+                                {
+                                  type: 'Box',
+                                  props: { sx: { mt: 1, display: 'flex', alignItems: 'center', gap: 1 } },
+                                  children: [
+                                    {
+                                      type: 'Box',
+                                      props: {
+                                        sx: {
+                                          width: 42,
+                                          height: 42,
+                                          borderRadius: '50%',
+                                          overflow: 'hidden',
+                                          border: '1px solid',
+                                          borderColor: 'divider',
+                                          backgroundColor: 'background.default',
+                                        },
+                                      },
+                                      children: [
+                                        {
+                                          type: 'Box',
+                                          props: {
+                                            component: 'img',
+                                            src: 'https://res.cloudinary.com/dkwnxf6gm/image/upload/w_96/v1761276578/this.gui.npm.png',
+                                            alt: 'GUI',
+                                            sx: { width: '100%', height: '100%', objectFit: 'cover' },
+                                          },
+                                        },
+                                      ],
+                                    },
+                                    {
+                                      type: 'Box',
+                                      props: { sx: { flex: 1 } },
+                                      children: [
+                                        { type: 'Typography', props: { variant: 'subtitle2', sx: { fontWeight: 700 } }, children: ['neurons.me'] },
+                                        {
+                                          type: 'Typography',
+                                          props: { variant: 'caption', sx: { color: 'text.secondary' } },
+                                          children: ['Theme-aware identity header'],
+                                        },
+                                      ],
+                                    },
+                                    { type: 'Button', props: { variant: 'outlined', size: 'small' }, children: ['Follow'] },
+                                  ],
+                                },
+                              ],
+                            },
+                            {
+                              type: 'Paper',
+                              props: { sx: { p: 1.5, borderRadius: 2 } },
+                              children: [
+                                { type: 'Typography', props: { variant: 'subtitle1', sx: { fontWeight: 700 } }, children: ['Layout / Grid'] },
+                                {
+                                  type: 'Box',
+                                  props: {
+                                    sx: {
+                                      mt: 1,
+                                      display: 'grid',
+                                      gridTemplateColumns: 'repeat(3, 1fr)',
+                                      gap: 1,
+                                    },
+                                  },
+                                  children: [
+                                    { type: 'Box', props: { sx: { p: 1, borderRadius: 1.5, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' } }, children: [
+                                      { type: 'Typography', props: { variant: 'caption', sx: { color: 'text.secondary' } }, children: ['Card A'] },
+                                      { type: 'Typography', props: { variant: 'subtitle2', sx: { fontWeight: 700 } }, children: ['Atoms'] },
+                                    ] },
+                                    { type: 'Box', props: { sx: { p: 1, borderRadius: 1.5, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' } }, children: [
+                                      { type: 'Typography', props: { variant: 'caption', sx: { color: 'text.secondary' } }, children: ['Card B'] },
+                                      { type: 'Typography', props: { variant: 'subtitle2', sx: { fontWeight: 700 } }, children: ['Molecules'] },
+                                    ] },
+                                    { type: 'Box', props: { sx: { p: 1, borderRadius: 1.5, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' } }, children: [
+                                      { type: 'Typography', props: { variant: 'caption', sx: { color: 'text.secondary' } }, children: ['Card C'] },
+                                      { type: 'Typography', props: { variant: 'subtitle2', sx: { fontWeight: 700 } }, children: ['Components'] },
+                                    ] },
+                                  ],
+                                },
+                              ],
+                            },
+                          ],
+                        },
+
+                        // Footer note
+                        {
+                          type: 'Typography',
+                          props: { variant: 'caption', sx: { display: 'block', mt: 2, color: 'text.secondary' } },
+                          children: [
+                            'Everything above is rendered from the JSON spec on the right. Try editing the spec and reloading.',
                           ],
                         },
                       ],
+                    },
+                    {
+                      type: 'CodeBlock',
+                      props: {
+                        title: 'spec.json (source)',
+                        language: 'json',
+                        variant: 'dark',
+                        showLineNumbers: true,
+                        wrapLongLines: true,
+                        // placeholder (filled below)
+                        code: '',
+                      },
                     },
                   ],
                 },
@@ -160,11 +331,11 @@
           ],
         };
 
-        // Inject JSON into the CodeBlock node (first child in the grid)
+        // Inject JSON into the CodeBlock node (second child in the grid)
         try {
           const json = JSON.stringify(spec, null, 2);
           const codeBlockNode =
-            spec?.children?.[0]?.children?.[0]?.children?.[0];
+            spec?.children?.[0]?.children?.[0]?.children?.[1];
           if (codeBlockNode && codeBlockNode.type === 'CodeBlock') {
             codeBlockNode.props.code = json;
           }
