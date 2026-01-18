@@ -1,0 +1,94 @@
+import { Meta, Title, Subtitle } from '@storybook/addon-docs/blocks';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+
+
+
+<Meta title="Getting Started" />
+
+<Title />
+<Subtitle />
+
+<Box
+  sx={{
+    width: '100%',
+    minHeight: '100vh',
+    backgroundColor: 'background.default',
+    color: 'text.primary',
+  }}
+>
+  <Box
+    component="section"
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '70vh',
+      p: 5,
+      textAlign: 'center',
+    }}
+  >
+    <img
+      src="GUI.png"
+      alt="This.GUI"
+      style={{
+        width: '320px',
+        height: 'auto',
+        imageRendering: 'auto',
+        marginBottom: '14px',
+      }}
+    />
+
+    <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: '-0.04em', mb: 1 }}>
+      .GUI
+    </Typography>
+
+    <Typography variant="h5" sx={{ fontWeight: 500, opacity: 0.85, mb: 2 }}>
+      Composable, Declarative and Imperative.
+    </Typography>
+
+    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
+      <Button
+        variant="contained"
+        color="primary"
+        component="a"
+        href="https://neurons-me.github.io/this.GUI"
+        sx={{ px: 2.25 }}
+      >
+        window.GUI
+      </Button>
+
+      <Button
+        variant="outlined"
+        color="secondary"
+        component="a"
+        href="https://www.npmjs.com/search?q=this.gui"
+        sx={{ px: 2.25 }}
+      >
+        npx this.gui
+      </Button>
+
+      <Button
+        variant="text"
+        color="inherit"
+        component="a"
+        href="https://neurons.me"
+        startIcon={
+          <img
+            src="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760629056/neurons-grey_hxjcom.png"
+            alt="neurons.me"
+            width={32}
+            height={34}
+            style={{ opacity: 0.9, filter: 'grayscale(1)' }}
+          />
+        }
+        sx={{ px: 2.25, opacity: 0.9 }}
+      >
+        neurons.me
+      </Button>
+    </Stack>
+  </Box>
+</Box>

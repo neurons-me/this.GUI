@@ -12,7 +12,13 @@ import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 const isDemo = process.env.DEMO === 'true';
-const isStorybook = process.env.STORYBOOK === 'true';
+const lifecycle = process.env.npm_lifecycle_event || '';
+const argv = process.argv.join(' ');
+const isStorybook =
+  process.env.STORYBOOK === 'true' ||
+  process.env.SB === 'true' ||
+  lifecycle.includes('storybook') ||
+  argv.includes('storybook');
 const isUMD = process.env.UMD === 'true';
 export default defineConfig({
   plugins: [

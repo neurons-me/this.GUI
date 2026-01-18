@@ -16,7 +16,7 @@ The **Layout** component wires the responsive shell used across This.GUI demos. 
 ---
 ## Features
 - **Context wiring** – wraps children with the required providers (LeftSidebar, RightSidebar) so hooks and insets work automatically.
-- **Composable regions** – optional \`topBarConfig\`, \`leftSidebarConfig\`, \`rightSidebarConfig\`, and \`footerConfig\` let you enable only what you need.
+- **Composable regions** – optional \`TopBar\`, \`LeftSideBar\`, \`RightSideBar\`, and \`Footer\` let you enable only what you need.
 - **Inset aware** – whenever a sidebar expands or collapses, the layout updates theme insets so the TopBar/Footer and main content stay aligned.
 - **Story-friendly** – serves as an orchestration helper in Storybook; in production you can lift the same pattern to your app shell.
 
@@ -26,7 +26,7 @@ The **Layout** component wires the responsive shell used across This.GUI demos. 
 {
   "type": "Layout",
   "props": {
-    "topBarConfig": {
+    "TopBar": {
       "title": "Workspace",
       "elementsRight": [
         {
@@ -37,7 +37,7 @@ The **Layout** component wires the responsive shell used across This.GUI demos. 
         }
       ]
     },
-    "leftSidebarConfig": {
+    "LeftSideBar": {
       "elements": [
         {
           "type": "link",
@@ -65,7 +65,8 @@ The **Layout** component wires the responsive shell used across This.GUI demos. 
         }
       ]
     },
-    "footerConfig": {
+    "RightSideBar": { "elements": [] },
+    "Footer": {
       "brandLabel": "Neuroverse",
       "centerElements": [
         {
@@ -107,19 +108,19 @@ Use the layout as a shell around your routes or dashboard pages. Pass config obj
 function DashboardPage() {
   return (
     <Layout
-      topBarConfig={{
+      TopBar={{
         title: "Analytics",
         elementsRight: [
           { type: "action", props: { element: <ThemeModeToggle variant="minimal" /> } },
         ],
       }}
-      leftSidebarConfig={{
+      LeftSideBar={{
         elements: [
           { type: "link", props: { label: "Overview", icon: "home" } },
           { type: "link", props: { label: "Reports", icon: "insights" } },
         ],
       }}
-      rightSidebarConfig={{
+      RightSideBar={{
         elements: [
           { type: "link", props: { label: "Alerts", icon: "notifications" } },
         ],
@@ -133,12 +134,18 @@ function DashboardPage() {
 
 ---
 ## Notes
-- Config objects mirror the props of the individual components (TopBar, LeftSidebar, RightSidebar, Footer). Anything you can pass there can be forwarded through the layout.
+- Props objects mirror the props of the individual components (TopBar, LeftSidebar, RightSidebar, Footer). (Legacy \`*Config\` props are still supported.)
 - Set a config to \`false\` (or omit it) to exclude that region entirely.
 - Children render in document order beneath any enabled sidebars/top bar – for sticky layouts remember to add padding or section containers as shown below.
 `,
       },
     },
+  },
+  argTypes: {
+    TopBar: { control: 'object' },
+    LeftSideBar: { control: 'object' },
+    RightSideBar: { control: 'object' },
+    Footer: { control: 'object' },
   },
 };
 
@@ -213,7 +220,7 @@ type Story = StoryObj<typeof Layout>;
 export const TopOnly: Story = {
   render: Template,
   args: {
-    topBarConfig: {
+    TopBar: {
       title: "Neuroverse",
       elementsRight: [
         {
@@ -224,9 +231,9 @@ export const TopOnly: Story = {
         },
       ],
     },
-    leftSidebarConfig: false,
-    rightSidebarConfig: false,
-    footerConfig: false,
+    LeftSideBar: false,
+    RightSideBar: false,
+    Footer: false,
   },
 };
 
@@ -234,7 +241,7 @@ export const TopWithLeftSidebar: Story = {
   render: Template,
   args: {
     ...TopOnly.args,
-    leftSidebarConfig: {
+    LeftSideBar: {
       elements: [
         { type: "link", props: { label: "Overview", icon: "dashboard" } },
         {
@@ -260,7 +267,7 @@ export const TopWithLeftAndRight: Story = {
   render: Template,
   args: {
     ...TopWithLeftSidebar.args,
-    rightSidebarConfig: {
+    RightSideBar: {
       elements: [
         { type: "link", props: { label: "Activity", icon: "history" } },
         { type: "action", props: { label: "Export", icon: "download" } },
@@ -273,7 +280,7 @@ export const FullShellWithFooter: Story = {
   render: Template,
   args: {
     ...TopWithLeftAndRight.args,
-    footerConfig: {
+    Footer: {
       brandLabel: "Neuroverse",
       brandLogo: "https://neurons.me/neurons.me.png",
       centerElements: [
@@ -292,10 +299,10 @@ export const FullShellWithFooter: Story = {
 export const ContentOnly: Story = {
   render: Template,
   args: {
-    topBarConfig: false,
-    leftSidebarConfig: false,
-    rightSidebarConfig: false,
-    footerConfig: false,
+    TopBar: false,
+    LeftSideBar: false,
+    RightSideBar: false,
+    Footer: false,
   },
 };
 
@@ -303,24 +310,23 @@ export const ContentOnly: Story = {
 export const LayoutWithPage: Story = {
   render: () => (
     <Layout
-      topBarConfig={{ title: 'Neuroverse Workspace' }}
-      leftSidebarConfig={{
+      TopBar={{ title: 'Neuroverse Workspace' }}
+      LeftSideBar={{
         elements: [
           { type: 'link', props: { label: 'Home', icon: 'home' } },
           { type: 'link', props: { label: 'Analytics', icon: 'insights' } },
         ],
       }}
-      rightSidebarConfig={{
+      RightSideBar={{
         elements: [
           { type: 'link', props: { label: 'Chat', icon: 'chat' } },
         ],
       }}
-      footerConfig={{
+      Footer={{
         brandLabel: 'Neuroverse',
         centerElements: [
           { type: 'link', props: { label: 'Docs', icon: 'menu_book' } },
         ],
-        position: 'fixed',
       }}
     >
       <Page padding={4}>

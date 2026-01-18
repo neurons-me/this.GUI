@@ -20,7 +20,6 @@ export const parameters = {
   controls: { matchers: { color: /(background|color)$/i, date: /Date$/i } },
   backgrounds: { disable: true },
   docs: { page: null, theme: themes.dark },
-
   // Sidebar ordering
   options: {
     storySort: {
