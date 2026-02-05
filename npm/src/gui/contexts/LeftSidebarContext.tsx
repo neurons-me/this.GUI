@@ -7,7 +7,7 @@ export type LeftSidebarContextType = {
 };
 
 export const LeftSidebarContext = createContext<LeftSidebarContextType | undefined>(undefined);
-export const LeftSidebarProvider: React.FC<{ children: React.ReactNode; initialView?: LeftSidebarView }> = ({
+export const LeftBarProvider: React.FC<{ children: React.ReactNode; initialView?: LeftSidebarView }> = ({
   children,
   initialView = 'rail',
 }) => {

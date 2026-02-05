@@ -16,7 +16,7 @@
 //
 // Usage examples:
 //   // ✅ Recommended (tree-shakeable)
-//   import { GuiProvider, ThemeModeToggle, Icon } from 'this.gui';
+//   import { Theme, ThemeModeToggle, Icon } from 'this.gui';
 //
 //   // ✅ UMD/global usage (browser)
 //   // window.GUI.Button, window.GUI.mount, etc.
@@ -32,7 +32,10 @@
 //   entrypoint (e.g. `this.gui/full`) if you decide to offer that convenience.
 // =========================================
 // 1) constants
-export const version = '1.3.49';
+declare const __GUI_VERSION__: string;
+const injectedVersion = typeof __GUI_VERSION__ !== 'undefined' ? __GUI_VERSION__ : undefined;
+export const version = injectedVersion || '0.0.0-dev';
+export type { Theme as MuiTheme } from '@mui/material/styles';
 // 2) named exports (tree-shakeable)
 // Core primitives (ergonomic root exports)
 // NOTE: Export from concrete modules (not barrels) to preserve tree-shaking and avoid pulling in the whole atoms surface.
@@ -45,7 +48,7 @@ export { default as Typography } from '@/gui/atoms/Typography/Typography';
 // Friendly aliases (optional ergonomics)
 export { default as Text } from '@/gui/atoms/Typography/Typography';
 export { default as Input } from '@/gui/atoms/TextField/TextField';
-export { default as GuiProvider } from '@/gui/Theme/GuiProvider';
+export { default as Theme } from '@/gui/Theme/Theme';
 export { default as Layout } from '@/gui/Layout/Layout';
 export { default as Icon } from '@/gui/Theme/Icon/Icon';
 export { default as ThemeModeToggle } from '@/gui/Theme/ToggleMode/ToggleMode';
@@ -65,9 +68,8 @@ export {
 //   window.GUI.Button
 //   window.GUI.Atoms.Button
 // without any `window.GUI.default` wrapper.
-
 // NOTE: We still import concrete modules (not barrels) to preserve tree-shaking.
-import GuiProvider from '@/gui/Theme/GuiProvider';
+import ThemeComponent from '@/gui/Theme/Theme';
 import Box from '@/gui/atoms/Box/Box';
 import Button from '@/gui/atoms/Button/Button';
 import Link from '@/gui/atoms/Link/Link';
@@ -120,8 +122,8 @@ export const Components = {
   Icon,
   ThemeModeToggle,
 } as const;
-export const Theme = {
-  GuiProvider,
+export const ThemeRuntime = {
+  Theme: ThemeComponent,
   Layout,
   Icon,
   ThemeModeToggle,
@@ -132,6 +134,7 @@ export const atoms = Atoms;
 export const molecules = Molecules;
 export const widgets = Widgets;
 export const components = Components;
+export const theme = ThemeRuntime;
 // Menus registry (kept explicit to avoid accidental surface growth)
 export const menus = {
   'GUI-Tools': {

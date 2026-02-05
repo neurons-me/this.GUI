@@ -5,7 +5,7 @@ A collection of components and building blocks enabling **.GUI** generation.
 
 ### Links
 - **.GUI Website:** https://neurons-me.github.io/GUI/
-- **Storybook:** https://neurons-me.github.io/GUI/storybook-static/
+- **Storybook:** https://neurons-me.github.io/storybook-static/
 
 ## Quick Start (npx)
 
@@ -31,7 +31,7 @@ This generates a **minimal app** pre-wired with `this.gui`.
 
 ### What you get
 - `src/main.tsx` boots a React app
-- `GuiProvider` is already mounted
+- `Theme` is already mounted
 - A simple `App.tsx` example using core atoms
 
 <img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/w_320/v1761281165/geometry_shapes-removebg-preview_anrdke.png" alt="Geometry shapes" width="244" />
@@ -44,7 +44,7 @@ This generates a **minimal app** pre-wired with `this.gui`.
 npm install this.gui
 ```
 
-All components are theme-aware and automatically inherit styles and tokens from the `GuiProvider`
+All components are theme-aware and automatically inherit styles and tokens from the `Theme` provider
 
 - Explore components in Storybook: https://neurons-me.github.io/GUI/storybook-static/
 - Import atoms directly:
@@ -62,7 +62,7 @@ import { Button as AtomButton } from "this.gui/atoms";
 import "this.gui/style.css";
 ```
 
-> **Tip:** If you're using the UMD build in a plain HTML page, include `this.gui.css` from the `dist/` folder and load `this.gui.umd.js` via a `<script>` tag.
+> **Tip:** If you're using the UMD build in a plain HTML page, include `styles.css` from the `dist/` folder and load `this.gui.umd.js` via a `<script>` tag.
 
 ## 🪐 License
 MIT © [neurons.me](https://neurons.me)

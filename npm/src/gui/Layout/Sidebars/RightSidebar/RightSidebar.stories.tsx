@@ -65,7 +65,7 @@ import RightSidebar from '@/gui/Layouts/ResponsiveUI/Sidebars/RightSidebar/Right
 ## React usage
 Combine the context provider and hook to manage the view explicitly:
 ~~~tsx
-import { RightSidebarProvider } from '@/gui/contexts';
+import { RightBarProvider } from '@/gui/contexts';
 import { useRightSidebar } from '@/gui/hooks';
 import RightSidebar from '@/gui/Layouts/ResponsiveUI/Sidebars/RightSidebar/RightSidebar';
 
@@ -85,9 +85,9 @@ function Inspector() {
 
 export function InspectorShell() {
   return (
-    <RightSidebarProvider>
+    <RightBarProvider>
       <Inspector />
-    </RightSidebarProvider>
+    </RightBarProvider>
   );
 }
 ~~~

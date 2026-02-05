@@ -2,17 +2,17 @@
 import React from 'react'
 import { CssBaseline } from '@mui/material'
 import 'material-symbols/rounded.css';
-import { GuiProvider } from '../src/gui/Theme/GuiProvider';
+import { Theme } from '../index';
 import { themes } from 'storybook/theming';
 import { MemoryRouter } from 'react-router-dom';
 export const decorators = [
   (Story: React.FC) => (
-      <GuiProvider initialThemeId="neurons.me" initialMode="light">
+      <Theme initialThemeId="neurons.me" initialMode="light">
         <CssBaseline />
         <MemoryRouter initialEntries={['/']}>
           <Story />
         </MemoryRouter>
-      </GuiProvider>
+      </Theme>
   ),
 ];
 

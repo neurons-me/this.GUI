@@ -65,9 +65,9 @@ import LeftSidebar from '@/gui/Layouts/ResponsiveUI/Sidebars/LeftSidebar/LeftSid
 
 ---
 ## React usage
-Wrap your layout with \`LeftSidebarProvider\` and consume \`useLeftSidebar()\` to control the view programmatically:
+Wrap your layout with \`LeftBarProvider\` and consume \`useLeftSidebar()\` to control the view programmatically:
 ~~~tsx
-import { LeftSidebarProvider } from '@/gui/contexts';
+import { LeftBarProvider } from '@/gui/contexts';
 import LeftSidebar from '@/gui/Layouts/ResponsiveUI/Sidebars/LeftSidebar/LeftSidebar';
 import { useLeftSidebar } from '@/gui/hooks';
 
@@ -90,9 +90,9 @@ function Shell() {
 
 export function AppShell() {
   return (
-    <LeftSidebarProvider>
+    <LeftBarProvider>
       <Shell />
-    </LeftSidebarProvider>
+    </LeftBarProvider>
   );
 }
 ~~~

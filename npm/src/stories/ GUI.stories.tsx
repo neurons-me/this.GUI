@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import GuiProvider from '@/gui/Theme/GuiProvider';
+import Theme from '@/gui/Theme/Theme';
 import Icon from '@/gui/Theme/Icon/Icon';
 import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 import {
@@ -47,7 +47,7 @@ export const EnsureMaterialSymbols = () => {
 
 const Home = () => {
   return (
-  <GuiProvider>
+  <Theme>
   <EnsureMaterialSymbols />
   <Box
     sx={{
@@ -607,7 +607,7 @@ const Home = () => {
       Designed in Veracruz.
       </Typography>
   </Box>
-    </GuiProvider>
+    </Theme>
   );
 };
 import type { Meta, StoryObj } from '@storybook/react';

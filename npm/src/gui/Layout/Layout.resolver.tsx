@@ -15,11 +15,14 @@ const LayoutResolver: RegistryEntry = {
     const props = spec.props ?? {};
 
     // Allow declarative specs to use semantic region names (preferred):
-    //   TopBar / LeftSideBar / RightSideBar / Footer
-    // while still supporting legacy *Config keys.
+    //   TopBar / LeftBar / RightBar / Footer
+    // while still supporting legacy *Config keys and older LeftSideBar/RightSideBar.
     // We normalize to the legacy prop names that the Layout component expects.
     const {
       TopBar,
+      LeftBar,
+      RightBar,
+      // Deprecated aliases
       LeftSideBar,
       RightSideBar,
       Footer,
@@ -33,8 +36,8 @@ const LayoutResolver: RegistryEntry = {
     const normalizedProps = {
       ...rest,
       topBarConfig: TopBar ?? topBarConfig,
-      leftSidebarConfig: LeftSideBar ?? leftSidebarConfig,
-      rightSidebarConfig: RightSideBar ?? rightSidebarConfig,
+      leftSidebarConfig: LeftBar ?? LeftSideBar ?? leftSidebarConfig,
+      rightSidebarConfig: RightBar ?? RightSideBar ?? rightSidebarConfig,
       footerConfig: Footer ?? footerConfig,
     };
 

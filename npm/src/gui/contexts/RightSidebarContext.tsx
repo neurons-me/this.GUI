@@ -9,7 +9,7 @@ export type RightSidebarContextType = {
 
 export const RightSidebarContext = createContext<RightSidebarContextType | undefined>(undefined);
 
-export const RightSidebarProvider: React.FC<{ children: React.ReactNode; initialView?: RightSidebarView }> = ({
+export const RightBarProvider: React.FC<{ children: React.ReactNode; initialView?: RightSidebarView }> = ({
   children,
   initialView = 'rail',
 }) => {
@@ -21,5 +21,3 @@ export const RightSidebarProvider: React.FC<{ children: React.ReactNode; initial
     </RightSidebarContext.Provider>
   );
 };
-
-export default RightSidebarProvider;

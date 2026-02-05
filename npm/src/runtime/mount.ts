@@ -75,16 +75,16 @@ export function mount(
     (gui?.theme && (gui.theme.InsetsProvider || gui.theme.insetsProvider));
 
   // If your GUI has a top-level theme/provider (common in this.GUI), wrap with it as well.
-  const GuiProvider =
-    (gui && (gui.GuiProvider || gui.GUIProvider)) ||
-    (gui?.Theme && (gui.Theme.GuiProvider || gui.Theme.GUIProvider)) ||
-    (gui?.theme && (gui.theme.GuiProvider || gui.theme.GUIProvider));
+  const ThemeProvider =
+    gui?.Theme ||
+    gui?.theme?.Theme ||
+    (gui?.Theme && gui.Theme.Theme);
 
   if (InsetsProvider) {
     el = React.createElement(InsetsProvider as any, null, el);
   }
-  if (GuiProvider) {
-    el = React.createElement(GuiProvider as any, null, el);
+  if (ThemeProvider) {
+    el = React.createElement(ThemeProvider as any, null, el);
   }
 
   root.render(el);

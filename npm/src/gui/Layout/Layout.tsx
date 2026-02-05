@@ -1,6 +1,6 @@
 // Layout/Layout/Layout.tsx
-import { LeftSidebarProvider } from '@/gui/contexts/LeftSidebarContext';
-import { RightSidebarProvider } from '@/gui/contexts/RightSidebarContext';
+import { LeftBarProvider } from '@/gui/contexts/LeftSidebarContext';
+import { RightBarProvider } from '@/gui/contexts/RightSidebarContext';
 import Box from '@/gui/atoms/Box/Box';
 import TopBar from '@/gui/Layout/TopBar/TopBar';
 import LeftSidebar from '@/gui/Layout/Sidebars/LeftSidebar/LeftSidebar';
@@ -11,34 +11,46 @@ import Content from '@/gui/Layout/Content/Content';
 import type { LayoutProps } from './Layout.types';
 function Layout({
   topBarConfig = false,
-  leftSidebarConfig = false,
-  rightSidebarConfig = false,
+  leftSidebarConfig: legacyLeftConfig = false,
+  rightSidebarConfig: legacyRightConfig = false,
   footerConfig = false,
+  TopBar: TopBarProp,
+  LeftBar,
+  RightBar,
+  LeftSideBar: legacyLeftBar,
+  RightSideBar: legacyRightBar,
+  Footer: FooterProp,
   children,
 }: LayoutProps) {
-  const hasTopBar = Boolean(topBarConfig);
-  const hasLeftSidebar = Boolean(leftSidebarConfig);
-  const hasRightSidebar = Boolean(rightSidebarConfig);
+  // Normalize preferred + legacy props into the config fields the layout consumes.
+  const resolvedTopBar = TopBarProp ?? topBarConfig;
+  const resolvedLeft = LeftBar ?? legacyLeftBar ?? legacyLeftConfig;
+  const resolvedRight = RightBar ?? legacyRightBar ?? legacyRightConfig;
+  const resolvedFooter = FooterProp ?? footerConfig;
+
+  const hasTopBar = Boolean(resolvedTopBar);
+  const hasLeftBar = Boolean(resolvedLeft);
+  const hasRightBar = Boolean(resolvedRight);
   const leftInitialView =
-    typeof leftSidebarConfig === 'object' && 'initialView' in leftSidebarConfig
-      ? leftSidebarConfig.initialView
+    typeof resolvedLeft === 'object' && 'initialView' in resolvedLeft
+      ? (resolvedLeft as any).initialView
       : undefined;
   const rightInitialView =
-    typeof rightSidebarConfig === 'object' && 'initialView' in rightSidebarConfig
-      ? rightSidebarConfig.initialView
+    typeof resolvedRight === 'object' && 'initialView' in resolvedRight
+      ? (resolvedRight as any).initialView
       : undefined;
   return (
-    <LeftSidebarProvider initialView={leftInitialView}>
-      <RightSidebarProvider initialView={rightInitialView}>
+    <LeftBarProvider initialView={leftInitialView}>
+      <RightBarProvider initialView={rightInitialView}>
         <Box
           id="layout-root"
           sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}
         >
           {hasTopBar && (
             <TopBar
-              {...(typeof topBarConfig === 'object'
+              {...(typeof resolvedTopBar === 'object'
                 ? (() => {
-                    const { showMenuButton, brandLogo, ...rest } = topBarConfig as any;
+                    const { showMenuButton, brandLogo, ...rest } = resolvedTopBar as any;
                     return {
                       ...rest,
                       // Convention: use `brandLogo` as the config field, but TopBar expects `logo`.
@@ -49,25 +61,25 @@ function Layout({
             />
           )}
           <Box sx={{ display: 'flex', flex: 1 }}>
-            {hasLeftSidebar && (
+            {hasLeftBar && (
               <LeftSidebar
                 elements={[]}
-                {...(typeof leftSidebarConfig === 'object' ? leftSidebarConfig : {})}
+                {...(typeof resolvedLeft === 'object' ? (resolvedLeft as any) : {})}
               />
             )}
-<Content disableInsetPadding>
-  {children ?? <Namespace />}
-</Content>
-            {hasRightSidebar && (
+            <Content>
+              {children ?? <Namespace />}
+            </Content>
+            {hasRightBar && (
               <RightSidebar
                 elements={[]}
-                {...(typeof rightSidebarConfig === 'object' ? rightSidebarConfig : {})}
+                {...(typeof resolvedRight === 'object' ? (resolvedRight as any) : {})}
               />
             )}
           </Box>
-          {footerConfig && (
+          {resolvedFooter && (
             <Footer
-              {...(typeof footerConfig === 'object'
+              {...(typeof resolvedFooter === 'object'
                 ? (() => {
                     const {
                       title,
@@ -86,7 +98,7 @@ function Layout({
                       appBarSx,
                       sectionSx,
                       'data-testid': dataTestId,
-                    } = footerConfig;
+                    } = resolvedFooter;
                     return {
                       brandLabel: brandLabel ?? title,
                       brandLogo,
@@ -109,8 +121,8 @@ function Layout({
             />
           )}
         </Box>
-      </RightSidebarProvider>
-    </LeftSidebarProvider>
+      </RightBarProvider>
+    </LeftBarProvider>
   );
 }
 

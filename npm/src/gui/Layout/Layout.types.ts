@@ -36,16 +36,24 @@ export interface FooterConfig {
 
 export interface LayoutProps {
   // Legacy names (supported)
+  /** @deprecated use TopBar */
   topBarConfig?: TopBarConfig | boolean;
+  /** @deprecated use LeftBar */
   leftSidebarConfig?: LeftSidebarConfig | boolean;
+  /** @deprecated use RightBar */
   rightSidebarConfig?: RightSidebarConfig | boolean;
+  /** @deprecated use Footer */
   footerConfig?: FooterConfig | boolean;
 
   // New semantic names (preferred)
   TopBar?: TopBarConfig | boolean;
+  LeftBar?: LeftSidebarConfig | boolean;
+  RightBar?: RightSidebarConfig | boolean;
+  Footer?: FooterConfig | boolean;
+
+  // Deprecated aliases (kept for back-compat)
   LeftSideBar?: LeftSidebarConfig | boolean;
   RightSideBar?: RightSidebarConfig | boolean;
-  Footer?: FooterConfig | boolean;
 
   children?: ReactNode;
 }

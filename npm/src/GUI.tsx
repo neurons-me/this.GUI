@@ -1,8 +1,8 @@
 // src/GUI.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { GuiProvider } from '../index';
-import { QRouter } from '@/QRouter/QRouter';
+import Theme from '@/gui/Theme/Theme';
+import { QRouter } from '@/Router/Router';
 import { GuiRegistry as CORE_REGISTRY, extendRegistry } from '@/Registry';
 import type { GuiRegistry as GuiRegistryType } from '@/Registry/types';
 export type GuiSpecNode = { type: string; props?: Record<string, any>; children?: any };
@@ -51,24 +51,25 @@ function renderSpec(registry: GuiRegistryType, spec: any, ctx?: any): any {
   return entry.resolve(spec, ctx);
 }
 
-export function mountSpec(root: Element | string, spec: any, ctx?: any) {
-  const el = typeof root === 'string' ? document.querySelector(root) : root;
+export function mountSpec(target: Element | string, spec: any, ctx?: any) {
+  const el = typeof target === 'string' ? document.querySelector(target) : target;
   if (!el) return;
   const defaultSpec = { type: 'Home', props: {} };
   const finalSpec = (spec === undefined || spec === null) ? defaultSpec : spec;
   const mount = document.createElement('div');
   el.appendChild(mount);
-  ReactDOM.createRoot(mount).render(
-    <GuiProvider>
+  const reactRoot = ReactDOM.createRoot(mount);
+  reactRoot.render(
+    <Theme>
       <QRouter>
         {renderSpec(__GUI_REGISTRY__, finalSpec, ctx)}
       </QRouter>
-    </GuiProvider>
+    </Theme>
   );
   return () => {
     try {
       // best-effort unmount
-      ReactDOM.createRoot(mount).unmount();
+      reactRoot.unmount();
     } catch {}
     mount.remove();
   };
@@ -79,14 +80,14 @@ export const GUI = ({ title = 'this.GUI', children, spec, resolvers, ctx }: GUIP
   const fallbackSpec = { type: 'Home', props: {} };
   const content = spec ? renderSpec(__GUI_REGISTRY__, spec, ctx) : (children ?? renderSpec(__GUI_REGISTRY__, fallbackSpec, ctx));
   return (
-    <GuiProvider>
+    <Theme>
       <QRouter>
         <main style={{ padding: '2rem' }}>
           <h1>{title}</h1>
           {content ?? <p>Ready to render declarative GUI components.</p>}
         </main>
       </QRouter>
-    </GuiProvider>
+    </Theme>
   );
 };
 
@@ -115,6 +116,15 @@ if (typeof window !== 'undefined') {
   (window as any).GUI = (window as any).GUI || {};
   (window as any).GUI.install = (entries: any[]) => installResolvers(entries);
   (window as any).GUI.mount = (selector: string, spec?: any, ctx?: any) => mountSpec(selector, spec, ctx);
+
+  // Expose version on the global (UMD) surface
+  const injectedVersion =
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    typeof __GUI_VERSION__ !== 'undefined' ? __GUI_VERSION__ : undefined;
+  const v = injectedVersion || (typeof process !== 'undefined' ? process.env?.npm_package_version : undefined) || '0.0.0-dev';
+  (window as any).GUI.version = v;
+  (window as any).GUI.VERSION = v;
 
   window.addEventListener('DOMContentLoaded', () => {
     const rootTag = document.querySelector('gui-app');

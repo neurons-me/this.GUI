@@ -4,7 +4,7 @@ import { MDXProvider } from '@mdx-js/react';
 // Keep the MDX layer minimal: it should only provide
 // (1) component mappings and (2) optional wrappers (providers).
 // It should NOT depend on `GUI.tsx` (which mounts an app + router).
-import GuiProvider from '@/gui/Theme/GuiProvider';
+import Theme from '@/gui/Theme/Theme';
 import { Button } from '@/gui/atoms';
 import CodeBlock from '@/gui/molecules';
 export type GuiMDXComponents = Record<string, any>;
@@ -21,19 +21,19 @@ export type GuiMDXProps = {
   children: React.ReactNode;
   /** Override/extend the default MDX component mapping */
   components?: GuiMDXComponents;
-  /** Wrap content with GuiProvider (disable if the host already provides it) */
-  withGuiProvider?: boolean;
+  /** Wrap content with Theme (disable if the host already provides it) */
+  withTheme?: boolean;
 };
 
 export function GuiMDX({
   children,
   components,
-  withGuiProvider = true,
+  withTheme = true,
 }: GuiMDXProps) {
   const merged = { ...guiMdxComponents, ...(components || {}) };
   const content = <MDXProvider components={merged}>{children}</MDXProvider>;
-  if (withGuiProvider) {
-    return <GuiProvider>{content}</GuiProvider>;
+  if (withTheme) {
+    return <Theme>{content}</Theme>;
   }
 
   return content;

@@ -3,10 +3,10 @@
 </p>
 <h1 align="center">.GUI</h1>
 <p align="center">
-  A collection of components and building blocks for the <strong>neurons.me</strong> environment,<br/>
-  enabling <strong>GUI </strong> generation powered by AI.</br> </br>  
-<strong>Composable, Declarative and Imperative.</strong>
+  A collection of components and building blocks for <strong>GUI </strong> generation powered by AI.</br> </br>  
+<strong>Composable, Declarative && Imperative.</strong>
 </p>
+
 
 
 ---

@@ -1,7 +1,7 @@
 {
   "name": "this.gui",
   "private": false,
-  "version": "1.3.67",
+  "version": "1.4.1",
   "type": "module",
   "main": "./dist/this.gui.cjs",
   "module": "./dist/this.gui.es.js",
@@ -15,12 +15,22 @@
       "import": "./dist/this.gui.es.js",
       "require": "./dist/this.gui.cjs"
     },
-    "./style.css": "./dist/this.gui.css",
-    "./style": "./dist/this.gui.css",
+    "./style.css": "./dist/styles.css",
+    "./style": "./dist/styles.css",
     "./atoms": {
       "types": "./dist/atoms/index.d.ts",
       "import": "./dist/atoms/index.js",
       "require": "./dist/atoms/index.cjs"
+    },
+    "./molecules": {
+      "types": "./dist/molecules/index.d.ts",
+      "import": "./dist/molecules/index.js",
+      "require": "./dist/molecules/index.cjs"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.js",
+      "require": "./dist/components/index.cjs"
     }
   },
   "files": [
@@ -31,12 +41,15 @@
     "this.gui": "./dist/bin/cli.js"
   },
   "scripts": {
-    "build": "vite build && npm run build:types && npm run build:cli && npm run build:copy-init && npm run build:umd",
-    "build:all": "npm run build && npm run build:umd",
+    "build": "vite build && npm run build:types && npm run build:types:sync && npm run build:cli && npm run build:copy-init && npm run build:umd",
+    "build:all": "npm run build",
     "build:types": "tsc -p tsconfig.build.json",
+    "build:types:sync": "node -e \"const fs=require('fs-extra'); const path=require('path'); const copy=(from,to)=>{ if(!fs.existsSync(from)) { throw new Error('Missing type file: ' + from); } fs.ensureDirSync(path.dirname(to)); fs.copyFileSync(from,to); }; copy('dist/src/gui/atoms/index.d.ts','dist/atoms/index.d.ts'); copy('dist/src/gui/molecules/index.d.ts','dist/molecules/index.d.ts'); copy('dist/src/gui/components/index.d.ts','dist/components/index.d.ts');\"",
     "build:cli": "tsc --project tsconfig.cli.json && node -e \"import('./vite.config.js').then(m => (m.buildFinished ? m.buildFinished() : Promise.reject(new Error('buildFinished() not exported from vite.config.js')))).catch(e => { console.error(e); process.exit(1); })\"",
     "build:copy-init": "node -e \"const fs=require('fs-extra'); if(!fs.existsSync('init')){throw new Error('init directory missing at project root');} fs.removeSync('dist/init'); fs.copySync('init','dist/init');\"",
-    "build:umd": "UMD=true vite build",
+    "build:umd:core": "UMD=true UMD_TARGET=core vite build",
+    "build:umd:bootstrap": "UMD=true UMD_TARGET=bootstrap vite build",
+    "build:umd": "npm run build:umd:core && npm run build:umd:bootstrap",
     "pack:local": "npm run build && npm pack",
     "prepublishOnly": "npm run build",
     "dev": "vite",

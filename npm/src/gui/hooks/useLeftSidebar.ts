@@ -4,7 +4,7 @@ import { LeftSidebarContext } from "@/gui/contexts";
 export const useLeftSidebar = () => {
   const context = useContext(LeftSidebarContext);
   if (!context) {
-    throw new Error('useLeftSidebar must be used within a SidebarProvider');
+    throw new Error('useLeftSidebar must be used within a LeftBarProvider');
   }
   return context;
 };

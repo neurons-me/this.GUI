@@ -8,6 +8,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+const pkg = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
@@ -20,6 +21,7 @@ const isStorybook =
   lifecycle.includes('storybook') ||
   argv.includes('storybook');
 const isUMD = process.env.UMD === 'true';
+const umdTarget = process.env.UMD_TARGET || 'core'; // 'core' | 'bootstrap'
 export default defineConfig({
   plugins: [
     ...(isStorybook ? [] : [mdx({ include: ['**/*.mdx', '**/*.md'] })]),
@@ -30,6 +32,7 @@ export default defineConfig({
   ],
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
+    __GUI_VERSION__: JSON.stringify(pkg.version),
   },
   resolve: {
     alias: {
@@ -41,24 +44,37 @@ export default defineConfig({
     dedupe: ['react', 'react-dom', 'react-router', 'react-router-dom']
   },
   build: isDemo ? undefined : {
+    emptyOutDir: !isUMD,
     lib: isUMD
       ? {
-          // UMD/IIFE bundles must be single-entry; this is used for browser runtime via <script>.
-          entry: resolve(__dirname, 'index.ts'),
+          // UMD builds must be single-entry.
+          // We support two targets via env:
+          //   UMD_TARGET=core      -> dist/this.gui.umd.js
+          //   UMD_TARGET=bootstrap -> dist/this.gui.bootstrap.umd.js
+          entry:
+            umdTarget === 'bootstrap'
+              ? resolve(__dirname, 'src/runtime/bootstrap-umd.ts')
+              : resolve(__dirname, 'index.ts'),
           name: 'GUI',
           fileName: (format) => {
-            // Keep the historical filename for browser usage.
-            if (format === 'umd') return 'this.gui.umd.js';
-            if (format === 'iife') return 'this.gui.iife.js';
-            return `this.gui.${format}.js`;
+            if (format === 'umd') {
+              return umdTarget === 'bootstrap' ? 'this.gui.bootstrap.umd.js' : 'this.gui.umd.js';
+            }
+            if (format === 'iife') {
+              return umdTarget === 'bootstrap' ? 'this.gui.bootstrap.iife.js' : 'this.gui.iife.js';
+            }
+            return umdTarget === 'bootstrap'
+              ? `this.gui.bootstrap.${format}.js`
+              : `this.gui.${format}.js`;
           },
-          // Prefer UMD for widest compatibility. (Optionally you can add 'iife' too.)
           formats: ['umd'],
         }
       : {
           entry: {
             index: resolve(__dirname, 'index.ts'),
             atoms: resolve(__dirname, 'src/gui/atoms/index.ts'),
+            molecules: resolve(__dirname, 'src/gui/molecules/index.ts'),
+            components: resolve(__dirname, 'src/gui/components/index.ts'),
           },
           name: 'GUI',
           fileName: (format, entryName) => {
@@ -75,6 +91,16 @@ export default defineConfig({
               if (format === 'es') return 'atoms/index.js';
               if (format === 'cjs') return 'atoms/index.cjs';
               return `atoms/index.${format}.js`;
+            }
+            if (entryName === 'molecules') {
+              if (format === 'es') return 'molecules/index.js';
+              if (format === 'cjs') return 'molecules/index.cjs';
+              return `molecules/index.${format}.js`;
+            }
+            if (entryName === 'components') {
+              if (format === 'es') return 'components/index.js';
+              if (format === 'cjs') return 'components/index.cjs';
+              return `components/index.${format}.js`;
             }
             // Fallback for any future entrypoints
             if (format === 'cjs') return `${entryName}.cjs`;
@@ -124,6 +150,11 @@ export default defineConfig({
           'react-router-dom': 'ReactRouterDOM',
         },
         exports: 'named',
+        // Force CSS bundle to have a stable filename for consumers.
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name && assetInfo.name.endsWith('.css')) return 'styles.css';
+          return 'assets/[name].[ext]';
+        },
         banner: `;(function(){
           try {
             var g = (typeof globalThis !== 'undefined') ? globalThis : (typeof window !== 'undefined' ? window : this);
