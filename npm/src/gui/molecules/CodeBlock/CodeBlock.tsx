@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 export type CodeBlockVariant = 'dark' | 'light';
@@ -15,6 +15,8 @@ export type CodeBlockProps = {
   showLineNumbers?: boolean;
   /** Wrap long lines */
   wrapLongLines?: boolean;
+  /** Show a copy-to-clipboard button (default: true) */
+  showCopyButton?: boolean;
   /** Extra class name for outer wrapper */
   className?: string;
   /** Optional inline style for outer wrapper */
@@ -35,11 +37,47 @@ export default function CodeBlock(props: CodeBlockProps) {
     title,
     showLineNumbers = false,
     wrapLongLines = true,
+    showCopyButton = true,
     className,
     style,
   } = props;
 
   const theme = variant === 'light' ? oneLight : oneDark;
+
+  const [copied, setCopied] = useState(false);
+
+  const headerText = useMemo(() => {
+    if (!showCopyButton) return title;
+    // If copy is enabled but no title, still render a minimal header row.
+    return title || '';
+  }, [showCopyButton, title]);
+
+  const canUseClipboard = typeof navigator !== 'undefined' && !!navigator.clipboard;
+
+  const handleCopy = async () => {
+    try {
+      const text = String(code ?? '');
+      if (canUseClipboard) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for older environments
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        ta.style.top = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1200);
+    } catch {
+      // no-op
+    }
+  };
 
   return (
     <div
@@ -58,7 +96,7 @@ export default function CodeBlock(props: CodeBlockProps) {
         ...style,
       }}
     >
-      {title ? (
+      {title || showCopyButton ? (
         <div
           style={{
             padding: '10px 14px',
@@ -72,9 +110,35 @@ export default function CodeBlock(props: CodeBlockProps) {
             background:
               variant === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.04)',
             opacity: 0.9,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 10,
           }}
         >
-          {title}
+          <div style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {headerText}
+          </div>
+
+          {showCopyButton ? (
+            <button
+              type="button"
+              onClick={handleCopy}
+              aria-label="Copy code"
+              title="Copy"
+              style={{
+                fontSize: 11,
+                padding: '4px 10px',
+                cursor: 'pointer',
+                border: 'none',
+                borderRadius: 10,
+                background: variant === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.10)',
+                color: variant === 'light' ? 'rgba(0,0,0,0.75)' : 'rgba(255,255,255,0.85)',
+              }}
+            >
+              {copied ? 'Copied' : 'Copy'}
+            </button>
+          ) : null}
         </div>
       ) : null}
 

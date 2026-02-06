@@ -11,6 +11,7 @@ const meta: Meta<typeof CodeBlock> = {
     title: 'index.html',
     showLineNumbers: false,
     wrapLongLines: true,
+    showCopyButton: true,
     code: `<!doctype html>
 <html lang="en">
   <head>
@@ -76,6 +77,13 @@ export const WithLineNumbers: Story = {
   "version": "1.0.0",
   "private": false
 }`,
+  },
+};
+
+export const NoCopyButton: Story = {
+  name: 'No Copy Button',
+  args: {
+    showCopyButton: false,
   },
 };
 

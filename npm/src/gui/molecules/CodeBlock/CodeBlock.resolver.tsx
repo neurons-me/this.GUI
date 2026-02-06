@@ -17,6 +17,8 @@ export type CodeBlockSpec = {
     showLineNumbers?: boolean;
     /** Wrap long lines */
     wrapLongLines?: boolean;
+    /** Show copy-to-clipboard button (default: true) */
+    showCopyButton?: boolean;
     /** Extra class name for outer wrapper */
     className?: string;
     /** Optional inline style for outer wrapper */
@@ -41,6 +43,7 @@ const CodeBlockResolver: RegistryEntry = {
       title,
       showLineNumbers,
       wrapLongLines,
+      showCopyButton,
       className,
       style,
       id,
@@ -55,6 +58,7 @@ const CodeBlockResolver: RegistryEntry = {
         title={title}
         showLineNumbers={showLineNumbers}
         wrapLongLines={wrapLongLines}
+        showCopyButton={showCopyButton}
         className={className}
         style={style}
         id={codeBlockId}

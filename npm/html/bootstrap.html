@@ -2,9 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" 
+          content="width=device-width, 
+          initial-scale=1.0" />
+    <link 
+    rel="icon" 
+    href="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1761276578/this.gui.npm.png"/>
     <title>.GUI — Bootstrap</title>
-    <link rel="icon" href="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1761276578/this.gui.npm.png"/>
   </head>
 
   <body>
@@ -12,49 +16,27 @@
     <!-- .GUI BOOTSTRAP -->
     <script src="../dist/this.gui.bootstrap.umd.js"></script>
     <script>
-      (async function () {
-        await window.GUI.bootstrap();
-        const GUI = window.GUI;
-        const root = document.getElementById('root');
-        const version = GUI.version || 'unknown';
-        const app = {
-          type: 'Page',
-          props: {
-            title: '.GUI Bootstrap',
-            subtitle: 'Single-script HTML setup via this.gui.bootstrap.umd.js',
+  (async function () {
+    await window.GUI.bootstrap();
+    const GUI = window.GUI;
+    const root = document.getElementById('root');
+    const app = {
+      type: 'Page',
+        props: {
+          title: '.GUI Bootstrap',
+          subtitle: 'Single-script HTML Setup.',
           },
+      children: [
+          {
+          type: 'Paper',
+          props: { sx: { p: 2, borderRadius: 2, mt: 2 } },
           children: [
             {
-              type: 'Paper',
-              props: { sx: { p: 2, borderRadius: 2, mt: 2 } },
-              children: [
-                {
-                  type: 'Typography',
-                  props: { variant: 'body1', sx: { fontWeight: 800 } },
-                  children: ['✅ window.GUI is ready'],
-                },
-                {
-                  type: 'Typography',
-                  props: { variant: 'body2', sx: { mt: 1, opacity: 0.85 } },
-                  children: [`Version: ${version}`],
-                },
-                {
-                  type: 'Link',
-                  props: {
-                    href:
-                      version && version !== 'unknown'
-                        ? `https://www.npmjs.com/package/this.gui/v/${version}`
-                        : 'https://www.npmjs.com/package/this.gui',
-                    target: '_blank',
-                    rel: 'noopener noreferrer',
-                    sx: { mt: 1, display: 'inline-flex' },
-                  }
-                },
-              ],
-            },
-          ],
+              type: 'Typography',
+              props: { variant: 'body1', sx: { fontWeight: 800 } },
+              children: ['✅ window.GUI is ready'],
+            }]}]
         };
-
         GUI.mount(app, root);
       })();
     </script>

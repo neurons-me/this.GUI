@@ -58,9 +58,8 @@
     "dev:root": "vite",
     "preview": "DEMO=true vite preview",
     "storybook": "STORYBOOK=true storybook dev -p 6006",
-    "build-storybook": "STORYBOOK=true storybook build",
+    "build-storybook": "STORYBOOK=true storybook build -o ../docs/storybook",
     "chromatic": "STORYBOOK=true chromatic"
-  
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
