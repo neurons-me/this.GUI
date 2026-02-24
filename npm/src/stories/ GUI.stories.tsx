@@ -9,11 +9,6 @@ import {
   Divider,
   IconButton,
   Link,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Paper,
   Stack,
   Grid,
@@ -26,10 +21,17 @@ import {
   Tooltip,
   Typography,
 } from '@/gui/atoms';
-import Card from '@/gui/molecules/Card/Card';
-import CardActions from '@/gui/molecules/Card/CardActions/CardActions';
-import CardContent from '@/gui/molecules/Card/CardContent/CardContent';
-import CardHeader from '@/gui/molecules/Card/CardHeader/CardHeader';
+import {
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from '@/gui/molecules';
+import Card from '@/gui/atoms/Card/Card';
+import CardActions from '@/gui/atoms/Card/CardActions/CardActions';
+import CardContent from '@/gui/atoms/Card/CardContent/CardContent';
+import CardHeader from '@/gui/atoms/Card/CardHeader/CardHeader';
 import TextField from '@/gui/atoms/TextField/TextField';
 export const EnsureMaterialSymbols = () => {
   useEffect(() => {

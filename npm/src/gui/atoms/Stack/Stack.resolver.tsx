@@ -44,6 +44,28 @@ export type StackSpec = {
   };
 };
 
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.stack',
+  type: 'Stack',
+  label: 'Stack',
+  group: 'Atoms',
+  path: ['Layout'],
+  tags: ["stack"],
+  story: {
+    title: 'Atoms/Containers/Stack',
+    primary: 'atoms-containers-stack--playground',
+  },
+  demoSpec: {
+    type: 'Stack',
+    props: {"children":"Stack"},
+  },
+} as const;
+
 const StackResolver: RegistryEntry = {
   type: 'Stack',
   resolve(spec: StackSpec, _ctx?: ResolveCtx) {

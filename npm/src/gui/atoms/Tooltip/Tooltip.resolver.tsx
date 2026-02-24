@@ -45,6 +45,28 @@ export type TooltipSpec = {
   };
 };
 
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.tooltip',
+  type: 'Tooltip',
+  label: 'Tooltip',
+  group: 'Atoms',
+  path: ['Feedback'],
+  tags: ["tooltip"],
+  story: {
+    title: 'Atoms/Content/Tooltip',
+    primary: 'atoms-content-tooltip--playground',
+  },
+  demoSpec: {
+    type: 'Tooltip',
+    props: {"title":"Tooltip","children":"Hover me"},
+  },
+} as const;
+
 const TooltipResolver: RegistryEntry = {
   type: 'Tooltip',
   resolve(spec: TooltipSpec, ctx?: ResolveCtx) {

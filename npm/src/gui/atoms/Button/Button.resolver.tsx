@@ -1,4 +1,4 @@
-// src/gui/primitives/Button/Button.resolver.tsx
+// src/gui/atoms/Button/Button.resolver.tsx
 import * as React from 'react';
 import Button from './Button';
 import Icon from '@/gui/Theme/Icon/Icon';
@@ -48,6 +48,28 @@ type ButtonSpec = {
  * - Keeps MUI polymorphism intact. If `to` is provided and no `component`,
  *   it defaults to your primitives Link; if `external` is true, it uses an anchor safely.
  */
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.button',
+  type: 'Button',
+  label: 'Button',
+  group: 'Atoms',
+  path: ['Actions'],
+  tags: ["button"],
+  story: {
+    title: 'Atoms/Forms & Inputs/Button',
+    primary: 'atoms-forms-inputs-button--playground',
+  },
+  demoSpec: {
+    type: 'Button',
+    props: {"children":"Button"},
+  },
+} as const;
+
 const ButtonResolver: RegistryEntry = {
   type: 'Button',
   resolve(spec: ButtonSpec) {

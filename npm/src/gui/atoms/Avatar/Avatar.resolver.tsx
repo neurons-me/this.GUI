@@ -3,6 +3,33 @@ import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { ensureNodeId } from '@/gui/utils/nodeID';
 import Avatar from './Avatar';
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// - Keep this small + structured; docs live in Storybook.
+// =========================================
+export const meta = {
+  id: 'atoms.avatar',
+  type: 'Avatar',
+  label: 'Avatar',
+  group: 'Atoms',
+  path: ['Identity'],
+  tags: ['avatar', 'profile', 'image', 'initials'],
+  // Storybook linkage (fill with real ids when you know them)
+  story: {
+    title: 'Atoms/Elements/Avatar',
+    primary: 'atoms-elements-avatar--initialsavatar',
+  },
+  // A minimal demo spec for runtime mounting / previews
+  demoSpec: {
+    type: 'Avatar',
+    props: {
+      children: 'A',
+      variant: 'circular',
+    },
+  },
+} as const;
 export type AvatarSpec = {
   type: 'Avatar';
   props?: {

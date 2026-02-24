@@ -1,3 +1,4 @@
+//src/gui/atoms/Button/Button.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button, Link } from '@/gui/atoms';
 import Icon from '@/gui/Theme/Icon/Icon';

@@ -3,16 +3,13 @@
 </p>
 <h1 align="center">.GUI</h1>
 <p align="center">
-  A collection of components and building blocks for <strong>GUI </strong> generation powered by AI.</br> </br>  
-<strong>Composable, Declarative && Imperative.</strong>
+  A collection of components and building blocks for <strong>GUI </strong> generation powered by <strong>AI</strong>.</br> </br>  
+<strong>Composable, Declarative & Imperative.</strong>
 </p>
-
-
 
 ---
 
 <p align="center">
-  <a href="https://neurons-me.github.io/GUI/" style="text-decoration:none" target="_blank">Website</a>
-  &nbsp;&nbsp;•&nbsp;&nbsp;
-  <a href="https://neurons-me.github.io/GUI/storybook-static/" style="text-decoration:none" target="_blank">Storybook</a>
+  <a href="https://neurons-me.github.io/GUI/" style="text-decoration:none" target="_blank"><strong>Learn More.</strong></a>
 </p>
+

@@ -28,6 +28,28 @@ type ToolbarSpec = {
  * - Maps JSON-friendly spec → <Toolbar /> props.
  * - Accepts sx/id/className for styling and test hooks.
  */
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.toolbar',
+  type: 'Toolbar',
+  label: 'Toolbar',
+  group: 'Atoms',
+  path: ['Navigation'],
+  tags: ["toolbar"],
+  story: {
+    title: 'Atoms/Containers/Toolbar',
+    primary: 'atoms-containers-toolbar--playground',
+  },
+  demoSpec: {
+    type: 'Toolbar',
+    props: {"children":"Toolbar"},
+  },
+} as const;
+
 const ToolbarResolver: RegistryEntry = {
   type: 'Toolbar',
   resolve(spec: ToolbarSpec) {

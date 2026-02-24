@@ -122,6 +122,7 @@ export const Components = {
   Icon,
   ThemeModeToggle,
 } as const;
+
 export const ThemeRuntime = {
   Theme: ThemeComponent,
   Layout,

@@ -12,6 +12,28 @@ import type { SurfaceResolverSpec as SurfaceSpec } from './Surface.types';
  * - Preserves MUI styling (`sx`, `variant`, `elevation`).
  * - Adds IDs and classNames for runtime targeting.
  */
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.surface',
+  type: 'Surface',
+  label: 'Surface',
+  group: 'Atoms',
+  path: ['Layout'],
+  tags: ["surface"],
+  story: {
+    title: 'Atoms/Surface',
+    primary: 'atoms-surface--elevation',
+  },
+  demoSpec: {
+    type: 'Surface',
+    props: {"children":"Surface"},
+  },
+} as const;
+
 const SurfaceResolver: RegistryEntry = {
   type: 'Surface',
   resolve(spec: SurfaceSpec) {

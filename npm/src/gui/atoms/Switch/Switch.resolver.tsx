@@ -32,6 +32,28 @@ export type SwitchResolverProps = React.ComponentProps<typeof Switch> & {
   guiId?: string;
 };
 
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.switch',
+  type: 'Switch',
+  label: 'Switch',
+  group: 'Atoms',
+  path: ['Forms'],
+  tags: ["switch"],
+  story: {
+    title: 'Atoms/Forms & Inputs/Switch',
+    primary: 'atoms-forms-inputs-switch--playground',
+  },
+  demoSpec: {
+    type: 'Switch',
+    props: {"label":"Switch"},
+  },
+} as const;
+
 export default function resolveSwitch(props: SwitchResolverProps) {
   const { label, labelPlacement = 'end', guiId, sx, ...rest } = props || ({} as SwitchResolverProps);
 

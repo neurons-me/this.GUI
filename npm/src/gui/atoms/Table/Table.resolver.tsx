@@ -39,6 +39,28 @@ export type TableSpec = {
   };
 };
 
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.table',
+  type: 'Table',
+  label: 'Table',
+  group: 'Atoms',
+  path: ['DataDisplay'],
+  tags: ["table"],
+  story: {
+    title: 'Atoms/DataDisplay/Table',
+    primary: 'atoms-datadisplay-table--playground',
+  },
+  demoSpec: {
+    type: 'Table',
+    props: {"children":null},
+  },
+} as const;
+
 const TableResolver: RegistryEntry = {
   type: 'Table',
   resolve(spec: TableSpec, _ctx?: ResolveCtx) {

@@ -89,6 +89,28 @@ function coerceComponent(comp: any) {
   return comp;
 }
 
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.menuitem',
+  type: 'MenuItem',
+  label: 'MenuItem',
+  group: 'Atoms',
+  path: ['Navigation'],
+  tags: ["menu-item"],
+  story: {
+    title: 'Atoms/Navigation/MenuItem',
+    primary: 'atoms-navigation-menuitem--playground',
+  },
+  demoSpec: {
+    type: 'MenuItem',
+    props: {"children":"MenuItem"},
+  },
+} as const;
+
 const MenuItemResolver: RegistryEntry = {
   type: 'MenuItem',
   resolve(spec: MenuItemSpec, _ctx?: ResolveCtx) {

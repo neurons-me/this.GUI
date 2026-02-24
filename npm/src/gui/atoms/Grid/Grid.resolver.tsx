@@ -3,6 +3,28 @@ import { ensureNodeId } from '@/gui/utils/nodeID';
 import Grid from './Grid';
 import type { GridResolverSpec } from './Grid.types';
 
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.grid',
+  type: 'Grid',
+  label: 'Grid',
+  group: 'Atoms',
+  path: ['Layout'],
+  tags: ["grid"],
+  story: {
+    title: 'Atoms/Containers/Grid',
+    primary: 'atoms-containers-grid--playground',
+  },
+  demoSpec: {
+    type: 'Grid',
+    props: {"children":"Grid"},
+  },
+} as const;
+
 const GridResolver: RegistryEntry = {
   type: 'Grid',
   resolve(spec: GridResolverSpec, _ctx?: ResolveCtx) {

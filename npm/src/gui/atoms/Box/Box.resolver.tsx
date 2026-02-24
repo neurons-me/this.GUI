@@ -51,6 +51,28 @@ export type BoxSpec = {
   };
 };
 
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.box',
+  type: 'Box',
+  label: 'Box',
+  group: 'Atoms',
+  path: ['Layout'],
+  tags: ["box"],
+  story: {
+    title: 'Atoms/Containers/Box',
+    primary: 'atoms-containers-box--playground',
+  },
+  demoSpec: {
+    type: 'Box',
+    props: {"children":"Box"},
+  },
+} as const;
+
 const BoxResolver: RegistryEntry = {
   type: 'Box',
   resolve(spec: BoxSpec, _ctx?: ResolveCtx) {

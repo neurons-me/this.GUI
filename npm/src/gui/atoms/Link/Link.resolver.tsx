@@ -30,6 +30,28 @@ type LinkSpec = {
   };
 };
 
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.link',
+  type: 'Link',
+  label: 'Link',
+  group: 'Atoms',
+  path: ['Navigation'],
+  tags: ["link"],
+  story: {
+    title: 'Atoms/Navigation/Link',
+    primary: 'atoms-navigation-link--playground',
+  },
+  demoSpec: {
+    type: 'Link',
+    props: {"children":"Link"},
+  },
+} as const;
+
 const LinkResolver: RegistryEntry = {
   type: 'Link',
   resolve(spec: LinkSpec) {

@@ -54,6 +54,28 @@ type DrawerSpec = {
   };
 };
 
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.drawer',
+  type: 'Drawer',
+  label: 'Drawer',
+  group: 'Atoms',
+  path: ['Navigation'],
+  tags: ["drawer"],
+  story: {
+    title: 'Atoms/Containers/Drawer',
+    primary: 'atoms-containers-drawer--playground',
+  },
+  demoSpec: {
+    type: 'Drawer',
+    props: {"children":"Drawer"},
+  },
+} as const;
+
 const DrawerResolver: RegistryEntry = {
   type: 'Drawer',
   resolve(spec: DrawerSpec) {

@@ -61,6 +61,28 @@ type TypographySpec = {
  * - Never leaks `to`/`href` to invalid targets.
  * - A `data-gui-id` is attached automatically for stable editor/node identification.
  */
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.typography',
+  type: 'Typography',
+  label: 'Typography',
+  group: 'Atoms',
+  path: ['DataDisplay'],
+  tags: ["typography"],
+  story: {
+    title: 'Atoms/Content/Typography',
+    primary: 'atoms-content-typography--basic',
+  },
+  demoSpec: {
+    type: 'Typography',
+    props: {"children":"Typography"},
+  },
+} as const;
+
 const TypographyResolver: RegistryEntry = {
   type: 'Typography',
   resolve(spec: TypographySpec) {

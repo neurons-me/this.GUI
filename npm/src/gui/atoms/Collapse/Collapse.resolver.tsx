@@ -54,6 +54,28 @@ export type CollapseSpec = {
   };
 };
 
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.collapse',
+  type: 'Collapse',
+  label: 'Collapse',
+  group: 'Atoms',
+  path: ['Layout'],
+  tags: ["collapse"],
+  story: {
+    title: 'Atoms/Content/Collapse',
+    primary: 'atoms-content-collapse--playground',
+  },
+  demoSpec: {
+    type: 'Collapse',
+    props: {"children":"Collapse"},
+  },
+} as const;
+
 const CollapseResolver: RegistryEntry = {
   type: 'Collapse',
   resolve(spec: CollapseSpec, _ctx?: ResolveCtx) {

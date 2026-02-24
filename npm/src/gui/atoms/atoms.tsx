@@ -53,22 +53,6 @@ export type { DrawerProps } from './Drawer/Drawer';
 import Link from './Link/Link';
 export { default as Link } from './Link/Link';
 export type { LinkProps } from './Link/Link';
-// List and related are not polymorphic so we wrap them with forwardRef
-import List, { type ListProps } from './List/List';
-export { default as List } from './List/List';
-export type { ListProps } from './List/List';
-import ListItem, { type ListItemProps } from './ListItem/ListItem';
-export { default as ListItem } from './ListItem/ListItem';
-export type { ListItemProps } from './ListItem/ListItem';
-import ListItemButton, { type ListItemButtonProps } from './ListItemButton/ListItemButton';
-export { default as ListItemButton } from './ListItemButton/ListItemButton';
-export type { ListItemButtonProps } from './ListItemButton/ListItemButton';
-import ListItemIcon, { type ListItemIconProps } from './ListItemIcon/ListItemIcon';
-export { default as ListItemIcon } from './ListItemIcon/ListItemIcon';
-export type { ListItemIconProps } from './ListItemIcon/ListItemIcon';
-import ListItemText, { type ListItemTextProps } from './ListItemText/ListItemText';
-export { default as ListItemText } from './ListItemText/ListItemText';
-export type { ListItemTextProps } from './ListItemText/ListItemText';
 // Menu and related are polymorphic so we re-export them directly
 import Menu, { type MenuProps } from './Menu/Menu';
 export { default as Menu } from './Menu/Menu';
@@ -148,11 +132,6 @@ export const atoms = {
   Menu,
   MenuItem,
   Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Collapse,
   Button,
   Grid,

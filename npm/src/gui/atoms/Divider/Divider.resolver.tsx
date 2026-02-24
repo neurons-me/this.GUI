@@ -56,6 +56,28 @@ export type DividerSpec = {
   };
 };
 
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.divider',
+  type: 'Divider',
+  label: 'Divider',
+  group: 'Atoms',
+  path: ['Layout'],
+  tags: ["divider"],
+  story: {
+    title: 'Atoms/Content/Divider',
+    primary: 'atoms-content-divider--playground',
+  },
+  demoSpec: {
+    type: 'Divider',
+    props: {"children":"Divider"},
+  },
+} as const;
+
 const DividerResolver: RegistryEntry = {
   type: 'Divider',
   resolve(spec: DividerSpec, _ctx?: ResolveCtx) {

@@ -32,6 +32,19 @@ import type { HeroProps } from './Hero/Hero.types';
 import type PageProps from './Page/Page';
 import type { CodeBlockProps } from './CodeBlock/CodeBlock';
 
+//List
+// List and related are not polymorphic so we wrap them with forwardRef
+import List, { type ListProps } from './List/List';
+export type { ListProps } from './List/List';
+import ListItem, { type ListItemProps } from './List/ListItem/ListItem';
+export type { ListItemProps } from './List/ListItem/ListItem';
+import ListItemButton, { type ListItemButtonProps } from './List/ListItemButton/ListItemButton';
+export type { ListItemButtonProps } from './List/ListItemButton/ListItemButton';
+import ListItemIcon, { type ListItemIconProps } from './List/ListItemIcon/ListItemIcon';
+export type { ListItemIconProps } from './List/ListItemIcon/ListItemIcon';
+import ListItemText, { type ListItemTextProps } from './List/ListItemText/ListItemText';
+export type { ListItemTextProps } from './List/ListItemText/ListItemText';
+
 type MoleculesRegistry = {
   Dialog: typeof Dialog;
   Hero: typeof Hero;
@@ -40,6 +53,11 @@ type MoleculesRegistry = {
   Modal: ComponentType<ModalProps>;
   Page: typeof Page;
   CodeBlock: typeof CodeBlock;
+  List: typeof List;
+  ListItem: typeof ListItem;
+  ListItemButton: typeof ListItemButton;
+  ListItemIcon: typeof ListItemIcon;
+  ListItemText: typeof ListItemText;
 };
 
 const Molecules: MoleculesRegistry = {
@@ -47,7 +65,12 @@ const Molecules: MoleculesRegistry = {
   Hero,
   Modal,
   Page,
-  CodeBlock
+  CodeBlock,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText
 };
 
 export {
@@ -55,7 +78,12 @@ export {
   Hero,
   Modal,
   Page,
-  CodeBlock
+  CodeBlock,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText
 };
 
 export type {

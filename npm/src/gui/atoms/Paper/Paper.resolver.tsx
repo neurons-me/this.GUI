@@ -45,6 +45,28 @@ export type PaperSpec = {
   };
 };
 
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.paper',
+  type: 'Paper',
+  label: 'Paper',
+  group: 'Atoms',
+  path: ['Layout'],
+  tags: ["paper"],
+  story: {
+    title: 'Atoms/Containers/Paper',
+    primary: 'atoms-containers-paper--playground',
+  },
+  demoSpec: {
+    type: 'Paper',
+    props: {"children":"Paper"},
+  },
+} as const;
+
 const PaperResolver: RegistryEntry = {
   type: 'Paper',
   resolve(spec: PaperSpec, _ctx?: ResolveCtx) {

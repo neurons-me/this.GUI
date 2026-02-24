@@ -55,6 +55,28 @@ export type MenuSpec = {
   };
 };
 
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.menu',
+  type: 'Menu',
+  label: 'Menu',
+  group: 'Atoms',
+  path: ['Navigation'],
+  tags: ["menu"],
+  story: {
+    title: 'Atoms/Navigation/Menu',
+    primary: 'atoms-navigation-menu--playground',
+  },
+  demoSpec: {
+    type: 'Menu',
+    props: {"children":"Menu"},
+  },
+} as const;
+
 const MenuResolver: RegistryEntry = {
   type: 'Menu',
   resolve(spec: MenuSpec, _ctx?: ResolveCtx) {

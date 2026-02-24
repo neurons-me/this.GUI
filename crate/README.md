@@ -1,18 +1,19 @@
 <p align="center">
-  <img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760894993/neurons-crates-io-no-background_yfxaer.png" alt=".GUI logo" width="320"/>
+  <img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760894993/neurons-crates-io-no-background_yfxaer.png" alt=".GUI logo" width="203"/>
 </p>
+
 
 <h1 align="center">.GUI</h1>
 
 <p align="center">
   A collection of components and building blocks enabling <strong>AI GUI Generation</strong>.
 </p>
-
 <p align="center">
   Available for <a href="https://www.npmjs.com/package/this.gui"><strong>Javascript</strong></a> only. </br>
-Crate coming soon.</br>
+<strong>Crate coming soon.</strong></br>
 Collaborate.
 </p>
+
 
 ---
 

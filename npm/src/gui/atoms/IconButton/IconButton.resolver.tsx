@@ -64,6 +64,28 @@ export type IconButtonSpec = {
   };
 };
 
+// =========================================
+// Catalog meta (discoverability)
+// - Used by CommandPalette / search ("google feel")
+// - Kept next to the resolver so it stays self-registered.
+// =========================================
+export const meta = {
+  id: 'atoms.iconbutton',
+  type: 'IconButton',
+  label: 'IconButton',
+  group: 'Atoms',
+  path: ['Actions'],
+  tags: ["icon-button"],
+  story: {
+    title: 'Atoms/Forms & Inputs/IconButton',
+    primary: 'atoms-forms-inputs-iconbutton--playground',
+  },
+  demoSpec: {
+    type: 'IconButton',
+    props: {"children":"IconButton"},
+  },
+} as const;
+
 const IconButtonResolver: RegistryEntry = {
   type: 'IconButton',
   resolve(spec: IconButtonSpec, _ctx?: ResolveCtx) {
