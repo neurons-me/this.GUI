@@ -20,6 +20,9 @@
     await window.GUI.bootstrap();
     const GUI = window.GUI;
     const root = document.getElementById('root');
+    // Optional: connect a .me runtime adapter (if you load this.me separately)
+    // const me = new window.Me(); // or your own instance factory
+    // const runtime = window.GUI.RunMe ? window.GUI.RunMe(me) : undefined;
     const app = {
       type: 'Page',
         props: {
@@ -37,7 +40,7 @@
               children: ['✅ window.GUI is ready'],
             }]}]
         };
-        GUI.mount(app, root);
+        GUI.mount(app, root /*, { runtime } */);
       })();
     </script>
   </body>

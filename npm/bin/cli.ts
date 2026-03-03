@@ -86,7 +86,7 @@ const htmlTemplate = `<!doctype html>
         // Start your declarative tree here:
         const spec = { type: 'Home', props: {} };
         const ctx = {};
-        GUI.mount('#root', spec, ctx);
+        GUI.mount(spec, '#root', { ctx });
         console.log('[this.GUI] mounted via GUI.mount');
       })();
     </script>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1761276578/this.gui.npm.png" />
+    <link rel="stylesheet" href="../dist/styles.css" />
+    <title>.GUI - Local Bootstrap (.me + this.GUI)</title>
+    <style>
+      html,
+      body,
+      #root {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        background: #0b1020;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- Local React globals -->
+    <script src="../node_modules/react/umd/react.development.js"></script>
+    <script src="../node_modules/react-dom/umd/react-dom.development.js"></script>
+
+    <!-- Local UMD bundles -->
+    <script src="../dist/this.gui.umd.js"></script>
+    <script src="../../../.me/npm/dist/me.umd.js"></script>
+
+    <script>
+      (function () {
+        const GUI = window.GUI;
+        const Me = window.Me;
+        const root = document.getElementById('root');
+
+        if (!GUI || typeof GUI.mount !== 'function') {
+          throw new Error('[bootstrap.local] window.GUI.mount is missing. Build this.GUI first.');
+        }
+        if (!Me) {
+          throw new Error('[bootstrap.local] window.Me is missing. Build this.me first.');
+        }
+
+        const me = new Me();
+        me.profile.status('idle');
+
+        const toDotPath = (value) => String(value || '').replace(/\//g, '.').replace(/^\.+/, '');
+
+        // Local connector: declarative GUI actions -> .me execution
+        const runtime = {
+          resolve(value) {
+            if (typeof value === 'string' && value.startsWith('me/')) {
+              const path = toDotPath(value.slice(3));
+              if (typeof me.get === 'function') return me.get(path);
+              if (typeof me === 'function') return me(path);
+            }
+            return value;
+          },
+          action(expression) {
+            return function () {
+              if (typeof me.run === 'function') {
+                me.run(expression);
+              } else if (typeof me === 'function') {
+                me(expression);
+              }
+              render();
+            };
+          },
+        };
+
+        const app = {
+          type: 'Page',
+          props: {
+            title: '.GUI Local + .me Runtime',
+            subtitle: 'Declarative actions running against local this.me.',
+          },
+          children: [
+            {
+              type: 'Paper',
+              props: { sx: { p: 2, borderRadius: 2, mt: 2 } },
+              children: [
+                {
+                  type: 'Typography',
+                  props: { variant: 'body1', sx: { mb: 1, fontWeight: 700 } },
+                  children: ['Current status'],
+                },
+                {
+                  type: 'Typography',
+                  props: { variant: 'body2' },
+                  children: ['me/profile/status'],
+                },
+                {
+                  type: 'Typography',
+                  props: { variant: 'body2', sx: { mt: 0.5, opacity: 0.85 } },
+                  children: ['Resolved value is refreshed after each action.'],
+                },
+              ],
+            },
+            {
+              type: 'Box',
+              props: { sx: { mt: 2, display: 'flex', gap: 1, flexWrap: 'wrap' } },
+              children: [
+                {
+                  type: 'Button',
+                  props: {
+                    variant: 'contained',
+                    color: 'success',
+                    label: 'Set sent',
+                    onClick: "profile.status = 'sent'",
+                  },
+                },
+                {
+                  type: 'Button',
+                  props: {
+                    variant: 'outlined',
+                    color: 'warning',
+                    label: 'Set draft',
+                    onClick: "profile.status = 'draft'",
+                  },
+                },
+              ],
+            },
+          ],
+        };
+
+        function render() {
+          const status = typeof me === 'function' ? me('profile.status') : undefined;
+          app.children[0].children[1].children = [String(status)];
+          GUI.mount(app, root, { runtime, showUnknown: true, inspectorEnabled: true });
+        }
+
+        render();
+      })();
+    </script>
+  </body>
+</html>
+

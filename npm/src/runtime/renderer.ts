@@ -10,6 +10,8 @@
 // }
 // where GuiNode can also be a string/number/boolean/null.
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { defaultAdapter, isPromiseLike, type RuntimeAdapter } from './adapter';
+
 export type GuiPrimitive = string | number | boolean | null | undefined;
 export type GuiSpecNode = {
   type: string | any; // string key into registry OR a React component
@@ -22,6 +24,14 @@ export type GuiRegistryLike = Record<string, any>;
 export type ResolveResult = {
   Component: any | null;
   resolvedPath?: string;
+};
+
+export type ResolvedNodeRecord = {
+  id: string;
+  type?: string;
+  spec: GuiSpecNode;
+  resolvedProps?: Record<string, any>;
+  path: string;
 };
 
 export type RendererOptions = {
@@ -38,6 +48,12 @@ export type RendererOptions = {
   showUnknown?: boolean;
   /** Optional transform hook to rewrite nodes before render (e.g., inject keys, normalize props). */
   transformNode?: (node: GuiSpecNode) => GuiSpecNode;
+  /** Passive runtime context (session, auth, preferences, etc.). */
+  ctx?: any;
+  /** Active runtime capabilities (bind/expr resolution, subscriptions, etc.). */
+  runtime?: RuntimeAdapter;
+  /** Optional node tap for inspector/runtime tooling. */
+  onNodeResolved?: (record: ResolvedNodeRecord) => void;
 };
 
 function getReact(opt?: RendererOptions): any {
@@ -142,10 +158,99 @@ function withAutoKey(child: any, key: string): any {
   return { ...child, props: { ...props, key } };
 }
 
+function resolveProps(
+  props: Record<string, any> | undefined,
+  opt: RendererOptions,
+  node: GuiSpecNode
+): Record<string, any> | undefined {
+  if (!props || typeof props !== 'object') return props;
+  const runtime = opt.runtime ?? defaultAdapter;
+  const metaBase = { type: typeof node.type === 'string' ? node.type : undefined, node };
+
+  if (runtime.batchResolve) {
+    try {
+      const batch = runtime.batchResolve(props, opt.ctx, metaBase);
+      if (!isPromiseLike(batch)) return batch;
+      if (opt.showUnknown) {
+        // eslint-disable-next-line no-console
+        console.warn('[this.GUI runtime] runtime.batchResolve returned a Promise; async batch is ignored in sync renderer.');
+      }
+    } catch (err) {
+      if (opt.showUnknown) {
+        // eslint-disable-next-line no-console
+        console.warn('[this.GUI runtime] runtime.batchResolve failed; falling back to per-prop resolve.', err);
+      }
+    }
+  }
+
+  const out: Record<string, any> = {};
+  for (const [key, value] of Object.entries(props)) {
+    // Event props: hydrate declarative string actions into executable callbacks.
+    if (key.startsWith('on') && typeof value === 'string') {
+      if (!runtime.action) {
+        if (opt.showUnknown) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `[this.GUI runtime] event prop "${key}" received declarative action string but runtime.action is not configured.`
+          );
+        }
+        out[key] = undefined;
+        continue;
+      }
+      try {
+        out[key] = runtime.action(value, opt.ctx, { ...metaBase, propKey: key });
+      } catch (err) {
+        if (opt.showUnknown) {
+          // eslint-disable-next-line no-console
+          console.warn(`[this.GUI runtime] runtime.action("${key}") failed; dropping handler.`, err);
+        }
+        out[key] = undefined;
+      }
+      continue;
+    }
+
+    if (!runtime.resolve) {
+      out[key] = value;
+      continue;
+    }
+    try {
+      const resolved = runtime.resolve(value, opt.ctx, { ...metaBase, propKey: key });
+      if (isPromiseLike(resolved)) {
+        if (opt.showUnknown) {
+          // eslint-disable-next-line no-console
+          console.warn(`[this.GUI runtime] runtime.resolve("${key}") returned a Promise; using original value in sync renderer.`);
+        }
+        out[key] = value;
+      } else {
+        out[key] = resolved;
+      }
+    } catch (err) {
+      if (opt.showUnknown) {
+        // eslint-disable-next-line no-console
+        console.warn(`[this.GUI runtime] runtime.resolve("${key}") failed; using original value.`, err);
+      }
+      out[key] = value;
+    }
+  }
+
+  return out;
+}
+
+function makeNodeId(node: GuiSpecNode, path: string): string {
+  const props = (node.props || {}) as Record<string, any>;
+  const explicit =
+    props['data-gui-node-id'] ??
+    props['data-gui-id'] ??
+    props.id;
+  if (explicit != null && String(explicit).trim()) return String(explicit);
+  const t = typeof node.type === 'string' ? node.type : 'node';
+  return `${t}:${path}`;
+}
+
 /**
  * Render a GuiNode to a React element (or primitive) using React.createElement.
  */
-export function renderNode(node: GuiNode, opt?: RendererOptions): any {
+export function renderNode(node: GuiNode, opt?: RendererOptions, path = 'r'): any {
   const React = getReact(opt);
   if (!React) throw new Error('[this.GUI runtime] Missing React. Pass { React: window.React } in the renderer options.');
 
@@ -155,7 +260,7 @@ export function renderNode(node: GuiNode, opt?: RendererOptions): any {
 
   // arrays (auto-key spec siblings)
   if (Array.isArray(node)) {
-    return node.map((n, i) => renderNode(withAutoKey(n, `k${i}`), nextOpt));
+    return node.map((n, i) => renderNode(withAutoKey(n, `k${i}`), nextOpt, `${path}.${i}`));
   }
 
   // primitives
@@ -164,11 +269,30 @@ export function renderNode(node: GuiNode, opt?: RendererOptions): any {
   // spec
   if (isSpecNode(node)) {
     const next = nextOpt.transformNode ? nextOpt.transformNode(node) : node;
-    const { type, props } = next;
+    const { type } = next;
+    const resolvedProps = resolveProps(next.props, nextOpt, next);
+    const nodeId = makeNodeId(next, path);
+    const props = {
+      ...(resolvedProps ?? {}),
+      ...(resolvedProps?.['data-gui-node-id'] == null ? { 'data-gui-node-id': nodeId } : {}),
+    };
+    nextOpt.onNodeResolved?.({
+      id: nodeId,
+      type: typeof type === 'string' ? type : undefined,
+      spec: next,
+      resolvedProps,
+      path,
+    });
 
     // children (auto-key spec siblings)
     const rawKids = normalizeChildren(next.children);
-    const kids = rawKids.map((c, i) => renderNode(withAutoKey(c, `${typeof type === 'string' ? type : 'node'}-${i}`), nextOpt));
+    const kids = rawKids.map((c, i) =>
+      renderNode(
+        withAutoKey(c, `${typeof type === 'string' ? type : 'node'}-${i}`),
+        nextOpt,
+        `${path}.${i}`
+      )
+    );
 
     // If `type` is already a React element, clone it (so spec can override props/children)
     if (React.isValidElement?.(type)) {
