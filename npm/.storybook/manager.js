@@ -6,7 +6,7 @@ addons.setConfig({
   theme: create({
     theme: themes.dark,
     base: 'dark', // o 'light'
-    brandTitle: 'This.GUI - Storybook',
+    brandTitle: '.GUI',
     brandUrl: 'https://neurons-me.github.io/storybook-static/',
     brandImage: 'GUI.png',
     brandTarget: '_self',

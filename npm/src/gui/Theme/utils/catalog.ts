@@ -9,8 +9,9 @@ import muiManifest from '../Catalog/themes/MUI/manifest';
 import lunaManifest from '../Catalog/themes/LunaHex/manifest';
 import cherryByteManifest from '../Catalog/themes/CherryByte/manifest';
 import SeafoamManifest from '../Catalog/themes/Seafoam/manifest';
+import mdrnChurchManifest from '../Catalog/themes/MdrnChurch/manifest';
 import { FlatGuiTheme } from '@/types/theme'; //definiciones de tipos
-export const GuiThemes = [neuronsManifest, ghostShellManifest, PrinceOfDarknessManifest, muiManifest, lunaManifest, cherryByteManifest, SeafoamManifest];
+export const GuiThemes = [neuronsManifest, ghostShellManifest, PrinceOfDarknessManifest, muiManifest, lunaManifest, cherryByteManifest, SeafoamManifest, mdrnChurchManifest];
 /*
  FlatGuiThemes (plano)
 	•	Es un array plano de modos individuales.

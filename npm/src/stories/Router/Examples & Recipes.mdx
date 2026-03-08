@@ -1,0 +1,111 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Box } from '@/gui/atoms';
+import { KeepPreviousScreenVisibleDemo, SwapToPendingShellDemo } from './components/RouterLoadingRecipes';
+
+<Meta title="Router/Examples & Recipes" />
+
+# Examples & Recipes
+
+This page focuses on practical combinations.
+
+Here the goal is not to explain every API from first principles, but to show
+how pieces work together in patterns you can reuse.
+
+---
+
+## Router + Loading States
+
+Async route factories are supported by `Router`.
+That means route transitions can behave a bit like Suspense, as long as you decide
+what the user should see while the next spec is resolving.
+
+There are two strong patterns:
+
+1. Keep the previous screen visible and place a loading overlay on top
+2. Swap immediately to a pending shell and then replace it with the final route
+
+---
+
+## Recipe 1: Keep Previous Screen Visible
+
+Use this when the current screen still helps the user stay oriented.
+
+- good for dashboards
+- good for detail panels
+- good when the next route is only a small contextual jump
+
+<KeepPreviousScreenVisibleDemo />
+
+Why this works:
+
+- the app feels responsive immediately
+- the user keeps context
+- loading becomes a lightweight state, not a hard interruption
+
+---
+
+## Recipe 2: Swap To Pending Shell
+
+Use this when navigation should feel explicit and staged.
+
+- good for docs spaces
+- good for editors
+- good for routes that represent a whole new working surface
+
+<SwapToPendingShellDemo />
+
+Why this works:
+
+- the transition feels intentional
+- the loading state belongs to the new route, not the old one
+- it communicates “we are entering a new screen”
+
+---
+
+## Minimal Wiring Pattern
+
+Both recipes are variations of the same idea:
+
+```ts
+const router = new Router({ runtime });
+
+router.onChange((spec, meta) => {
+  GUI.mount(spec, '#root', {
+    runtime,
+    ctx: meta.ctx,
+  });
+});
+```
+
+The only difference is what you render **before** the async route finishes.
+
+---
+
+## Choosing The Pattern
+
+<Box
+  sx={{
+    p: 2,
+    my: 3,
+    bgcolor: 'action.hover',
+    borderRadius: 1.5,
+    borderLeft: '4px solid',
+    borderColor: 'primary.main',
+  }}
+>
+  <strong>Rule of thumb</strong><br />
+  If the previous screen still helps orientation, keep it and overlay loading.
+  If the next route is a full context switch, render a pending shell immediately.
+</Box>
+
+---
+
+## What To Build Next
+
+Natural follow-ups:
+
+1. Add route-level error states next to loading states
+2. Add optimistic params-based transitions (`/shops/41` -> `/shops/42`)
+   Since `this.GUI` is a runtime, you can render a skeleton using only `ctx.params`
+   before the full data resolves.
+3. Add prefetching with `resolve()` before calling `navigate()`

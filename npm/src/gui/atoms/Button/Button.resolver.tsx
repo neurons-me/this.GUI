@@ -74,6 +74,30 @@ const ButtonResolver: RegistryEntry = {
   type: 'Button',
   resolve(spec: ButtonSpec) {
     const p = spec.props ?? {};
+    const {
+      label: _label,
+      children: _children,
+      variant: _variant,
+      color: _color,
+      size: _size,
+      startIcon: _startIcon,
+      endIcon: _endIcon,
+      sx: _sx,
+      disabled: _disabled,
+      fullWidth: _fullWidth,
+      external: _external,
+      href: _href,
+      to: _to,
+      target: _target,
+      rel: _rel,
+      component: _component,
+      as: _as,
+      type: _type,
+      id: _id,
+      className: _className,
+      ['data-testid']: _dataTestId,
+      ...rest
+    } = p;
     // Decide component priority
     const isExternal = p.external === true || p.external === 'true' || p.external === 1;
     let component: React.ElementType | string | undefined =
@@ -97,6 +121,7 @@ const ButtonResolver: RegistryEntry = {
     const children = p.children ?? p.label ?? 'Button';
     return (
       <Button
+        {...rest}
         {...(component ? { component } : {})}
         variant={p.variant ?? 'text'}
         color={p.color ?? 'inherit'}

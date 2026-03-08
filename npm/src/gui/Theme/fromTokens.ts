@@ -63,7 +63,14 @@ export function makeMuiTheme(themeTokens: any, modeTokens: any, mode: 'light' | 
   // Core primitives
   const radius = readNumber(pick(g, ['radius', 'md'], 10), 10);
   const spacing = readNumber(pick(g, ['spacing', 'base'], 8), 8);
-  const fontFamily = pick<string>(g, ['font', 'family'], 'Roboto, sans-serif');
+  const fontFamily =
+    pick<string | undefined>(modeTokens, ['font', 'family'], undefined) ??
+    pick<string | undefined>(modeTokens, ['font', 'body'], undefined) ??
+    pick<string>(g, ['font', 'family'], 'Roboto, sans-serif');
+  const headingFontFamily =
+    pick<string | undefined>(modeTokens, ['font', 'headingFamily'], undefined) ??
+    pick<string | undefined>(modeTokens, ['font', 'heading'], undefined) ??
+    fontFamily;
   const borderDefault =
     pick<string | undefined>(g, ['border', 'default'], undefined) ??
     (mode === 'dark' ? 'rgb(45,45,55)' : 'rgba(0,0,0,0.08)');
@@ -201,12 +208,12 @@ export function makeMuiTheme(themeTokens: any, modeTokens: any, mode: 'light' | 
     typography: {
       fontFamily,
       // existing variants
-      h1: { fontSize: pxToRem(40), fontWeight: 600, lineHeight: 1.2, letterSpacing: '-0.01em' },
-      h2: { fontSize: pxToRem(32), fontWeight: 600, lineHeight: 1.25 },
-      h3: { fontSize: pxToRem(26), fontWeight: 600, lineHeight: 1.3 },
-      h4: { fontSize: pxToRem(21), fontWeight: 600, lineHeight: 1.35 },
-      h5: { fontSize: pxToRem(18), fontWeight: 600, lineHeight: 1.35 },
-      subtitle1: { fontSize: pxToRem(16), fontWeight: 600, lineHeight: 1.4 },
+      h1: { fontFamily: headingFontFamily, fontSize: pxToRem(40), fontWeight: 600, lineHeight: 1.2, letterSpacing: '-0.01em' },
+      h2: { fontFamily: headingFontFamily, fontSize: pxToRem(32), fontWeight: 600, lineHeight: 1.25 },
+      h3: { fontFamily: headingFontFamily, fontSize: pxToRem(26), fontWeight: 600, lineHeight: 1.3 },
+      h4: { fontFamily: headingFontFamily, fontSize: pxToRem(21), fontWeight: 600, lineHeight: 1.35 },
+      h5: { fontFamily: headingFontFamily, fontSize: pxToRem(18), fontWeight: 600, lineHeight: 1.35 },
+      subtitle1: { fontFamily: headingFontFamily, fontSize: pxToRem(16), fontWeight: 600, lineHeight: 1.4 },
       body1: { fontSize: pxToRem(16), lineHeight: 1.6 },
       body2: { fontSize: pxToRem(14), lineHeight: 1.6 },
       button: { textTransform: 'none', fontWeight: 700, letterSpacing: '0.02em' },

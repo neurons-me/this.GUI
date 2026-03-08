@@ -54,6 +54,10 @@ export type RendererOptions = {
   runtime?: RuntimeAdapter;
   /** Optional node tap for inspector/runtime tooling. */
   onNodeResolved?: (record: ResolvedNodeRecord) => void;
+  /** Optional allowlist for semantic expressions. Default: ['me/views/', 'me/public/'] */
+  allowedExprRoots?: string[];
+  /** If true, disable expression allowlist checks (use with care). */
+  unsafeAllowAllExpressions?: boolean;
 };
 
 function getReact(opt?: RendererOptions): any {
@@ -183,56 +187,177 @@ function resolveProps(
     }
   }
 
-  const out: Record<string, any> = {};
-  for (const [key, value] of Object.entries(props)) {
-    // Event props: hydrate declarative string actions into executable callbacks.
-    if (key.startsWith('on') && typeof value === 'string') {
+  function isPlainObject(value: any): value is Record<string, any> {
+    return !!value && typeof value === 'object' && Object.getPrototypeOf(value) === Object.prototype;
+  }
+
+  function resolvePathValue(source: any, dottedPath: string): any {
+    const parts = dottedPath.split('.').filter(Boolean);
+    let cursor = source;
+    for (const p of parts) {
+      cursor = cursor?.[p];
+      if (cursor === undefined) return undefined;
+    }
+    return cursor;
+  }
+
+  function interpolate(input: string): string {
+    return input.replace(/\{\{(.+?)\}\}/g, (match, rawPath) => {
+      const trimmed = String(rawPath ?? '').trim();
+      if (!trimmed) return match;
+      // support both {{ctx.params.id}} and {{params.id}}
+      const cleanPath = trimmed.replace(/^ctx\./, '');
+      const value = resolvePathValue(opt.ctx, cleanPath);
+      if (value === undefined) {
+        if (opt.showUnknown) {
+          // eslint-disable-next-line no-console
+          console.warn(`[this.GUI runtime] Missing context for interpolation: {{${cleanPath}}}`);
+        }
+        return match;
+      }
+      return String(value);
+    });
+  }
+
+  function isAllowedExpression(expr: string): boolean {
+    if (opt.unsafeAllowAllExpressions) return true;
+    const roots = (opt.allowedExprRoots && opt.allowedExprRoots.length > 0)
+      ? opt.allowedExprRoots
+      : ['me/views/', 'me/public/'];
+    return roots.some((root) => expr.startsWith(root));
+  }
+
+  function resolveLeaf(value: any, propKey: string): any {
+    // Token mode: { $expr: "..." }
+    if (isPlainObject(value) && typeof value.$expr === 'string') {
+      const expr = interpolate(value.$expr);
+      if (!isAllowedExpression(expr)) {
+        // eslint-disable-next-line no-console
+        console.error(`[Security] Blocked access to non-public expression: ${expr}`);
+        return value.$expr;
+      }
+      if (!runtime.resolve) {
+        if (opt.showUnknown) {
+          // eslint-disable-next-line no-console
+          console.warn(`[this.GUI runtime] $expr found at "${propKey}" but runtime.resolve is not configured.`);
+        }
+        return expr;
+      }
+      try {
+        const resolved = runtime.resolve(expr, opt.ctx, { ...metaBase, propKey });
+        if (isPromiseLike(resolved)) {
+          if (opt.showUnknown) {
+            // eslint-disable-next-line no-console
+            console.warn(`[this.GUI runtime] runtime.resolve("${propKey}") returned a Promise; using raw expression.`);
+          }
+          return expr;
+        }
+        return resolved;
+      } catch (err) {
+        if (opt.showUnknown) {
+          // eslint-disable-next-line no-console
+          console.warn(`[this.GUI runtime] runtime.resolve("${propKey}") failed for $expr; using raw expression.`, err);
+        }
+        return expr;
+      }
+    }
+
+    // Token mode: { $action: "..." }
+    if (isPlainObject(value) && typeof value.$action === 'string') {
+      const actionExpr = interpolate(value.$action);
+      if (!isAllowedExpression(actionExpr)) {
+        // eslint-disable-next-line no-console
+        console.error(`[Security] Blocked action for non-public expression: ${actionExpr}`);
+        return () => {};
+      }
+      if (!runtime.action) {
+        if (opt.showUnknown) {
+          // eslint-disable-next-line no-console
+          console.warn(`[this.GUI runtime] $action found at "${propKey}" but runtime.action is not configured.`);
+        }
+        return () => {};
+      }
+      try {
+        return runtime.action(actionExpr, opt.ctx, { ...metaBase, propKey });
+      } catch (err) {
+        if (opt.showUnknown) {
+          // eslint-disable-next-line no-console
+          console.warn(`[this.GUI runtime] runtime.action("${propKey}") failed for $action; using noop.`, err);
+        }
+        return () => {};
+      }
+    }
+
+    // Back-compat mode: on* with declarative string action
+    if (propKey.startsWith('on') && typeof value === 'string') {
+      const actionExpr = interpolate(value);
+      if (!isAllowedExpression(actionExpr)) {
+        // eslint-disable-next-line no-console
+        console.error(`[Security] Blocked event action for non-public expression: ${actionExpr}`);
+        return undefined;
+      }
       if (!runtime.action) {
         if (opt.showUnknown) {
           // eslint-disable-next-line no-console
           console.warn(
-            `[this.GUI runtime] event prop "${key}" received declarative action string but runtime.action is not configured.`
+            `[this.GUI runtime] event prop "${propKey}" received declarative action string but runtime.action is not configured.`
           );
         }
-        out[key] = undefined;
-        continue;
+        return undefined;
       }
       try {
-        out[key] = runtime.action(value, opt.ctx, { ...metaBase, propKey: key });
+        return runtime.action(actionExpr, opt.ctx, { ...metaBase, propKey });
       } catch (err) {
         if (opt.showUnknown) {
           // eslint-disable-next-line no-console
-          console.warn(`[this.GUI runtime] runtime.action("${key}") failed; dropping handler.`, err);
+          console.warn(`[this.GUI runtime] runtime.action("${propKey}") failed; dropping handler.`, err);
         }
-        out[key] = undefined;
+        return undefined;
       }
-      continue;
     }
 
-    if (!runtime.resolve) {
-      out[key] = value;
-      continue;
-    }
+    if (!runtime.resolve) return value;
     try {
-      const resolved = runtime.resolve(value, opt.ctx, { ...metaBase, propKey: key });
+      const resolved = runtime.resolve(value, opt.ctx, { ...metaBase, propKey });
       if (isPromiseLike(resolved)) {
         if (opt.showUnknown) {
           // eslint-disable-next-line no-console
-          console.warn(`[this.GUI runtime] runtime.resolve("${key}") returned a Promise; using original value in sync renderer.`);
+          console.warn(`[this.GUI runtime] runtime.resolve("${propKey}") returned a Promise; using original value in sync renderer.`);
         }
-        out[key] = value;
-      } else {
-        out[key] = resolved;
+        return value;
       }
+      return resolved;
     } catch (err) {
       if (opt.showUnknown) {
         // eslint-disable-next-line no-console
-        console.warn(`[this.GUI runtime] runtime.resolve("${key}") failed; using original value.`, err);
+        console.warn(`[this.GUI runtime] runtime.resolve("${propKey}") failed; using original value.`, err);
       }
-      out[key] = value;
+      return value;
     }
   }
 
+  function resolveDynamicValue(value: any, propKey: string): any {
+    if (Array.isArray(value)) {
+      return value.map((item, i) => resolveDynamicValue(item, `${propKey}[${i}]`));
+    }
+    if (isPlainObject(value)) {
+      // Token objects are leaf instructions and should not recurse into internals.
+      if (typeof value.$expr === 'string' || typeof value.$action === 'string') {
+        return resolveLeaf(value, propKey);
+      }
+      const next: Record<string, any> = {};
+      for (const [k, v] of Object.entries(value)) {
+        next[k] = resolveDynamicValue(v, `${propKey}.${k}`);
+      }
+      return next;
+    }
+    return resolveLeaf(value, propKey);
+  }
+
+  const out: Record<string, any> = {};
+  for (const [key, value] of Object.entries(props)) {
+    out[key] = resolveDynamicValue(value, key);
+  }
   return out;
 }
 

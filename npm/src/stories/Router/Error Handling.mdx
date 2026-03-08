@@ -1,0 +1,145 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Box } from '@/gui/atoms';
+import { KeepPreviousScreenOnErrorDemo, RetryFailedRouteDemo, SwapToErrorShellDemo } from './components/RouterErrorRecipes';
+
+<Meta title="Router/Error Handling" />
+
+# Error Handling
+
+Error handling in `this.GUI` has three layers:
+
+1. the boundary where routes resolve
+2. the experience of async transitions
+3. the content layer where runtime expressions and actions can fail
+
+---
+
+## Layer 1: The Boundary (Router)
+
+The Router should absorb route failures without collapsing the whole app.
+
+That means documenting two things clearly:
+
+- `notFound` configuration
+- async factory rejections
+
+```ts
+const router = new Router({
+  runtime,
+  notFound: (context, error) => ({
+    type: 'Page',
+    props: {
+      title: 'Route failed',
+      subtitle: error instanceof Error ? error.message : 'Unknown route error',
+    },
+  }),
+});
+```
+
+Use this when:
+
+- a route cannot resolve
+- a handler throws
+- an async factory rejects
+
+The important goal is continuity: the shell stays alive even when a specific route fails.
+
+---
+
+## Layer 2: The Experience (Transitions)
+
+This is where `useDeferredPending` helps.
+
+It lets you keep loading and error policy outside the Router core:
+
+```ts
+const { showLoader, run } = useDeferredPending({ threshold: 180 });
+
+const handleNav = async (path: string) => {
+  try {
+    await run(() => router.navigate(path));
+  } catch (error) {
+    setRouteError(error);
+  }
+};
+```
+
+That gives you a clean separation:
+
+- Router resolves screens
+- the hook decides when loading becomes visible
+- your app decides how to render failure
+
+---
+
+## Recipe: Retry Failed Route
+
+<RetryFailedRouteDemo />
+
+---
+
+## Layer 3: The Content (Runtime)
+
+Inside the screen itself, failures can still happen in the runtime layer.
+
+Typical sources:
+
+- `$expr` cannot resolve
+- `$action` throws
+- an expression is blocked by security policy
+
+Your goal here is graceful degradation, not silent collapse.
+
+Patterns to favor:
+
+- show a fallback value for failed reads
+- surface action failures near the control that triggered them
+- keep screen structure intact even when one expression fails
+
+<Box
+  sx={{
+    p: 2,
+    my: 3,
+    bgcolor: 'action.hover',
+    borderRadius: 1.5,
+    borderLeft: '4px solid',
+    borderColor: 'primary.main',
+  }}
+>
+  <strong>Pro Tip: Runtime failures should degrade locally</strong><br />
+  If one `$expr` fails, that node should degrade. It should not take down the entire route.
+</Box>
+
+---
+
+## Recipes
+
+### Keep Previous Screen On Error
+
+<KeepPreviousScreenOnErrorDemo />
+
+Use this when:
+
+- the old screen still provides orientation
+- the failed route is a contextual jump
+- you want the user to recover without losing place
+
+### Swap To Error Shell
+
+<SwapToErrorShellDemo />
+
+Use this when:
+
+- the route owns the entire workspace
+- the failure belongs to the target route itself
+- you want a clear “this route failed” message
+
+---
+
+## Rules Of Thumb
+
+1. Handle route failures at the Router boundary
+2. Handle loading and retry policy in transition logic
+3. Handle `$expr` and `$action` failures close to the failing node
+4. Keep the app shell alive whenever possible
+5. Prefer retryable states over dead-end errors

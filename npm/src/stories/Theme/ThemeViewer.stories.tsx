@@ -38,7 +38,7 @@ import { useInsets } from '@/gui/hooks';
 export const CurrentThemeState = () => {
   const theme = useTheme();
   const { mode, themeId } = useThemeContext();
-  const { insets } = useInsets();
+  const insets = useInsets();
   return (
     <pre style={{ padding: 16 }}>
       <code>

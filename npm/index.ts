@@ -148,3 +148,5 @@ export const menus = {
 // GuiNode → renderer → ReactDOM, expects React/ReactDOM globals in UMD usage.
 export { mount } from '@/runtime/mount';
 export type { MountTarget } from '@/runtime/mount';
+export { Router, RouterProvider } from '@/Router/Router';
+export { RunMe } from '@/runtime/run-me';

@@ -25,7 +25,8 @@ export const parameters = {
     storySort: {
       order: [
         'Docs',
-        ['Home'],
+        'Getting Started',
+        ['Quick Start', 'GUI Overview', 'Using This Docs'],
         'gui',
         'Layout',
         'Theme',

@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Theme from '@/gui/Theme/Theme';
-import { QRouter } from '@/Router/Router';
+import { RouterProvider } from '@/Router/Router';
 import { GuiRegistry as CORE_REGISTRY, extendRegistry } from '@/Registry';
 import type { GuiRegistry as GuiRegistryType } from '@/Registry/types';
 export type GuiSpecNode = { type: string; props?: Record<string, any>; children?: any };
@@ -61,9 +61,9 @@ export function mountSpec(target: Element | string, spec: any, ctx?: any) {
   const reactRoot = ReactDOM.createRoot(mount);
   reactRoot.render(
     <Theme>
-      <QRouter>
+      <RouterProvider>
         {renderSpec(__GUI_REGISTRY__, finalSpec, ctx)}
-      </QRouter>
+      </RouterProvider>
     </Theme>
   );
   return () => {
@@ -81,12 +81,12 @@ export const GUI = ({ title = 'this.GUI', children, spec, resolvers, ctx }: GUIP
   const content = spec ? renderSpec(__GUI_REGISTRY__, spec, ctx) : (children ?? renderSpec(__GUI_REGISTRY__, fallbackSpec, ctx));
   return (
     <Theme>
-      <QRouter>
+      <RouterProvider>
         <main style={{ padding: '2rem' }}>
           <h1>{title}</h1>
           {content ?? <p>Ready to render declarative GUI components.</p>}
         </main>
-      </QRouter>
+      </RouterProvider>
     </Theme>
   );
 };

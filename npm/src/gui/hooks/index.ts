@@ -9,3 +9,4 @@ export * from './useViewportKey';
 export * from './useViewportProp';
 export * from './useLeftSidebar';
 export * from './useRightSidebar';
+export * from './useDeferredPending';

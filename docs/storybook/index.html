@@ -78,6 +78,42 @@
 </style>
 <link rel="icon" type="image/png" href="/favicon.ico" />
 <link rel="stylesheet" href="/material-symbols.css" />
+<script>
+  (() => {
+    const TARGET_LABEL = 'Getting Started';
+
+    function syncSidebarExpansion() {
+      const buttons = Array.from(document.querySelectorAll('[data-side="left"] button[aria-expanded]'));
+      if (!buttons.length) return;
+
+      for (const button of buttons) {
+        const label = (button.textContent || '').trim();
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        const shouldExpand = label.includes(TARGET_LABEL);
+
+        if (shouldExpand && !expanded) {
+          button.click();
+        } else if (!shouldExpand && expanded) {
+          button.click();
+        }
+      }
+    }
+
+    const observer = new MutationObserver(() => {
+      window.requestAnimationFrame(syncSidebarExpansion);
+    });
+
+    window.addEventListener('load', () => {
+      syncSidebarExpansion();
+      observer.observe(document.body, {
+        subtree: true,
+        childList: true,
+        attributes: true,
+        attributeFilter: ['aria-expanded'],
+      });
+    });
+  })();
+</script>
 
 <link rel="stylesheet" href="/material-symbols.css" />
 <style>
