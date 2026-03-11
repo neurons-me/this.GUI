@@ -43,6 +43,7 @@ export default function CodeBlock(props: CodeBlockProps) {
   } = props;
 
   const theme = variant === 'light' ? oneLight : oneDark;
+  const isLight = variant === 'light';
 
   const [copied, setCopied] = useState(false);
 
@@ -88,11 +89,12 @@ export default function CodeBlock(props: CodeBlockProps) {
         borderRadius: 14,
         overflow: 'hidden',
         border:
-          variant === 'light'
+          isLight
             ? '1px solid rgba(0,0,0,0.10)'
             : '1px solid rgba(255,255,255,0.10)',
         background:
-          variant === 'light' ? 'rgba(255,255,255,0.95)' : 'rgba(10, 14, 22, 0.92)',
+          isLight ? 'rgba(255,255,255,0.95)' : 'rgba(10, 14, 22, 0.92)',
+        color: isLight ? 'rgba(15,23,42,0.92)' : 'rgba(241,245,249,0.96)',
         ...style,
       }}
     >
@@ -104,11 +106,12 @@ export default function CodeBlock(props: CodeBlockProps) {
             fontWeight: 700,
             letterSpacing: '0.2px',
             borderBottom:
-              variant === 'light'
+              isLight
                 ? '1px solid rgba(0,0,0,0.08)'
                 : '1px solid rgba(255,255,255,0.08)',
             background:
-              variant === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.04)',
+              isLight ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.04)',
+            color: isLight ? 'rgba(15,23,42,0.78)' : 'rgba(226,232,240,0.92)',
             opacity: 0.9,
             display: 'flex',
             alignItems: 'center',
@@ -132,8 +135,8 @@ export default function CodeBlock(props: CodeBlockProps) {
                 cursor: 'pointer',
                 border: 'none',
                 borderRadius: 10,
-                background: variant === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.10)',
-                color: variant === 'light' ? 'rgba(0,0,0,0.75)' : 'rgba(255,255,255,0.85)',
+                background: isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.10)',
+                color: isLight ? 'rgba(15,23,42,0.75)' : 'rgba(241,245,249,0.88)',
               }}
             >
               {copied ? 'Copied' : 'Copy'}

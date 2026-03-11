@@ -36,16 +36,22 @@ export interface FooterConfig {
 
 export interface LayoutProps {
   // Legacy names (supported)
-  /** @deprecated use TopBar */
+  /** @deprecated use topBar */
   topBarConfig?: TopBarConfig | boolean;
-  /** @deprecated use LeftBar */
+  /** @deprecated use leftBar */
   leftSidebarConfig?: LeftSidebarConfig | boolean;
-  /** @deprecated use RightBar */
+  /** @deprecated use rightBar */
   rightSidebarConfig?: RightSidebarConfig | boolean;
-  /** @deprecated use Footer */
+  /** @deprecated use footer */
   footerConfig?: FooterConfig | boolean;
 
-  // New semantic names (preferred)
+  // New semantic names (preferred for declarative specs)
+  topBar?: TopBarConfig | boolean;
+  leftBar?: LeftSidebarConfig | boolean;
+  rightBar?: RightSidebarConfig | boolean;
+  footer?: FooterConfig | boolean;
+
+  // PascalCase aliases (supported)
   TopBar?: TopBarConfig | boolean;
   LeftBar?: LeftSidebarConfig | boolean;
   RightBar?: RightSidebarConfig | boolean;

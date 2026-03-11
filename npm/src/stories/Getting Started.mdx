@@ -1,5 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 import GettingStartedHero from './Sections/GettingStartedHero';
+import FirstGuiPreview from './Sections/FirstGuiPreview';
 import Theme from '@/gui/Theme/Theme';
 import { Box } from '@/gui/atoms';
 import { QueryExpressionsDemo } from './Router/components/RouterSemanticsDemos';
@@ -46,9 +47,15 @@ import { QueryExpressionsDemo } from './Router/components/RouterSemanticsDemos';
 `this.GUI` is not only a component catalog.  
 It is a declarative runtime with three layers:
 
-1. **Body (`this.GUI`)**: agnostic recursive renderer.
-2. **Nervous System (`$expr` / `$action`)**: serializable protocol.
-3. **Brain (`runtime`, optional `.me`)**: expression resolution and mutations.
+1. **UI spec (`this.GUI`)**: you describe the screen as data: pages, cards, text, buttons, sidebars, and children.
+2. **Dynamic tokens (`$expr` / `$action`)**: instead of hardcoding everything, you can say "read this value" or "run this mutation" in a serializable way.
+3. **Runtime (`runtime`, optional `.me`)**: the host decides how those reads and writes actually work, for example by resolving profile data, route params, or backend mutations.
+
+In plain terms:
+
+- `this.GUI` defines **what to render**
+- `$expr` and `$action` define **what should be dynamic**
+- `runtime` defines **where the data comes from and what actions do**
 
 ## Mental Model
 
@@ -93,6 +100,8 @@ That already gives you:
 - a page shell
 - a heading
 - a working button
+
+<FirstGuiPreview />
 
 ---
 

@@ -70,6 +70,7 @@ export {
 // without any `window.GUI.default` wrapper.
 // NOTE: We still import concrete modules (not barrels) to preserve tree-shaking.
 import ThemeComponent from '@/gui/Theme/Theme';
+import { GuiRegistry as RegistryEntries } from '@/Registry';
 import Box from '@/gui/atoms/Box/Box';
 import Button from '@/gui/atoms/Button/Button';
 import Link from '@/gui/atoms/Link/Link';
@@ -136,6 +137,8 @@ export const molecules = Molecules;
 export const widgets = Widgets;
 export const components = Components;
 export const theme = ThemeRuntime;
+export const Registry = RegistryEntries;
+export const registry = RegistryEntries;
 // Menus registry (kept explicit to avoid accidental surface growth)
 export const menus = {
   'GUI-Tools': {

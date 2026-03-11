@@ -19,6 +19,10 @@ const LayoutResolver: RegistryEntry = {
     // while still supporting legacy *Config keys and older LeftSideBar/RightSideBar.
     // We normalize to the legacy prop names that the Layout component expects.
     const {
+      topBar,
+      leftBar,
+      rightBar,
+      footer,
       TopBar,
       LeftBar,
       RightBar,
@@ -35,10 +39,10 @@ const LayoutResolver: RegistryEntry = {
 
     const normalizedProps = {
       ...rest,
-      topBarConfig: TopBar ?? topBarConfig,
-      leftSidebarConfig: LeftBar ?? LeftSideBar ?? leftSidebarConfig,
-      rightSidebarConfig: RightBar ?? RightSideBar ?? rightSidebarConfig,
-      footerConfig: Footer ?? footerConfig,
+      topBarConfig: topBar ?? TopBar ?? topBarConfig,
+      leftSidebarConfig: leftBar ?? LeftBar ?? LeftSideBar ?? leftSidebarConfig,
+      rightSidebarConfig: rightBar ?? RightBar ?? RightSideBar ?? rightSidebarConfig,
+      footerConfig: footer ?? Footer ?? footerConfig,
     };
 
     const contentSections = (spec as any).Content ?? [];

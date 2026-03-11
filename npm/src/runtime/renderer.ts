@@ -83,8 +83,19 @@ function isPrimitive(v: any): v is GuiPrimitive {
 export function inferRegistryFromGUI(gui: any): GuiRegistryLike {
   const out: GuiRegistryLike = {};
   if (!gui || typeof gui !== 'object') return out;
+  const semanticRegistries = ['Registry', 'registry'] as const;
+  for (const key of semanticRegistries) {
+    const reg = gui[key];
+    if (reg && typeof reg === 'object') {
+      for (const k of Object.keys(reg)) {
+        out[k] = reg[k];
+      }
+    }
+  }
   // 1) Root keys (prefer these first)
-  for (const k of Object.keys(gui)) out[k] = gui[k];
+  for (const k of Object.keys(gui)) {
+    if (out[k] == null) out[k] = gui[k];
+  }
   // 2) Capital registries
   const caps = ['Atoms', 'Molecules', 'Components', 'Widgets'] as const;
   for (const key of caps) {
@@ -450,6 +461,16 @@ export function renderNode(node: GuiNode, opt?: RendererOptions, path = 'r'): an
           );
         }
         return null;
+      }
+      if (Component && typeof Component === 'object' && typeof Component.resolve === 'function') {
+        const resolverSpec = {
+          ...next,
+          props: {
+            ...(props ?? {}),
+            ...(kids.length > 0 ? { children: kids.length === 1 ? kids[0] : kids } : {}),
+          },
+        };
+        return Component.resolve(resolverSpec, nextOpt.ctx);
       }
       return React.createElement(Component, props ?? null, ...kids);
     }

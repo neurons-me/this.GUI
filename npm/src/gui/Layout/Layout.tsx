@@ -11,9 +11,13 @@ import Content from '@/gui/Layout/Content/Content';
 import type { LayoutProps } from './Layout.types';
 function Layout({
   topBarConfig = false,
+  topBar,
   leftSidebarConfig: legacyLeftConfig = false,
+  leftBar,
   rightSidebarConfig: legacyRightConfig = false,
+  rightBar,
   footerConfig = false,
+  footer,
   TopBar: TopBarProp,
   LeftBar,
   RightBar,
@@ -23,10 +27,10 @@ function Layout({
   children,
 }: LayoutProps) {
   // Normalize preferred + legacy props into the config fields the layout consumes.
-  const resolvedTopBar = TopBarProp ?? topBarConfig;
-  const resolvedLeft = LeftBar ?? legacyLeftBar ?? legacyLeftConfig;
-  const resolvedRight = RightBar ?? legacyRightBar ?? legacyRightConfig;
-  const resolvedFooter = FooterProp ?? footerConfig;
+  const resolvedTopBar = topBar ?? TopBarProp ?? topBarConfig;
+  const resolvedLeft = leftBar ?? LeftBar ?? legacyLeftBar ?? legacyLeftConfig;
+  const resolvedRight = rightBar ?? RightBar ?? legacyRightBar ?? legacyRightConfig;
+  const resolvedFooter = footer ?? FooterProp ?? footerConfig;
 
   const hasTopBar = Boolean(resolvedTopBar);
   const hasLeftBar = Boolean(resolvedLeft);
