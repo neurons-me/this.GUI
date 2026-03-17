@@ -4,7 +4,7 @@ import type { ThemesCatalogResolverSpec } from './Catalog.types';
 const resolver = {
   type: 'ThemesCatalog',
   resolve: (props?: ThemesCatalogResolverSpec) => {
-    const { variant, sx, hideDescription, hideAuthor, minimal } = props || {};
+    const { variant, sx, hideDescription, hideAuthor, minimal, compact, hideTitle, hideModeToggle } = props || {};
 
     // `minimal` is a convenience preset: hide both author + description.
     const resolvedHideDescription = minimal ? true : hideDescription;
@@ -16,6 +16,10 @@ const resolver = {
           sx={sx}
           hideDescription={resolvedHideDescription}
           hideAuthor={resolvedHideAuthor}
+          minimal={minimal}
+          compact={compact}
+          hideTitle={hideTitle}
+          hideModeToggle={hideModeToggle}
         />
       ),
       props,

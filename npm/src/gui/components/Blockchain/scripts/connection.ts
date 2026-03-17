@@ -6,6 +6,14 @@ export function normalizeBlockchain(raw: string): string {
     .replace(/^https?:\/\//i, '')
     .replace(/\/$/, '');
 }
+
+function getBlockchainProtocol(host: string): 'http' | 'https' {
+  const normalized = String(host || '').trim().toLowerCase();
+  const isLocalhost = /^(localhost|127(?:\.\d{1,3}){3}|0\.0\.0\.0)(:\d+)?$/.test(normalized);
+  const isLocalDomain = /\.local(:\d+)?$/.test(normalized);
+  return isLocalhost || isLocalDomain ? 'http' : 'https';
+}
+
 export function useBlockchainConnection(params: {
   blockchain: string;
   username: string;
@@ -25,7 +33,7 @@ export function useBlockchainConnection(params: {
     debounceUserMs = 350,
   } = params;
   const blockchainHost = normalizeBlockchain(blockchain);
-  const blockchainBaseUrl = `http://${blockchainHost}`;
+  const blockchainBaseUrl = `${getBlockchainProtocol(blockchainHost)}://${blockchainHost}`;
   const [connectionStatus, setConnectionStatus] = React.useState<ConnectionStatus>('idle');
   const [usernameStatus, setUsernameStatus] = React.useState<UsernameStatus>('idle');
   React.useEffect(() => {

@@ -5,7 +5,7 @@
 //  ✔ Tabs (Users / Blocks)
 //  ✔ Passing endpoint prop downward
 // No fetching, no table markup.
-//@/gui/components/organisms/IdentityNoise/Triad/Blockchain/blockchain.tsx
+//@/gui/Session/Session.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Button, IconButton, Tooltip, Typography } from '@/gui/atoms';
 import Icon from '@/gui/Theme/Icon/Icon';

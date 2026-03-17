@@ -2,7 +2,7 @@ import * as React from 'react';
 import clsx from 'clsx';
 import 'material-symbols';
 
-export type IconProps = {
+export type IconProps = React.HTMLAttributes<HTMLSpanElement> & {
   name: string; // e.g., 'material:home'
   iconColor?: string; // CSS color value
   fontSize?: number | string; // optional font size
@@ -10,8 +10,6 @@ export type IconProps = {
   fill?: number; // font variation setting (0 = outlined, 1 = filled)
   grade?: number;
   opticalSize?: number;
-  className?: string;
-  style?: React.CSSProperties;
 };
 
 export default function Icon({
@@ -24,11 +22,13 @@ export default function Icon({
   opticalSize = 24,
   className,
   style,
+  ...rest
 }: IconProps) {
   const iconName = name;
   const variationSettings = `"FILL" ${fill}, "wght" ${weight}, "GRAD" ${grade}, "opsz" ${opticalSize}`;
   return (
     <span
+      {...rest}
       className={clsx('material-symbols-rounded', className)}
       style={{
         fontVariationSettings: variationSettings,

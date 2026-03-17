@@ -17,13 +17,10 @@ async function getFaceLandmarker(): Promise<any | null> {
     try {
       const vision = await import('@mediapipe/tasks-vision');
       const { FaceLandmarker, FilesetResolver } = vision as any;
-
       const wasmBasePath = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm';
       const filesetResolver = await FilesetResolver.forVisionTasks(wasmBasePath);
-
       const modelPath =
         'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task';
-
       const faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
         baseOptions: {
           modelAssetPath: modelPath,

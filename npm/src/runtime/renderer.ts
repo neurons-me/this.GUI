@@ -58,6 +58,8 @@ export type RendererOptions = {
   allowedExprRoots?: string[];
   /** If true, disable expression allowlist checks (use with care). */
   unsafeAllowAllExpressions?: boolean;
+  /** Optional prefix to avoid nodeId collisions across multiple mounts. */
+  idPrefix?: string;
 };
 
 function getReact(opt?: RendererOptions): any {
@@ -372,15 +374,20 @@ function resolveProps(
   return out;
 }
 
-function makeNodeId(node: GuiSpecNode, path: string): string {
+function makeNodeId(node: GuiSpecNode, path: string, idPrefix?: string): string {
   const props = (node.props || {}) as Record<string, any>;
   const explicit =
     props['data-gui-node-id'] ??
     props['data-gui-id'] ??
     props.id;
-  if (explicit != null && String(explicit).trim()) return String(explicit);
-  const t = typeof node.type === 'string' ? node.type : 'node';
-  return `${t}:${path}`;
+  const base =
+    explicit != null && String(explicit).trim()
+      ? String(explicit)
+      : `${typeof node.type === 'string' ? node.type : 'node'}:${path}`;
+  if (idPrefix && String(idPrefix).trim()) {
+    return `${idPrefix}:${base}`;
+  }
+  return base;
 }
 
 /**
@@ -394,9 +401,15 @@ export function renderNode(node: GuiNode, opt?: RendererOptions, path = 'r'): an
   // (This avoids recomputing inferRegistryFromGUI on every resolveType.)
   const nextOpt: RendererOptions = opt?.gui && !opt?.registry ? { ...opt, registry: inferRegistryFromGUI(opt.gui) } : (opt || {});
 
-  // arrays (auto-key spec siblings)
+  // arrays (auto-key spec siblings) + ensure React keys for primitives
   if (Array.isArray(node)) {
-    return node.map((n, i) => renderNode(withAutoKey(n, `k${i}`), nextOpt, `${path}.${i}`));
+    return node.map((n, i) =>
+      React.createElement(
+        React.Fragment,
+        { key: `k${i}` },
+        renderNode(withAutoKey(n, `k${i}`), nextOpt, `${path}.${i}`)
+      )
+    );
   }
 
   // primitives
@@ -407,26 +420,37 @@ export function renderNode(node: GuiNode, opt?: RendererOptions, path = 'r'): an
     const next = nextOpt.transformNode ? nextOpt.transformNode(node) : node;
     const { type } = next;
     const resolvedProps = resolveProps(next.props, nextOpt, next);
-    const nodeId = makeNodeId(next, path);
+    const nodeId = makeNodeId(next, path, nextOpt.idPrefix);
     const props = {
       ...(resolvedProps ?? {}),
       ...(resolvedProps?.['data-gui-node-id'] == null ? { 'data-gui-node-id': nodeId } : {}),
+      ...(resolvedProps?.['data-gui-component'] == null && typeof type === 'string' ? { 'data-gui-component': type } : {}),
     };
-    nextOpt.onNodeResolved?.({
-      id: nodeId,
-      type: typeof type === 'string' ? type : undefined,
-      spec: next,
-      resolvedProps,
-      path,
-    });
+    if (nextOpt.onNodeResolved) {
+      const record = {
+        id: nodeId,
+        type: typeof type === 'string' ? type : undefined,
+        spec: next,
+        resolvedProps,
+        path,
+      };
+      const schedule =
+        (typeof queueMicrotask === 'function' && queueMicrotask) ||
+        ((cb: () => void) => Promise.resolve().then(cb));
+      schedule(() => nextOpt.onNodeResolved?.(record));
+    }
 
     // children (auto-key spec siblings)
     const rawKids = normalizeChildren(next.children);
     const kids = rawKids.map((c, i) =>
-      renderNode(
-        withAutoKey(c, `${typeof type === 'string' ? type : 'node'}-${i}`),
-        nextOpt,
-        `${path}.${i}`
+      React.createElement(
+        React.Fragment,
+        { key: `${typeof type === 'string' ? type : 'node'}-${i}` },
+        renderNode(
+          withAutoKey(c, `${typeof type === 'string' ? type : 'node'}-${i}`),
+          nextOpt,
+          `${path}.${i}`
+        )
       )
     );
 

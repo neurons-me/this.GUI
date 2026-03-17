@@ -85,19 +85,21 @@ const RightSidebar = ({
 
   const renderElements = (items: RightSidebarElement[]) =>
     items.map((el, idx) => {
-      if (el.type === 'link') return <RightSidebarLink key={idx} {...el.props} />;
-      if (el.type === 'menu') return <RightSidebarMenu key={idx} view={view} {...el.props} />;
-      if (el.type === 'action') return <RightSidebarAction key={idx} view={view} {...el.props} />;
+      const key = (el as any)?.props?.id ?? (el as any)?.props?.label ?? idx;
+      if (el.type === 'link') return <RightSidebarLink key={key} {...el.props} />;
+      if (el.type === 'menu') return <RightSidebarMenu key={key} view={view} {...el.props} />;
+      if (el.type === 'action') return <RightSidebarAction key={key} view={view} {...el.props} />;
       return null;
     });
 
   const renderFooterItems = (items: RightSidebarElement[]) =>
     items.map((el, idx) => {
-      if (el.type === 'link') return <RightSidebarLink key={`footer-link-${idx}`} {...el.props} />;
+      const baseKey = (el as any)?.props?.id ?? (el as any)?.props?.label ?? idx;
+      if (el.type === 'link') return <RightSidebarLink key={`footer-link-${baseKey}`} {...el.props} />;
       if (el.type === 'menu')
-        return <RightSidebarMenu key={`footer-menu-${idx}`} view={view} {...el.props} />;
+        return <RightSidebarMenu key={`footer-menu-${baseKey}`} view={view} {...el.props} />;
       if (el.type === 'action')
-        return <RightSidebarAction key={`footer-action-${idx}`} view={view} {...el.props} />;
+        return <RightSidebarAction key={`footer-action-${baseKey}`} view={view} {...el.props} />;
       return null;
     });
 

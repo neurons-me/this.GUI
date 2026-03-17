@@ -98,8 +98,8 @@ const RightSidebarLink: React.FC<RightSidebarLinkProps> = ({
       )}
       {hasChildren && expanded && view !== 'rail' && (
         <Box sx={{ pl: 2, pt: 0.5 }}>
-          {React.Children.map(children, (child, index) =>
-            React.isValidElement(child) ? React.cloneElement(child, { key: index }) : null
+          {React.Children.toArray(children).map((child) =>
+            React.isValidElement(child) ? child : null
           )}
         </Box>
       )}
@@ -120,8 +120,8 @@ const RightSidebarLink: React.FC<RightSidebarLinkProps> = ({
             borderColor: 'divider',
           }}
         >
-          {React.Children.map(children, (child, index) =>
-            React.isValidElement(child) ? React.cloneElement(child, { key: index }) : null
+          {React.Children.toArray(children).map((child) =>
+            React.isValidElement(child) ? child : null
           )}
         </Box>
       )}

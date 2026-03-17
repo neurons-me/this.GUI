@@ -4,12 +4,15 @@ import { Box, Typography, Tooltip } from '@/gui/atoms';
 import Icon from '@/gui/Theme/Icon/Icon';
 import type { LeftSidebarMode } from '../../LeftSidebar.types';
 import { useLeftSidebar } from '@/gui/hooks';
+import resolveLeftSidebarAction from './LeftSidebarAction.resolver';
 
 export type LeftSidebarActionProps = {
   label?: string;
   icon?: string;
   iconColor?: string;
   onClick?: () => void;
+  action?: string | (() => any);
+  element?: React.ReactNode;
   active?: boolean;
   className?: string;
   style?: React.CSSProperties;
@@ -22,13 +25,29 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
   icon,
   iconColor,
   onClick,
+  action,
+  element,
   active = false,
   className,
   style,
   resolver,
   view,
 }) => {
-  const handleClick = onClick || (resolver ? () => { try { new Function(resolver)(); } catch (e) { console.error(e); } } : undefined);
+  const handleClick =
+    onClick ||
+    (typeof action !== 'undefined'
+      ? () => {
+          resolveLeftSidebarAction({ action });
+        }
+      : resolver
+        ? () => {
+            try {
+              new Function(resolver)();
+            } catch (e) {
+              console.error(e);
+            }
+          }
+        : undefined);
 
   const content = (
     <Box
@@ -58,6 +77,25 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
       )}
     </Box>
   );
+
+  if (element) {
+    return (
+      <Box
+        className={clsx('LeftSidebarAction', className)}
+        style={style}
+        sx={{
+          p: 1.123,
+          display: 'flex',
+          justifyContent: view === 'rail' ? 'center' : 'flex-start',
+          alignItems: 'center',
+          width: '100%',
+          textAlign: view === 'rail' ? 'center' : 'left',
+        }}
+      >
+        {element}
+      </Box>
+    );
+  }
 
   return (
     <Box

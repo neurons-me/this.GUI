@@ -52,7 +52,15 @@ export function Theme({
   }, [manifestModes]);
   const theme = mode === 'dark' ? darkMuiTheme : lightMuiTheme;
   useEffect(() => {
-    generatePaletteCssVars(theme);
+    const root = document.documentElement;
+    const vars = generatePaletteCssVars(theme);
+    const muiVars = generatePaletteCssVars(theme, '--mui-palette');
+    Object.entries(vars).forEach(([key, value]) => {
+      root.style.setProperty(key, value);
+    });
+    Object.entries(muiVars).forEach(([key, value]) => {
+      root.style.setProperty(key, value);
+    });
   }, [theme]);
   // Ensure saved key is valid with the current catalog
   useEffect(() => {
@@ -66,6 +74,16 @@ export function Theme({
   };
 
   const toggleMode = () => setModeState((m) => (m === 'dark' ? 'light' : 'dark'));
+  useEffect(() => {
+    try {
+      window.dispatchEvent(new CustomEvent('this.gui:themeMode:changed', { detail: { mode } }));
+    } catch {}
+  }, [mode]);
+  useEffect(() => {
+    try {
+      window.dispatchEvent(new CustomEvent('this.gui:themeId:changed', { detail: { themeId } }));
+    } catch {}
+  }, [themeId]);
   const ctxValue: GuiContextValue = useMemo(
     () => ({
       themeId: manifest?.themeId ?? '',

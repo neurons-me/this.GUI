@@ -2,6 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Theme from '@/gui/Theme/Theme';
+import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 import { RouterProvider } from '@/Router/Router';
 import { GuiRegistry as CORE_REGISTRY, extendRegistry } from '@/Registry';
 import type { GuiRegistry as GuiRegistryType } from '@/Registry/types';
@@ -25,6 +26,14 @@ export function installResolvers(entries: any[]) {
 
 function renderSpec(registry: GuiRegistryType, spec: any, ctx?: any): any {
   if (spec == null) return null;
+  const normalizeResolved = (resolved: any) => {
+    if (!Array.isArray(resolved)) return resolved;
+    return resolved.map((child, i) => {
+      const key =
+        (React.isValidElement(child) && child.key != null) ? child.key : i;
+      return <React.Fragment key={key as any}>{child}</React.Fragment>;
+    });
+  };
   // Arrays are treated as fragments
   if (Array.isArray(spec)) {
     return (
@@ -48,7 +57,7 @@ function renderSpec(registry: GuiRegistryType, spec: any, ctx?: any): any {
     return null;
   }
 
-  return entry.resolve(spec, ctx);
+  return normalizeResolved(entry.resolve(spec, ctx));
 }
 
 export function mountSpec(target: Element | string, spec: any, ctx?: any) {
@@ -125,6 +134,7 @@ if (typeof window !== 'undefined') {
   const v = injectedVersion || (typeof process !== 'undefined' ? process.env?.npm_package_version : undefined) || '0.0.0-dev';
   (window as any).GUI.version = v;
   (window as any).GUI.VERSION = v;
+  (window as any).GUI.ThemeModeToggle = ThemeModeToggle;
 
   window.addEventListener('DOMContentLoaded', () => {
     const rootTag = document.querySelector('gui-app');

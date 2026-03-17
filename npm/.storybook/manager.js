@@ -11,4 +11,10 @@ addons.setConfig({
     brandImage: 'GUI.png',
     brandTarget: '_self',
   }),
+  sidebar: {
+    showRoots: true,
+    // Root ids are kebab-case from first title segment.
+    // Leave "getting-started" out so it stays open by default.
+    collapsedRoots: ['docs', 'gui', 'atoms', 'molecules', 'components', 'identity-noise', 'namespace', 'widgets'],
+  },
 });

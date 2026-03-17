@@ -11,26 +11,21 @@
     <!-- Local CSS (preferred for repo demo) -->
     <link rel="stylesheet" href="../dist/styles.css" />
   </head>
-
   <body>
     <div id="root"></div>
-
     <!-- React UMD globals (required by this.gui runtime mount) -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <!-- IMPORTANT: provide the JSX runtime global for react-jsx builds -->
     <script src="https://unpkg.com/react@18/umd/react-jsx-runtime.production.min.js"></script>
-
     <!-- process.env shim (some bundles read process.env.NODE_ENV) -->
     <script>
       window.process = window.process || { env: {} };
       window.process.env = window.process.env || {};
       if (!('NODE_ENV' in window.process.env)) window.process.env.NODE_ENV = 'production';
     </script>
-
     <!-- Local UMD build -->
     <script src="../dist/this.gui.umd.js"></script>
-
     <script>
       (function () {
         const GUI = window.GUI;

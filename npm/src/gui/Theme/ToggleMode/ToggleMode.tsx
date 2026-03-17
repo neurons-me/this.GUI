@@ -39,6 +39,15 @@ const ThemeModeToggle: React.FC<ThemeModeToggleProps> = ({
         sx={sx ? ([{ cursor: 'pointer' }, sx] as any) : ({ cursor: 'pointer' } as any)}
         className={className}
         data-testid={dataTestId}
+        role="button"
+        tabIndex={0}
+        onClick={handleToggle}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleToggle();
+          }
+        }}
       >
         {/* Always show icons for both switch variants */}
         <Icon
@@ -48,7 +57,10 @@ const ThemeModeToggle: React.FC<ThemeModeToggleProps> = ({
         />
         <Switch
           checked={!isLight}
-          onChange={handleToggle}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleToggle();
+          }}
           color="primary"
           size={switchSize}
           inputProps={{ 'aria-label': 'toggle theme mode' }}

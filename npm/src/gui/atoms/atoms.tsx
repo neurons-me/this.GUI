@@ -25,6 +25,10 @@ export type { BoxProps } from './Box/Box';
 import Avatar, { type AvatarProps } from './Avatar/Avatar';
 export { default as Avatar } from './Avatar/Avatar';
 export type { AvatarProps } from './Avatar/Avatar';
+// Checkbox is not polymorphic so we wrap it with forwardRef
+import Checkbox, { type CheckboxProps } from './Checkbox/Checkbox';
+export { default as Checkbox } from './Checkbox/Checkbox';
+export type { CheckboxProps } from './Checkbox/Checkbox';
 // Button is polymorphic so we re-export it directly
 import Button from './Button/Button';
 export { default as Button } from './Button/Button';
@@ -136,6 +140,7 @@ export const atoms = {
   Button,
   Grid,
   Tooltip,
+  Checkbox,
   Switch,
   Paper,
   Avatar,

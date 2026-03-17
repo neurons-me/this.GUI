@@ -33,6 +33,26 @@ export function usePersistentThemeId(
       // fail silently
     }
   }, [themeId]);
+  useEffect(() => {
+    function handleStorage(event: StorageEvent) {
+      if (!event || event.key !== 'this.gui:themeId') return;
+      const next = String(event.newValue || '');
+      if (!next) return;
+      setThemeId((prev) => (prev === next ? prev : next));
+    }
+    function handleThemeIdEvent(event: Event) {
+      const detail = (event as CustomEvent).detail || {};
+      const next = String(detail.themeId || '');
+      if (!next) return;
+      setThemeId((prev) => (prev === next ? prev : next));
+    }
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('this.gui:themeId:changed', handleThemeIdEvent as EventListener);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('this.gui:themeId:changed', handleThemeIdEvent as EventListener);
+    };
+  }, []);
   return [themeId, setThemeId];
 }
 
@@ -62,5 +82,23 @@ export function usePersistentThemeMode(
       // fail silently
     }
   }, [mode]);
+  useEffect(() => {
+    function handleStorage(event: StorageEvent) {
+      if (!event || event.key !== 'this.gui:themeMode') return;
+      const next = event.newValue === 'dark' ? 'dark' : 'light';
+      setMode((prev) => (prev === next ? prev : next));
+    }
+    function handleThemeModeEvent(event: Event) {
+      const detail = (event as CustomEvent).detail || {};
+      const next = detail.mode === 'dark' ? 'dark' : 'light';
+      setMode((prev) => (prev === next ? prev : next));
+    }
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('this.gui:themeMode:changed', handleThemeModeEvent as EventListener);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('this.gui:themeMode:changed', handleThemeModeEvent as EventListener);
+    };
+  }, []);
   return [mode, setMode];
 }

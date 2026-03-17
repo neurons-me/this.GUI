@@ -41,6 +41,7 @@ export type { Theme as MuiTheme } from '@mui/material/styles';
 // NOTE: Export from concrete modules (not barrels) to preserve tree-shaking and avoid pulling in the whole atoms surface.
 export { default as Box } from '@/gui/atoms/Box/Box';
 export { default as Button } from '@/gui/atoms/Button/Button';
+export { default as Checkbox } from '@/gui/atoms/Checkbox/Checkbox';
 export { default as Link } from '@/gui/atoms/Link/Link';
 export { default as Paper } from '@/gui/atoms/Paper/Paper';
 export { default as TextField } from '@/gui/atoms/TextField/TextField';
@@ -53,6 +54,10 @@ export { default as Layout } from '@/gui/Layout/Layout';
 export { default as Icon } from '@/gui/Theme/Icon/Icon';
 export { default as ThemeModeToggle } from '@/gui/Theme/ToggleMode/ToggleMode';
 export { default as Blockchain } from '@/gui/components/Blockchain/blockchain';
+export { default as Cleaker } from '@/gui/Session/Cleaker';
+export { default as FaceRecognition } from '@/gui/widgets/FaceRecognition/FaceRecognition';
+export { default as Monad } from '@/gui/widgets/Monad/Monad';
+export type { MonadProps } from '@/gui/widgets/Monad/Monad';
 export { default as HighLighter } from '@/gui/widgets/HighLighter/HighLighter';
 export { default as CodeBlock } from '@/gui/molecules/CodeBlock/CodeBlock';
 export { default as Modal } from '@/gui/molecules/Modal/Modal';
@@ -73,6 +78,7 @@ import ThemeComponent from '@/gui/Theme/Theme';
 import { GuiRegistry as RegistryEntries } from '@/Registry';
 import Box from '@/gui/atoms/Box/Box';
 import Button from '@/gui/atoms/Button/Button';
+import Checkbox from '@/gui/atoms/Checkbox/Checkbox';
 import Link from '@/gui/atoms/Link/Link';
 import Paper from '@/gui/atoms/Paper/Paper';
 import TextField from '@/gui/atoms/TextField/TextField';
@@ -81,6 +87,8 @@ import Layout from '@/gui/Layout/Layout';
 import Icon from '@/gui/Theme/Icon/Icon';
 import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 import Blockchain from '@/gui/components/Blockchain/blockchain';
+import FaceRecognition from '@/gui/widgets/FaceRecognition/FaceRecognition';
+import Monad from '@/gui/widgets/Monad/Monad';
 import HighLighter from '@/gui/widgets/HighLighter/HighLighter';
 import HighLightsDrawer from '@/gui/widgets/HighLighter/HighLightsDrawer';
 import CodeBlock from '@/gui/molecules/CodeBlock/CodeBlock';
@@ -93,11 +101,12 @@ import GUITools, {
   guiToolsElements,
   guiToolsLeftSidebarConfig,
 } from '@/gui/molecules/menus/GUI-Tools/GUI-Tools';
-import IdentityNoise from '@/gui/components/IdentityNoise/IdentityNoise';
+import Cleaker from '@/gui/Session/Cleaker';
 
 export const Atoms = {
   Box,
   Button,
+  Checkbox,
   Link,
   Paper,
   TextField,
@@ -113,13 +122,15 @@ export const Molecules = {
 } as const;
 
 export const Widgets = {
+  FaceRecognition,
   HighLighter,
   HighLightsDrawer,
+  Monad,
 } as const;
 
 export const Components = {
   Blockchain,
-  IdentityNoise,
+  Cleaker,
   Icon,
   ThemeModeToggle,
 } as const;

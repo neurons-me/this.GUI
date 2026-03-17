@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { useGuiTheme } from '@/gui/hooks';
 export type CodeBlockVariant = 'dark' | 'light';
 export type CodeBlockProps = {
   /** Code string to render */
@@ -33,7 +34,7 @@ export default function CodeBlock(props: CodeBlockProps) {
   const {
     code,
     language = 'tsx',
-    variant = 'dark',
+    variant,
     title,
     showLineNumbers = false,
     wrapLongLines = true,
@@ -41,9 +42,11 @@ export default function CodeBlock(props: CodeBlockProps) {
     className,
     style,
   } = props;
-
-  const theme = variant === 'light' ? oneLight : oneDark;
-  const isLight = variant === 'light';
+  const guiTheme = useGuiTheme();
+  const resolvedVariant: CodeBlockVariant =
+    variant ?? (guiTheme.palette.mode === 'dark' ? 'dark' : 'light');
+  const theme = resolvedVariant === 'light' ? oneLight : oneDark;
+  const isLight = resolvedVariant === 'light';
 
   const [copied, setCopied] = useState(false);
 

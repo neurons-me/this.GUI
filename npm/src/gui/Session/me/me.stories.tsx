@@ -1,46 +1,39 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
-import Triad from "../Triad";
+import Cleaker from "../Cleaker";
 import IconButton from "@mui/material/IconButton";
 import Icon from "@/gui/Theme/Icon/Icon";
 /**
  * These stories focus on two things:
- * 1) Triad UI states (online/offline/username available/exists) without needing a real ledger.
+ * 1) Session UI states (online/offline/username available/exists) without needing a real ledger.
  * 2) The core mental model you described: ME is a short-term thought machine.
  *    - Everything creates a Thought.
  *    - shortTermMemory is bounded (ring-buffer).
  *    - Only when you "cleak" do you persist.
  */
-const meta: Meta<typeof Triad> = {
-  title: "Identity Noise/Triad/me",
-  component: Triad,
+const meta: Meta<typeof Cleaker> = {
+  title: "Users/cleaker/states",
+  component: Cleaker,
   parameters: {
     layout: "centered",
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof Triad>;
+type Story = StoryObj<typeof Cleaker>;
 // ------------------------------------------------------------
-// Triad stories
+// Session stories
 // ------------------------------------------------------------
 export const Default: Story = {
-  name: "Default (blockchain input collapsed)",
+  name: "Cleaker — Connect",
   args: {},
 };
 
-export const WithBlockchainInputOpen: Story = {
-  name: "Blockchain input open",
-  render: () => {
-    return <Triad />;
-  },
-};
-
 export const OfflineBlockchain: Story = {
-  name: "Offline blockchain (simulated)",
+  name: "Cleaker — Unavailable (simulated)",
   render: () => (
     <WithFetchMock mode="offline">
-      <Triad />
+      <Cleaker />
     </WithFetchMock>
   ),
 };
@@ -49,7 +42,7 @@ export const OnlineBlockchainUsernameAvailable: Story = {
   name: "Online blockchain + username available (simulated)",
   render: () => (
     <WithFetchMock mode="available">
-      <Triad />
+      <Cleaker />
     </WithFetchMock>
   ),
 };
@@ -58,13 +51,13 @@ export const OnlineBlockchainUsernameExists: Story = {
   name: "Online blockchain + username exists (simulated)",
   render: () => (
     <WithFetchMock mode="exists">
-      <Triad />
+      <Cleaker />
     </WithFetchMock>
   ),
 };
 
 /**
- * Minimal fetch mock for Triad's endpoints:
+ * Minimal fetch mock for Session endpoints:
  *  - GET http://<host>/
  *  - GET http://<host>/users/<username>
  */
@@ -104,7 +97,7 @@ function WithFetchMock({
 }
 
 // ------------------------------------------------------------
-// ME thought model story (no Triad dependency)
+// ME thought model story (no Session dependency)
 // ------------------------------------------------------------
 export const ThoughtModel_RingBufferAndCleak: Story = {
   name: "ME thought model: ring-buffer + cleak concept (explain)",

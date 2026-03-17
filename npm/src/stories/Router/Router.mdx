@@ -28,13 +28,11 @@ const router = new Router({ runtime });
 Then register routes:
 
 ```ts
-router.set('/dashboard', () => ({
-  type: 'Page',
-  props: { title: 'Dashboard' },
-}));
+router.set('/dashboard', 'me/views/dashboard/default');
 ```
 
-The handler returns a GUI spec. That spec is what you later mount.
+If your route points to `me/...`, Router delegates to `runtime.resolve(...)` and the runtime returns the final GUI spec.
+This is usually the best default-first setup.
 
 ---
 
@@ -42,7 +40,20 @@ The handler returns a GUI spec. That spec is what you later mount.
 
 You can use the Router in three main ways.
 
-### 1. Static Spec
+Recommended first to go: start with Semantic Pointer so route resolution is delegated to your runtime.
+
+### 1. Semantic Pointer (Recommended First)
+
+Good when the route should resolve through your runtime.
+
+```ts
+router.set('/profile', 'me/views/profile/page');
+```
+
+If the handler is a string starting with `me/`, the Router will ask `runtime.resolve(...)` for the final spec.
+This is the handoff point where `this.GUI` stops being just a route matcher and starts behaving like a runtime-driven interface system.
+
+### 2. Static Spec
 
 Good when the route always renders the same screen.
 
@@ -56,7 +67,7 @@ router.set('/about', {
 });
 ```
 
-### 2. Route Factory
+### 3. Route Factory
 
 Good when the route depends on params, runtime context, or async data.
 
@@ -69,17 +80,6 @@ router.set('/shops/:id', ({ ctx }) => ({
   },
 }));
 ```
-
-### 3. Semantic Pointer
-
-Good when the route should resolve through your runtime.
-
-```ts
-router.set('/profile', 'me/views/profile/page');
-```
-
-If the handler is a string starting with `me/`, the Router will ask `runtime.resolve(...)` for the final spec.
-This is the handoff point where `this.GUI` stops being just a route matcher and starts behaving like a runtime-driven interface system.
 
 ---
 
@@ -99,15 +99,19 @@ router.set('/dashboard', () => ({
 ### Dynamic Params
 
 ```ts
+router.set('/shops', 'me/views/shops/default/page');
+
 router.set('/shops/:id', ({ ctx }) => ({
   type: 'Page',
   props: {
     title: { $expr: 'me/views/shops[{{params.id}}].name' },
+    subtitle: { $expr: 'me/views/shops/default/subtitle' },
   },
 }));
 ```
 
 `ctx.params.id` is filled automatically from the URL.
+Use `/shops` as your default route and `/shops/:id` as the dynamic specialization.
 
 ### Wildcard Route
 

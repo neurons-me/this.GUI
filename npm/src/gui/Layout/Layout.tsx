@@ -9,6 +9,7 @@ import Footer from '@/gui/Layout/Footer/Footer';
 import Namespace from '@/gui/Layout/Namespace/Namespace';
 import Content from '@/gui/Layout/Content/Content';
 import type { LayoutProps } from './Layout.types';
+import React from 'react';
 function Layout({
   topBarConfig = false,
   topBar,
@@ -43,6 +44,61 @@ function Layout({
     typeof resolvedRight === 'object' && 'initialView' in resolvedRight
       ? (resolvedRight as any).initialView
       : undefined;
+  const childArray = React.Children.toArray(children);
+  let topBarChild: React.ReactElement | null = null;
+  let leftBarChild: React.ReactElement | null = null;
+  let rightBarChild: React.ReactElement | null = null;
+  let footerChild: React.ReactElement | null = null;
+  type ContentElement = React.ReactElement<React.ComponentProps<typeof Content>>;
+  const isContentElement = (child: React.ReactNode): child is ContentElement =>
+    React.isValidElement(child) && child.type === Content;
+  let contentChild: ContentElement | null = null;
+  const contentExtras: React.ReactNode[] = [];
+
+  childArray.forEach((child) => {
+    if (!React.isValidElement(child)) {
+      contentExtras.push(child);
+      return;
+    }
+    if (child.type === TopBar) {
+      topBarChild = child;
+      return;
+    }
+    if (child.type === LeftSidebar) {
+      leftBarChild = child;
+      return;
+    }
+    if (child.type === RightSidebar) {
+      rightBarChild = child;
+      return;
+    }
+    if (child.type === Footer) {
+      footerChild = child;
+      return;
+    }
+    if (isContentElement(child)) {
+      contentChild = child;
+      return;
+    }
+    contentExtras.push(child);
+  });
+
+  const resolvedContent =
+    contentChild
+      ? (() => {
+          const element: React.ReactElement<any> = contentChild;
+          return React.cloneElement(
+            element,
+            element.props,
+            [...React.Children.toArray(element.props.children), ...contentExtras]
+          );
+        })()
+      : (
+          <Content>
+            {contentExtras.length ? contentExtras : (children ?? <Namespace />)}
+          </Content>
+        );
+
   return (
     <LeftBarProvider initialView={leftInitialView}>
       <RightBarProvider initialView={rightInitialView}>
@@ -50,7 +106,7 @@ function Layout({
           id="layout-root"
           sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}
         >
-          {hasTopBar && (
+          {topBarChild ?? (hasTopBar && (
             <TopBar
               {...(typeof resolvedTopBar === 'object'
                 ? (() => {
@@ -63,25 +119,23 @@ function Layout({
                   })()
                 : {})}
             />
-          )}
+          ))}
           <Box sx={{ display: 'flex', flex: 1 }}>
-            {hasLeftBar && (
+            {leftBarChild ?? (hasLeftBar && (
               <LeftSidebar
                 elements={[]}
                 {...(typeof resolvedLeft === 'object' ? (resolvedLeft as any) : {})}
               />
-            )}
-            <Content>
-              {children ?? <Namespace />}
-            </Content>
-            {hasRightBar && (
+            ))}
+            {resolvedContent}
+            {rightBarChild ?? (hasRightBar && (
               <RightSidebar
                 elements={[]}
                 {...(typeof resolvedRight === 'object' ? (resolvedRight as any) : {})}
               />
-            )}
+            ))}
           </Box>
-          {resolvedFooter && (
+          {footerChild ?? (resolvedFooter && (
             <Footer
               {...(typeof resolvedFooter === 'object'
                 ? (() => {
@@ -123,7 +177,7 @@ function Layout({
                   })()
                 : {})}
             />
-          )}
+          ))}
         </Box>
       </RightBarProvider>
     </LeftBarProvider>

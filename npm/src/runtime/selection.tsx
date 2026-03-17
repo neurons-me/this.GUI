@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import type { ResolvedNodeRecord } from './renderer';
+import { selectionStore, type SelectionMeta } from './selectionStore';
 
 type SelectionState = {
   inspectorEnabled: boolean;
@@ -11,6 +12,9 @@ type SelectionState = {
   clearSelection: () => void;
   registerNode: (record: ResolvedNodeRecord) => void;
   getNode: (id: string | null | undefined) => ResolvedNodeRecord | null;
+  getNodeByPath: (path: string | null | undefined) => ResolvedNodeRecord | null;
+  selectedMeta: SelectionMeta | null;
+  setSelectedMeta: (meta: SelectionMeta | null) => void;
 };
 
 const SelectionContext = React.createContext<SelectionState | undefined>(undefined);
@@ -28,66 +32,56 @@ export function SelectionProvider({
   children: React.ReactNode;
   initialInspectorEnabled?: boolean;
 }) {
-  const [inspectorEnabled, setInspectorEnabled] = React.useState(Boolean(initialInspectorEnabled));
-  const [selectedNodeId, setSelectedNodeId] = React.useState<string | null>(null);
-  const [records, setRecords] = React.useState<Record<string, ResolvedNodeRecord>>({});
+  const [state, setState] = React.useState(selectionStore.getState());
 
-  const registerNode = React.useCallback((record: ResolvedNodeRecord) => {
-    setRecords((prev) => {
-      const curr = prev[record.id];
-      if (
-        curr &&
-        curr.path === record.path &&
-        curr.type === record.type &&
-        curr.spec === record.spec &&
-        curr.resolvedProps === record.resolvedProps
-      ) {
-        return prev;
-      }
-      return { ...prev, [record.id]: record };
+  React.useEffect(() => {
+    const unsub = selectionStore.subscribe(() => {
+      setState(selectionStore.getState());
     });
-  }, []);
+    return unsub;
+  }, [initialInspectorEnabled]);
 
-  const selectNode = React.useCallback((id: string | null) => {
-    setSelectedNodeId(id);
-  }, []);
-
-  const clearSelection = React.useCallback(() => {
-    setSelectedNodeId(null);
-  }, []);
-
-  const getNode = React.useCallback(
-    (id: string | null | undefined) => {
-      if (!id) return null;
-      return records[id] ?? null;
-    },
-    [records]
-  );
-
-  const selected = selectedNodeId ? records[selectedNodeId] ?? null : null;
+  const registerNode = selectionStore.actions.registerNode;
+  const selectNode = selectionStore.actions.selectNode;
+  const clearSelection = selectionStore.actions.clearSelection;
+  const getNode = selectionStore.actions.getNode;
+  const getNodeByPath = selectionStore.actions.getNodeByPath;
+  const setSelectedMeta = selectionStore.actions.setSelectedMeta;
+  const setInspectorEnabled = selectionStore.actions.setInspectorEnabled;
+  const selected = state.selectedNodeId ? state.records[state.selectedNodeId] ?? null : null;
 
   const value = React.useMemo<SelectionState>(
     () => ({
-      inspectorEnabled,
+      inspectorEnabled: state.inspectorEnabled,
       setInspectorEnabled,
-      selectedNodeId,
+      selectedNodeId: state.selectedNodeId,
       selected,
       selectNode,
       clearSelection,
       registerNode,
       getNode,
+      getNodeByPath,
+      selectedMeta: state.selectedMeta,
+      setSelectedMeta,
     }),
     [
-      inspectorEnabled,
-      selectedNodeId,
+      state.inspectorEnabled,
+      state.selectedNodeId,
       selected,
       selectNode,
       clearSelection,
       registerNode,
       getNode,
+      getNodeByPath,
+      state.selectedMeta,
+      setSelectedMeta,
+      setInspectorEnabled,
     ]
   );
 
+  React.useEffect(() => {
+    selectionStore.actions.setInspectorEnabled(Boolean(initialInspectorEnabled));
+  }, [initialInspectorEnabled]);
+
   return <SelectionContext.Provider value={value}>{children}</SelectionContext.Provider>;
 }
-

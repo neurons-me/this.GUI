@@ -372,7 +372,7 @@ export default function FaceRecognition({
     let label: string | null = null;
     let tone: 'warn' | 'error' | 'success' | 'neutral' = 'neutral';
 
-    // Highest priority: explicit app-level status from parent (Triad)
+    // Highest priority: explicit app-level status from parent (Session)
     if (hasFace && !verifyLoading && !verifyResult && effectiveVerifyStatus) {
       const s = String(effectiveVerifyStatus).toUpperCase();
       if (s === 'FACE_NOT_ENROLLED' || s === 'NOT_ENROLLED') {

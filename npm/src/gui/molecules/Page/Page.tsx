@@ -12,13 +12,13 @@ import type { PageProps } from './Page.types';
  *
  * Features:
  * - Applies consistent padding and layout structure.
- * - Supports background color/image and custom sx overrides.
+ * - Uses transparent background with a smooth border by default.
+ * - Supports custom sx overrides.
  * - Fully responsive by default.
  */
 export default function Page({
   children,
   padding = 3,
-  background = 'transparent',
   sx = {},
   insetsAware = true,
 }: PageProps) {
@@ -69,7 +69,11 @@ export default function Page({
         overflowY: 'auto',
         overflowX: 'hidden',
         padding: resolvedPadding,
-        background,
+        background: 'transparent',
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 2,
+        filter: 'brightness(1.16)',
         boxSizing: 'border-box',
         ...(insetsAware &&
           basePadding && {

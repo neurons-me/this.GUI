@@ -17,11 +17,11 @@
  * - It does this by collecting a short burst of templates, then computing a per-dimension median.
  * - Once stable, it can automatically call `verifyUrl` (default: `/api/face/verify`) when `autoVerify=true`.
  *
- * Externally-driven status (Triad-friendly)
+ * Externally-driven status (Session-friendly)
  * - Parent apps can drive the HUD badge via:
  *   - `verifyHttpStatus` and `verifyMessage` (to show 404, ERR, etc.)
  *   - `verifyPayload` (to trigger verification using a parent-provided template)
- * - This lets a parent (like Triad) show a badge even if verification happens elsewhere.
+ * - This lets a parent (like Session) show a badge even if verification happens elsewhere.
  *
  * Events / callbacks
  * - `onCapture(imageDataUrl)` is used in Capture mode (when `showLandmarks=false`).
@@ -38,7 +38,7 @@ import React from 'react';
 import FaceRecognition from './FaceRecognition';
 
 const meta: Meta<typeof FaceRecognition> = {
-  title: 'Identity Noise/FaceRecognition',
+  title: 'Widgets/FaceRecognition',
   component: FaceRecognition,
   tags: ['autodocs'],
   decorators: [
@@ -70,7 +70,7 @@ FaceRecognition is a versatile camera and face landmarks organism designed for R
 - Mirrored preview and overlays by default for a natural selfie experience.
 - Extracts stable face templates for verification workflows.
 - Supports automatic verification via a configurable API endpoint.
-- Allows external status control for integration with parent applications like Triad.
+- Allows external status control for integration with parent applications like Session.
 
 ## Key Props
 
@@ -100,7 +100,7 @@ FaceRecognition is a versatile camera and face landmarks organism designed for R
 />
 \`\`\`
 
-## Triad / external status usage
+## Session / external status usage
 
 Parent applications can control the HUD badge externally by setting \`verifyHttpStatus\` and \`verifyMessage\` props, allowing verification state to be displayed even if performed outside this component.
 

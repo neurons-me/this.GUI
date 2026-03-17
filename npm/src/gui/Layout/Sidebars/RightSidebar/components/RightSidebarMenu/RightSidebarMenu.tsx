@@ -89,7 +89,7 @@ const RightSidebarMenu: React.FC<RightSidebarMenuProps> = ({ label, icon, iconCo
           >
             {(items ?? []).map((item, idx) => (
               <Box
-                key={idx}
+                key={item.label ?? idx}
                 onClick={item.onClick}
                 sx={{
                   display: 'flex',
@@ -113,7 +113,7 @@ const RightSidebarMenu: React.FC<RightSidebarMenuProps> = ({ label, icon, iconCo
         <Collapse in={open}>
           {(items ?? []).map((item, idx) => (
             <Box
-              key={idx}
+              key={item.label ?? idx}
               onClick={item.onClick}
               sx={{
                 display: 'flex',

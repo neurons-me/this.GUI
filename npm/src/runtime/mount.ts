@@ -1,7 +1,7 @@
 //src/runtime/mount.ts
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
-import type { GuiNode, RendererOptions } from './renderer';
+import type { GuiNode, RendererOptions, ResolvedNodeRecord } from './renderer';
 import { renderWithGUI } from './renderer';
 import { SelectionProvider, useSelection } from './selection';
 import { RuntimeInspector } from './inspector';
@@ -12,6 +12,7 @@ export type MountOptions = Omit<RendererOptions, 'gui' | 'React'> & {
   React?: any;
   ReactDOM?: any;
   inspectorEnabled?: boolean;
+  inspectorToggleVisible?: boolean;
 };
 
 // Cache React roots by host element so repeated `mount()` calls update instead of re-creating roots.
@@ -83,13 +84,24 @@ function RuntimeRoot({
   ReactNS: any;
 }) {
   const selection = useSelection();
+  const pendingResolved = React.useRef<ResolvedNodeRecord[]>([]);
+  const collectResolved = React.useCallback((record: ResolvedNodeRecord) => {
+    pendingResolved.current.push(record);
+  }, []);
+
+  React.useLayoutEffect(() => {
+    if (!pendingResolved.current.length) return;
+    const batch = pendingResolved.current.slice();
+    pendingResolved.current = [];
+    batch.forEach((record) => selection.registerNode(record));
+  });
   const renderOptions = React.useMemo(
     () => ({
       ...options,
       React: ReactNS,
-      onNodeResolved: selection.registerNode,
+      onNodeResolved: collectResolved,
     }),
-    [options, ReactNS, selection.registerNode]
+    [options, ReactNS, collectResolved]
   );
   const rendered = React.useMemo(
     () => renderWithGUI(spec, gui, renderOptions),
@@ -99,7 +111,9 @@ function RuntimeRoot({
     React.Fragment,
     null,
     rendered,
-    React.createElement(RuntimeInspector, null)
+    React.createElement(RuntimeInspector, {
+      toggleVisible: Boolean(options.inspectorToggleVisible),
+    })
   );
 }
 

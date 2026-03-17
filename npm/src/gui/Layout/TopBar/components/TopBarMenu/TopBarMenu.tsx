@@ -10,7 +10,8 @@ const renderMenuItems = (
   expandedItems: Set<string>,
   toggleExpand: (label: string) => void
 ): React.ReactElement[] =>
-  items.map(({ label, href, icon, iconColor, external, items: subItems }) => {
+  items.map(({ label, href, icon, iconColor, external, items: subItems }, idx) => {
+    const key = label ?? href ?? idx;
     const isExpanded = expandedItems.has(label);
 
     const content = (
@@ -33,7 +34,7 @@ const renderMenuItems = (
 
     if (subItems && subItems.length > 0) {
       return (
-        <React.Fragment key={label}>
+        <React.Fragment key={key}>
           <MenuItem
             onClick={() => toggleExpand(label)}
             sx={{ color: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
@@ -61,7 +62,7 @@ const renderMenuItems = (
     }
 
     return (
-      <MenuItem key={label} onClick={handleClose} sx={{ color: 'inherit' }}>
+      <MenuItem key={key} onClick={handleClose} sx={{ color: 'inherit' }}>
         {content}
       </MenuItem>
     );

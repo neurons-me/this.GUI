@@ -96,10 +96,8 @@ const LeftSidebarLink: React.FC<LeftSidebarItemProps> = ({
         <>
           {expanded && view !== 'rail' && (
             <Box sx={{ pl: 2, pt: 0.5 }}>
-              {React.Children.map(children, (child, index) =>
-                React.isValidElement(child) ? (
-                  React.cloneElement(child, { key: index })
-                ) : null
+              {React.Children.toArray(children).map((child) =>
+                React.isValidElement(child) ? child : null
               )}
             </Box>
           )}
@@ -118,10 +116,8 @@ const LeftSidebarLink: React.FC<LeftSidebarItemProps> = ({
                 minWidth: 180,
               }}
             >
-              {React.Children.map(children, (child, index) =>
-                React.isValidElement(child)
-                  ? React.cloneElement(child, { key: index })
-                  : null
+              {React.Children.toArray(children).map((child) =>
+                React.isValidElement(child) ? child : null
               )}
             </Box>
           )}

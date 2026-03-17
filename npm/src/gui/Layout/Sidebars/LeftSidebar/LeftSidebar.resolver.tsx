@@ -32,11 +32,15 @@ type LeftSidebarSpec = {
     // Content
     header?: LeftSidebarHeaderSpec; // optional header (title + icon)
     drawerLinks?: RouteItemSpec[]; // navigation tree
+    elements?: Array<{ type: 'link' | 'menu' | 'action'; props: Record<string, any> }>;
+    footerElements?: Array<{ type: 'link' | 'menu' | 'action'; props: Record<string, any> }>;
+    initialView?: 'rail' | 'expanded' | 'mobile';
     // Style passthrough / misc
     sx?: any;
     id?: string;
     className?: string;
     'data-testid'?: string;
+    style?: React.CSSProperties;
   };
 };
 
@@ -57,21 +61,29 @@ const LeftSidebarResolver: RegistryEntry = {
         ? ctx.handlers[p.onCloseId]
         : undefined;
     // Convert drawerLinks to elements format expected by LeftSidebar
-    const elements = (p.drawerLinks ?? []).map((link) => ({
-      type: 'link' as const,
-      props: {
-        label: link.label,
-        href: link.href,
-        icon: link.icon,
-        iconColor: link.iconColor,
-        children: link.children,
-      },
-    }));
+    const elements =
+      Array.isArray(p.elements) && p.elements.length
+        ? p.elements
+        : (p.drawerLinks ?? []).map((link) => ({
+            type: 'link' as const,
+            props: {
+              label: link.label,
+              href: link.href,
+              icon: link.icon,
+              iconColor: link.iconColor,
+              children: link.children,
+            },
+          }));
 
     return (
       <LeftSidebar
         elements={elements}
+        footerElements={Array.isArray(p.footerElements) ? p.footerElements : []}
+        header={p.header as any}
+        initialView={p.initialView}
         className={p.className}
+        id={p.id}
+        style={p.style}
       />
     );
   },

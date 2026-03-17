@@ -91,7 +91,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({ label, icon, items, v
           >
             {(items ?? []).map((item, idx) => (
               <Box
-                key={idx}
+                key={item.label ?? idx}
                 onClick={item.onClick}
                 sx={{
                   display: 'flex',
@@ -115,7 +115,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({ label, icon, items, v
         <Collapse in={open}>
           {(items ?? []).map((item, idx) => (
             <Box
-              key={idx}
+              key={item.label ?? idx}
               onClick={item.onClick}
               sx={{
                 display: 'flex',

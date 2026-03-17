@@ -4,14 +4,14 @@
  * Exported here so consumers can import from a single namespace.
  */
 import Blockchain from '@/gui/components/Blockchain/blockchain';
-import IdentityNoise from '@/gui/components/IdentityNoise/IdentityNoise';
+import Cleaker from '@/gui/Session/Cleaker';
 // IMPORTANT:
 // - Keep this registry explicit.
 // - Do not `export *` from here.
 // - Add new high-level compositions intentionally.
 const Components = {
   Blockchain,
-  IdentityNoise,
+  Cleaker,
 } as const;
 export { Components };
 export default Components;

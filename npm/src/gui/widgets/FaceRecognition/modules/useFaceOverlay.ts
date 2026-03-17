@@ -9,24 +9,20 @@ export type UseFaceOverlayArgs = {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
   /** Getter for the underlying video element (from react-webcam) */
   getVideoEl: () => HTMLVideoElement | undefined;
-
   /** MediaPipe FaceLandmarker instance (or null). */
   faceLandmarker: any | null;
   /** Whether landmarker is currently loading. */
   faceLandmarkerLoading?: boolean;
   /** Whether landmarker failed to load. */
   faceLandmarkerError?: boolean;
-
   /** UI variant affects fit mode. inline => cover, modal => contain */
   variant?: 'modal' | 'inline';
   /** Mirror preview + overlay mapping. Default true */
   mirrorPreview?: boolean;
-
   /** Draw connection strokes between mesh points. Default: true when real mesh is present */
   showMeshConnections?: boolean;
   /** Draw density for mesh points. 1 = full 468 points, 2 = every other, etc. Default 1 */
   meshStep?: number;
-
   /** Detection throttle in ms. Lower = more responsive. Default 80. */
   detectThrottleMs?: number;
   /** How many consecutive misses before declaring no-face. Default 6 (lenient defaults bump this). */
@@ -35,7 +31,6 @@ export type UseFaceOverlayArgs = {
   noFaceGraceMs?: number;
   /** Minimum time (ms) to hold a detected face before clearing. Helps avoid badge flicker. */
   minFaceHoldMs?: number;
-
   /** Optional: called whenever face presence changes */
   onHasFaceChange?: (hasFace: boolean) => void;
   /** Optional: called with latest landmark points (normalized 0..1, video space). null when none */

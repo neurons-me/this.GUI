@@ -59,6 +59,20 @@ import "this.gui/style.css";
 
 > **Tip:** If you're using the UMD build in a plain HTML page, include `styles.css` from the `dist/` folder and load `this.gui.umd.js` via a `<script>` tag.
 
+## Router: Recommended First Pattern
+
+If your app resolves views from runtime semantics, start with a semantic pointer route:
+
+```ts
+import { Router } from "this.gui";
+
+const router = new Router({ runtime });
+router.set('/profile', 'me/views/profile/page');
+```
+
+When a route handler is a string starting with `me/`, Router delegates to `runtime.resolve(...)`.
+This is the recommended first pattern when you want runtime-driven interfaces instead of static route specs.
+
 ## QUICK START (clone)
 ###### In your terminal run:
 

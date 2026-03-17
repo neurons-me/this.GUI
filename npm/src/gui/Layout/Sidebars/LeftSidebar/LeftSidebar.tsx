@@ -1,6 +1,6 @@
 // LeftSidebar.tsx
 import clsx from 'clsx';
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Icon from '@/gui/Theme/Icon/Icon';
 import { LeftSidebarElement } from './LeftSidebar.types';
@@ -9,19 +9,25 @@ import LeftSidebarMenu from './components/LeftSidebarMenu/LeftSidebarMenu';
 import LeftSidebarAction from './components/LeftSidebarAction/LeftSidebarAction';
 import LeftSidebarToggleButton from './components/LeftSidebarToggleButton/LeftSidebarToggleButton';
 import { useLeftSidebar, useGuiTheme, useGuiMediaQuery, useUpdateInsets, useInsets } from '@/gui/hooks';
-import { Box, Drawer } from '@/gui/atoms';
+import { Box, Drawer, Typography } from '@/gui/atoms';
 import type { LeftSidebarView } from '@/gui/contexts';
 
 const LeftSidebar = ({
   elements = [],
   className,
+  id,
+  style,
   initialView = 'rail',
   footerElements = [],
+  header,
 }: {
   elements: LeftSidebarElement[];
   className?: string;
+  id?: string;
+  style?: React.CSSProperties;
   initialView?: LeftSidebarView;
   footerElements?: LeftSidebarElement[];
+  header?: React.ReactNode | { title?: string; icon?: string; iconColor?: string };
 }) => {
   const { view, setView } = useLeftSidebar();
   const theme = useGuiTheme();
@@ -35,6 +41,34 @@ const LeftSidebar = ({
   const toggleOffset = (navInset > 0 ? navInset : 0) + 12;
   const hasFooterElements = Array.isArray(footerElements) && footerElements.length > 0;
   const initialViewApplied = useRef(false);
+  const rawHeaderNode = (() => {
+    if (!header) return null;
+    if (React.isValidElement(header)) return header;
+    if (typeof header === 'string') {
+      return (
+        <Typography variant="body2" sx={{ fontWeight: 700, letterSpacing: 0.2 }}>
+          {header}
+        </Typography>
+      );
+    }
+    if (typeof header === 'object') {
+      const title = (header as any).title;
+      const iconName = (header as any).icon;
+      const iconColor = (header as any).iconColor;
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+          {iconName ? <Icon name={iconName} iconColor={iconColor} /> : null}
+          {view !== 'rail' && title ? (
+            <Typography variant="body2" sx={{ fontWeight: 700, letterSpacing: 0.2 }}>
+              {title}
+            </Typography>
+          ) : null}
+        </Box>
+      );
+    }
+    return null;
+  })();
+  const headerNode = view === 'rail' ? null : rawHeaderNode;
 
   useEffect(() => {
     if (typeof setInsets !== 'function') return;
@@ -82,16 +116,18 @@ const LeftSidebar = ({
 
   const renderElements = () =>
     elements.map((el, idx) => {
-      if (el.type === 'link') return <LeftSidebarLink key={idx} view={view} {...el.props} />;
-      if (el.type === 'menu') return <LeftSidebarMenu key={idx} view={view} {...el.props} />;
-      if (el.type === 'action') return <LeftSidebarAction key={idx} view={view} {...el.props} />;
+      const key = (el as any)?.props?.id ?? (el as any)?.props?.label ?? idx;
+      if (el.type === 'link') return <LeftSidebarLink key={key} view={view} {...el.props} />;
+      if (el.type === 'menu') return <LeftSidebarMenu key={key} view={view} {...el.props} />;
+      if (el.type === 'action') return <LeftSidebarAction key={key} view={view} {...el.props} />;
       return null;
     });
   const renderFooterItems = () =>
     footerElements.map((el, idx) => {
-      if (el.type === 'link') return <LeftSidebarLink key={`footer-link-${idx}`} view={view} {...el.props} />;
-      if (el.type === 'menu') return <LeftSidebarMenu key={`footer-menu-${idx}`} view={view} {...el.props} />;
-      if (el.type === 'action') return <LeftSidebarAction key={`footer-action-${idx}`} view={view} {...el.props} />;
+      const baseKey = (el as any)?.props?.id ?? (el as any)?.props?.label ?? idx;
+      if (el.type === 'link') return <LeftSidebarLink key={`footer-link-${baseKey}`} view={view} {...el.props} />;
+      if (el.type === 'menu') return <LeftSidebarMenu key={`footer-menu-${baseKey}`} view={view} {...el.props} />;
+      if (el.type === 'action') return <LeftSidebarAction key={`footer-action-${baseKey}`} view={view} {...el.props} />;
       return null;
     });
 
@@ -100,6 +136,8 @@ const LeftSidebar = ({
       <Box
         component="aside"
         className={clsx('LeftSidebar', className)}
+        id={id}
+        style={style}
         sx={{
           position: 'fixed',
           top: 0,
@@ -126,12 +164,17 @@ const LeftSidebar = ({
             height: `${headerHeight}px`,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'flex-end',
+            justifyContent: headerNode ? 'space-between' : 'flex-end',
             px: 1.5,
             py: 0,
             gap: 1.25,
           }}
         >
+          {headerNode && (
+            <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
+              {headerNode}
+            </Box>
+          )}
           <LeftSidebarToggleButton
             expanded={view === ('expanded' as any)}
             onToggle={() => setView(view === 'rail' ? 'expanded' : 'rail')}
@@ -195,6 +238,7 @@ const LeftSidebar = ({
           onClose={() => setMobileOpen(false)}
           variant="temporary"
           ModalProps={{ keepMounted: true }}
+          PaperProps={id || style ? { id, style } : undefined}
           sx={{
             '& .MuiDrawer-paper': {
               width: 220,
@@ -216,11 +260,16 @@ const LeftSidebar = ({
               height: `${headerHeight}px`,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'flex-end',
+              justifyContent: headerNode ? 'space-between' : 'flex-end',
               px: 1.5,
               gap: 1.25,
             }}
           >
+            {headerNode && (
+              <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
+                {headerNode}
+              </Box>
+            )}
             <LeftSidebarToggleButton expanded onToggle={() => setMobileOpen(false)} />
           </Box>
           <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>{renderElements()}</Box>
@@ -250,6 +299,8 @@ const LeftSidebar = ({
     <Box
       component="aside"
       className={clsx('LeftSidebar', className)}
+      id={id}
+      style={style}
       sx={{
         position: 'fixed',
         top: 0,
@@ -276,12 +327,17 @@ const LeftSidebar = ({
           height: `${headerHeight}px`,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: headerNode ? 'space-between' : 'flex-end',
           px: 1.5,
           py: 0,
           gap: 1.25,
         }}
       >
+        {headerNode && (
+          <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
+            {headerNode}
+          </Box>
+        )}
         <LeftSidebarToggleButton
           expanded={view === ('expanded' as any)}
           onToggle={() => setView(view === 'expanded' ? 'rail' : 'expanded')}

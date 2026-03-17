@@ -26,6 +26,18 @@ export interface ThemesCatalogProps {
    * This is a convenience shortcut equivalent to setting `hideAuthor` and `hideDescription`.
    */
   minimal?: boolean;
+  /**
+   * If true, renders a compact mosaic-style catalog (smaller cards + tighter grid).
+   */
+  compact?: boolean;
+  /**
+   * If true, hides the theme name in each card.
+   */
+  hideTitle?: boolean;
+  /**
+   * If true, hides the per-card light/dark toggle.
+   */
+  hideModeToggle?: boolean;
 }
 
 /**
@@ -57,4 +69,16 @@ export interface ThemesCatalogResolverSpec {
    * This is a convenience shortcut equivalent to setting `hideAuthor` and `hideDescription`.
    */
   minimal?: boolean;
+  /**
+   * If true, renders a compact mosaic-style catalog (smaller cards + tighter grid).
+   */
+  compact?: boolean;
+  /**
+   * If true, hides the theme name in each card.
+   */
+  hideTitle?: boolean;
+  /**
+   * If true, hides the per-card light/dark toggle.
+   */
+  hideModeToggle?: boolean;
 }
