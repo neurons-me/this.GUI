@@ -288,6 +288,8 @@
     const STABLE_JS = 'https://cdn.jsdelivr.net/npm/this.gui@stable/dist/this.gui.bootstrap.umd.js';
     const LATEST_CSS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/styles.css';
     const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.bootstrap.umd.js';
+    const isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
+    const allowLocal = !isHttp || window.location.protocol === 'file:';
 
     function readLocalPaths() {
       try {
@@ -309,7 +311,7 @@
     }
 
     function resolveAssetUrls(source) {
-      if (source === 'local') return readLocalPaths();
+      if (source === 'local') return allowLocal ? readLocalPaths() : { css: STABLE_CSS, js: STABLE_JS };
       if (source === 'latest') return { css: LATEST_CSS, js: LATEST_JS };
       return { css: STABLE_CSS, js: STABLE_JS };
     }
@@ -396,7 +398,11 @@
     function readSources() {
       try {
         const raw = localStorage.getItem(SOURCE_STORAGE_KEY);
-        return raw ? { ...defaults, ...JSON.parse(raw) } : { ...defaults };
+        const parsed = raw ? { ...defaults, ...JSON.parse(raw) } : { ...defaults };
+        if (!allowLocal && parsed.gui === 'local') {
+          return { ...parsed, gui: 'stable' };
+        }
+        return parsed;
       } catch {
         return { ...defaults };
       }
@@ -494,7 +500,20 @@
     });
 
     const sources = readSources();
-    if (guiSelect) guiSelect.value = sources.gui || defaults.gui;
+    if (guiSelect) {
+      guiSelect.value = sources.gui || defaults.gui;
+      if (!allowLocal) {
+        const localOption = guiSelect.querySelector('option[value="local"]');
+        if (localOption) {
+          localOption.disabled = true;
+          localOption.textContent = 'Local (file only)';
+        }
+        if (sources.gui === 'local') {
+          guiSelect.value = 'stable';
+          writeSources({ ...sources, gui: 'stable' });
+        }
+      }
+    }
     bindToggle();
     if (readCollapsedState()) {
       document.body.classList.add('runtime-collapsed');
