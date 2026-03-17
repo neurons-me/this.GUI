@@ -5,13 +5,60 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>.GUI</title>
 <link rel="icon" href="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1761276578/this.gui.npm.png" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.bootstrap.css" crossorigin="anonymous" />
 </head>
 <body>
 <div id="root"></div>
-<script src="https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.bootstrap.umd.js" crossorigin="anonymous"></script>
 <script>
   (async function () {
+    const STABLE_CSS = 'https://cdn.jsdelivr.net/npm/this.gui@stable/dist/styles.css';
+    const STABLE_JS = 'https://cdn.jsdelivr.net/npm/this.gui@stable/dist/this.gui.bootstrap.umd.js';
+    const LATEST_CSS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/styles.css';
+    const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.bootstrap.umd.js';
+
+    const setLoadSource = (source) => {
+      window.GUI_LOAD_SOURCE = source;
+      document.documentElement.setAttribute('data-gui-source', source);
+      console.log(`[GUI] Loaded from: ${source}`);
+    };
+
+    const loadStyle = (href) => new Promise((resolve, reject) => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      link.crossOrigin = 'anonymous';
+      link.onload = () => resolve(true);
+      link.onerror = () => reject(new Error('style load failed: ' + href));
+      document.head.appendChild(link);
+    });
+
+    const loadScript = (src) => new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src;
+      s.crossOrigin = 'anonymous';
+      s.onload = () => resolve(true);
+      s.onerror = () => reject(new Error('script load failed: ' + src));
+      document.head.appendChild(s);
+    });
+
+    const loadStable = async () => {
+      await loadStyle(STABLE_CSS);
+      await loadScript(STABLE_JS);
+      setLoadSource('cdn:stable');
+    };
+
+    const loadLatest = async () => {
+      await loadStyle(LATEST_CSS);
+      await loadScript(LATEST_JS);
+      setLoadSource('cdn:latest');
+    };
+
+    try {
+      await loadStable();
+    } catch (e) {
+      console.warn('[GUI] Stable CDN failed, falling back to latest CDN.', e);
+      await loadLatest();
+    }
+
     const rootEl = document.getElementById('root');
     if (!rootEl) return;
     await window.GUI.bootstrap();
