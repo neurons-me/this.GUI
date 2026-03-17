@@ -5,58 +5,609 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>.GUI</title>
 <link rel="icon" href="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1761276578/this.gui.npm.png" />
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--mui-palette-background-default, Canvas);
+    color: var(--mui-palette-text-primary, CanvasText);
+    font: 13px/1.35 var(--mui-font-family, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif);
+  }
+
+  body.runtime-collapsed #runtime-controls {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+    max-height: 0;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-bottom-width: 0;
+  }
+
+  #runtime-controls {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    align-items: center;
+    padding: 10px 14px;
+    background: color-mix(in srgb, var(--mui-palette-background-paper, Canvas) 90%, transparent);
+    border-bottom: 1px solid var(--mui-palette-divider, #ddd);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+    transition: transform 200ms ease, opacity 200ms ease;
+    margin-left: var(--gui-inset-left, 0px);
+    margin-right: var(--gui-inset-right, 0px);
+    width: calc(100% - var(--gui-inset-left, 0px) - var(--gui-inset-right, 0px));
+  }
+
+  #runtime-controls .runtime-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  #runtime-controls .runtime-control {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    min-width: 0;
+    padding: 6px 8px;
+    border: 1px solid var(--mui-palette-divider, #eee);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--mui-palette-background-paper, Canvas) 70%, transparent);
+  }
+
+  #runtime-controls .runtime-control-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  #runtime-controls label {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--mui-palette-text-secondary, #666);
+    white-space: nowrap;
+  }
+
+  #runtime-controls select,
+  #runtime-controls button {
+    border: 1px solid var(--mui-palette-divider, #ccc);
+    border-radius: 9px;
+    background: var(--mui-palette-background-paper, #fff);
+    color: var(--mui-palette-text-primary, #111);
+    padding: 6px 9px;
+    font: inherit;
+    min-height: 32px;
+  }
+
+  #runtime-controls .runtime-action {
+    margin-left: auto;
+    align-self: center;
+    border-radius: 999px;
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  body:not(.runtime-ready) #runtime-controls-toggle {
+    display: none;
+  }
+
+  #runtime-controls .runtime-local-prompt,
+  #runtime-controls .runtime-local-editor {
+    display: none;
+    flex: 1 1 100%;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--mui-palette-divider, #ddd);
+    background: color-mix(in srgb, var(--mui-palette-background-paper, Canvas) 88%, transparent);
+  }
+
+  #runtime-controls .runtime-local-prompt.visible,
+  #runtime-controls .runtime-local-editor.visible {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  #runtime-controls .runtime-local-prompt span {
+    font-size: 11px;
+    color: var(--mui-palette-text-secondary, #666);
+  }
+
+  #runtime-controls .runtime-local-prompt button,
+  #runtime-controls .runtime-local-editor button {
+    border: 1px solid var(--mui-palette-divider, #ccc);
+    border-radius: 9px;
+    background: var(--mui-palette-background-paper, #fff);
+    color: var(--mui-palette-text-primary, #111);
+    padding: 6px 10px;
+    font: inherit;
+    min-height: 30px;
+  }
+
+  #runtime-controls .runtime-local-editor label {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--mui-palette-text-secondary, #666);
+  }
+
+  #runtime-controls .runtime-local-editor input {
+    border: 1px solid var(--mui-palette-divider, #ccc);
+    border-radius: 9px;
+    background: var(--mui-palette-background-paper, #fff);
+    color: var(--mui-palette-text-primary, #111);
+    padding: 6px 9px;
+    font: inherit;
+    min-height: 30px;
+    min-width: 220px;
+  }
+
+  .runtime-status-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .runtime-status-state::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: currentColor;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--mui-palette-divider, #ddd) 60%, transparent);
+  }
+
+  .runtime-status-state.pending { color: var(--mui-palette-warning-main, #a2750a); }
+  .runtime-status-state.on { color: var(--mui-palette-success-main, #0c7a43); }
+  .runtime-status-state.off { color: var(--mui-palette-error-main, #a12c2c); }
+
+  .runtime-status-url {
+    font-size: 10px;
+    color: var(--mui-palette-text-secondary, #777);
+    line-height: 1.25;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .runtime-status-url .url-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .runtime-status-url .url-text {
+    flex: 1;
+    min-width: 0;
+    font-size: 9px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--mui-palette-text-secondary, #777);
+  }
+
+  .runtime-status-url .url-toggle {
+    border: 0;
+    padding: 0 2px;
+    font-size: 9px;
+    background: transparent;
+    cursor: pointer;
+    color: var(--mui-palette-primary-main, #1f5fff);
+  }
+</style>
 </head>
 <body>
+<div id="runtime-controls">
+  <div class="runtime-group runtime-control" id="runtime-gui-box">
+    <div class="runtime-control-row">
+      <label for="gui-source">GUI</label>
+      <select id="gui-source">
+        <option value="local">Local</option>
+        <option value="stable" selected>CDN Stable</option>
+        <option value="latest">CDN Latest</option>
+      </select>
+      <div id="runtime-gui-state" class="runtime-status-state pending" title="-">pending</div>
+    </div>
+    <div id="runtime-gui-url" class="runtime-status-url">
+      <span class="url-row">
+        <span class="url-text">-</span>
+        <button class="url-toggle" id="runtime-gui-toggle" type="button" hidden>expand</button>
+      </span>
+    </div>
+  </div>
+  <div class="runtime-local-prompt" id="runtime-local-prompt">
+    <span>Local runtime not found. Skip to CDN or edit local paths.</span>
+    <button type="button" id="runtime-local-skip">Skip</button>
+    <button type="button" id="runtime-local-edit">Edit</button>
+  </div>
+  <div class="runtime-local-editor" id="runtime-local-editor">
+    <label for="runtime-local-css">Local CSS</label>
+    <input id="runtime-local-css" type="text" placeholder="../../this/GUI/npm/dist/styles.css" />
+    <label for="runtime-local-js">Local JS</label>
+    <input id="runtime-local-js" type="text" placeholder="../../this/GUI/npm/dist/this.gui.bootstrap.umd.js" />
+    <button type="button" id="runtime-local-save">Save & Retry</button>
+    <button type="button" id="runtime-local-cancel">Cancel</button>
+  </div>
+  <button class="runtime-action" id="runtime-controls-toggle" type="button" aria-label="Close runtime controls">×</button>
+</div>
 <div id="root"></div>
 <script>
   (async function () {
+    const SOURCE_STORAGE_KEY = 'gui.runtime.source.v1';
+    const COLLAPSE_STORAGE_KEY = 'gui.runtime.collapsed.v1';
+    const INSPECTOR_STORAGE_KEY = 'gui.runtime.inspector.v1';
+    const LOCAL_PATHS_KEY = 'gui.runtime.local.paths.v1';
+    const defaults = { gui: 'stable' };
+    const guiSelect = document.getElementById('gui-source');
+    const toggleButton = document.getElementById('runtime-controls-toggle');
+    const localPrompt = document.getElementById('runtime-local-prompt');
+    const localEdit = document.getElementById('runtime-local-editor');
+    const localSkip = document.getElementById('runtime-local-skip');
+    const localEditBtn = document.getElementById('runtime-local-edit');
+    const localCssInput = document.getElementById('runtime-local-css');
+    const localJsInput = document.getElementById('runtime-local-js');
+    const localSave = document.getElementById('runtime-local-save');
+    const localCancel = document.getElementById('runtime-local-cancel');
+    let rerender = () => {};
+    const statusEls = {
+      guiBox: document.getElementById('runtime-gui-box'),
+      guiState: document.getElementById('runtime-gui-state'),
+      guiUrl: document.getElementById('runtime-gui-url'),
+      guiToggle: document.getElementById('runtime-gui-toggle'),
+    };
+
+    const LOCAL_CSS_DEFAULT = '../../this/GUI/npm/dist/styles.css';
+    const LOCAL_JS_DEFAULT = '../../this/GUI/npm/dist/this.gui.bootstrap.umd.js';
     const STABLE_CSS = 'https://cdn.jsdelivr.net/npm/this.gui@stable/dist/styles.css';
     const STABLE_JS = 'https://cdn.jsdelivr.net/npm/this.gui@stable/dist/this.gui.bootstrap.umd.js';
     const LATEST_CSS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/styles.css';
     const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.bootstrap.umd.js';
 
-    const setLoadSource = (source) => {
-      window.GUI_LOAD_SOURCE = source;
-      document.documentElement.setAttribute('data-gui-source', source);
-      console.log(`[GUI] Loaded from: ${source}`);
-    };
+    function readLocalPaths() {
+      try {
+        const raw = localStorage.getItem(LOCAL_PATHS_KEY);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return {
+          css: parsed && parsed.css ? String(parsed.css) : LOCAL_CSS_DEFAULT,
+          js: parsed && parsed.js ? String(parsed.js) : LOCAL_JS_DEFAULT,
+        };
+      } catch {
+        return { css: LOCAL_CSS_DEFAULT, js: LOCAL_JS_DEFAULT };
+      }
+    }
+
+    function writeLocalPaths(next) {
+      try {
+        localStorage.setItem(LOCAL_PATHS_KEY, JSON.stringify(next));
+      } catch {}
+    }
+
+    function resolveAssetUrls(source) {
+      if (source === 'local') return readLocalPaths();
+      if (source === 'latest') return { css: LATEST_CSS, js: LATEST_JS };
+      return { css: STABLE_CSS, js: STABLE_JS };
+    }
+
+    function formatRuntimeDetail(version, url) {
+      const shortUrl = String(url || '').replace(window.location.origin, '');
+      return version ? ('v' + version + ' · ' + shortUrl) : shortUrl;
+    }
+
+    function setStatus(state, urls, version) {
+      const boxEl = statusEls.guiBox;
+      const stateEl = statusEls.guiState;
+      const urlEl = statusEls.guiUrl;
+      const toggleEl = statusEls.guiToggle;
+      if (boxEl) {
+        boxEl.classList.remove('state-pending', 'state-loaded', 'state-notfound');
+        boxEl.classList.add('state-' + state);
+      }
+      if (stateEl) {
+        const normalized = state === 'loaded' ? 'on' : state === 'notfound' ? 'off' : 'pending';
+        stateEl.textContent = normalized === 'on' ? 'Loaded' : normalized === 'off' ? 'NotFound' : 'Pending';
+        stateEl.className = 'runtime-status-state ' + normalized;
+      }
+      if (urlEl) {
+        const cssUrl = urls && urls.css ? urls.css : '-';
+        const jsUrl = urls && urls.js ? urls.js : '-';
+        const detailText = [
+          formatRuntimeDetail(version, cssUrl),
+          formatRuntimeDetail(version, jsUrl),
+        ].join('\n');
+        const urlTextEl = urlEl.querySelector('.url-text') || urlEl;
+        const full = detailText;
+        const isLong = full.length > 42;
+        const short = isLong ? `${full.slice(0, 16)}…${full.slice(-12)}` : full;
+        urlTextEl.textContent = short;
+        urlTextEl.title = full;
+        urlTextEl.dataset.full = full;
+        urlTextEl.dataset.short = short;
+        urlTextEl.dataset.expanded = 'false';
+        if (toggleEl) {
+          toggleEl.hidden = !isLong;
+          toggleEl.textContent = 'expand';
+        }
+      }
+    }
+
+    function bindToggle() {
+      const urlEl = statusEls.guiUrl;
+      const toggleEl = statusEls.guiToggle;
+      if (!urlEl || !toggleEl) return;
+      const urlTextEl = urlEl.querySelector('.url-text') || urlEl;
+      toggleEl.addEventListener('click', () => {
+        const expanded = urlTextEl.dataset.expanded === 'true';
+        urlTextEl.textContent = expanded ? urlTextEl.dataset.short || '-' : urlTextEl.dataset.full || '-';
+        urlTextEl.dataset.expanded = expanded ? 'false' : 'true';
+        toggleEl.textContent = expanded ? 'expand' : 'collapse';
+      });
+    }
 
     const loadStyle = (href) => new Promise((resolve, reject) => {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
       link.href = href;
-      link.crossOrigin = 'anonymous';
+      if (/^https?:\/\//i.test(href)) {
+        link.crossOrigin = 'anonymous';
+      }
       link.onload = () => resolve(true);
       link.onerror = () => reject(new Error('style load failed: ' + href));
       document.head.appendChild(link);
     });
 
+
     const loadScript = (src) => new Promise((resolve, reject) => {
       const s = document.createElement('script');
       s.src = src;
-      s.crossOrigin = 'anonymous';
+      if (/^https?:\/\//i.test(src)) {
+        s.crossOrigin = 'anonymous';
+      }
       s.onload = () => resolve(true);
       s.onerror = () => reject(new Error('script load failed: ' + src));
       document.head.appendChild(s);
     });
 
-    const loadStable = async () => {
-      await loadStyle(STABLE_CSS);
-      await loadScript(STABLE_JS);
-      setLoadSource('cdn:stable');
-    };
+    function readSources() {
+      try {
+        const raw = localStorage.getItem(SOURCE_STORAGE_KEY);
+        return raw ? { ...defaults, ...JSON.parse(raw) } : { ...defaults };
+      } catch {
+        return { ...defaults };
+      }
+    }
 
-    const loadLatest = async () => {
-      await loadStyle(LATEST_CSS);
-      await loadScript(LATEST_JS);
-      setLoadSource('cdn:latest');
-    };
+    function writeSources(next) {
+      try {
+        localStorage.setItem(SOURCE_STORAGE_KEY, JSON.stringify(next));
+      } catch {}
+    }
 
-    try {
-      await loadStable();
-    } catch (e) {
-      console.warn('[GUI] Stable CDN failed, falling back to latest CDN.', e);
-      await loadLatest();
+    function showLocalPrompt() {
+      if (localPrompt) localPrompt.classList.add('visible');
+      if (localEdit) localEdit.classList.remove('visible');
+    }
+
+    function hideLocalPrompt() {
+      if (localPrompt) localPrompt.classList.remove('visible');
+      if (localEdit) localEdit.classList.remove('visible');
+    }
+
+    function showLocalEditor() {
+      if (localEdit) localEdit.classList.add('visible');
+      if (localPrompt) localPrompt.classList.remove('visible');
+      const current = readLocalPaths();
+      if (localCssInput) localCssInput.value = current.css || '';
+      if (localJsInput) localJsInput.value = current.js || '';
+    }
+
+    function readCollapsedState() {
+      try {
+        return localStorage.getItem(COLLAPSE_STORAGE_KEY) === 'true';
+      } catch {
+        return false;
+      }
+    }
+
+    function writeCollapsedState(isCollapsed) {
+      try {
+        localStorage.setItem(COLLAPSE_STORAGE_KEY, String(isCollapsed));
+      } catch {}
+    }
+
+    function readInspectorState() {
+      try {
+        return localStorage.getItem(INSPECTOR_STORAGE_KEY) === 'true';
+      } catch {
+        return false;
+      }
+    }
+
+    function writeInspectorState(enabled) {
+      try {
+        localStorage.setItem(INSPECTOR_STORAGE_KEY, String(enabled));
+      } catch {}
+    }
+
+    function syncCollapseUi() {
+      const isCollapsed = document.body.classList.contains('runtime-collapsed');
+      if (toggleButton) {
+        toggleButton.textContent = '×';
+        toggleButton.setAttribute('aria-label', 'Close runtime controls');
+      }
+    }
+
+    function toggleCollapsedState() {
+      const isCollapsed = !document.body.classList.contains('runtime-collapsed');
+      document.body.classList.toggle('runtime-collapsed', isCollapsed);
+      writeCollapsedState(isCollapsed);
+      syncCollapseUi();
+      rerender();
+    }
+
+    window.__guiToggleRuntimeControls = toggleCollapsedState;
+
+    let inspectorEnabled = readInspectorState();
+    function setInspectorEnabled(next, options = { persist: true, dispatch: true }) {
+      inspectorEnabled = Boolean(next);
+      if (options.persist) writeInspectorState(inspectorEnabled);
+      if (options.dispatch) {
+        window.dispatchEvent(new CustomEvent('this.gui:inspector:set', { detail: { enabled: inspectorEnabled } }));
+      }
+      rerender();
+    }
+    function toggleInspector() {
+      setInspectorEnabled(!inspectorEnabled);
+    }
+    window.__guiToggleInspector = toggleInspector;
+
+    window.addEventListener('this.gui:inspector:set', (ev) => {
+      const detail = ev && ev.detail ? ev.detail : {};
+      if (typeof detail.enabled === 'boolean' && detail.enabled !== inspectorEnabled) {
+        setInspectorEnabled(detail.enabled, { persist: true, dispatch: false });
+      }
+    });
+
+    const sources = readSources();
+    if (guiSelect) guiSelect.value = sources.gui || defaults.gui;
+    bindToggle();
+    if (readCollapsedState()) {
+      document.body.classList.add('runtime-collapsed');
+    }
+    syncCollapseUi();
+    if (toggleButton) {
+      toggleButton.addEventListener('click', toggleCollapsedState);
+    }
+
+    if (localSkip) {
+      localSkip.addEventListener('click', () => {
+        hideLocalPrompt();
+        if (guiSelect) guiSelect.value = 'stable';
+        writeSources({ ...sources, gui: 'stable' });
+        location.reload();
+      });
+    }
+    if (localEditBtn) {
+      localEditBtn.addEventListener('click', () => {
+        showLocalEditor();
+      });
+    }
+    if (localCancel) {
+      localCancel.addEventListener('click', () => {
+        hideLocalPrompt();
+      });
+    }
+    if (localSave) {
+      localSave.addEventListener('click', () => {
+        const next = {
+          css: localCssInput && localCssInput.value ? String(localCssInput.value).trim() : LOCAL_CSS_DEFAULT,
+          js: localJsInput && localJsInput.value ? String(localJsInput.value).trim() : LOCAL_JS_DEFAULT,
+        };
+        writeLocalPaths(next);
+        if (guiSelect) guiSelect.value = 'local';
+        writeSources({ ...sources, gui: 'local' });
+        location.reload();
+      });
+    }
+
+    async function attemptLoad(source) {
+      const urls = resolveAssetUrls(source);
+      setStatus('pending', urls);
+      window.GUI_RUNTIME_INFO = {
+        source,
+        state: 'pending',
+        css: urls.css,
+        js: urls.js,
+        version: undefined,
+      };
+      await loadStyle(urls.css);
+      await loadScript(urls.js);
+      const detectedVersion = (window.GUI && window.GUI.version) || undefined;
+      window.GUI_LOAD_SOURCE = source === 'local' ? 'local' : `cdn:${source}`;
+      document.documentElement.setAttribute('data-gui-source', window.GUI_LOAD_SOURCE);
+      console.log(`[GUI] Loaded from: ${window.GUI_LOAD_SOURCE}`);
+      setStatus('loaded', urls, detectedVersion);
+      document.body.classList.add('runtime-ready');
+      window.GUI_RUNTIME_INFO = {
+        source,
+        state: 'loaded',
+        css: urls.css,
+        js: urls.js,
+        version: detectedVersion,
+      };
+      return source;
+    }
+
+    const chosen = (guiSelect && guiSelect.value) || defaults.gui;
+    const fallbackOrder = chosen === 'local'
+      ? ['local', 'stable', 'latest']
+      : chosen === 'stable'
+      ? ['stable', 'latest']
+      : ['latest'];
+
+    let loadedSource = null;
+    for (const source of fallbackOrder) {
+      try {
+        loadedSource = await attemptLoad(source);
+        break;
+      } catch (e) {
+        console.warn(`[GUI] Runtime load failed for ${source}.`, e);
+        const urls = resolveAssetUrls(source);
+        setStatus('notfound', urls);
+        if (source === 'local' && chosen === 'local') {
+          showLocalPrompt();
+          return;
+        }
+      }
+    }
+
+    if (!loadedSource) {
+      const urls = resolveAssetUrls(chosen);
+      window.GUI_RUNTIME_INFO = {
+        source: chosen,
+        state: 'notfound',
+        css: urls.css,
+        js: urls.js,
+        version: undefined,
+      };
+      console.error('[GUI] No runtime could be loaded.');
+    } else if (guiSelect && guiSelect.value !== loadedSource) {
+      guiSelect.value = loadedSource;
+      writeSources({ ...sources, gui: loadedSource });
+    }
+
+    if (guiSelect) {
+      guiSelect.addEventListener('change', (event) => {
+        const value = event.target.value;
+        const next = { ...sources, gui: value };
+        writeSources(next);
+        location.reload();
+      });
     }
 
     const rootEl = document.getElementById('root');
@@ -65,78 +616,193 @@
     const GUI = window.GUI;
     // --- Version (direct) ------------------------------------------------------
     const VERSION_LABEL = GUI?.version || 'unknown';
+    const runtimeInfo = window.GUI_RUNTIME_INFO || {};
+    const runtimeSource =
+      runtimeInfo.source === 'local'
+        ? 'local'
+        : runtimeInfo.source === 'latest'
+        ? 'cdn latest'
+        : 'cdn stable';
+    const runtimeState =
+      runtimeInfo.state === 'loaded'
+        ? 'Loaded'
+        : runtimeInfo.state === 'notfound'
+        ? 'NotFound'
+        : 'Pending';
+    const runtimeCss = runtimeInfo.css || '-';
+    const runtimeJs = runtimeInfo.js || '-';
+    const runtimeDetail = [
+      formatRuntimeDetail(runtimeInfo.version, runtimeCss),
+      formatRuntimeDetail(runtimeInfo.version, runtimeJs),
+    ];
+    const isHttpUrl = (value) => /^https?:\/\//i.test(String(value || ''));
+    const versionLabel = String(VERSION_LABEL || 'unknown');
+    const sourceLabel = String(runtimeSource || '');
+    const sourceEmphasis = sourceLabel.includes('latest') ? 'latest' : sourceLabel || 'local';
+    const sourcePrefix = sourceLabel.replace(sourceEmphasis, '').trim();
     try {
       document.title = VERSION_LABEL !== 'unknown'
         ? `this.GUI v${VERSION_LABEL} — Runtime`
         : `this.GUI (${VERSION_LABEL}) — Runtime`;
     } catch (e) {}
-    // Sidebar config
-    const leftBar = {
-      initialView: 'rail',
-      elements: [
-        { type: 'link', props: { label: 'Home', icon: 'home', href: '../../index.html' } },
-        { type: 'link', props: { label: '.GUI', icon: 'widgets', href: './index.html' } },
-        { type: 'link', props: { label: 'Themes', icon: 'palette', href: './themes.html' } },
-        { type: 'link', props: { label: 'Exports', icon: 'schema', href: './exports.html' } },
-        { type: 'link', props: { label: 'Storybook', icon: 'auto_stories', href: 'https://neurons-me.github.io/storybook-static/' } },
-        { type: 'link', props: { label: 'GitHub', icon: 'code', href: 'https://github.com/neurons-me/this.GUI' } },
-        { type: 'link', props: { label: 'npm', icon: 'package_2', href: 'https://www.npmjs.com/package/this.gui' } }
-      ]
-    };
-    // JSON spec rendered by GUI.mount
-    const spec = {
-      type: 'Layout',
-      props: { leftBar },
-      children: [
-        {
-          type: 'Page',
-          props: { title: 'this.GUI — Runtime' },
-          children: [
-            {
-              type: 'Box',
-              props: {
-                sx: {
-                  mt: 2,
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                  gap: 2,
-                  alignItems: 'start',
+    function buildSpec() {
+      const runtimeCollapsed = document.body.classList.contains('runtime-collapsed');
+      const leftBar = {
+        initialView: 'rail',
+        elements: [
+          { type: 'link', props: { label: 'Home', icon: 'home', href: '../../index.html' } },
+          { type: 'link', props: { label: '.GUI', icon: 'widgets', href: './index.html' } },
+          { type: 'link', props: { label: 'Themes', icon: 'palette', href: './themes.html' } },
+          { type: 'link', props: { label: 'Exports', icon: 'schema', href: './exports.html' } },
+          { type: 'link', props: { label: 'Storybook', icon: 'auto_stories', href: 'https://neurons-me.github.io/storybook-static/' } },
+          { type: 'link', props: { label: 'GitHub', icon: 'code', href: 'https://github.com/neurons-me/this.GUI' } },
+          { type: 'link', props: { label: 'npm', icon: 'package_2', href: 'https://www.npmjs.com/package/this.gui' } }
+        ],
+        footerElements: [
+          {
+            type: 'action',
+            props: {
+              label: inspectorEnabled ? 'Inspector · ON' : 'Inspector · OFF',
+              icon: inspectorEnabled ? 'code' : 'code_off',
+              active: inspectorEnabled,
+              resolver: 'window.__guiToggleInspector && window.__guiToggleInspector()'
+            }
+          },
+          {
+            type: 'action',
+            props: {
+              label: runtimeCollapsed ? 'Runtime Controls · Hidden' : 'Runtime Controls · Visible',
+              icon: runtimeCollapsed ? 'unfold_more' : 'unfold_less',
+              active: !runtimeCollapsed,
+              resolver: 'window.__guiToggleRuntimeControls && window.__guiToggleRuntimeControls()'
+            }
+          }
+        ]
+      };
+      return {
+        type: 'Layout',
+        props: { leftBar },
+        children: [
+          {
+            type: 'Page',
+            props: { title: 'this.GUI — Runtime' },
+            children: [
+              {
+                type: 'Box',
+                props: {
+                  sx: {
+                    mt: 2,
+                    display: 'grid',
+                    gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                    gap: 2,
+                    alignItems: 'start',
+                  },
                 },
-              },
-              children: [
-                {
-                  type: 'Paper',
-                  props: { sx: { p: 2, borderRadius: 2 } },
-                  children: [
-                    {
-                      type: 'Box',
-                      props: { sx: { display: 'flex', justifyContent: 'center' } },
-                      children: [
-                        {
-                          type: 'Box',
-                          props: {
-                            component: 'img',
-                            src: 'https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760629119/this.gui.neurons.me_mkapde.png',
-                            alt: 'this.GUI',
-                            sx: { width: 220, maxWidth: '70vw', height: 'auto', display: 'block', mb: 2 },
+                children: [
+                  {
+                    type: 'Paper',
+                    props: { sx: { p: 2, borderRadius: 2 } },
+                    children: [
+                      {
+                        type: 'Box',
+                        props: { sx: { display: 'flex', justifyContent: 'center' } },
+                        children: [
+                          {
+                            type: 'Box',
+                            props: {
+                              component: 'img',
+                              src: 'https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760629119/this.gui.neurons.me_mkapde.png',
+                              alt: 'this.GUI',
+                              sx: { width: 220, maxWidth: '70vw', height: 'auto', display: 'block', mb: 2 },
+                            },
                           },
-                        },
-                      ],
-                    },
-                    { type: 'Typography', props: { variant: 'h4', sx: { fontWeight: 900, letterSpacing: '-0.4px' } }, children: ['.GUI'] },
-                    { type: 'Typography', props: { sx: { mt: 0.75, color: 'text.secondary' } }, children: ['Version: ' + VERSION_LABEL] }
+                        ],
+                      },
+                      { type: 'Typography', props: { variant: 'h1', component: 'h1', sx: { fontWeight: 900, letterSpacing: '-0.4px' } }, children: ['.GUI'] },
+                      {
+                        type: 'Typography',
+                        props: { sx: { mt: 0.75, color: 'text.secondary' } },
+                        children: [
+                          'Version: ',
+                          {
+                            type: 'Box',
+                            props: { component: 'span', sx: { fontWeight: 800, color: 'text.primary' } },
+                            children: [versionLabel],
+                          },
+                          ' · ',
+                          sourcePrefix ? `${sourcePrefix} ` : '',
+                          {
+                            type: 'Box',
+                            props: { component: 'span', sx: { fontWeight: 800, color: 'text.primary' } },
+                            children: [sourceEmphasis],
+                          },
+                          ' ',
+                          {
+                            type: 'Box',
+                            props: {
+                              component: 'span',
+                              sx: {
+                                ml: 0.5,
+                                px: 0.75,
+                                py: 0.1,
+                                borderRadius: 999,
+                                bgcolor: runtimeState === 'Loaded' ? 'success.main' : runtimeState === 'NotFound' ? 'error.main' : 'warning.main',
+                                color: runtimeState === 'Loaded' ? 'success.contrastText' : 'common.white',
+                                fontSize: '0.7rem',
+                                fontWeight: 800,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.04em',
+                              },
+                            },
+                            children: [runtimeState || 'Pending'],
+                          },
+                        ],
+                      },
+                    isHttpUrl(runtimeCss)
+                      ? {
+                          type: 'Typography',
+                          props: {
+                            component: 'a',
+                            href: runtimeCss,
+                            target: '_blank',
+                            rel: 'noopener noreferrer',
+                            sx: { color: 'text.secondary', display: 'block' },
+                          },
+                          children: [runtimeDetail[0]]
+                        }
+                      : { type: 'Typography', props: { sx: { color: 'text.secondary' } }, children: [runtimeDetail[0]] },
+                    isHttpUrl(runtimeJs)
+                      ? {
+                          type: 'Typography',
+                          props: {
+                            component: 'a',
+                            href: runtimeJs,
+                            target: '_blank',
+                            rel: 'noopener noreferrer',
+                            sx: { color: 'text.secondary', display: 'block' },
+                          },
+                          children: [runtimeDetail[1]]
+                        }
+                      : { type: 'Typography', props: { sx: { color: 'text.secondary' } }, children: [runtimeDetail[1]] }
                   ],
                 },
               ],
-            },
-          ],
-        },
-      ],
-    };
+              },
+            ],
+          },
+        ],
+      };
+    }
+
+    function renderSpec() {
+      const spec = buildSpec();
+      GUI.mount(spec, '#root', { inspectorEnabled });
+      console.log('[GUI] ✅ Runtime mounted via GUI.mount');
+    }
+    rerender = renderSpec;
 
     try {
-      GUI.mount(spec, '#root');
-      console.log('[GUI] ✅ Runtime mounted via GUI.mount');
+      renderSpec();
     } catch (err) {
       const msg = err && err.message ? err.message : String(err);
       rootEl.innerHTML =

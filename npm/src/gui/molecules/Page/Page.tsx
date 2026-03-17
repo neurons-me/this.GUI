@@ -21,7 +21,8 @@ export default function Page({
   padding = 3,
   sx = {},
   insetsAware = true,
-}: PageProps) {
+  ...rest
+}: PageProps & Record<string, any>) {
   useInsetsContext();
   const theme = useGuiTheme();
 
@@ -59,6 +60,7 @@ export default function Page({
   return (
     <Box
       id="page-container"
+      {...rest}
       sx={{
         flex: 1,
         flexGrow: 1,
