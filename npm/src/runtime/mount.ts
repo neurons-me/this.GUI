@@ -11,6 +11,8 @@ export type MountOptions = Omit<RendererOptions, 'gui' | 'React'> & {
   gui?: any;
   React?: any;
   ReactDOM?: any;
+  /** Optional .me instance; if provided, mount() will derive runtime via GUI.RunMe(me). */
+  me?: any;
   inspectorEnabled?: boolean;
   inspectorToggleVisible?: boolean;
 };
@@ -149,6 +151,9 @@ export function mount(
   }
 
   const { gui, React, ReactDOM } = getReactGlobals(finalOptions);
+  if (!finalOptions.runtime && (finalOptions as any).me && typeof gui?.RunMe === 'function') {
+    finalOptions = { ...finalOptions, runtime: gui.RunMe((finalOptions as any).me) };
+  }
 
   if (!gui) throw new Error('[this.GUI] Missing window.GUI (UMD surface).');
   if (!React) throw new Error('[this.GUI] Missing window.React.');

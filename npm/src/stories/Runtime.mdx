@@ -1,0 +1,59 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Getting Started/Runtime" />
+
+# Runtime
+
+`this.GUI` renders a spec, but **runtime** decides how data and actions resolve.
+You can pass a fully constructed `runtime`, or pass a `.me` instance and let GUI build it for you.
+
+---
+
+## Minimal: no runtime
+
+Use this when you only need static UI.
+
+```ts
+const spec = {
+  type: 'Page',
+  props: { title: 'Hello GUI' },
+  children: [
+    { type: 'Button', props: { variant: 'contained', children: 'Click' } },
+  ],
+};
+
+GUI.mount(spec, '#root');
+```
+
+---
+
+## Pass a runtime adapter
+
+Use this when you already have a runtime (custom adapter, router, etc.).
+
+```ts
+const runtime = buildRuntime(/* ... */);
+
+GUI.mount(spec, '#root', { runtime });
+```
+
+---
+
+## Pass a `.me` instance
+
+If `.me` is your runtime, just pass `{ me }` and GUI will derive the runtime.
+
+```ts
+const me = new ME();
+
+GUI.mount(spec, '#root', { me });
+```
+
+---
+
+## When to choose which
+
+- **No runtime**: static docs, marketing pages, or mockups.
+- **runtime**: you already have a runtime adapter (router, app state).
+- **me**: your app is driven by `.me` and you want the cleanest API.
+

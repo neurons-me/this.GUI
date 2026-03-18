@@ -63,8 +63,7 @@
     <link href="./sb-addons/links-7/manager-bundle.js" rel="modulepreload" />
     
     <link href="./sb-addons/storybook-8/manager-bundle.js" rel="modulepreload" />
-      
-<style>
+      <style>
   /* Asegura que el título .GUI aparezca junto al logo */
   .sidebar-header a {
     display: flex !important;
@@ -82,12 +81,28 @@
   (() => {
     const TARGET_LABEL = 'Getting Started';
 
+    function resetSidebarPersistence() {
+      try {
+        const keys = Object.keys(window.localStorage || {});
+        for (const key of keys) {
+          const isStorybookKey = /^storybook/i.test(String(key || ''));
+          const isSidebarState = /(sidebar|expanded|navigation|explorer)/i.test(String(key || ''));
+          if (isStorybookKey && isSidebarState) {
+            window.localStorage.removeItem(key);
+          }
+        }
+      } catch {
+        // ignore storage issues
+      }
+    }
+
     function syncSidebarExpansion() {
       const buttons = Array.from(document.querySelectorAll('[data-side="left"] button[aria-expanded]'));
       if (!buttons.length) return;
 
       for (const button of buttons) {
         const label = (button.textContent || '').trim();
+        if (!label || label.includes('/')) continue;
         const expanded = button.getAttribute('aria-expanded') === 'true';
         const shouldExpand = label.includes(TARGET_LABEL);
 
@@ -104,6 +119,7 @@
     });
 
     window.addEventListener('load', () => {
+      resetSidebarPersistence();
       syncSidebarExpansion();
       observer.observe(document.body, {
         subtree: true,
@@ -114,18 +130,6 @@
     });
   })();
 </script>
-
-<link rel="stylesheet" href="/material-symbols.css" />
-<style>
-  /* Collapse groups by default in the left sidebar */
-  [data-side="left"] [role="tree"] [role="group"] {
-    display: none;
-  }
-  /* Keep the top-level list visible */
-  [data-side="left"] [role="tree"] > [role="group"] {
-    display: block;
-  }
-</style>
  
 
     <style>
