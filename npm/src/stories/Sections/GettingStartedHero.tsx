@@ -27,10 +27,10 @@ export default function GettingStartedHero() {
           alt="This.GUI"
           style={{ width: '320px', height: 'auto', imageRendering: 'auto', marginBottom: '14px' }}
         />
-        <Typography variant="h2" sx={{ fontWeight: 700, letterSpacing: '-0.04em', mb: 1 }}>
+        <Typography variant="h2" sx={{ fontWeight: 700, letterSpacing: '-0.04em', mb: 1, color: 'text.primary' }}>
           .GUI
         </Typography>
-        <Typography variant="h5" sx={{ fontWeight: 500, opacity: 0.85, mb: 2 }}>
+        <Typography variant="h5" sx={{ fontWeight: 500, opacity: 1, mb: 2, color: 'text.primary' }}>
           Composable, Declarative and Imperative.
         </Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>

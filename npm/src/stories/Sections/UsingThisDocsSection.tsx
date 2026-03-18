@@ -18,11 +18,11 @@ const UsingThisDocsSection = () => {
   const listTextProps = {
     primaryTypographyProps: {
       variant: 'subtitle1',
-      sx: { fontWeight: 500, lineHeight: 1.2, mb: 0.25 },
+      sx: { fontWeight: 500, lineHeight: 1.2, mb: 0.25, color: 'text.primary' },
     },
     secondaryTypographyProps: {
       variant: 'body2',
-      sx: { opacity: 0.82, lineHeight: 1.35 },
+      sx: { opacity: 1, lineHeight: 1.35, color: 'text.primary' },
     },
     sx: {
       my: 0,
@@ -38,13 +38,13 @@ const UsingThisDocsSection = () => {
   return (
     <Box component="section" sx={{ px: { xs: 2, md: 4 }, pb: 10 }}>
       <EnsureMaterialSymbols />
-      <Typography variant="h3" sx={{ mb: 1.5, fontWeight: 700, lineHeight: 1.1 }}>
+      <Typography variant="h3" sx={{ mb: 1.5, fontWeight: 700, lineHeight: 1.1, color: 'text.primary' }}>
         How to navigate Storybook
       </Typography>
       <Card variant="outlined">
         <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
           <Stack spacing={1} sx={{ maxWidth: 980 }}>
-            <Typography variant="body1" sx={{ opacity: 0.88, mb: 0.75 }}>
+            <Typography variant="body1" sx={{ opacity: 1, mb: 0.75, color: 'text.primary' }}>
               Storybook is the fastest way to learn the surface area of This.GUI.
             </Typography>
             <List dense sx={{ pl: 1, py: 0 }}>
@@ -89,11 +89,23 @@ const UsingThisDocsSection = () => {
                 />
               </ListItem>
             </List>
-            <Divider sx={{ my: 1 }} />
-            <Typography variant="h5" sx={{ fontWeight: 700, mt: 0.5 }}>
+            <Divider sx={{ my: 1, mb: 2.5 }} />
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 800,
+                mt: 5,
+                mb: 0.5,
+                letterSpacing: '-0.01em',
+                color: 'text.primary',
+              }}
+            >
               This.GUI architecture (high-level)
             </Typography>
-            <Typography variant="body1" sx={{ opacity: 0.88, mb: 0.75 }}>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: 600, opacity: 0.75, mb: 1.5, color: 'text.primary' }}
+            >
               This.GUI is organized as a composable UI system:
             </Typography>
             <List dense sx={{ pl: 1, py: 0 }}>
@@ -148,7 +160,7 @@ const UsingThisDocsSection = () => {
                 />
               </ListItem>
             </List>
-            <Typography variant="body2" sx={{ opacity: 0.72, mt: 0.5 }}>
+            <Typography variant="body2" sx={{ opacity: 1, mt: 0.5, color: 'text.primary' }}>
               Tip: If something looks wrong, jump to the matching story under Layout / Sidebars / Theme — it’s the source of truth for intended behavior.
             </Typography>
           </Stack>
