@@ -1,7 +1,7 @@
 {
   "name": "this.gui",
   "private": false,
-  "version": "1.4.6",
+  "version": "1.4.7",
   "type": "module",
   "main": "./dist/this.gui.cjs",
   "module": "./dist/this.gui.es.js",

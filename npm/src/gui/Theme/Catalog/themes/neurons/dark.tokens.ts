@@ -18,7 +18,7 @@ const darkTokens = {
     },
     "background": {
       "default": { "$type": "color", "$value": "#121214" },
-      "paper": { "$type": "color", "$value": "#181a1c" },
+      "paper": { "$type": "color", "$value": "transparent" },
       "nav": { "$type": "color", "$value": "rgba(18,18,20,0.95)" }
     },
     "textPrimary": {

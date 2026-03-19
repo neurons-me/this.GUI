@@ -1,1 +1,0 @@
-function n(e){return typeof e.main=="string"}function a(e,r=[]){if(!n(e))return!1;for(const t of r)if(!e.hasOwnProperty(t)||typeof e[t]!="string")return!1;return!0}function i(e=[]){return([,r])=>r&&a(r,e)}export{i as c};

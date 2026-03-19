@@ -7,6 +7,7 @@ type LeftSidebarMenuItem = {
   label?: string;
   icon?: string;
   onClick?: () => void;
+  inspectorControl?: boolean;
 };
 
 type LeftSidebarMenuProps = {
@@ -14,12 +15,96 @@ type LeftSidebarMenuProps = {
   icon?: string;
   items?: LeftSidebarMenuItem[];
   view?: 'rail' | 'expanded' | 'mobile';
+  onRailTooltipChange?: (payload: {
+    open: boolean;
+    label?: string;
+    icon?: string;
+    items?: LeftSidebarMenuItem[];
+  }) => void;
+  onRailTooltipOpen?: (payload: {
+    label?: string;
+    icon?: string;
+    items?: LeftSidebarMenuItem[];
+  }) => void;
+  onRailTooltipClose?: (payload: {
+    label?: string;
+    icon?: string;
+    items?: LeftSidebarMenuItem[];
+  }) => void;
 };
 
-const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({ label, icon, items, view }) => {
+const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({
+  label,
+  icon,
+  items,
+  view,
+  onRailTooltipChange,
+  onRailTooltipOpen,
+  onRailTooltipClose,
+}) => {
   const [open, setOpen] = useState(false);
   const [anchorTop, setAnchorTop] = useState<number | null>(null);
   const isRail = view === 'rail';
+  const tooltipPayload = { label, icon, items };
+  const openRef = React.useRef(open);
+  const hoveringTrigger = React.useRef(false);
+  const hoveringTooltip = React.useRef(false);
+  const closeTimeoutRef = React.useRef<number | null>(null);
+
+  React.useEffect(() => {
+    openRef.current = open;
+  }, [open]);
+
+  const emitRailTooltip = (isOpen: boolean) => {
+    if (!isRail) return;
+    onRailTooltipChange?.({ open: isOpen, ...tooltipPayload });
+    if (isOpen) {
+      onRailTooltipOpen?.(tooltipPayload);
+    } else {
+      onRailTooltipClose?.(tooltipPayload);
+    }
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('this.gui:leftbarMenuTooltip', {
+          detail: { open: isOpen, ...tooltipPayload },
+        })
+      );
+    }
+  };
+
+  const setOpenState = (next: boolean) => {
+    if (!isRail) {
+      setOpen(next);
+      return;
+    }
+    if (openRef.current === next) return;
+    setOpen(next);
+    emitRailTooltip(next);
+  };
+
+  const clearCloseTimeout = () => {
+    if (closeTimeoutRef.current != null) {
+      window.clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  };
+
+  const scheduleClose = () => {
+    if (!isRail) return;
+    clearCloseTimeout();
+    closeTimeoutRef.current = window.setTimeout(() => {
+      if (!hoveringTrigger.current && !hoveringTooltip.current) {
+        setOpenState(false);
+        setAnchorTop(null);
+      }
+    }, 120);
+  };
+
+  React.useEffect(() => {
+    return () => {
+      clearCloseTimeout();
+    };
+  }, []);
 
   return (
     <Box
@@ -27,13 +112,15 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({ label, icon, items, v
         if (isRail) {
           const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
           setAnchorTop(rect.top);
-          setOpen(true);
+          hoveringTrigger.current = true;
+          clearCloseTimeout();
+          setOpenState(true);
         }
       }}
       onMouseLeave={() => {
         if (isRail) {
-          setOpen(false);
-          setAnchorTop(null);
+          hoveringTrigger.current = false;
+          scheduleClose();
         }
       }}
       sx={{
@@ -71,6 +158,15 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({ label, icon, items, v
       {isRail ? (
         open && (
           <Box
+            onMouseEnter={() => {
+              hoveringTooltip.current = true;
+              clearCloseTimeout();
+              setOpenState(true);
+            }}
+            onMouseLeave={() => {
+              hoveringTooltip.current = false;
+              scheduleClose();
+            }}
             sx={{
               position: 'fixed',
               left: 'calc(var(--gui-rail-width, 60px) + 2px)',
@@ -89,10 +185,14 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({ label, icon, items, v
               py: 1,
             }}
           >
-            {(items ?? []).map((item, idx) => (
+            {(items ?? []).map((item, idx) => {
+              const isInspectorControl =
+                item.inspectorControl === true || /inspector/i.test(String(item.label ?? ''));
+              return (
               <Box
                 key={item.label ?? idx}
                 onClick={item.onClick}
+                data-gui-inspector-control={isInspectorControl ? 'true' : undefined}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
@@ -108,15 +208,20 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({ label, icon, items, v
                 <Icon name={item.icon ?? ''} />
                 <Typography variant="body2">{item.label}</Typography>
               </Box>
-            ))}
+              );
+            })}
           </Box>
         )
       ) : (
         <Collapse in={open}>
-          {(items ?? []).map((item, idx) => (
+          {(items ?? []).map((item, idx) => {
+            const isInspectorControl =
+              item.inspectorControl === true || /inspector/i.test(String(item.label ?? ''));
+            return (
             <Box
               key={item.label ?? idx}
               onClick={item.onClick}
+              data-gui-inspector-control={isInspectorControl ? 'true' : undefined}
               sx={{
                 display: 'flex',
                 alignItems: 'center',
@@ -132,7 +237,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({ label, icon, items, v
               <Icon name={item.icon ?? ''} />
               <Typography variant="body2">{item.label}</Typography>
             </Box>
-          ))}
+            );
+          })}
         </Collapse>
       )}
     </Box>

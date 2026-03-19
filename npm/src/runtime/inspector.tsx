@@ -8,6 +8,25 @@ import { useGuiTheme } from '@/gui/hooks/useGuiTheme';
 const DATA_URI_PREFIXES = ['data:', 'blob:'];
 const DATA_URI_PREVIEW_CHARS = 32;
 const LARGE_STRING_LIMIT = 1024;
+const ADMIN_VIEW_SCOPE_KEY = 'gui.runtime.admin.view.scope.v1';
+const ADMIN_VIEW_SCOPE_SET_EVENT = 'this.gui:adminView:scope:set';
+const ADMIN_VIEW_SCOPE_CHANGED_EVENT = 'this.gui:adminView:scope:changed';
+type AdminScopeMode = 'global' | 'scoped';
+
+function readAdminScopeMode(): AdminScopeMode {
+  try {
+    const raw = String(localStorage.getItem(ADMIN_VIEW_SCOPE_KEY) || '').toLowerCase();
+    return raw === 'scoped' ? 'scoped' : 'global';
+  } catch {
+    return 'global';
+  }
+}
+
+function writeAdminScopeMode(mode: AdminScopeMode) {
+  try {
+    localStorage.setItem(ADMIN_VIEW_SCOPE_KEY, mode);
+  } catch {}
+}
 
 function truncateString(value: string): string {
   if (DATA_URI_PREFIXES.some((prefix) => value.startsWith(prefix))) {
@@ -147,8 +166,124 @@ export function RuntimeInspector({
   const theme = useGuiTheme();
   const codeVariant = theme?.palette?.mode === 'light' ? 'light' : 'dark';
   const [tab, setTab] = React.useState<InspectorTab>('spec');
+  const [adminScopeMode, setAdminScopeMode] = React.useState<AdminScopeMode>(() => readAdminScopeMode());
   const lastHighlighted = React.useRef<HTMLElement | null>(null);
   const highlightClass = 'gui-inspector-selected';
+  const lastInspectorEnabled = React.useRef<boolean>(inspectorEnabled);
+
+  const getLabel = React.useCallback((el: HTMLElement) => {
+    const dataName = el.getAttribute('data-gui-component');
+    if (dataName) return dataName;
+    return el.tagName.toLowerCase();
+  }, []);
+
+  const buildResolvedPath = React.useCallback(
+    (start: HTMLElement, host: HTMLElement) => {
+      const path: string[] = [];
+      let current: HTMLElement | null = start;
+      while (current) {
+        path.unshift(getLabel(current));
+        if (current === host) break;
+        current = current.parentElement;
+      }
+      return path;
+    },
+    [getLabel]
+  );
+
+  const resolveNodeId = React.useCallback(
+    (rawId?: string | null) => {
+      if (!rawId) return null;
+      let resolvedId = rawId;
+      if (!getNode(resolvedId)) {
+        const parts = rawId.split(':');
+        const path = parts.length > 1 ? parts.slice(1).join(':') : '';
+        const fallback = getNodeByPath(path);
+        if (fallback?.id) resolvedId = fallback.id;
+      }
+      return resolvedId;
+    },
+    [getNode, getNodeByPath]
+  );
+
+  const selectHostElement = React.useCallback(
+    (host: HTMLElement, metaFrom?: HTMLElement | null) => {
+      const rawId = host.getAttribute('data-gui-node-id');
+      const resolvedId = resolveNodeId(rawId);
+      if (!resolvedId) return false;
+      selectNode(resolvedId);
+      const metaSource = metaFrom ?? host;
+      setSelectedMeta({
+        elementTag: metaSource.tagName.toLowerCase(),
+        resolvedTag: host.tagName.toLowerCase(),
+        resolvedPath: buildResolvedPath(metaSource, host),
+      });
+      rightSidebar?.setView?.('expanded');
+      return true;
+    },
+    [resolveNodeId, selectNode, setSelectedMeta, buildResolvedPath, rightSidebar]
+  );
+
+  const getSelectedHostElement = React.useCallback(() => {
+    if (!selectedNodeId) return null;
+    let host: HTMLElement | null = null;
+    try {
+      host = document.querySelector(
+        `[data-gui-node-id="${CSS.escape(selectedNodeId)}"]`
+      ) as HTMLElement | null;
+    } catch {
+      host = document.querySelector(
+        `[data-gui-node-id="${selectedNodeId}"]`
+      ) as HTMLElement | null;
+    }
+    return host;
+  }, [selectedNodeId]);
+
+  const selectParentNode = React.useCallback(() => {
+    const host = getSelectedHostElement();
+    if (!host) return;
+    let cursor: HTMLElement | null = host.parentElement;
+    while (cursor) {
+      if (cursor.hasAttribute('data-gui-node-id')) {
+        selectHostElement(cursor, cursor);
+        return;
+      }
+      cursor = cursor.parentElement;
+    }
+  }, [getSelectedHostElement, selectHostElement]);
+
+  const selectTopmostNode = React.useCallback(() => {
+    const host = getSelectedHostElement();
+    if (!host) return;
+    let cursor: HTMLElement | null = host;
+    let topMost: HTMLElement | null = host;
+    while (cursor) {
+      if (cursor.hasAttribute('data-gui-node-id')) {
+        topMost = cursor;
+      }
+      cursor = cursor.parentElement;
+    }
+    if (topMost) selectHostElement(topMost, topMost);
+  }, [getSelectedHostElement, selectHostElement]);
+
+  const findNearestChildNode = React.useCallback((root: HTMLElement) => {
+    const queue: HTMLElement[] = Array.from(root.children) as HTMLElement[];
+    while (queue.length) {
+      const node = queue.shift();
+      if (!node) continue;
+      if (node.hasAttribute('data-gui-node-id')) return node;
+      queue.push(...Array.from(node.children) as HTMLElement[]);
+    }
+    return null;
+  }, []);
+
+  const selectChildNode = React.useCallback(() => {
+    const host = getSelectedHostElement();
+    if (!host) return;
+    const child = findNearestChildNode(host);
+    if (!child) return;
+    selectHostElement(child, child);
+  }, [findNearestChildNode, getSelectedHostElement, selectHostElement]);
   const imagePreviews = React.useMemo(() => {
     const results: { path: string; src: string }[] = [];
     const maxDepth = 6;
@@ -214,6 +349,29 @@ export function RuntimeInspector({
   }, [clearSelection, setInspectorEnabled]);
 
   React.useEffect(() => {
+    const onScopeChanged = (ev: Event) => {
+      const custom = ev as CustomEvent<{ mode?: AdminScopeMode }>;
+      const nextMode = custom?.detail?.mode;
+      if (nextMode === 'scoped' || nextMode === 'global') {
+        setAdminScopeMode(nextMode);
+      }
+    };
+    window.addEventListener(ADMIN_VIEW_SCOPE_CHANGED_EVENT, onScopeChanged as EventListener);
+    return () => {
+      window.removeEventListener(ADMIN_VIEW_SCOPE_CHANGED_EVENT, onScopeChanged as EventListener);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (lastInspectorEnabled.current === inspectorEnabled) return;
+    lastInspectorEnabled.current = inspectorEnabled;
+    window.dispatchEvent(
+      new CustomEvent('this.gui:inspector:changed', { detail: { enabled: inspectorEnabled } })
+    );
+  }, [inspectorEnabled]);
+
+  React.useEffect(() => {
     const styleId = 'gui-inspector-highlight-style';
     if (document.getElementById(styleId)) return;
     const style = document.createElement('style');
@@ -222,7 +380,9 @@ export function RuntimeInspector({
       .${highlightClass} {
         outline: 2px solid rgba(59, 130, 246, 0.85);
         outline-offset: 2px;
-        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+        box-shadow:
+          0 0 0 2px rgba(59, 130, 246, 0.25),
+          inset 0 0 0 2px rgba(59, 130, 246, 0.4);
         border-radius: 6px;
       }
       .gui-inspector-preview {
@@ -315,48 +475,49 @@ export function RuntimeInspector({
   }, [highlightClass, inspectorEnabled, selectedNodeId]);
 
   React.useEffect(() => {
-    const getLabel = (el: HTMLElement) => {
-      const dataName = el.getAttribute('data-gui-component');
-      if (dataName) return dataName;
-      return el.tagName.toLowerCase();
-    };
-
-    const buildResolvedPath = (start: HTMLElement, host: HTMLElement) => {
-      const path: string[] = [];
-      let current: HTMLElement | null = start;
-      while (current) {
-        path.unshift(getLabel(current));
-        if (current === host) break;
-        current = current.parentElement;
-      }
-      return path;
-    };
-
     const onClickCapture = (ev: MouseEvent) => {
       const target = ev.target as HTMLElement | null;
       if (!target) return;
-      const host = target.closest('[data-gui-node-id]') as HTMLElement | null;
+      if (target.closest('[data-gui-inspector-control="true"]')) return;
+      let host = target.closest('[data-gui-node-id]') as HTMLElement | null;
       if (!host) return;
 
       // Respect OFF strictly: no click-to-inspect path when disabled.
       if (!inspectorEnabled) return;
 
-      const id = host.getAttribute('data-gui-node-id');
-      if (!id) return;
-      let resolvedId = id;
-      if (!getNode(resolvedId)) {
-        const parts = id.split(':');
-        const path = parts.length > 1 ? parts.slice(1).join(':') : '';
-        const fallback = getNodeByPath(path);
-        if (fallback?.id) resolvedId = fallback.id;
+      let metaSource: HTMLElement = target;
+      if (ev.metaKey || ev.ctrlKey) {
+        const child = findNearestChildNode(host);
+        if (child) {
+          host = child;
+          if (!child.contains(target)) {
+            metaSource = child;
+          }
+        }
+      } else if (ev.altKey) {
+        let cursor: HTMLElement | null = host;
+        let topMost: HTMLElement | null = host;
+        while (cursor) {
+          if (cursor.hasAttribute('data-gui-node-id')) {
+            topMost = cursor;
+          }
+          cursor = cursor.parentElement;
+        }
+        host = topMost ?? host;
+      } else if (ev.shiftKey) {
+        let cursor: HTMLElement | null = host.parentElement;
+        let parentMatch: HTMLElement | null = null;
+        while (cursor) {
+          if (cursor.hasAttribute('data-gui-node-id')) {
+            parentMatch = cursor;
+            break;
+          }
+          cursor = cursor.parentElement;
+        }
+        if (parentMatch) host = parentMatch;
       }
-      selectNode(resolvedId);
-      setSelectedMeta({
-        elementTag: target.tagName.toLowerCase(),
-        resolvedTag: host.tagName.toLowerCase(),
-        resolvedPath: buildResolvedPath(target, host),
-      });
-      rightSidebar?.setView?.('expanded');
+
+      selectHostElement(host, metaSource);
 
       ev.preventDefault();
       ev.stopPropagation();
@@ -364,7 +525,7 @@ export function RuntimeInspector({
 
     window.addEventListener('click', onClickCapture, true);
     return () => window.removeEventListener('click', onClickCapture, true);
-  }, [inspectorEnabled, rightSidebar, selectNode, setSelectedMeta, getNode, getNodeByPath]);
+  }, [inspectorEnabled, findNearestChildNode, selectHostElement]);
 
   const open = inspectorEnabled && !!selectedNodeId;
   const diffPayload = React.useMemo(
@@ -382,6 +543,33 @@ export function RuntimeInspector({
     fontSize: 11,
     fontWeight: active ? 700 : 500,
   });
+
+  const shortcutKeyStyle: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 4,
+    fontSize: 10,
+    letterSpacing: '0.04em',
+    textTransform: 'uppercase',
+    color: 'rgba(229, 231, 235, 0.75)',
+  };
+  const keycapStyle: React.CSSProperties = {
+    border: '1px solid rgba(255,255,255,0.2)',
+    borderRadius: 6,
+    padding: '2px 6px',
+    fontSize: 10,
+    background: 'rgba(255,255,255,0.06)',
+    color: '#e5e7eb',
+  };
+  const shortcutButtonStyle: React.CSSProperties = {
+    border: '1px solid rgba(255,255,255,0.2)',
+    background: 'transparent',
+    color: '#e5e7eb',
+    borderRadius: 6,
+    padding: '4px 8px',
+    cursor: 'pointer',
+    fontSize: 11,
+  };
 
   return (
     <>
@@ -463,6 +651,27 @@ export function RuntimeInspector({
               >
                 Clear
               </button>
+              <button
+                type="button"
+                onClick={() => {
+                  clearSelection();
+                  setInspectorEnabled(false);
+                }}
+                aria-label="Close inspector"
+                title="Close inspector"
+                style={{
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  background: 'transparent',
+                  color: '#e5e7eb',
+                  borderRadius: 999,
+                  padding: '2px 8px',
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  lineHeight: 1,
+                }}
+              >
+                ×
+              </button>
             </div>
           </header>
 
@@ -501,6 +710,47 @@ export function RuntimeInspector({
                 <code>{selectedMeta.resolvedPath.join(' > ')}</code>
               </div>
             )}
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ opacity: 0.75, marginBottom: 6, fontWeight: 700 }}>SHORTCUTS</div>
+              <div style={{ display: 'grid', gap: 6 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                  <div>
+                    <div style={{ fontWeight: 600 }}>Select parent</div>
+                    <div style={shortcutKeyStyle}>
+                      <span style={keycapStyle}>Shift</span>
+                      <span>+ Click</span>
+                    </div>
+                  </div>
+                  <button type="button" onClick={selectParentNode} style={shortcutButtonStyle}>
+                    Select
+                  </button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                  <div>
+                    <div style={{ fontWeight: 600 }}>Select child</div>
+                    <div style={shortcutKeyStyle}>
+                      <span style={keycapStyle}>Ctrl/⌘</span>
+                      <span>+ Click</span>
+                    </div>
+                  </div>
+                  <button type="button" onClick={selectChildNode} style={shortcutButtonStyle}>
+                    Select
+                  </button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                  <div>
+                    <div style={{ fontWeight: 600 }}>Select topmost</div>
+                    <div style={shortcutKeyStyle}>
+                      <span style={keycapStyle}>Alt</span>
+                      <span>+ Click</span>
+                    </div>
+                  </div>
+                  <button type="button" onClick={selectTopmostNode} style={shortcutButtonStyle}>
+                    Select
+                  </button>
+                </div>
+              </div>
+            </div>
             {tab === 'spec' && (
               <div style={{ marginBottom: 10 }}>
                 <div style={{ opacity: 0.75, marginBottom: 6, fontWeight: 700 }}>

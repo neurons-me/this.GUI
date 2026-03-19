@@ -5,6 +5,7 @@ import type { GuiNode, RendererOptions, ResolvedNodeRecord } from './renderer';
 import { renderWithGUI } from './renderer';
 import { SelectionProvider, useSelection } from './selection';
 import { RuntimeInspector } from './inspector';
+import { RuntimeAdminView } from './adminView';
 
 export type MountTarget = string | Element;
 export type MountOptions = Omit<RendererOptions, 'gui' | 'React'> & {
@@ -50,6 +51,117 @@ function isTargetLike(value: any): value is MountTarget {
 
 function isPlainObject(value: any): value is Record<string, any> {
   return !!value && typeof value === 'object' && Object.getPrototypeOf(value) === Object.prototype;
+}
+
+function normalizeChildrenList(children: any): any[] {
+  if (!children) return [];
+  return Array.isArray(children) ? children : [children];
+}
+
+function expandHeroStructured(node: any): any {
+  if (!node || typeof node !== 'object' || node.type !== 'Hero') return node;
+  const props = node.props ?? {};
+  if (props.__renderStructuredChildren) return node;
+  const hasStructured = Boolean(
+    props.brand || props.header || props.subheader || props.typography || props.options
+  );
+  if (!hasStructured) return node;
+
+  const structuredChildren: any[] = [];
+  const brand = props.brand;
+  if (brand && brand.src) {
+    structuredChildren.push({
+      type: 'Box',
+      props: {
+        component: 'img',
+        src: brand.src,
+        alt: brand.alt || 'Brand',
+        'data-gui-component': 'HeroBrand',
+        sx: {
+          width: brand.width ?? 220,
+          maxWidth: brand.maxWidth ?? '70vw',
+          height: brand.height ?? 'auto',
+          objectFit: brand.fit ?? 'contain',
+          display: 'block',
+          mb: 2,
+          ...(brand.sx || {}),
+        },
+      },
+    });
+  }
+
+  const headerVariant = props.headerVariant || 'h2';
+  const subheaderVariant = props.subheaderVariant || 'subtitle1';
+  const typographyVariant = props.typographyVariant || 'body1';
+
+  const headerNode = props.header
+    ? {
+        type: 'Typography',
+        props: {
+          variant: headerVariant,
+          sx: { fontWeight: 800, letterSpacing: '-0.3px' },
+          'data-gui-component': 'HeroHeader',
+        },
+        children: [props.header],
+      }
+    : null;
+
+  const subheaderIsOverline = subheaderVariant === 'overline';
+  const subheaderNode = props.subheader
+    ? {
+        type: 'Typography',
+        props: {
+          variant: subheaderVariant,
+          sx: subheaderIsOverline
+            ? { letterSpacing: '0.18em', opacity: 0.8, mb: props.header ? 0.5 : 0 }
+            : { mt: props.header ? 0.5 : 0 },
+          'data-gui-component': 'HeroSubheader',
+        },
+        children: [props.subheader],
+      }
+    : null;
+
+  if (subheaderIsOverline && subheaderNode) structuredChildren.push(subheaderNode);
+  if (headerNode) structuredChildren.push(headerNode);
+  if (!subheaderIsOverline && subheaderNode) structuredChildren.push(subheaderNode);
+
+  if (props.typography) {
+    structuredChildren.push({
+      type: 'Typography',
+      props: {
+        variant: typographyVariant,
+        sx: { mt: props.subheader || props.header ? 0.75 : 0 },
+        'data-gui-component': 'HeroBody',
+      },
+      children: [props.typography],
+    });
+  }
+
+  if (props.options) {
+    const optionsChildren = normalizeChildrenList(props.options);
+    structuredChildren.push({
+      type: 'Box',
+      props: {
+        sx: {
+          mt: 1.5,
+          display: 'flex',
+          flexDirection: props.optionsDirection || 'row',
+          gap: props.optionsGap ?? 1.5,
+          justifyContent: props.optionsJustify || 'flex-start',
+          flexWrap: 'wrap',
+        },
+        'data-gui-component': 'HeroOptions',
+      },
+      children: optionsChildren,
+    });
+  }
+
+  const existingChildren = normalizeChildrenList(node.children);
+  return {
+    ...node,
+    props: { ...props, __renderStructuredChildren: true },
+    children: [...structuredChildren, ...existingChildren],
+  };
 }
 
 const LEGACY_WARN_KEY = '__THIS_GUI_MOUNT_LEGACY_WARNED__';
@@ -102,6 +214,10 @@ function RuntimeRoot({
       ...options,
       React: ReactNS,
       onNodeResolved: collectResolved,
+      transformNode: (node: any) => {
+        const next = expandHeroStructured(node);
+        return options.transformNode ? options.transformNode(next) : next;
+      },
     }),
     [options, ReactNS, collectResolved]
   );
@@ -115,7 +231,8 @@ function RuntimeRoot({
     rendered,
     React.createElement(RuntimeInspector, {
       toggleVisible: Boolean(options.inspectorToggleVisible),
-    })
+    }),
+    React.createElement(RuntimeAdminView, null)
   );
 }
 

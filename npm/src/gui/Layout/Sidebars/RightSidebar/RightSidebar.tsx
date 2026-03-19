@@ -37,6 +37,11 @@ const RightSidebar = ({
   const toggleOffset = (navInset > 0 ? navInset : 0) + 12;
   const hasFooterElements = Array.isArray(footerElements) && footerElements.length > 0;
   const initialViewApplied = useRef(false);
+  const adminNodeId = id ? String(id) : 'RightSidebar';
+  const adminAttrs = {
+    'data-gui-node-id': adminNodeId,
+    'data-gui-component': 'RightSidebar',
+  };
 
   useEffect(() => {
     if (typeof setInsets !== 'function') return;
@@ -111,6 +116,7 @@ const RightSidebar = ({
         id={id}
         data-testid={dataTestId}
         style={style}
+        {...adminAttrs}
         sx={{
           position: 'fixed',
           top: 0,
@@ -215,7 +221,7 @@ const RightSidebar = ({
               borderColor: 'divider',
             },
           }}
-          PaperProps={{ id, 'data-testid': dataTestId, style, className }}
+          PaperProps={{ id, 'data-testid': dataTestId, style, className, ...adminAttrs }}
         >
           <Box
             component="header"
@@ -262,6 +268,7 @@ const RightSidebar = ({
       id={id}
       data-testid={dataTestId}
       style={style}
+      {...adminAttrs}
       sx={{
         position: 'fixed',
         top: 0,

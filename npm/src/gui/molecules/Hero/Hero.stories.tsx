@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { Button, TextField } from '@mui/material';
 import { Hero } from './Hero';
 
 const meta: Meta<typeof Hero> = {
@@ -16,20 +17,21 @@ const meta: Meta<typeof Hero> = {
     docs: {
       description: {
         component: `
-**HeroSection** is a full-screen display component that supports image, GIF, or video backgrounds with overlay and blur options.
+**HeroSection** is a full-screen display component that supports image, GIF, video, or color backgrounds with overlay and blur options.
 
 ---
 ## Features
-- Background types: \`image\`, \`gif\`, \`video\`.
+- Background types: \`image\`, \`gif\`, \`video\`, \`color\`.
 - Overlay color and opacity control.
 - Theme-aware blur effects: \`light\`, \`medium\`, \`heavy\`, \`all\`.
 - Fully responsive and fills viewport (100vh).
+- Structured content helpers: brand image, header, subheader, description, options.
 
 ---
 ## Props
 - \`backgroundSrc\`: Media URL (image, gif, or video).
-- \`backgroundType\`: Type of background media ('image', 'gif', or 'video').
-- \`overlayOpacity\`: Opacity of overlay (0–1).
+- \`backgroundType\`: Type of background media ('image', 'gif', 'video', or 'color').
+- \`backgroundColor\`: Color when backgroundType = 'color'.
 - \`overlayColor\`: Color of overlay.
 - \`blur\`: Theme-based blur intensity (\`light\`, \`medium\`, \`heavy\`, \`all\`).
         `,
@@ -45,6 +47,7 @@ export const ImageBackground: Story = {
     backgroundSrc: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e',
     backgroundType: 'image',
     blur: 'none',
+    layout: 'fixed',
     children: (
       <div style={{ color: 'white', fontSize: '2rem', fontWeight: 600, textAlign: 'center', marginTop: '40vh' }}>
         Example: Image Background, Blur none
@@ -58,6 +61,7 @@ export const GifBackground: Story = {
     backgroundSrc: 'https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif',
     backgroundType: 'gif',
     blur: 'light',
+    layout: 'fixed',
     children: (
       <div style={{ color: 'white', fontSize: '2rem', fontWeight: 600, textAlign: 'center', marginTop: '40vh' }}>
         Example: GIF Background, Blur light
@@ -71,11 +75,37 @@ export const VideoBackground: Story = {
     backgroundSrc: 'https://www.neurons.me/media/neurons.mp4',
     backgroundType: 'video',
     blur: 'medium',
+    layout: 'fixed',
     children: (
       <div style={{ color: 'white', fontSize: '2rem', fontWeight: 600, textAlign: 'center', marginTop: '40vh' }}>
         Example: Video Background, Blur medium
       </div>
     ),
+  },
+};
+
+export const StructuredHero: Story = {
+  args: {
+    backgroundType: 'color',
+    backgroundColor: '#0b1114',
+    overlayColor: 'rgba(8, 14, 24, 0.55)',
+    brand: {
+      src: 'https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760629119/this.gui.neurons.me_mkapde.png',
+      alt: 'this.GUI',
+      width: 220,
+      maxWidth: '70vw',
+    },
+    header: 'this.GUI Runtime',
+    subheader: 'Hero Section',
+    typography: 'Runtime overview and quick links for the GUI toolchain.',
+    options: (
+      <>
+        <Button variant="contained" color="primary">Get Started</Button>
+        <Button variant="outlined" color="inherit">Docs</Button>
+        <TextField size="small" placeholder="Search..." />
+      </>
+    ),
+    mode: 'left',
   },
 };
 

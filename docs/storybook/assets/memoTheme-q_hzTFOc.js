@@ -1,1 +1,0 @@
-import{p as s}from"./styled-8fWbaqUV.js";const l={theme:void 0};function u(o){let m,n;return function(t){let e=m;return(e===void 0||t.theme!==n)&&(l.theme=t.theme,e=s(o(l)),m=e,n=t.theme),e}}const r=u;export{r as m};

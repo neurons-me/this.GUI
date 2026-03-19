@@ -15,6 +15,57 @@
     font: 13px/1.35 var(--mui-font-family, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif);
   }
 
+  .gui-leftbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 60px;
+    justify-content: center;
+    padding: 6px 10px;
+    text-decoration: none;
+    color: inherit;
+    box-sizing: border-box;
+  }
+
+  .gui-leftbar-logo-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .gui-leftbar-rail .gui-leftbar-logo {
+    justify-content: center;
+    padding: 6px 6px;
+  }
+
+  .gui-leftbar-rail .gui-leftbar-logo-label {
+    display: none;
+  }
+
+  .gui-leftbar-expanded .gui-leftbar-logo {
+    justify-content: flex-start;
+  }
+
+  .gui-leftbar-footer-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 44px;
+    text-decoration: none;
+    color: inherit;
+    box-sizing: border-box;
+    opacity: 0.72;
+    transition: opacity 160ms ease;
+  }
+
+  .gui-leftbar-footer-logo:hover {
+    opacity: 1;
+  }
+
   body.runtime-collapsed #runtime-controls {
     transform: translateY(-100%);
     opacity: 0;
@@ -250,7 +301,7 @@
     <label for="runtime-local-css">Local CSS</label>
     <input id="runtime-local-css" type="text" placeholder="../../this/GUI/npm/dist/styles.css" />
     <label for="runtime-local-js">Local JS</label>
-    <input id="runtime-local-js" type="text" placeholder="../../this/GUI/npm/dist/this.gui.bootstrap.umd.js" />
+    <input id="runtime-local-js" type="text" placeholder="../../this/GUI/npm/dist/this.gui.umd.js" />
     <button type="button" id="runtime-local-save">Save & Retry</button>
     <button type="button" id="runtime-local-cancel">Cancel</button>
   </div>
@@ -262,6 +313,7 @@
     const SOURCE_STORAGE_KEY = 'gui.runtime.source.v1';
     const COLLAPSE_STORAGE_KEY = 'gui.runtime.collapsed.v1';
     const INSPECTOR_STORAGE_KEY = 'gui.runtime.inspector.v1';
+    const ADMIN_VIEW_STORAGE_KEY = 'gui.runtime.admin.view.v1';
     const LOCAL_PATHS_KEY = 'gui.runtime.local.paths.v1';
     const defaults = { gui: 'stable' };
     const guiSelect = document.getElementById('gui-source');
@@ -283,11 +335,13 @@
     };
 
     const LOCAL_CSS_DEFAULT = '../../this/GUI/npm/dist/styles.css';
-    const LOCAL_JS_DEFAULT = '../../this/GUI/npm/dist/this.gui.bootstrap.umd.js';
+    const LOCAL_JS_DEFAULT = '../../this/GUI/npm/dist/this.gui.umd.js';
     const STABLE_CSS = 'https://cdn.jsdelivr.net/npm/this.gui@stable/dist/styles.css';
     const STABLE_JS = 'https://cdn.jsdelivr.net/npm/this.gui@stable/dist/this.gui.bootstrap.umd.js';
     const LATEST_CSS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/styles.css';
     const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.bootstrap.umd.js';
+    const REACT_CDN = 'https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js';
+    const REACTDOM_CDN = 'https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js';
     const isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
     const allowLocal = !isHttp || window.location.protocol === 'file:';
 
@@ -479,6 +533,40 @@
     window.__guiToggleRuntimeControls = toggleCollapsedState;
 
     let inspectorEnabled = readInspectorState();
+    let adminViewEnabled = readAdminViewState();
+
+    function readAdminViewState() {
+      try {
+        return localStorage.getItem(ADMIN_VIEW_STORAGE_KEY) === 'true';
+      } catch {
+        return false;
+      }
+    }
+
+    function setAdminViewEnabled(next, options = { persist: true, dispatch: true }) {
+      adminViewEnabled = Boolean(next);
+      if (options.persist) {
+        try {
+          localStorage.setItem(ADMIN_VIEW_STORAGE_KEY, String(adminViewEnabled));
+        } catch {}
+      }
+      if (options.dispatch) {
+        window.dispatchEvent(
+          new CustomEvent('this.gui:adminView:set', { detail: { enabled: adminViewEnabled } })
+        );
+      }
+      rerender();
+    }
+
+    function toggleAdminView() {
+      if (window.__guiToggleAdminView && window.__guiToggleAdminView !== toggleAdminView) {
+        window.__guiToggleAdminView();
+        return;
+      }
+      setAdminViewEnabled(!adminViewEnabled);
+    }
+
+    window.__guiToggleAdminView = toggleAdminView;
     function setInspectorEnabled(next, options = { persist: true, dispatch: true }) {
       inspectorEnabled = Boolean(next);
       if (options.persist) writeInspectorState(inspectorEnabled);
@@ -497,6 +585,25 @@
       if (typeof detail.enabled === 'boolean' && detail.enabled !== inspectorEnabled) {
         setInspectorEnabled(detail.enabled, { persist: true, dispatch: false });
       }
+    });
+
+    window.addEventListener('this.gui:inspector:changed', (ev) => {
+      const detail = ev && ev.detail ? ev.detail : {};
+      if (typeof detail.enabled === 'boolean') {
+        inspectorEnabled = detail.enabled;
+        writeInspectorState(inspectorEnabled);
+        rerender();
+      }
+    });
+
+    window.addEventListener('this.gui:adminView:changed', (ev) => {
+      const detail = ev && ev.detail ? ev.detail : {};
+      if (typeof detail.enabled === 'boolean') {
+        adminViewEnabled = detail.enabled;
+      } else {
+        adminViewEnabled = readAdminViewState();
+      }
+      rerender();
     });
 
     const sources = readSources();
@@ -522,6 +629,11 @@
     if (toggleButton) {
       toggleButton.addEventListener('click', toggleCollapsedState);
     }
+    window.addEventListener('storage', (ev) => {
+      if (ev.key !== ADMIN_VIEW_STORAGE_KEY) return;
+      adminViewEnabled = readAdminViewState();
+      rerender();
+    });
 
     if (localSkip) {
       localSkip.addEventListener('click', () => {
@@ -565,6 +677,10 @@
         version: undefined,
       };
       await loadStyle(urls.css);
+      if (source === 'local') {
+        if (!window.React) await loadScript(REACT_CDN);
+        if (!window.ReactDOM) await loadScript(REACTDOM_CDN);
+      }
       await loadScript(urls.js);
       const detectedVersion = (window.GUI && window.GUI.version) || undefined;
       window.GUI_LOAD_SOURCE = source === 'local' ? 'local' : `cdn:${source}`;
@@ -631,7 +747,12 @@
 
     const rootEl = document.getElementById('root');
     if (!rootEl) return;
-    await window.GUI.bootstrap();
+    if (window.GUI && typeof window.GUI.bootstrap === 'function') {
+      await window.GUI.bootstrap();
+    }
+    if (!window.GUI || typeof window.GUI.mount !== 'function') {
+      throw new Error('GUI runtime missing: window.GUI.mount not found');
+    }
     const GUI = window.GUI;
     // --- Version (direct) ------------------------------------------------------
     const VERSION_LABEL = GUI?.version || 'unknown';
@@ -654,6 +775,7 @@
       formatRuntimeDetail(runtimeInfo.version, runtimeCss),
       formatRuntimeDetail(runtimeInfo.version, runtimeJs),
     ];
+    const HERO_HEIGHT = '45vh';
     const isHttpUrl = (value) => /^https?:\/\//i.test(String(value || ''));
     const versionLabel = String(VERSION_LABEL || 'unknown');
     const sourceLabel = String(runtimeSource || '');
@@ -664,119 +786,329 @@
         ? `this.GUI v${VERSION_LABEL} — Runtime`
         : `this.GUI (${VERSION_LABEL}) — Runtime`;
     } catch (e) {}
+    const leftBarLogo =
+      window.React && typeof window.React.createElement === 'function'
+        ? window.React.createElement(
+            'a',
+            {
+              href: 'https://neurons-me.github.io/GUI/',
+              target: '_blank',
+              rel: 'noopener noreferrer',
+              title: 'GUI',
+              'aria-label': 'GUI',
+              className: 'gui-leftbar-logo',
+            },
+            window.React.createElement('img', {
+              src: 'https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760629119/this.gui.neurons.me_mkapde.png',
+              alt: 'this.GUI',
+              style: {
+                width: '55px',
+                height: '55px',
+                objectFit: 'contain',
+                display: 'block',
+              },
+            }),
+            window.React.createElement('span', { className: 'gui-leftbar-logo-label' }, 'GUI')
+          )
+        : null;
+    const leftBarFooterLogo =
+      window.React && typeof window.React.createElement === 'function'
+        ? window.React.createElement(
+            'a',
+            {
+              href: 'https://neurons.me/',
+              target: '_blank',
+              rel: 'noopener noreferrer',
+              title: 'neurons.me',
+              'aria-label': 'neurons.me',
+              className: 'gui-leftbar-footer-logo',
+            },
+            window.React.createElement('img', {
+              src: 'https://neurons.me/media/neurons-grey.png',
+              alt: 'neurons.me',
+              style: {
+                width: '49px',
+                height: '49px',
+                objectFit: 'contain',
+                display: 'block',
+              },
+            })
+          )
+        : null;
+    const leftBarThemeToggle =
+      window.React && window.GUI && window.GUI.ThemeModeToggle && typeof window.React.createElement === 'function'
+        ? window.React.createElement(window.GUI.ThemeModeToggle, {
+            variant: 'minimal',
+            show: 'icons',
+            iconSize: 'small',
+          })
+        : null;
+    const heroAvailable = Boolean(
+      window.GUI &&
+        (window.GUI.Hero ||
+          (window.GUI.Molecules && window.GUI.Molecules.Hero) ||
+          (window.GUI.molecules && window.GUI.molecules.Hero))
+    );
+    const heroSpec = heroAvailable
+      ? {
+          type: 'Hero',
+          props: {
+            height: HERO_HEIGHT,
+            padding: 4,
+            backgroundSrc: 'https://www.neurons.me/media/neurons.mp4',
+            backgroundType: 'video',
+            blur: 'medium',
+            overlayColor: 'rgba(8, 14, 24, 0.55)',
+            layout: 'flow',
+            mode: 'left',
+            contentMaxWidth: 640,
+            contentPaddingBottom: 4,
+            brand: {
+              src: 'https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760629119/this.gui.neurons.me_mkapde.png',
+              alt: 'this.GUI',
+              width: 220,
+              maxWidth: '70vw'
+            },
+            header: 'this.GUI Runtime',
+            subheader: 'Hero',
+            subheaderVariant: 'overline',
+            typography: 'Runtime overview and quick links for the GUI toolchain.'
+          }
+        }
+      : null;
+    let leftbarResizeObserver = null;
+    let leftbarObserverTarget = null;
+    function setLeftbarViewClass(view) {
+      const root = document.documentElement;
+      const isRail = view === 'rail';
+      root.classList.toggle('gui-leftbar-rail', isRail);
+      root.classList.toggle('gui-leftbar-expanded', !isRail);
+    }
+    function inferLeftbarView(sidebar) {
+      if (!sidebar) return 'expanded';
+      const width = Math.max(0, sidebar.getBoundingClientRect().width || 0);
+      return width >= 120 ? 'expanded' : 'rail';
+    }
+    function attachLeftbarObserver() {
+      const sidebar = document.querySelector('.LeftSidebar');
+      if (!sidebar) {
+        if (leftbarResizeObserver) {
+          leftbarResizeObserver.disconnect();
+          leftbarResizeObserver = null;
+        }
+        leftbarObserverTarget = null;
+        setLeftbarViewClass('expanded');
+        return;
+      }
+      if (sidebar === leftbarObserverTarget) return;
+      leftbarObserverTarget = sidebar;
+      if (leftbarResizeObserver) leftbarResizeObserver.disconnect();
+      if (typeof ResizeObserver === 'undefined') {
+        setLeftbarViewClass(inferLeftbarView(sidebar));
+        return;
+      }
+      leftbarResizeObserver = new ResizeObserver(() => {
+        setLeftbarViewClass(inferLeftbarView(sidebar));
+      });
+      leftbarResizeObserver.observe(sidebar);
+      setLeftbarViewClass(inferLeftbarView(sidebar));
+    }
+    function installLeftbarViewObserver() {
+      if (window.__guiLeftbarViewObserverInstalled) {
+        attachLeftbarObserver();
+        return;
+      }
+      window.__guiLeftbarViewObserverInstalled = true;
+      attachLeftbarObserver();
+      if (typeof MutationObserver === 'undefined') return;
+      const mo = new MutationObserver(() => {
+        attachLeftbarObserver();
+      });
+      mo.observe(document.body, { childList: true, subtree: true });
+    }
+    function openExternal(url) {
+      if (!url) return;
+      const win = window.open(url, '_blank', 'noopener,noreferrer');
+      if (win) {
+        try {
+          win.opener = null;
+        } catch (e) {}
+        return;
+      }
+      try {
+        window.location.href = url;
+      } catch (e) {}
+    }
     function buildSpec() {
       const runtimeCollapsed = document.body.classList.contains('runtime-collapsed');
       const leftBar = {
         initialView: 'rail',
         elements: [
-          { type: 'link', props: { label: 'Home', icon: 'home', href: '../../index.html' } },
-          { type: 'link', props: { label: '.GUI', icon: 'widgets', href: './index.html' } },
-          { type: 'link', props: { label: 'Themes', icon: 'palette', href: './themes.html' } },
-          { type: 'link', props: { label: 'Exports', icon: 'schema', href: './exports.html' } },
-          { type: 'link', props: { label: 'Storybook', icon: 'auto_stories', href: 'https://neurons-me.github.io/GUI/docs/storybook/index.html' } },
-          { type: 'link', props: { label: 'GitHub', icon: 'code', href: 'https://github.com/neurons-me/this.GUI' } },
-          { type: 'link', props: { label: 'npm', icon: 'package_2', href: 'https://www.npmjs.com/package/this.gui' } }
-        ],
+          leftBarLogo ? { type: 'action', props: { element: leftBarLogo } } : null,
+        ].filter(Boolean),
         footerElements: [
+          leftBarThemeToggle
+            ? { type: 'action', props: { label: 'Theme Mode', element: leftBarThemeToggle } }
+            : null,
+          {
+            type: 'menu',
+            props: {
+              label: 'Settings',
+              icon: 'settings',
+              items: [
+                {
+                  label: adminViewEnabled ? 'Admin View · ON' : 'Admin View · OFF',
+                  icon: adminViewEnabled ? 'visibility' : 'visibility_off',
+                  onClick: () => window.__guiToggleAdminView && window.__guiToggleAdminView()
+                },
+                {
+                  label: 'Themes',
+                  icon: 'palette',
+                  onClick: () => {
+                    window.location.href = './themes.html';
+                  }
+                },
+                {
+                  label: inspectorEnabled ? 'Inspector · ON' : 'Inspector · OFF',
+                  icon: inspectorEnabled ? 'code' : 'code_off',
+                  onClick: () => window.__guiToggleInspector && window.__guiToggleInspector()
+                },
+                {
+                  label: runtimeCollapsed ? 'Runtime Controls · Hidden' : 'Runtime Controls · Visible',
+                  icon: runtimeCollapsed ? 'unfold_more' : 'unfold_less',
+                  onClick: () => window.__guiToggleRuntimeControls && window.__guiToggleRuntimeControls()
+                }
+              ]
+            }
+          },
+          leftBarFooterLogo ? { type: 'action', props: { element: leftBarFooterLogo } } : null
+        ].filter(Boolean)
+      };
+      const rightBar = {
+        initialView: 'rail',
+        elements: [
           {
             type: 'action',
             props: {
-              label: inspectorEnabled ? 'Inspector · ON' : 'Inspector · OFF',
-              icon: inspectorEnabled ? 'code' : 'code_off',
-              active: inspectorEnabled,
-              resolver: 'window.__guiToggleInspector && window.__guiToggleInspector()'
+              label: 'Exports',
+              icon: 'schema',
+              onClick: () => {
+                window.location.href = './exports.html';
+              }
             }
           },
           {
             type: 'action',
             props: {
-              label: runtimeCollapsed ? 'Runtime Controls · Hidden' : 'Runtime Controls · Visible',
-              icon: runtimeCollapsed ? 'unfold_more' : 'unfold_less',
-              active: !runtimeCollapsed,
-              resolver: 'window.__guiToggleRuntimeControls && window.__guiToggleRuntimeControls()'
+              label: 'Storybook',
+              icon: 'auto_stories',
+              onClick: () => openExternal('https://neurons-me.github.io/GUI/docs/storybook/index.html')
+            }
+          },
+          {
+            type: 'action',
+            props: {
+              label: 'GitHub',
+              icon: 'code',
+              onClick: () => openExternal('https://github.com/neurons-me/this.GUI')
+            }
+          },
+          {
+            type: 'action',
+            props: {
+              label: 'npm',
+              icon: 'package_2',
+              onClick: () => openExternal('https://www.npmjs.com/package/this.gui')
             }
           }
         ]
       };
       return {
         type: 'Layout',
-        props: { leftBar },
+        props: { leftBar, rightBar },
         children: [
           {
             type: 'Page',
             props: { title: 'this.GUI — Runtime' },
             children: [
-              {
-                type: 'Box',
-                props: {
-                  sx: {
-                    mt: 2,
-                    display: 'grid',
-                    gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                    gap: 2,
-                    alignItems: 'start',
-                  },
+              heroSpec,
+            {
+              type: 'Box',
+              props: {
+                sx: {
+                  mt: 2,
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                  gap: 2,
+                  alignItems: 'start',
                 },
-                children: [
-                  {
-                    type: 'Paper',
-                    props: { sx: { p: 2, borderRadius: 2 } },
-                    children: [
-                      {
-                        type: 'Box',
-                        props: { sx: { display: 'flex', justifyContent: 'center' } },
-                        children: [
-                          {
-                            type: 'Box',
-                            props: {
-                              component: 'img',
-                              src: 'https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760629119/this.gui.neurons.me_mkapde.png',
-                              alt: 'this.GUI',
-                              sx: { width: 220, maxWidth: '70vw', height: 'auto', display: 'block', mb: 2 },
+              },
+              children: [
+                {
+                  type: 'Paper',
+                  props: { sx: { p: 2, borderRadius: 2 } },
+                  children: [
+                    {
+                      type: 'Typography',
+                      props: {
+                        variant: 'overline',
+                        sx: { color: 'text.secondary', letterSpacing: '0.18em' },
+                      },
+                      children: ['Module'],
+                    },
+                    {
+                      type: 'Typography',
+                      props: { variant: 'h6', sx: { fontWeight: 700, mt: 0.5 } },
+                      children: ['Runtime Assets'],
+                    },
+                    {
+                      type: 'Typography',
+                      props: {
+                        variant: 'h1',
+                        component: 'h1',
+                        sx: { fontWeight: 900, letterSpacing: '-0.4px', mt: 0.5 },
+                      },
+                      children: ['.GUI'],
+                    },
+                    {
+                      type: 'Typography',
+                      props: { sx: { mt: 0.75, color: 'text.secondary' } },
+                      children: [
+                        'Version: ',
+                        {
+                          type: 'Box',
+                          props: { component: 'span', sx: { fontWeight: 800, color: 'text.primary' } },
+                          children: [versionLabel],
+                        },
+                        ' · ',
+                        sourcePrefix ? `${sourcePrefix} ` : '',
+                        {
+                          type: 'Box',
+                          props: { component: 'span', sx: { fontWeight: 800, color: 'text.primary' } },
+                          children: [sourceEmphasis],
+                        },
+                        ' ',
+                        {
+                          type: 'Box',
+                          props: {
+                            component: 'span',
+                            sx: {
+                              ml: 0.5,
+                              px: 0.75,
+                              py: 0.1,
+                              borderRadius: 999,
+                              bgcolor: 'success.main',
+                              color: 'success.contrastText',
+                              fontSize: '0.7rem',
+                              fontWeight: 800,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.04em',
                             },
                           },
-                        ],
-                      },
-                      { type: 'Typography', props: { variant: 'h1', component: 'h1', sx: { fontWeight: 900, letterSpacing: '-0.4px' } }, children: ['.GUI'] },
-                      {
-                        type: 'Typography',
-                        props: { sx: { mt: 0.75, color: 'text.secondary' } },
-                        children: [
-                          'Version: ',
-                          {
-                            type: 'Box',
-                            props: { component: 'span', sx: { fontWeight: 800, color: 'text.primary' } },
-                            children: [versionLabel],
-                          },
-                          ' · ',
-                          sourcePrefix ? `${sourcePrefix} ` : '',
-                          {
-                            type: 'Box',
-                            props: { component: 'span', sx: { fontWeight: 800, color: 'text.primary' } },
-                            children: [sourceEmphasis],
-                          },
-                          ' ',
-                          {
-                            type: 'Box',
-                            props: {
-                              component: 'span',
-                              sx: {
-                                ml: 0.5,
-                                px: 0.75,
-                                py: 0.1,
-                                borderRadius: 999,
-                                bgcolor: runtimeState === 'Loaded' ? 'success.main' : runtimeState === 'NotFound' ? 'error.main' : 'warning.main',
-                                color: runtimeState === 'Loaded' ? 'success.contrastText' : 'common.white',
-                                fontSize: '0.7rem',
-                                fontWeight: 800,
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.04em',
-                              },
-                            },
-                            children: [runtimeState || 'Pending'],
-                          },
-                        ],
-                      },
+                          children: [runtimeState],
+                        },
+                      ],
+                    },
                     isHttpUrl(runtimeCss)
                       ? {
                           type: 'Typography',
@@ -787,7 +1119,7 @@
                             rel: 'noopener noreferrer',
                             sx: { color: 'text.secondary', display: 'block' },
                           },
-                          children: [runtimeDetail[0]]
+                          children: [runtimeDetail[0]],
                         }
                       : { type: 'Typography', props: { sx: { color: 'text.secondary' } }, children: [runtimeDetail[0]] },
                     isHttpUrl(runtimeJs)
@@ -800,13 +1132,245 @@
                             rel: 'noopener noreferrer',
                             sx: { color: 'text.secondary', display: 'block' },
                           },
-                          children: [runtimeDetail[1]]
+                          children: [runtimeDetail[1]],
                         }
-                      : { type: 'Typography', props: { sx: { color: 'text.secondary' } }, children: [runtimeDetail[1]] }
+                      : { type: 'Typography', props: { sx: { color: 'text.secondary' } }, children: [runtimeDetail[1]] },
+                    {
+                      type: 'Box',
+                      props: {
+                        sx: {
+                          mt: 1.5,
+                          p: 1.5,
+                          borderRadius: 2,
+                          border: '1px solid',
+                          borderColor: 'divider',
+                          backgroundColor: 'action.hover',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 1,
+                        },
+                      },
+                      children: [
+                        {
+                          type: 'Box',
+                          props: {
+                            sx: {
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: 1,
+                              flexWrap: 'wrap',
+                            },
+                          },
+                          children: [
+                            {
+                              type: 'Typography',
+                              props: { variant: 'body2', sx: { fontWeight: 700 } },
+                              children: ['Admin View'],
+                            },
+                            {
+                              type: 'Button',
+                              props: {
+                                size: 'small',
+                                variant: adminViewEnabled ? 'contained' : 'outlined',
+                                color: adminViewEnabled ? 'success' : 'inherit',
+                                onClick: () => window.__guiToggleAdminView && window.__guiToggleAdminView(),
+                                'data-gui-inspector-control': true,
+                                sx: { textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 },
+                              },
+                              children: [adminViewEnabled ? 'ON' : 'OFF'],
+                            },
+                          ],
+                        },
+                        {
+                          type: 'Box',
+                          props: {
+                            sx: {
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: 1,
+                              flexWrap: 'wrap',
+                            },
+                          },
+                          children: [
+                            {
+                              type: 'Typography',
+                              props: { variant: 'body2', sx: { fontWeight: 700 } },
+                              children: ['Component Inspector'],
+                            },
+                            {
+                              type: 'Button',
+                              props: {
+                                size: 'small',
+                                variant: inspectorEnabled ? 'contained' : 'outlined',
+                                color: inspectorEnabled ? 'success' : 'inherit',
+                                onClick: () => window.__guiToggleInspector && window.__guiToggleInspector(),
+                                'data-gui-inspector-control': true,
+                                sx: { textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 },
+                              },
+                              children: [inspectorEnabled ? 'ON' : 'OFF'],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: 'Paper',
+                  props: { sx: { p: 2, borderRadius: 2 } },
+                  children: [
+                    {
+                      type: 'Typography',
+                      props: {
+                        variant: 'overline',
+                        sx: { color: 'text.secondary', letterSpacing: '0.18em' },
+                      },
+                      children: ['Index'],
+                    },
+                    {
+                      type: 'Typography',
+                      props: { variant: 'h6', sx: { fontWeight: 700, mt: 0.5 } },
+                      children: ['Content and Navigation'],
+                    },
+                    {
+                      type: 'Box',
+                      props: {
+                        sx: {
+                          mt: 1.25,
+                          display: 'grid',
+                          gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                          gap: 1,
+                        },
+                      },
+                      children: [
+                        {
+                          type: 'Box',
+                          props: {
+                            component: 'a',
+                            href: 'https://neurons-me.github.io/GUI/docs/storybook/index.html',
+                            target: '_blank',
+                            rel: 'noopener noreferrer',
+                            sx: {
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: 0.75,
+                              p: 1.25,
+                              borderRadius: 2,
+                              border: '1px solid',
+                              borderColor: 'divider',
+                              textDecoration: 'none',
+                              color: 'text.primary',
+                              backgroundColor: 'action.hover',
+                              transition: 'transform 140ms ease, border-color 140ms ease, background-color 140ms ease',
+                              '&:hover': {
+                                transform: 'translateY(-2px)',
+                                borderColor: 'text.secondary',
+                                backgroundColor: 'action.selected',
+                              },
+                            },
+                          },
+                          children: [
+                            {
+                              type: 'Box',
+                              props: {
+                                sx: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 },
+                              },
+                              children: [
+                                {
+                                  type: 'Typography',
+                                  props: {
+                                    variant: 'overline',
+                                    sx: { color: 'text.secondary', letterSpacing: '0.12em' },
+                                  },
+                                  children: ['Component'],
+                                },
+                                {
+                                  type: 'Typography',
+                                  props: { component: 'span', sx: { fontSize: '2.6rem', lineHeight: 1 } },
+                                  children: ['𓏞'],
+                                },
+                              ],
+                            },
+                            {
+                              type: 'Typography',
+                              props: { variant: 'subtitle1', sx: { fontWeight: 700 } },
+                              children: ["Component's Storybook"],
+                            },
+                            {
+                              type: 'Typography',
+                              props: { variant: 'body2', sx: { color: 'text.secondary' } },
+                              children: ['Open the components catalog'],
+                            },
+                          ],
+                        },
+                        {
+                          type: 'Box',
+                          props: {
+                            component: 'a',
+                            href: 'https://neurons-me.github.io/GUI/docs/storybook/index.html',
+                            target: '_blank',
+                            rel: 'noopener noreferrer',
+                            sx: {
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: 0.75,
+                              p: 1.25,
+                              borderRadius: 2,
+                              border: '1px solid',
+                              borderColor: 'divider',
+                              textDecoration: 'none',
+                              color: 'text.primary',
+                              backgroundColor: 'action.hover',
+                              transition: 'transform 140ms ease, border-color 140ms ease, background-color 140ms ease',
+                              '&:hover': {
+                                transform: 'translateY(-2px)',
+                                borderColor: 'text.secondary',
+                                backgroundColor: 'action.selected',
+                              },
+                            },
+                          },
+                          children: [
+                            {
+                              type: 'Box',
+                              props: {
+                                sx: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 },
+                              },
+                              children: [
+                                {
+                                  type: 'Typography',
+                                  props: {
+                                    variant: 'overline',
+                                    sx: { color: 'text.secondary', letterSpacing: '0.12em' },
+                                  },
+                                  children: ['Exports'],
+                                },
+                                {
+                                  type: 'Typography',
+                                  props: { component: 'span', sx: { fontSize: '2.6rem', lineHeight: 1 } },
+                                  children: ['𓇼'],
+                                },
+                              ],
+                            },
+                            {
+                              type: 'Typography',
+                              props: { variant: 'subtitle1', sx: { fontWeight: 700 } },
+                              children: ['Shapes and Forms'],
+                            },
+                            {
+                              type: 'Typography',
+                              props: { variant: 'body2', sx: { color: 'text.secondary' } },
+                              children: ['atoms, molecules, components, widgets and more...'],
+                            },
+                          ],
+                        },
+                      ],
+                    },
                   ],
                 },
               ],
-              },
+            },
             ],
           },
         ],
@@ -816,6 +1380,10 @@
     function renderSpec() {
       const spec = buildSpec();
       GUI.mount(spec, '#root', { inspectorEnabled });
+      installLeftbarViewObserver();
+      window.dispatchEvent(
+        new CustomEvent('this.gui:adminView:set', { detail: { enabled: adminViewEnabled } })
+      );
       console.log('[GUI] ✅ Runtime mounted via GUI.mount');
     }
     rerender = renderSpec;

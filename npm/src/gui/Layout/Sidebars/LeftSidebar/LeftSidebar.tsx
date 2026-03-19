@@ -41,6 +41,11 @@ const LeftSidebar = ({
   const toggleOffset = (navInset > 0 ? navInset : 0) + 12;
   const hasFooterElements = Array.isArray(footerElements) && footerElements.length > 0;
   const initialViewApplied = useRef(false);
+  const adminNodeId = id ? String(id) : 'LeftSidebar';
+  const adminAttrs = {
+    'data-gui-node-id': adminNodeId,
+    'data-gui-component': 'LeftSidebar',
+  };
   const rawHeaderNode = (() => {
     if (!header) return null;
     if (React.isValidElement(header)) return header;
@@ -138,6 +143,7 @@ const LeftSidebar = ({
         className={clsx('LeftSidebar', className)}
         id={id}
         style={style}
+        {...adminAttrs}
         sx={{
           position: 'fixed',
           top: 0,
@@ -238,7 +244,11 @@ const LeftSidebar = ({
           onClose={() => setMobileOpen(false)}
           variant="temporary"
           ModalProps={{ keepMounted: true }}
-          PaperProps={id || style ? { id, style } : undefined}
+          PaperProps={{
+            id,
+            style,
+            ...adminAttrs,
+          }}
           sx={{
             '& .MuiDrawer-paper': {
               width: 220,
@@ -301,6 +311,7 @@ const LeftSidebar = ({
       className={clsx('LeftSidebar', className)}
       id={id}
       style={style}
+      {...adminAttrs}
       sx={{
         position: 'fixed',
         top: 0,

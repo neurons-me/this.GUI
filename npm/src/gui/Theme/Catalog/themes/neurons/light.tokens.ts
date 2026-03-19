@@ -26,11 +26,16 @@ const lightTokens = {
     },
     "paper": {
       "$type": "color",
-      "$value": "#ffffff"
+      "$value": "#f9f9fb"
     },
     "nav": {
       "$type": "color",
       "$value": "#fdfdfd"
+    },
+    "background": {
+      "default": { "$type": "color", "$value": "#f8f9fa" },
+      "paper": { "$type": "color", "$value": "#f9f9fb" },
+      "nav": { "$type": "color", "$value": "#fdfdfd" }
     },
     "textPrimary": {
       "$type": "color",
