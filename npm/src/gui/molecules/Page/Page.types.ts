@@ -57,7 +57,7 @@ export interface PageProps {
   background?: string;
   /** Additional style overrides forwarded to Box `sx`. */
   sx?: Record<string, any>;
-  /** Respect layout insets via CSS vars: --gui-inset-* */
+  /** Respect layout insets via CSS vars: --gui-inset-*; opt in when Page sits outside Layout/Content. */
   insetsAware?: boolean;
   /** Optional document/head metadata applied while this Page is mounted. */
   head?: PageHeadConfig;

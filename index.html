@@ -285,7 +285,7 @@
       <label for="gui-source">GUI</label>
       <select id="gui-source">
         <option value="local">Local</option>
-        <option value="stable" selected>CDN Stable (1.4.86)</option>
+        <option value="stable" selected>CDN Stable (1.4.89)</option>
         <option value="latest">CDN Latest</option>
       </select>
       <div id="runtime-gui-state" class="runtime-status-state pending" title="-">pending</div>
@@ -316,9 +316,9 @@
 <script>
   (async function () {
     const SOURCE_STORAGE_KEY = 'gui.runtime.source.v2';
-    const COLLAPSE_STORAGE_KEY = 'gui.runtime.collapsed.v1';
-    const INSPECTOR_STORAGE_KEY = 'gui.runtime.inspector.v1';
-    const ADMIN_VIEW_STORAGE_KEY = 'gui.runtime.admin.view.v1';
+    const COLLAPSE_STORAGE_KEY = 'gui.runtime.collapsed.v2';
+    const INSPECTOR_STORAGE_KEY = 'gui.runtime.inspector.v2';
+    const ADMIN_VIEW_STORAGE_KEY = 'gui.runtime.admin.view.v2';
     const LOCAL_PATHS_KEY = 'gui.runtime.local.paths.v1';
     const defaults = { gui: 'stable' };
     const guiSelect = document.getElementById('gui-source');
@@ -341,7 +341,7 @@
 
 const LOCAL_CSS_DEFAULT = '../../this/GUI/npm/dist/styles.css';
 const LOCAL_JS_DEFAULT = '../../this/GUI/npm/dist/this.gui.umd.js';
-const STABLE_VERSION = '1.4.86';
+const STABLE_VERSION = '1.4.89';
 const STABLE_CSS = `https://cdn.jsdelivr.net/npm/this.gui@${STABLE_VERSION}/dist/styles.css`;
 const STABLE_JS = `https://cdn.jsdelivr.net/npm/this.gui@${STABLE_VERSION}/dist/this.gui.umd.js`;
 const LATEST_CSS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/styles.css';
@@ -500,9 +500,10 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
 
     function readCollapsedState() {
       try {
-        return localStorage.getItem(COLLAPSE_STORAGE_KEY) === 'true';
+        const raw = localStorage.getItem(COLLAPSE_STORAGE_KEY);
+        return raw == null ? true : raw === 'true';
       } catch {
-        return false;
+        return true;
       }
     }
 
@@ -1053,8 +1054,7 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
                         'aria-label': 'DOM',
                         className: 'gui-leftbar-logo',
                       },
-                      createDomIcon({ size: 55, title: 'DOM' }),
-                      window.React.createElement('span', { className: 'gui-leftbar-logo-label' }, 'DOM')
+                      createDomIcon({ size: 55, title: 'DOM' })
                     )
                   : null,
             },

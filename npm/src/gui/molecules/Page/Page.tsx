@@ -23,7 +23,7 @@ export default function Page({
   background,
   head,
   sx = {},
-  insetsAware = true,
+  insetsAware = false,
   ...rest
 }: PageProps & Record<string, any>) {
   useInsetsContext();
