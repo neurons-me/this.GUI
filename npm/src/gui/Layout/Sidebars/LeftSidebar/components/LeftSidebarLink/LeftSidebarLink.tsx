@@ -12,7 +12,6 @@ const LeftSidebarLink: React.FC<LeftSidebarItemProps> = ({
   href,
   to,
   active,
-  external,
   onClick,
   children
 }) => {
@@ -54,7 +53,7 @@ const LeftSidebarLink: React.FC<LeftSidebarItemProps> = ({
     <Box
       component={to ? (RouterLink as any) : href ? 'a' : 'div'}
       {...(to ? ({ to } as any) : {})}
-      {...(!to && href ? ({ href, target: external ? '_blank' : undefined, rel: external ? 'noreferrer' : undefined } as any) : {})}
+      {...(!to && href ? ({ href } as any) : {})}
       sx={{
         display: 'flex',
         flexDirection: 'column',
