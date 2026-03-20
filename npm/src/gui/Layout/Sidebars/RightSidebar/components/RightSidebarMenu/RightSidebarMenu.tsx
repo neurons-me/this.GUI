@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Box, Collapse, Typography } from '@/gui/atoms';
 import Icon from '@/gui/Theme/Icon/Icon';
 
+const VIEWPORT_MARGIN = 12;
+
 type RightSidebarMenuItem = {
   label?: string;
   icon?: string;
@@ -20,7 +22,32 @@ type RightSidebarMenuProps = {
 const RightSidebarMenu: React.FC<RightSidebarMenuProps> = ({ label, icon, iconColor, items, view }) => {
   const [open, setOpen] = useState(false);
   const [anchorTop, setAnchorTop] = useState<number | null>(null);
+  const [tooltipTop, setTooltipTop] = useState<number>(VIEWPORT_MARGIN);
   const isRail = view === 'rail';
+  const tooltipRef = React.useRef<HTMLDivElement | null>(null);
+
+  const updateTooltipPosition = React.useCallback(() => {
+    if (!isRail || !open || typeof window === 'undefined') return;
+    const tooltipHeight = tooltipRef.current?.getBoundingClientRect().height ?? 0;
+    const desiredTop = anchorTop ?? VIEWPORT_MARGIN;
+    const maxTop = Math.max(VIEWPORT_MARGIN, window.innerHeight - tooltipHeight - VIEWPORT_MARGIN);
+    setTooltipTop(Math.min(Math.max(VIEWPORT_MARGIN, desiredTop), maxTop));
+  }, [anchorTop, isRail, open]);
+
+  React.useLayoutEffect(() => {
+    updateTooltipPosition();
+  }, [updateTooltipPosition]);
+
+  React.useEffect(() => {
+    if (!isRail || !open || typeof window === 'undefined') return;
+    const handleViewportChange = () => updateTooltipPosition();
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('scroll', handleViewportChange, true);
+    return () => {
+      window.removeEventListener('resize', handleViewportChange);
+      window.removeEventListener('scroll', handleViewportChange, true);
+    };
+  }, [isRail, open, updateTooltipPosition]);
 
   return (
     <Box
@@ -70,10 +97,11 @@ const RightSidebarMenu: React.FC<RightSidebarMenuProps> = ({ label, icon, iconCo
       {isRail ? (
         open && (
           <Box
+            ref={tooltipRef}
             sx={{
               position: 'fixed',
               right: 'var(--gui-rail-width, 72px)',
-              top: anchorTop ?? 0,
+              top: tooltipTop,
               backgroundColor: 'background.paper',
               color: 'text.primary',
               borderRadius: 1,
@@ -82,7 +110,7 @@ const RightSidebarMenu: React.FC<RightSidebarMenuProps> = ({ label, icon, iconCo
               border: '1px solid',
               borderColor: 'divider',
               minWidth: 180,
-              maxHeight: '80vh',
+              maxHeight: `calc(100vh - ${VIEWPORT_MARGIN * 2}px)`,
               overflowY: 'auto',
               py: 1,
             }}

@@ -3,6 +3,8 @@ import Box from "@/gui/atoms/Box/Box";
 import Collapse from "@/gui/atoms/Collapse/Collapse";
 import Typography from "@/gui/atoms/Typography/Typography";
 import Icon from "@/gui/Theme/Icon/Icon";
+
+const VIEWPORT_MARGIN = 12;
 type LeftSidebarMenuItem = {
   label?: string;
   icon?: string;
@@ -44,16 +46,26 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [anchorTop, setAnchorTop] = useState<number | null>(null);
+  const [tooltipTop, setTooltipTop] = useState<number>(VIEWPORT_MARGIN);
   const isRail = view === 'rail';
   const tooltipPayload = { label, icon, items };
   const openRef = React.useRef(open);
   const hoveringTrigger = React.useRef(false);
   const hoveringTooltip = React.useRef(false);
   const closeTimeoutRef = React.useRef<number | null>(null);
+  const tooltipRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
     openRef.current = open;
   }, [open]);
+
+  const updateTooltipPosition = React.useCallback(() => {
+    if (!isRail || !open || typeof window === 'undefined') return;
+    const tooltipHeight = tooltipRef.current?.getBoundingClientRect().height ?? 0;
+    const desiredTop = anchorTop ?? VIEWPORT_MARGIN;
+    const maxTop = Math.max(VIEWPORT_MARGIN, window.innerHeight - tooltipHeight - VIEWPORT_MARGIN);
+    setTooltipTop(Math.min(Math.max(VIEWPORT_MARGIN, desiredTop), maxTop));
+  }, [anchorTop, isRail, open]);
 
   const emitRailTooltip = (isOpen: boolean) => {
     if (!isRail) return;
@@ -105,6 +117,21 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({
       clearCloseTimeout();
     };
   }, []);
+
+  React.useLayoutEffect(() => {
+    updateTooltipPosition();
+  }, [updateTooltipPosition]);
+
+  React.useEffect(() => {
+    if (!isRail || !open || typeof window === 'undefined') return;
+    const handleViewportChange = () => updateTooltipPosition();
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('scroll', handleViewportChange, true);
+    return () => {
+      window.removeEventListener('resize', handleViewportChange);
+      window.removeEventListener('scroll', handleViewportChange, true);
+    };
+  }, [isRail, open, updateTooltipPosition]);
 
   return (
     <Box
@@ -158,6 +185,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({
       {isRail ? (
         open && (
           <Box
+            ref={tooltipRef}
             onMouseEnter={() => {
               hoveringTooltip.current = true;
               clearCloseTimeout();
@@ -171,7 +199,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({
               position: 'fixed',
               left: 'calc(var(--gui-rail-width, 60px) + 2px)',
               marginLeft: '-2px',
-              top: anchorTop ?? 0,
+              top: tooltipTop,
               backgroundColor: 'background.paper',
               color: 'text.primary',
               borderRadius: 1,
@@ -180,7 +208,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({
               border: '1px solid',
               borderColor: 'divider',
               minWidth: 180,
-              maxHeight: '80vh',
+              maxHeight: `calc(100vh - ${VIEWPORT_MARGIN * 2}px)`,
               overflowY: 'auto',
               py: 1,
             }}
