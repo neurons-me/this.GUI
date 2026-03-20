@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>..GUI</title>
+<title>.GUI</title>
 <link rel="icon" href="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1761276578/this.gui.npm.png" />
 <style>
   :root { color-scheme: light dark; }
@@ -413,8 +413,8 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.bo
     }
 
     function bindToggle() {
-      const urlEl = statusEls.guiUrl;
       const toggleEl = statusEls.guiToggle;
+      const urlEl = statusEls.guiUrl;
       if (!urlEl || !toggleEl) return;
       const urlTextEl = urlEl.querySelector('.url-text') || urlEl;
       toggleEl.addEventListener('click', () => {
@@ -869,7 +869,7 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.bo
               width: 220,
               maxWidth: '70vw'
             },
-            header: 'this.GUI Runtime',
+            header: '.GUI Runtime',
             subheader: 'Hero',
             subheaderVariant: 'overline',
             typography: 'Runtime overview and quick links for the GUI toolchain.'
@@ -1060,15 +1060,6 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.bo
                       type: 'Typography',
                       props: { variant: 'h6', sx: { fontWeight: 700, mt: 0.5 } },
                       children: ['Runtime Assets'],
-                    },
-                    {
-                      type: 'Typography',
-                      props: {
-                        variant: 'h1',
-                        component: 'h1',
-                        sx: { fontWeight: 900, letterSpacing: '-0.4px', mt: 0.5 },
-                      },
-                      children: ['.GUI'],
                     },
                     {
                       type: 'Typography',
