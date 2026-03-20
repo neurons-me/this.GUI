@@ -30,6 +30,5 @@ playground/
 !dist/
 !bin/
 !init/
-!README.md
 !LICENSE
 !package.json

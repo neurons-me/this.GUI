@@ -1,89 +1,235 @@
-<img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/w_180/v1761276578/this.gui.npm.png" alt="This.GUI logo" width="180" />
-
 # .GUI
 A collection of components and building blocks enabling **.GUI** generation.
-- **[.GUI Website.](https://neurons-me.github.io/GUI/)**
-- **Storybook:** https://neurons-me.github.io/storybook-static/
+[Demo](https://neurons-me.github.io/GUI/)  -  [Storybook](https://neurons-me.github.io/GUI/docs/storybook)
 
-# QUICK START (npx)
-##### Create a new app.
-Open up your **terminal** and **run**:
-```bash
-npx this.gui AppName
-```
 
-```bash
-cd AppName
-```
-
-```bash
-npm install
-```
-
-```bash
-npm run dev
-```
-
-This generates a **minimal app** pre-wired with `this.gui`.
-
-### What you get
-- `src/main.tsx` boots a React app
-- `Theme` is already mounted
-- A simple `App.tsx` example using core atoms
 
 <img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/w_320/v1761281165/geometry_shapes-removebg-preview_anrdke.png" alt="Geometry shapes" width="244" />
 
-# QUICK START (npm)
+# Start Here: Runtime, Not Widgets
+`this.GUI` is not only a component catalog.  
+It is a declarative runtime with three layers:
 
-###### Installing using npm:
-```bash
-npm install this.gui
-```
+1. **UI spec (`this.GUI`)**: you describe the screen as data: pages, cards, text, buttons, sidebars, and children.
+2. **Dynamic tokens (`$expr` / `$action`)**: instead of hardcoding everything, you can say "read this value" or "run this mutation" in a serializable way.
+3. **Runtime (`runtime`, optional `.me`)**: the host decides how those reads and writes actually work, for example by resolving profile data, route params, or backend mutations.
 
-All components are theme-aware and automatically inherit styles and tokens from the `Theme` provider
-- Explore components in Storybook: https://neurons-me.github.io/GUI/storybook-static/
-- Import atoms directly:
+In plain terms:
+- `this.GUI` defines **what to render**
+- `$expr` and `$action` define **what should be dynamic**
+- `runtime` defines **where the data comes from and what actions do**
 
-```ts
-import { Button, Typography, Box } from "this.gui";
-// or subpath (more explicit)
-import { Button as AtomButton } from "this.gui/atoms";
-```
+## Mental Model
+You can run `this.GUI` in two modes:
+- **JS-Only mode**: plain functions and local state.
+- **Data-Driven mode**: dynamic tokens resolved by runtime (`$expr`, `$action`).
+  The same spec can evolve from local UI to data-driven app without rewriting components.
 
-### Add the stylesheet
-`this.gui` ships a compiled stylesheet. Import it once at your app entry:
+---
 
-```ts
-import "this.gui/style.css";
-```
-
-> **Tip:** If you're using the UMD build in a plain HTML page, include `styles.css` from the `dist/` folder and load `this.gui.umd.js` via a `<script>` tag.
-
-## Router: Recommended First Pattern
-
-If your app resolves views from runtime semantics, start with a semantic pointer route:
+## First GUI
+Start with a tiny spec and mount it.
+`Page` here is a built-in `this.GUI` node, so you can use it directly without registering it yourself.
 
 ```ts
-import { Router } from "this.gui";
+const spec = {
+  type: 'Page',
+  props: {
+    title: 'Hello GUI',
+    subtitle: 'Your first rendered screen',
+  },
+  children: [
+    {
+      type: 'Button',
+      props: {
+        variant: 'contained',
+        label: 'Click me',
+      },
+    },
+  ],
+};
 
-const router = new Router({ runtime });
-router.set('/profile', 'me/views/profile/page');
+GUI.mount(spec, '#root');
 ```
 
-When a route handler is a string starting with `me/`, Router delegates to `runtime.resolve(...)`.
-This is the recommended first pattern when you want runtime-driven interfaces instead of static route specs.
+That already gives you:
+- a page shell
+- a heading
+- a working button
+  <FirstGuiPreview />
 
-## QUICK START (clone)
-###### In your terminal run:
+---
 
-```bash
-git clone https://github.com/neurons-me/GUI.git
-cd GUI
-npm install
-npm run storybook
+## Compose With Children
+Everything is just nested nodes.
+
+```json
+{
+  "type": "Paper",
+  "props": { "sx": { "p": 2, "borderRadius": 2 } },
+  "children": [
+    {
+      "type": "Typography",
+      "props": { "variant": "h5", "children": "Profile" }
+    },
+    {
+      "type": "Typography",
+      "props": { "variant": "body2", "children": "Status: active" }
+    },
+    {
+      "type": "Button",
+      "props": { "label": "Edit", "variant": "outlined" }
+    }
+  ]
+}
 ```
 
-**Open storybook's URL.**
+Think in blocks:
 
-## 🪐 License
-MIT © [neurons.me](https://neurons.me)
+- layout containers
+- content nodes
+- actions
+
+---
+
+For those blocks to come alive, they need a contract with the runtime.
+
+---
+
+## Runtime Contract (Minimal)
+```ts
+const runtime = {
+  resolve(value, ctx) {
+    // read expression -> value
+    return value;
+  },
+  action(expression, ctx) {
+    // expression -> executable callback
+    return () => {};
+  },
+};
+```
+
+Use with mount:
+
+```ts
+GUI.mount(spec, '#root', { runtime, ctx });
+```
+
+---
+
+## Make It Dynamic
+Once you want live data, switch props from literals to tokens.
+```json
+{
+  "type": "Typography",
+  "props": {
+    "variant": "body1",
+    "children": { "$expr": "me/public/profile/name" }
+  }
+}
+```
+
+And for mutations:
+
+```json
+{
+  "type": "Button",
+  "props": {
+    "label": "Set active",
+    "onClick": { "$action": "me/public/profile/status = 'active'" }
+  }
+}
+```
+
+This is the core idea:
+- static prop -> fixed UI
+- `$expr` -> read data
+- `$action` -> mutate data
+
+---
+
+## Dynamic Props with `$Tokens`
+```json
+{
+  "type": "Button",
+  "props": {
+    "label": { "$expr": "me/public/profile/name" },
+    "onClick": { "$action": "me/public/profile/status = 'active'" }
+  }
+}
+```
+
+What happens:
+- `$expr` is resolved before render.
+- `$action` is hydrated into a callback.
+- If runtime is missing, GUI falls back safely (no crash).
+
+---
+
+## Routes And Params
+When you add routes like `/shops/:id`, the router places route params into `ctx.params`.
+
+```ts
+router.set('/shops/:id', ({ ctx }) => ({
+  type: 'Page',
+  props: {
+    // Inside $expr, {{...}} injects route/context values into the expression string.
+    title: { $expr: 'me/views/shops[{{params.id}}].name' },
+  },
+}));
+```
+
+That lets one screen template render many records.
+<QueryExpressionsDemo />
+
+---
+
+## Typical Build Order
+If you are building a screen from scratch, this order works well:
+
+1. **Start with layout**: `Page`, `Box`, `Paper`, `Stack`
+2. **Add content**: `Typography`, headings, labels
+3. **Insert interactive nodes**: `Button`, `TextField`, tables, cards
+4. **Replace literals** with `$expr`
+5. **Hydrate callbacks** with `$action`
+6. **Connect routes** once the static UI already works
+
+---
+
+## Security by Default
+Expression resolution is allowlisted by default:
+
+- `me/views/`
+- `me/public/`
+
+You can extend:
+
+```ts
+GUI.mount(spec, '#root', {
+  runtime,
+  allowedExprRoots: ['me/views/', 'me/public/', 'me/app/'],
+});
+```
+
+---
+
+## Inspectors, Not Starters
+These stories are useful when debugging theme/runtime internals, not when learning how to assemble a screen:
+
+- current theme state
+- palette inspector
+- typography inspector
+
+Use them only if you need to verify resolved values while developing the system.
+
+---
+
+## Practical Note
+If you want the ultra-minimal plain-HTML bootstrap, use:
+
+- `/html/bootstrap.local.html`
+  That file demonstrates `.me + this.GUI` end-to-end with runtime tokens.
+
+
+
