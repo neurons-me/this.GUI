@@ -342,8 +342,10 @@
 const LOCAL_CSS_DEFAULT = '../../this/GUI/npm/dist/styles.css';
 const LOCAL_JS_DEFAULT = '../../this/GUI/npm/dist/this.gui.umd.js';
 const LATEST_META_URL = 'https://registry.npmjs.org/this.gui/latest';
+const LATEST_FALLBACK_VERSION = '1.4.89';
 const LATEST_CSS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/styles.css';
 const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.umd.js';
+const REMOTE_ASSET_TIMEOUT_MS = 8000;
     const REACT_CDN = 'https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js';
     const REACTDOM_CDN = 'https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js';
     const isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
@@ -376,6 +378,10 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
         }
       })();
       return latestAssetsPromise;
+    }
+
+    function getLatestFallbackAssets() {
+      return buildVersionedLatestAssets(LATEST_FALLBACK_VERSION);
     }
 
     function readLocalPaths() {
@@ -457,15 +463,46 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
       });
     }
 
+    function isRemoteAssetUrl(value) {
+      return /^https?:\/\//i.test(String(value || ''));
+    }
+
     const loadStyle = (href) => new Promise((resolve, reject) => {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
       link.href = href;
-      if (/^https?:\/\//i.test(href)) {
+      const isRemote = isRemoteAssetUrl(href);
+      let settled = false;
+      let timeoutId = null;
+      const cleanup = () => {
+        if (timeoutId != null) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
+        link.onload = null;
+        link.onerror = null;
+      };
+      const finishResolve = () => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        resolve(true);
+      };
+      const finishReject = (error) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        try { link.remove(); } catch (e) {}
+        reject(error);
+      };
+      if (isRemote) {
         link.crossOrigin = 'anonymous';
+        timeoutId = window.setTimeout(() => {
+          finishReject(new Error('style load timed out: ' + href));
+        }, REMOTE_ASSET_TIMEOUT_MS);
       }
-      link.onload = () => resolve(true);
-      link.onerror = () => reject(new Error('style load failed: ' + href));
+      link.onload = () => finishResolve();
+      link.onerror = () => finishReject(new Error('style load failed: ' + href));
       document.head.appendChild(link);
     });
 
@@ -473,11 +510,38 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
     const loadScript = (src) => new Promise((resolve, reject) => {
       const s = document.createElement('script');
       s.src = src;
-      if (/^https?:\/\//i.test(src)) {
+      const isRemote = isRemoteAssetUrl(src);
+      let settled = false;
+      let timeoutId = null;
+      const cleanup = () => {
+        if (timeoutId != null) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
+        s.onload = null;
+        s.onerror = null;
+      };
+      const finishResolve = () => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        resolve(true);
+      };
+      const finishReject = (error) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        try { s.remove(); } catch (e) {}
+        reject(error);
+      };
+      if (isRemote) {
         s.crossOrigin = 'anonymous';
+        timeoutId = window.setTimeout(() => {
+          finishReject(new Error('script load timed out: ' + src));
+        }, REMOTE_ASSET_TIMEOUT_MS);
       }
-      s.onload = () => resolve(true);
-      s.onerror = () => reject(new Error('script load failed: ' + src));
+      s.onload = () => finishResolve();
+      s.onerror = () => finishReject(new Error('script load failed: ' + src));
       document.head.appendChild(s);
     });
 
@@ -722,10 +786,44 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
         js: urls.js,
         version: undefined,
       };
-      await loadStyle(urls.css);
-      if (!window.React) await loadScript(REACT_CDN);
-      if (!window.ReactDOM) await loadScript(REACTDOM_CDN);
-      await loadScript(urls.js);
+      try {
+        await loadStyle(urls.css);
+        if (!window.React) await loadScript(REACT_CDN);
+        if (!window.ReactDOM) await loadScript(REACTDOM_CDN);
+        await loadScript(urls.js);
+      } catch (error) {
+        if (source === 'latest') {
+          const fallbackUrls = getLatestFallbackAssets();
+          console.warn('[GUI] Latest CDN failed, falling back to', fallbackUrls.version, error);
+          setStatus('pending', fallbackUrls);
+          window.GUI_RUNTIME_INFO = {
+            source: 'latest',
+            state: 'pending',
+            css: fallbackUrls.css,
+            js: fallbackUrls.js,
+            version: fallbackUrls.version,
+          };
+          await loadStyle(fallbackUrls.css);
+          if (!window.React) await loadScript(REACT_CDN);
+          if (!window.ReactDOM) await loadScript(REACTDOM_CDN);
+          await loadScript(fallbackUrls.js);
+          const detectedFallbackVersion = (window.GUI && window.GUI.version) || fallbackUrls.version || undefined;
+          window.GUI_LOAD_SOURCE = 'cdn:latest';
+          document.documentElement.setAttribute('data-gui-source', window.GUI_LOAD_SOURCE);
+          console.log(`[GUI] Loaded from: ${window.GUI_LOAD_SOURCE} (fallback ${detectedFallbackVersion})`);
+          setStatus('loaded', fallbackUrls, detectedFallbackVersion);
+          document.body.classList.add('runtime-ready');
+          window.GUI_RUNTIME_INFO = {
+            source: 'latest',
+            state: 'loaded',
+            css: fallbackUrls.css,
+            js: fallbackUrls.js,
+            version: detectedFallbackVersion,
+          };
+          return source;
+        }
+        throw error;
+      }
       const detectedVersion = (window.GUI && window.GUI.version) || undefined;
       window.GUI_LOAD_SOURCE = source === 'local' ? 'local' : `cdn:${source}`;
       document.documentElement.setAttribute('data-gui-source', window.GUI_LOAD_SOURCE);
