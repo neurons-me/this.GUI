@@ -73,7 +73,7 @@
     "@mui/material": "^6.4.6",
     "@uiw/react-markdown-preview": "^5.1.5",
     "@uiw/react-md-editor": "^4.0.11",
-    "cleaker": "file:../../../core/cleaker/npm",
+    "cleaker": "^3.0.4",
     "file-saver": "^2.0.5",
     "fs-extra": "^11.3.2",
     "js-cookie": "^3.0.5",
