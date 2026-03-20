@@ -1,6 +1,6 @@
-import type { TopBarMenuResolverSpec } from './TopBarMenu.types';
+import type { TopBarMenuProps } from './TopBarMenu.types';
 
-const resolver: TopBarMenuResolverSpec = {
+const resolver: { type: string; props: TopBarMenuProps } = {
   type: 'TopBarMenu',
   props: {
     label: 'Menu',

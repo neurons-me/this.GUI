@@ -125,13 +125,14 @@ const RightSidebar = ({
           height: '100vh',
           display: 'flex',
           flexDirection: 'column',
-          width: `${RAIL_WIDTH}px`,
-          overflow: 'hidden',
-          borderLeft: '1px solid',
-          borderColor: 'divider',
-          backgroundColor: 'background.paper',
-        }}
-      >
+        width: `${RAIL_WIDTH}px`,
+        overflow: 'hidden',
+        borderLeft: '1px solid',
+        borderColor: 'divider',
+        backgroundColor: 'background.paper',
+        zIndex: (theme) => theme.zIndex.drawer + 2,
+      }}
+    >
         <Box
           component="header"
           sx={{
@@ -282,6 +283,7 @@ const RightSidebar = ({
         borderLeft: '1px solid',
         borderColor: 'divider',
         backgroundColor: 'background.paper',
+        zIndex: (theme) => theme.zIndex.drawer + 2,
       }}
     >
       <Box

@@ -11,7 +11,7 @@ const meta: Meta<typeof Footer> = {
     docs: {
       description: {
         component:
-`The **Footer** component serves as a foundational UI element that anchors actions and secondary navigation at the bottom of the viewport, while seamlessly integrating with responsive layouts and respecting insets caused by sidebars and other layout elements.
+`The **Footer** component serves as a foundational UI element that anchors actions and secondary navigation at the bottom of the viewport, while seamlessly integrating with responsive layouts and respecting sidebars and other layout elements.
 
 ---
 ## Declarative Usage
@@ -19,7 +19,7 @@ You can declare the Footer directly in JSX by passing branding information and a
 
 ---
 ## Responsive React Layout Integration
-The Footer automatically adjusts its width and position based on the presence of left and right sidebars, ensuring it does not overlap with other UI components. It also adapts to different screen sizes by hiding labels on tablet and mobile views, showing only icons with tooltips for accessibility.
+The Footer spans the full shell width so it visually closes the layout, while its internal content pads itself around left and right sidebars. It also adapts to different screen sizes by hiding labels on tablet and mobile views, showing only icons with tooltips for accessibility.
 
 ---
 ## Props Overview
@@ -30,7 +30,7 @@ The Footer automatically adjusts its width and position based on the presence of
 
 ---
 ## Features
-- **Inset-aware:** Automatically offsets its width to accommodate left and right sidebars, avoiding overlap.
+- **Shell-closing:** Keeps the footer bar full-width while offsetting its inner content to accommodate left and right sidebars.
 - **Responsive Design:** Collapses labels to icons only on smaller screens, maintaining usability and accessibility with tooltips.
 - **Segmented Layout:** Divides the footer into three distinct zones (left, center, right) for organized content placement.
 - **Flexible Positioning:** Supports \`static\`, \`fixed\`, and \`sticky\` positioning modes to suit various layout needs.

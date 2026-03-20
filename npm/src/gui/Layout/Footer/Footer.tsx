@@ -178,7 +178,7 @@ export default function Footer(props: FooterProps) {
 
   const insetLeft = Math.max(0, Number(insets?.left ?? 0));
   const insetRight = Math.max(0, Number(insets?.right ?? 0));
-  const horizontalInset = insetLeft + insetRight;
+  const edgePadding = typeof theme.spacing === 'function' ? theme.spacing(1.5) : '12px';
 
   const brandVisual = useMemo(() => {
     if (brandLogo) {
@@ -217,26 +217,34 @@ export default function Footer(props: FooterProps) {
     top: 'auto',
     bottom: 0,
     backgroundColor: theme.palette.background.paper ?? theme.palette.grey[900],
-    borderTop: '1px solid',
-    borderColor: theme.palette.divider,
     minHeight: 56,
     zIndex: (theme.zIndex?.appBar ?? 1100) - 1,
     boxShadow: 'none',
+    boxSizing: 'border-box',
     ...(isFixed
       ? {
           position: 'fixed',
-          left: `${insetLeft}px`,
-          right: `${insetRight}px`,
-          width: `calc(100% - ${horizontalInset}px)`,
-          transition: 'left 0.3s ease, right 0.3s ease, width 0.3s ease',
+          left: 0,
+          right: 0,
+          width: '100%',
         }
       : {
-          position: 'static',
-          ml: `${insetLeft}px`,
-          mr: `${insetRight}px`,
-          width: `calc(100% - ${horizontalInset}px)`,
-          transition: 'margin-left 0.3s ease, margin-right 0.3s ease, width 0.3s ease',
+          position: 'relative',
+          ml: 0,
+          mr: 0,
+          width: '100%',
         }),
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: `${insetLeft}px`,
+      right: `${insetRight}px`,
+      borderTop: '1px solid',
+      borderColor: theme.palette.divider,
+      pointerEvents: 'none',
+      transition: 'left 0.3s ease, right 0.3s ease',
+    },
   } as const;
 
   return (
@@ -256,12 +264,14 @@ export default function Footer(props: FooterProps) {
         sx={sxN(
           {
             minHeight: 56,
-            px: 1.5,
+            pl: `calc(${insetLeft}px + ${edgePadding})`,
+            pr: `calc(${insetRight}px + ${edgePadding})`,
             py: 1,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: 1.5,
+            transition: 'padding-left 0.3s ease, padding-right 0.3s ease',
           },
           sectionSx
         )}

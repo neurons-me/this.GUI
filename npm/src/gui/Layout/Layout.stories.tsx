@@ -65,7 +65,7 @@ It coordinates the TopBar left/right sidebars, and Footer so their insets remain
     },
     "RightBar": { "elements": [] },
     "Footer": {
-      "brandLabel": "Neuroverse",
+      "brandLabel": "neurons.me",
       "centerElements": [
         {
           "type": "link",
@@ -219,7 +219,7 @@ export const TopOnly: Story = {
   render: Template,
   args: {
     TopBar: {
-      title: "Neuroverse",
+      title: "neurons.me",
       elementsRight: [
         {
           type: "action",
@@ -279,14 +279,14 @@ export const FullShellWithFooter: Story = {
   args: {
     ...TopWithLeftAndRight.args,
     Footer: {
-      brandLabel: "Neuroverse",
+      brandLabel: "neurons.me",
       brandLogo: "https://neurons.me/neurons.me.png",
       centerElements: [
-        { type: "link", props: { label: "Docs", href: "/docs", icon: "menu_book", iconColor: "var(--gui-primary)" } },
+        { type: "link", props: { label: "Docs", href: "neurons-me.github.io/GUI/", icon: "menu_book", iconColor: "var(--gui-primary)" } },
         { type: "link", props: { label: "API", href: "/api", icon: "code", iconColor: "var(--gui-secondary)" } },
       ],
       rightElements: [
-        { type: "link", props: { label: "Community", href: "https://community.neuroverse.ai", icon: "forum", iconColor: "var(--gui-info)", external: true } },
+        { type: "link", props: { label: "Community", href: "https://neurons.me", icon: "forum", iconColor: "var(--gui-info)", external: true } },
         { type: "link", props: { label: "GitHub", href: "https://github.com", icon: "code", iconColor: "var(--gui-warning)", external: true } },
       ],
       position: "fixed",
@@ -308,7 +308,7 @@ export const ContentOnly: Story = {
 export const LayoutWithPage: Story = {
   render: () => (
     <Layout
-      TopBar={{ title: 'Neuroverse Workspace' }}
+      TopBar={{ title: 'neurons.me' }}
       LeftBar={{
         elements: [
           { type: 'link', props: { label: 'Home', icon: 'home' } },
@@ -321,7 +321,7 @@ export const LayoutWithPage: Story = {
         ],
       }}
       Footer={{
-        brandLabel: 'Neuroverse',
+        brandLabel: 'neurons.me',
         centerElements: [
           { type: 'link', props: { label: 'Docs', icon: 'menu_book' } },
         ],
