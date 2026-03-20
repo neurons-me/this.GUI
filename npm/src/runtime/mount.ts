@@ -15,6 +15,7 @@ export type MountOptions = Omit<RendererOptions, 'gui' | 'React'> & {
   /** Optional .me instance; if provided, mount() will derive runtime via GUI.RunMe(me). */
   me?: any;
   inspectorEnabled?: boolean;
+  adminViewEnabled?: boolean;
   inspectorToggleVisible?: boolean;
 };
 
@@ -232,7 +233,12 @@ function RuntimeRoot({
     React.createElement(RuntimeInspector, {
       toggleVisible: Boolean(options.inspectorToggleVisible),
     }),
-    React.createElement(RuntimeAdminView, null)
+    React.createElement(RuntimeAdminView, {
+      enabled:
+        typeof options.adminViewEnabled === 'boolean'
+          ? Boolean(options.adminViewEnabled)
+          : undefined,
+    })
   );
 }
 

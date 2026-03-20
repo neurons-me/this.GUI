@@ -4,7 +4,7 @@ import { alpha, darken, lighten } from '@mui/material/styles';
 import { selectionStore } from './selectionStore';
 import { useGuiTheme } from '@/gui/hooks/useGuiTheme';
 
-const ADMIN_VIEW_STORAGE_KEY = 'gui.runtime.admin.view.v1';
+const ADMIN_VIEW_STORAGE_KEY = 'gui.runtime.admin.view.v2';
 const ADMIN_VIEW_SET_EVENT = 'this.gui:adminView:set';
 const ADMIN_VIEW_CHANGED_EVENT = 'this.gui:adminView:changed';
 const ADMIN_VIEW_SCOPE_KEY = 'gui.runtime.admin.view.scope.v1';
@@ -81,13 +81,19 @@ function ensureStyle() {
   document.head.appendChild(style);
 }
 
-export function RuntimeAdminView() {
+export function RuntimeAdminView({
+  enabled: externalEnabled,
+}: {
+  enabled?: boolean;
+}) {
   const theme = useGuiTheme();
   const overlayRef = React.useRef<HTMLDivElement | null>(null);
   const rafRef = React.useRef<number | null>(null);
   const autoRafRef = React.useRef<number | null>(null);
   const lastAutoFrame = React.useRef<number>(0);
-  const enabledRef = React.useRef<boolean>(readAdminViewState());
+  const enabledRef = React.useRef<boolean>(
+    typeof externalEnabled === 'boolean' ? Boolean(externalEnabled) : readAdminViewState()
+  );
   const scopeModeRef = React.useRef<ScopeMode>(readAdminViewScope());
   const [enabled, setEnabled] = React.useState<boolean>(enabledRef.current);
 
@@ -278,6 +284,12 @@ export function RuntimeAdminView() {
       stopAutoUpdate();
     }
   }, [enabled, scheduleOverlay, clearOverlay, startAutoUpdate, stopAutoUpdate]);
+
+  React.useEffect(() => {
+    if (typeof externalEnabled !== 'boolean') return;
+    if (enabledRef.current === Boolean(externalEnabled)) return;
+    setAdminViewEnabled(Boolean(externalEnabled), { persist: true, dispatch: true });
+  }, [externalEnabled, setAdminViewEnabled]);
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return;

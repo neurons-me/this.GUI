@@ -285,8 +285,7 @@
       <label for="gui-source">GUI</label>
       <select id="gui-source">
         <option value="local">Local</option>
-        <option value="stable" selected>CDN Stable (1.4.89)</option>
-        <option value="latest">CDN Latest</option>
+        <option value="latest" selected>CDN Latest</option>
       </select>
       <div id="runtime-gui-state" class="runtime-status-state pending" title="-">pending</div>
     </div>
@@ -319,8 +318,9 @@
     const COLLAPSE_STORAGE_KEY = 'gui.runtime.collapsed.v2';
     const INSPECTOR_STORAGE_KEY = 'gui.runtime.inspector.v2';
     const ADMIN_VIEW_STORAGE_KEY = 'gui.runtime.admin.view.v2';
+    const LEGACY_ADMIN_VIEW_STORAGE_KEY = 'gui.runtime.admin.view.v1';
     const LOCAL_PATHS_KEY = 'gui.runtime.local.paths.v1';
-    const defaults = { gui: 'stable' };
+    const defaults = { gui: 'latest' };
     const guiSelect = document.getElementById('gui-source');
     const toggleButton = document.getElementById('runtime-controls-toggle');
     const localPrompt = document.getElementById('runtime-local-prompt');
@@ -341,20 +341,41 @@
 
 const LOCAL_CSS_DEFAULT = '../../this/GUI/npm/dist/styles.css';
 const LOCAL_JS_DEFAULT = '../../this/GUI/npm/dist/this.gui.umd.js';
-const STABLE_VERSION = '1.4.89';
-const STABLE_CSS = `https://cdn.jsdelivr.net/npm/this.gui@${STABLE_VERSION}/dist/styles.css`;
-const STABLE_JS = `https://cdn.jsdelivr.net/npm/this.gui@${STABLE_VERSION}/dist/this.gui.umd.js`;
+const LATEST_META_URL = 'https://registry.npmjs.org/this.gui/latest';
 const LATEST_CSS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/styles.css';
 const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.umd.js';
     const REACT_CDN = 'https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js';
     const REACTDOM_CDN = 'https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js';
     const isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
     const allowLocal = !isHttp || window.location.protocol === 'file:';
+    let latestAssetsPromise = null;
 
-    function resolveCoreRuntimeUrl(jsUrl) {
-      return String(jsUrl || '')
-        .replace(/this\.gui\.bootstrap\.umd\.js(?=($|\?))/, 'this.gui.umd.js')
-        .replace(/this\.gui\.bootstrap\.iife\.js(?=($|\?))/, 'this.gui.iife.js');
+    function buildVersionedLatestAssets(version) {
+      const normalized = String(version || '').trim();
+      if (!normalized) {
+        return { css: LATEST_CSS, js: LATEST_JS, version: undefined };
+      }
+      return {
+        css: `https://cdn.jsdelivr.net/npm/this.gui@${normalized}/dist/styles.css`,
+        js: `https://cdn.jsdelivr.net/npm/this.gui@${normalized}/dist/this.gui.umd.js`,
+        version: normalized,
+      };
+    }
+
+    async function resolveLatestAssets() {
+      if (latestAssetsPromise) return latestAssetsPromise;
+      latestAssetsPromise = (async () => {
+        try {
+          const response = await fetch(LATEST_META_URL, { cache: 'no-store' });
+          if (!response.ok) throw new Error(`latest metadata failed: ${response.status}`);
+          const payload = await response.json();
+          return buildVersionedLatestAssets(payload && payload.version);
+        } catch (error) {
+          console.warn('[GUI] Failed to resolve latest version metadata, falling back to @latest.', error);
+          return buildVersionedLatestAssets('');
+        }
+      })();
+      return latestAssetsPromise;
     }
 
     function readLocalPaths() {
@@ -377,9 +398,8 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
     }
 
     function resolveAssetUrls(source) {
-      if (source === 'local') return allowLocal ? readLocalPaths() : { css: STABLE_CSS, js: STABLE_JS };
-      if (source === 'latest') return { css: LATEST_CSS, js: LATEST_JS };
-      return { css: STABLE_CSS, js: STABLE_JS };
+      if (source === 'local') return allowLocal ? readLocalPaths() : { css: LATEST_CSS, js: LATEST_JS };
+      return { css: LATEST_CSS, js: LATEST_JS };
     }
 
     function formatRuntimeDetail(version, url) {
@@ -465,8 +485,11 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
       try {
         const raw = localStorage.getItem(SOURCE_STORAGE_KEY);
         const parsed = raw ? { ...defaults, ...JSON.parse(raw) } : { ...defaults };
+        if (parsed.gui === 'stable') {
+          parsed.gui = 'latest';
+        }
         if (!allowLocal && parsed.gui === 'local') {
-          return { ...parsed, gui: 'stable' };
+          return { ...parsed, gui: 'latest' };
         }
         return parsed;
       } catch {
@@ -556,12 +579,18 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
       }
     }
 
+    function writeAdminViewState(enabled) {
+      try {
+        const serialized = String(Boolean(enabled));
+        localStorage.setItem(ADMIN_VIEW_STORAGE_KEY, serialized);
+        localStorage.setItem(LEGACY_ADMIN_VIEW_STORAGE_KEY, serialized);
+      } catch {}
+    }
+
     function setAdminViewEnabled(next, options = { persist: true, dispatch: true }) {
       adminViewEnabled = Boolean(next);
       if (options.persist) {
-        try {
-          localStorage.setItem(ADMIN_VIEW_STORAGE_KEY, String(adminViewEnabled));
-        } catch {}
+        writeAdminViewState(adminViewEnabled);
       }
       if (options.dispatch) {
         window.dispatchEvent(
@@ -613,6 +642,7 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
       const detail = ev && ev.detail ? ev.detail : {};
       if (typeof detail.enabled === 'boolean') {
         adminViewEnabled = detail.enabled;
+        writeAdminViewState(adminViewEnabled);
       } else {
         adminViewEnabled = readAdminViewState();
       }
@@ -629,8 +659,8 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
           localOption.textContent = 'Local (file only)';
         }
         if (sources.gui === 'local') {
-          guiSelect.value = 'stable';
-          writeSources({ ...sources, gui: 'stable' });
+          guiSelect.value = 'latest';
+          writeSources({ ...sources, gui: 'latest' });
         }
       }
     }
@@ -643,16 +673,17 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
       toggleButton.addEventListener('click', toggleCollapsedState);
     }
     window.addEventListener('storage', (ev) => {
-      if (ev.key !== ADMIN_VIEW_STORAGE_KEY) return;
+      if (ev.key !== ADMIN_VIEW_STORAGE_KEY && ev.key !== LEGACY_ADMIN_VIEW_STORAGE_KEY) return;
       adminViewEnabled = readAdminViewState();
       rerender();
     });
+    writeAdminViewState(adminViewEnabled);
 
     if (localSkip) {
       localSkip.addEventListener('click', () => {
         hideLocalPrompt();
-        if (guiSelect) guiSelect.value = 'stable';
-        writeSources({ ...sources, gui: 'stable' });
+        if (guiSelect) guiSelect.value = 'latest';
+        writeSources({ ...sources, gui: 'latest' });
         location.reload();
       });
     }
@@ -680,11 +711,9 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
     }
 
     async function attemptLoad(source) {
-      const urls = resolveAssetUrls(source);
-      const bootstrapAssets = {
-        css: urls.css,
-        gui: resolveCoreRuntimeUrl(urls.js),
-      };
+      const urls = source === 'latest'
+        ? await resolveLatestAssets()
+        : resolveAssetUrls(source);
       setStatus('pending', urls);
       window.GUI_RUNTIME_INFO = {
         source,
@@ -694,13 +723,9 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
         version: undefined,
       };
       await loadStyle(urls.css);
-      window.__THIS_GUI_BOOTSTRAP_ASSETS__ = bootstrapAssets;
       if (!window.React) await loadScript(REACT_CDN);
       if (!window.ReactDOM) await loadScript(REACTDOM_CDN);
       await loadScript(urls.js);
-      if (window.GUI && typeof window.GUI.bootstrap === 'function') {
-        await window.GUI.bootstrap(bootstrapAssets);
-      }
       const detectedVersion = (window.GUI && window.GUI.version) || undefined;
       window.GUI_LOAD_SOURCE = source === 'local' ? 'local' : `cdn:${source}`;
       document.documentElement.setAttribute('data-gui-source', window.GUI_LOAD_SOURCE);
@@ -719,9 +744,7 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
 
     const chosen = (guiSelect && guiSelect.value) || defaults.gui;
     const fallbackOrder = chosen === 'local'
-      ? ['local', 'stable', 'latest']
-      : chosen === 'stable'
-      ? ['stable', 'latest']
+      ? ['local', 'latest']
       : ['latest'];
 
     let loadedSource = null;
@@ -766,9 +789,6 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
 
     const rootEl = document.getElementById('root');
     if (!rootEl) return;
-    if (window.GUI && typeof window.GUI.bootstrap === 'function') {
-      await window.GUI.bootstrap();
-    }
     if (!window.GUI || typeof window.GUI.mount !== 'function') {
       throw new Error('GUI runtime missing: window.GUI.mount not found');
     }
@@ -781,9 +801,7 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
         ? 'local'
         : runtimeInfo.source === 'latest'
         ? 'cdn latest'
-        : runtimeInfo.source === 'stable'
-        ? `cdn stable (${STABLE_VERSION})`
-        : 'cdn stable';
+        : 'cdn latest';
     const runtimeState =
       runtimeInfo.state === 'loaded'
         ? 'Loaded'
@@ -802,11 +820,9 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
     const sourceLabel = String(runtimeSource || '');
     const sourceEmphasis = runtimeInfo.source === 'latest'
       ? 'latest'
-      : runtimeInfo.source === 'stable'
-      ? 'stable'
       : sourceLabel || 'local';
     const sourcePrefix =
-      runtimeInfo.source === 'latest' || runtimeInfo.source === 'stable'
+      runtimeInfo.source === 'latest'
         ? 'cdn'
         : runtimeInfo.source === 'local'
         ? ''
@@ -1484,11 +1500,28 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
 
     function renderSpec() {
       const spec = buildSpec();
-      GUI.mount(spec, '#root', { inspectorEnabled });
+      GUI.mount(spec, '#root', { inspectorEnabled, adminViewEnabled });
       installLeftbarViewObserver();
-      window.dispatchEvent(
-        new CustomEvent('this.gui:adminView:set', { detail: { enabled: adminViewEnabled } })
-      );
+      const syncRuntimeAdminView = () => {
+        writeAdminViewState(adminViewEnabled);
+        if (typeof window.__guiSetAdminViewEnabled === 'function') {
+          window.__guiSetAdminViewEnabled(Boolean(adminViewEnabled));
+          return true;
+        }
+        window.dispatchEvent(
+          new CustomEvent('this.gui:adminView:set', { detail: { enabled: adminViewEnabled } })
+        );
+        return false;
+      };
+      const syncedImmediately = syncRuntimeAdminView();
+      if (!syncedImmediately) {
+        requestAnimationFrame(() => {
+          const syncedOnFrame = syncRuntimeAdminView();
+          if (!syncedOnFrame) {
+            setTimeout(syncRuntimeAdminView, 0);
+          }
+        });
+      }
       console.log('[GUI] ✅ Runtime mounted via GUI.mount');
     }
     rerender = renderSpec;
