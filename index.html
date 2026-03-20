@@ -1000,8 +1000,6 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
             'a',
             {
               href: 'https://neurons-me.github.io/GUI/',
-              target: '_blank',
-              rel: 'noopener noreferrer',
               title: 'GUI',
               'aria-label': 'GUI',
               className: 'gui-leftbar-logo',
@@ -1025,8 +1023,6 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
             'a',
             {
               href: 'https://neurons.me/',
-              target: '_blank',
-              rel: 'noopener noreferrer',
               title: 'neurons.me',
               'aria-label': 'neurons.me',
               className: 'gui-leftbar-footer-logo',
@@ -1134,15 +1130,8 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
       });
       mo.observe(document.body, { childList: true, subtree: true });
     }
-    function openExternal(url) {
+    function navigateTo(url) {
       if (!url) return;
-      const win = window.open(url, '_blank', 'noopener,noreferrer');
-      if (win) {
-        try {
-          win.opener = null;
-        } catch (e) {}
-        return;
-      }
       try {
         window.location.href = url;
       } catch (e) {}
@@ -1162,8 +1151,6 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
                       'a',
                       {
                         href: 'https://neurons-me.github.io/this.DOM',
-                        target: '_blank',
-                        rel: 'noopener noreferrer',
                         title: 'DOM',
                         'aria-label': 'DOM',
                         className: 'gui-leftbar-logo',
@@ -1230,7 +1217,7 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
             props: {
               label: 'Storybook',
               icon: 'auto_stories',
-              onClick: () => openExternal('https://neurons-me.github.io/GUI/docs/storybook/index.html')
+              onClick: () => navigateTo('https://neurons-me.github.io/GUI/docs/storybook/index.html')
             }
           },
           {
@@ -1238,7 +1225,7 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
             props: {
               label: 'GitHub',
               icon: 'code',
-              onClick: () => openExternal('https://github.com/neurons-me/this.GUI')
+              onClick: () => navigateTo('https://github.com/neurons-me/this.GUI')
             }
           },
           {
@@ -1246,7 +1233,7 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
             props: {
               label: 'npm',
               icon: 'package_2',
-              onClick: () => openExternal('https://www.npmjs.com/package/this.gui')
+              onClick: () => navigateTo('https://www.npmjs.com/package/this.gui')
             }
           }
         ]
