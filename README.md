@@ -12,4 +12,3 @@
 <p align="center">
   <a href="https://neurons-me.github.io/GUI/" style="text-decoration:none" target="_blank"><strong>Learn More.</strong></a>
 </p>
-

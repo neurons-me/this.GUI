@@ -6,10 +6,8 @@ A collection of components and building blocks enabling **.GUI** generation.
 
 <img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/w_320/v1761281165/geometry_shapes-removebg-preview_anrdke.png" alt="Geometry shapes" width="244" />
 
-# Start Here: Runtime, Not Widgets
-`this.GUI` is not only a component catalog.  
-It is a declarative runtime with three layers:
-
+# Start Here:
+`this.GUI` is a declarative runtime with three layers:
 1. **UI spec (`this.GUI`)**: you describe the screen as data: pages, cards, text, buttons, sidebars, and children.
 2. **Dynamic tokens (`$expr` / `$action`)**: instead of hardcoding everything, you can say "read this value" or "run this mutation" in a serializable way.
 3. **Runtime (`runtime`, optional `.me`)**: the host decides how those reads and writes actually work, for example by resolving profile data, route params, or backend mutations.
@@ -56,7 +54,6 @@ That already gives you:
 - a page shell
 - a heading
 - a working button
-  <FirstGuiPreview />
 
 ---
 
@@ -181,7 +178,6 @@ router.set('/shops/:id', ({ ctx }) => ({
 ```
 
 That lets one screen template render many records.
-<QueryExpressionsDemo />
 
 ---
 
@@ -228,8 +224,11 @@ Use them only if you need to verify resolved values while developing the system.
 ## Practical Note
 If you want the ultra-minimal plain-HTML bootstrap, use:
 
-- `/html/bootstrap.local.html`
-  That file demonstrates `.me + this.GUI` end-to-end with runtime tokens.
+`/html/bootstrap.local.html`
+That file demonstrates `.me + this.GUI` end-to-end with runtime tokens.
 
+<img src="https://suign.github.io/assets/imgs/neurons_me_logo.png" alt="neurons.me logo" width="89">
 
-
+###### [neurons.me](https://neurons.me)
+**MIT License.**
+###### suiGn

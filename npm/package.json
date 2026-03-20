@@ -1,12 +1,23 @@
 {
   "name": "this.gui",
   "private": false,
-  "version": "1.4.84",
+  "version": "1.4.86",
   "type": "module",
   "main": "./dist/this.gui.cjs",
   "module": "./dist/this.gui.es.js",
   "types": "./dist/index.d.ts",
   "license": "MIT",
+  "author": "suiGn - neurons.me",
+  "keywords": [
+    "gui",
+    "ui",
+    "react",
+    "components",
+    "declarative-ui",
+    "json-ui",
+    "runtime",
+    "layout"
+  ],
   "sideEffects": [
     "**/*.css"
   ],
