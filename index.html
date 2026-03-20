@@ -280,7 +280,7 @@
       <label for="gui-source">GUI</label>
       <select id="gui-source">
         <option value="local">Local</option>
-        <option value="stable" selected>CDN Stable</option>
+        <option value="stable" selected>CDN Latest</option>
         <option value="latest">CDN Latest</option>
       </select>
       <div id="runtime-gui-state" class="runtime-status-state pending" title="-">pending</div>
@@ -762,7 +762,7 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.bo
         ? 'local'
         : runtimeInfo.source === 'latest'
         ? 'cdn latest'
-        : 'cdn stable';
+        : 'cdn latest';
     const runtimeState =
       runtimeInfo.state === 'loaded'
         ? 'Loaded'
