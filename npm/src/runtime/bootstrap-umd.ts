@@ -9,6 +9,44 @@
     reactDom: 'https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js',
     gui: 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.umd.js',
   };
+  const BOOTSTRAP_ASSETS_KEY = '__THIS_GUI_BOOTSTRAP_ASSETS__';
+
+  type BootstrapOptions = Partial<typeof CDN>;
+
+  function inferSiblingAssets(): BootstrapOptions {
+    const currentScriptSrc =
+      (document.currentScript as HTMLScriptElement | null)?.src ||
+      Array.from(document.querySelectorAll('script[src]'))
+        .map((node) => (node as HTMLScriptElement).src)
+        .reverse()
+        .find((src) => /this\.gui\.bootstrap\.(umd|iife)\.js(?:$|\?)/.test(String(src || '')));
+
+    if (!currentScriptSrc) return {};
+
+    try {
+      const bootstrapUrl = new URL(currentScriptSrc, document.baseURI);
+      const guiFile = /this\.gui\.bootstrap\.iife\.js(?:$|\?)/.test(bootstrapUrl.pathname)
+        ? 'this.gui.iife.js'
+        : 'this.gui.umd.js';
+
+      return {
+        css: new URL('./styles.css', bootstrapUrl).href,
+        gui: new URL(`./${guiFile}`, bootstrapUrl).href,
+      };
+    } catch {
+      return {};
+    }
+  }
+
+  function resolveAssets(overrides: BootstrapOptions = {}) {
+    const globalOverrides = (((window as any)[BOOTSTRAP_ASSETS_KEY]) || {}) as BootstrapOptions;
+    return {
+      ...CDN,
+      ...inferSiblingAssets(),
+      ...globalOverrides,
+      ...overrides,
+    };
+  }
 
   const ensureLink = (href: string) =>
     new Promise<void>((resolve, reject) => {
@@ -45,32 +83,29 @@
   // Ensure a GUI object exists early (stub), so users can call: await window.GUI.bootstrap();
   const GUI: any = ((window as any).GUI = (window as any).GUI || {});
 
-  type BootstrapOptions = {
-    // future: allow overriding CDN endpoints, rootId, etc.
-  };
-
-  async function bootstrapGUI(_opts: BootstrapOptions = {}) {
+  async function bootstrapGUI(opts: BootstrapOptions = {}) {
+    const assets = resolveAssets(opts);
     // Idempotent: if runtime already loaded (mount exists), do nothing.
     if ((window as any).GUI && typeof (window as any).GUI.mount === 'function') {
       // Optional: ensure CSS is present (best-effort)
       try {
-        await ensureLink(CDN.css);
+        await ensureLink(assets.css);
       } catch {}
       return (window as any).GUI;
     }
 
     // Load CSS first (best-effort)
     try {
-      await ensureLink(CDN.css);
+      await ensureLink(assets.css);
     } catch {}
 
     // Load React globals only if missing
-    if (!(window as any).React) await ensureScript(CDN.react);
-    if (!(window as any).ReactDOM) await ensureScript(CDN.reactDom);
+    if (!(window as any).React) await ensureScript(assets.react);
+    if (!(window as any).ReactDOM) await ensureScript(assets.reactDom);
 
     // Load this.GUI runtime if mount is missing
     if (!(window as any).GUI || typeof (window as any).GUI.mount !== 'function') {
-      await ensureScript(CDN.gui);
+      await ensureScript(assets.gui);
     }
 
     // Validate
@@ -82,9 +117,13 @@
   }
 
   // Single-flight: prevent duplicate loads if bootstrap called multiple times concurrently
-  GUI.bootstrap = function bootstrap() {
+  GUI.bootstrap = function bootstrap(opts: BootstrapOptions = {}) {
+    GUI.__bootstrapAssets = {
+      ...(GUI.__bootstrapAssets || {}),
+      ...opts,
+    };
     if (!GUI.__bootstrapPromise) {
-      GUI.__bootstrapPromise = bootstrapGUI().catch((e: any) => {
+      GUI.__bootstrapPromise = bootstrapGUI(GUI.__bootstrapAssets).catch((e: any) => {
         // Allow retry after failure
         GUI.__bootstrapPromise = null;
         throw e;

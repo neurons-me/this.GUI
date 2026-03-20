@@ -338,13 +338,19 @@ const LOCAL_CSS_DEFAULT = '../../this/GUI/npm/dist/styles.css';
 const LOCAL_JS_DEFAULT = '../../this/GUI/npm/dist/this.gui.umd.js';
 const STABLE_VERSION = '1.4.86';
 const STABLE_CSS = `https://cdn.jsdelivr.net/npm/this.gui@${STABLE_VERSION}/dist/styles.css`;
-const STABLE_JS = `https://cdn.jsdelivr.net/npm/this.gui@${STABLE_VERSION}/dist/this.gui.bootstrap.umd.js`;
+const STABLE_JS = `https://cdn.jsdelivr.net/npm/this.gui@${STABLE_VERSION}/dist/this.gui.umd.js`;
 const LATEST_CSS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/styles.css';
-const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.bootstrap.umd.js';
+const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.umd.js';
     const REACT_CDN = 'https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js';
     const REACTDOM_CDN = 'https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js';
     const isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
     const allowLocal = !isHttp || window.location.protocol === 'file:';
+
+    function resolveCoreRuntimeUrl(jsUrl) {
+      return String(jsUrl || '')
+        .replace(/this\.gui\.bootstrap\.umd\.js(?=($|\?))/, 'this.gui.umd.js')
+        .replace(/this\.gui\.bootstrap\.iife\.js(?=($|\?))/, 'this.gui.iife.js');
+    }
 
     function readLocalPaths() {
       try {
@@ -669,6 +675,10 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.bo
 
     async function attemptLoad(source) {
       const urls = resolveAssetUrls(source);
+      const bootstrapAssets = {
+        css: urls.css,
+        gui: resolveCoreRuntimeUrl(urls.js),
+      };
       setStatus('pending', urls);
       window.GUI_RUNTIME_INFO = {
         source,
@@ -678,11 +688,13 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.bo
         version: undefined,
       };
       await loadStyle(urls.css);
-      if (source === 'local') {
-        if (!window.React) await loadScript(REACT_CDN);
-        if (!window.ReactDOM) await loadScript(REACTDOM_CDN);
-      }
+      window.__THIS_GUI_BOOTSTRAP_ASSETS__ = bootstrapAssets;
+      if (!window.React) await loadScript(REACT_CDN);
+      if (!window.ReactDOM) await loadScript(REACTDOM_CDN);
       await loadScript(urls.js);
+      if (window.GUI && typeof window.GUI.bootstrap === 'function') {
+        await window.GUI.bootstrap(bootstrapAssets);
+      }
       const detectedVersion = (window.GUI && window.GUI.version) || undefined;
       window.GUI_LOAD_SOURCE = source === 'local' ? 'local' : `cdn:${source}`;
       document.documentElement.setAttribute('data-gui-source', window.GUI_LOAD_SOURCE);
