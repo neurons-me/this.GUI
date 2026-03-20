@@ -14,7 +14,6 @@ npm/node_modules/
 npm/dist/
 npm/build/
 npm/coverage/
-npm/package-lock.json
 npm/yarn.lock
 
 # ─── Python (py) ─────────────────────────────
