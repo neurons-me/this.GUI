@@ -6,6 +6,7 @@ export { getInitialThemeId, usePersistentThemeId } from './utils/persistence';
 // Theme context and Theme component
 export { ThemeContext, useThemeContext } from '@/gui/contexts/ThemeContext';
 export { default as Theme } from './Theme';
+export { default as DomIcon } from './Icon/DomIcon';
 // Theme catalog UI (components)
 export { default as ThemesCatalog } from './Catalog/Catalog';
 // Back-compat / simple docs API (some pages expect `window.GUI.Catalog`)

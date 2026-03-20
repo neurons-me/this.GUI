@@ -52,6 +52,7 @@ export { default as Input } from '@/gui/atoms/TextField/TextField';
 export { default as Theme } from '@/gui/Theme/Theme';
 export { default as Layout } from '@/gui/Layout/Layout';
 export { default as Icon } from '@/gui/Theme/Icon/Icon';
+export { default as DomIcon } from '@/gui/Theme/Icon/DomIcon';
 export { default as ThemeModeToggle } from '@/gui/Theme/ToggleMode/ToggleMode';
 export { default as Blockchain } from '@/gui/components/Blockchain/blockchain';
 export { default as Cleaker } from '@/gui/Session/Cleaker';
@@ -85,6 +86,7 @@ import TextField from '@/gui/atoms/TextField/TextField';
 import Typography from '@/gui/atoms/Typography/Typography';
 import Layout from '@/gui/Layout/Layout';
 import Icon from '@/gui/Theme/Icon/Icon';
+import DomIcon from '@/gui/Theme/Icon/DomIcon';
 import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 import Blockchain from '@/gui/components/Blockchain/blockchain';
 import FaceRecognition from '@/gui/widgets/FaceRecognition/FaceRecognition';
@@ -132,6 +134,7 @@ export const Components = {
   Blockchain,
   Cleaker,
   Icon,
+  DomIcon,
   ThemeModeToggle,
 } as const;
 
@@ -139,6 +142,7 @@ export const ThemeRuntime = {
   Theme: ThemeComponent,
   Layout,
   Icon,
+  DomIcon,
   ThemeModeToggle,
 } as const;
 

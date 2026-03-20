@@ -1,4 +1,43 @@
 import type { ReactNode } from 'react';
+
+export type PageHeadMetaTag = {
+  name?: string;
+  property?: string;
+  content?: string;
+  httpEquiv?: string;
+  itemProp?: string;
+  charSet?: string;
+};
+
+export type PageHeadLinkTag = {
+  rel: string;
+  href: string;
+  type?: string;
+  sizes?: string;
+  media?: string;
+  color?: string;
+};
+
+export interface PageHeadConfig {
+  title?: string;
+  description?: string;
+  favicon?: string;
+  image?: string;
+  socialImage?: string;
+  ogImage?: string;
+  twitterImage?: string;
+  canonical?: string;
+  url?: string;
+  type?: string;
+  siteName?: string;
+  themeColor?: string;
+  robots?: string;
+  twitterCard?: string;
+  twitterSite?: string;
+  twitterCreator?: string;
+  meta?: PageHeadMetaTag[];
+  links?: PageHeadLinkTag[];
+}
 /**
  * PageProps
  * ----------
@@ -20,4 +59,6 @@ export interface PageProps {
   sx?: Record<string, any>;
   /** Respect layout insets via CSS vars: --gui-inset-* */
   insetsAware?: boolean;
+  /** Optional document/head metadata applied while this Page is mounted. */
+  head?: PageHeadConfig;
 }

@@ -4,6 +4,7 @@ import { Box } from '@/gui/atoms';
 import { useInsetsContext } from '@/gui/contexts/InsetsContext';
 import { useGuiTheme } from '@/gui/hooks';
 import type { PageProps } from './Page.types';
+import PageHead from './PageHead';
 /**
  * Page
  * ----------
@@ -19,6 +20,8 @@ import type { PageProps } from './Page.types';
 export default function Page({
   children,
   padding = 3,
+  background,
+  head,
   sx = {},
   insetsAware = true,
   ...rest
@@ -58,37 +61,40 @@ export default function Page({
       : undefined;
 
   return (
-    <Box
-      id="page-container"
-      {...rest}
-      sx={{
-        flex: 1,
-        flexGrow: 1,
-        width: '100%',
-        minHeight: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        padding: resolvedPadding,
-        background: 'transparent',
-        border: '1px solid',
-        borderColor: 'divider',
-        borderRadius: 2,
-        filter: 'brightness(1.16)',
-        boxSizing: 'border-box',
-        ...(insetsAware &&
-          basePadding && {
-            padding: 0,
-            paddingTop: topCalc,
-            paddingBottom: bottomCalc,
-            paddingLeft: leftCalc,
-            paddingRight: rightCalc,
-          }),
-        ...sx,
-      }}
-    >
-      {children}
-    </Box>
+    <>
+      <PageHead head={head} />
+      <Box
+        id="page-container"
+        {...rest}
+        sx={{
+          flex: 1,
+          flexGrow: 1,
+          width: '100%',
+          minHeight: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          padding: resolvedPadding,
+          background: background || 'transparent',
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 2,
+          filter: 'brightness(1.16)',
+          boxSizing: 'border-box',
+          ...(insetsAware &&
+            basePadding && {
+              padding: 0,
+              paddingTop: topCalc,
+              paddingBottom: bottomCalc,
+              paddingLeft: leftCalc,
+              paddingRight: rightCalc,
+            }),
+          ...sx,
+        }}
+      >
+        {children}
+      </Box>
+    </>
   );
 }

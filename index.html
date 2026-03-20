@@ -28,6 +28,11 @@
     box-sizing: border-box;
   }
 
+  .gui-leftbar-logo-mark {
+    display: block;
+    flex: 0 0 auto;
+  }
+
   .gui-leftbar-logo-label {
     font-size: 0.85rem;
     font-weight: 700;
@@ -810,6 +815,70 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
         ? `this.GUI v${VERSION_LABEL} — Runtime`
         : `this.GUI (${VERSION_LABEL}) — Runtime`;
     } catch (e) {}
+    const DOM_ICON_GRID = [
+      '#####....####...##..#..##',
+      '##..##..##..##..###.#.###',
+      '##...#..#....#..##.###.##',
+      '##...#..#....#..##..#..##',
+      '##...#..#....#..##.....##',
+      '##...#..#....#..##.....##',
+      '##...#..#....#..##.....##',
+      '##..##..##..##..##.....##',
+      '#####....####...##.....##',
+    ];
+    function createDomIcon(options) {
+      if (!window.React || typeof window.React.createElement !== 'function') return null;
+      const opts = options || {};
+      const size = opts.size || 55;
+      const title = opts.title || 'DOM';
+      const color =
+        opts.color ||
+        'var(--mui-palette-primary-main, var(--mui-palette-text-primary, #7bb0ff))';
+      const cellSize = 12;
+      const viewBoxWidth = DOM_ICON_GRID[0].length * cellSize;
+      const viewBoxHeight = DOM_ICON_GRID.length * cellSize;
+      const pixelRects = [];
+      DOM_ICON_GRID.forEach((row, y) => {
+        [...row].forEach((cell, x) => {
+          if (cell !== '#') return;
+          pixelRects.push(
+            window.React.createElement('rect', {
+              key: `dom-${x}-${y}`,
+              x: x * cellSize,
+              y: y * cellSize,
+              width: cellSize,
+              height: cellSize,
+              fill: 'currentColor',
+              stroke: 'currentColor',
+              strokeOpacity: 0.14,
+              strokeWidth: 1,
+              vectorEffect: 'non-scaling-stroke',
+            })
+          );
+        });
+      });
+      return window.React.createElement(
+        'svg',
+        {
+          viewBox: `0 0 ${viewBoxWidth} ${viewBoxHeight}`,
+          width: size,
+          height: (size * viewBoxHeight) / viewBoxWidth,
+          role: 'img',
+          'aria-label': title,
+          xmlns: 'http://www.w3.org/2000/svg',
+          fill: 'none',
+          preserveAspectRatio: 'xMidYMid meet',
+          className: 'gui-leftbar-logo-mark',
+          style: {
+            display: 'block',
+            height: 'auto',
+            color,
+          },
+        },
+        window.React.createElement('title', null, title),
+        window.React.createElement('g', { shapeRendering: 'crispEdges' }, pixelRects)
+      );
+    }
     const leftBarLogo =
       window.React && typeof window.React.createElement === 'function'
         ? window.React.createElement(
@@ -969,6 +1038,27 @@ const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.um
         initialView: 'rail',
         elements: [
           leftBarLogo ? { type: 'action', props: { element: leftBarLogo } } : null,
+          {
+            type: 'action',
+            props: {
+              element:
+                window.React && typeof window.React.createElement === 'function'
+                  ? window.React.createElement(
+                      'a',
+                      {
+                        href: 'https://neurons-me.github.io/this.DOM',
+                        target: '_blank',
+                        rel: 'noopener noreferrer',
+                        title: 'DOM',
+                        'aria-label': 'DOM',
+                        className: 'gui-leftbar-logo',
+                      },
+                      createDomIcon({ size: 55, title: 'DOM' }),
+                      window.React.createElement('span', { className: 'gui-leftbar-logo-label' }, 'DOM')
+                    )
+                  : null,
+            },
+          },
         ].filter(Boolean),
         footerElements: [
           leftBarThemeToggle
