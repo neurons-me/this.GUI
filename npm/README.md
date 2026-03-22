@@ -1,6 +1,6 @@
 # .GUI
-A collection of components and building blocks enabling **.GUI** generation.
-[Demo](https://neurons-me.github.io/GUI/)  -  [Storybook](https://neurons-me.github.io/GUI/docs/storybook)
+A collection of components and building blocks enabling **Graphic User Interface** generation.
+[Docs](https://neurons-me.github.io/GUI/)  -  [Storybook](https://neurons-me.github.io/GUI/docs/storybook)
 
 
 
@@ -8,12 +8,15 @@ A collection of components and building blocks enabling **.GUI** generation.
 
 # Start Here:
 `this.GUI` is a declarative runtime with three layers:
-1. **UI spec (`this.GUI`)**: you describe the screen as data: pages, cards, text, buttons, sidebars, and children.
+
+**[ Technical ]**
+
+1. **UI spec (`GUI`)**: you describe the screen as data: pages, cards, text, buttons, sidebars, and children.
 2. **Dynamic tokens (`$expr` / `$action`)**: instead of hardcoding everything, you can say "read this value" or "run this mutation" in a serializable way.
 3. **Runtime (`runtime`, optional `.me`)**: the host decides how those reads and writes actually work, for example by resolving profile data, route params, or backend mutations.
 
 In plain terms:
-- `this.GUI` defines **what to render**
+- `GUI` defines **what to render**
 - `$expr` and `$action` define **what should be dynamic**
 - `runtime` defines **where the data comes from and what actions do**
 

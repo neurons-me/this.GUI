@@ -6,6 +6,11 @@ import { renderWithGUI } from './renderer';
 import { SelectionProvider, useSelection } from './selection';
 import { RuntimeInspector } from './inspector';
 import { RuntimeAdminView } from './adminView';
+import {
+  ensureRuntimeControlSurface,
+  readAdminViewPreference,
+  readInspectorPreference,
+} from './controlSurface';
 
 export type MountTarget = string | Element;
 export type MountOptions = Omit<RendererOptions, 'gui' | 'React'> & {
@@ -274,6 +279,19 @@ export function mount(
   }
 
   const { gui, React, ReactDOM } = getReactGlobals(finalOptions);
+  ensureRuntimeControlSurface();
+  if (typeof finalOptions.inspectorEnabled !== 'boolean') {
+    finalOptions = {
+      ...finalOptions,
+      inspectorEnabled: readInspectorPreference(),
+    };
+  }
+  if (typeof finalOptions.adminViewEnabled !== 'boolean') {
+    finalOptions = {
+      ...finalOptions,
+      adminViewEnabled: readAdminViewPreference(),
+    };
+  }
   if (!finalOptions.runtime && (finalOptions as any).me && typeof gui?.RunMe === 'function') {
     finalOptions = { ...finalOptions, runtime: gui.RunMe((finalOptions as any).me) };
   }

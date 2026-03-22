@@ -3,8 +3,8 @@
 import HighLighter from './HighLighter/HighLighter';
 import HighLightsDrawer from './HighLighter/HighLightsDrawer';
 import FaceRecognition from './FaceRecognition/FaceRecognition';
-import Monad from './Monad/Monad';
-export type { MonadProps } from './Monad/Monad';
+import Monad from '../Session/monad.ai/monad.ai';
+export type { MonadProps } from '../Session/monad.ai/monad.ai';
 export { HighLighter };
 export type { HighLighterProps, HighLighterColor } from './HighLighter/HighLighter';
 export { DEFAULT_COLORS as HIGH_LIGHTER_DEFAULT_COLORS } from './HighLighter/HighLighter';

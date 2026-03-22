@@ -1,9 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import QR, { type QREmbedMode } from '../me/QR';
+import {
+  readUsernameFromBootstrap,
+  readUsernameFromLocation,
+  readUsernameFromStorage,
+  readUsernameFromWindow,
+  sanitizeCleakerUsername,
+  SESSION_CREDENTIALS_EVENT,
+  SESSION_USERNAME_STORAGE_KEY,
+} from './runtimeUsername';
 
 const DEFAULT_ENDPOINT = 'https://cleaker.me';
-const SESSION_USERNAME_STORAGE_KEY = 'cleaker.session.username.v1';
-const SESSION_CREDENTIALS_EVENT = 'cleaker:session:credentials-changed';
 
 export type CleakerQRProps = {
   /** Optional direct value override. If provided, it wins. */
@@ -42,39 +49,6 @@ export type CleakerQRProps = {
   style?: React.CSSProperties;
 };
 
-function sanitizeUsername(raw: string): string {
-  return String(raw || '')
-    .trim()
-    .toLowerCase()
-    .replace(/^me:\/\//, '')
-    .replace(/\/+$/, '')
-    .replace(/:\d+$/, '')
-    .replace(/[^a-z0-9._-]/g, '');
-}
-
-function readUsernameFromWindow(): string {
-  if (typeof window === 'undefined') return '';
-  try {
-    const meRef: any = (window as any).me;
-    if (typeof meRef === 'function') {
-      const v = meRef('@') || meRef('username') || '';
-      return sanitizeUsername(String(v || ''));
-    }
-    if (meRef && typeof meRef.username === 'function') {
-      return sanitizeUsername(String(meRef.username() || ''));
-    }
-  } catch {}
-  return '';
-}
-
-function readUsernameFromStorage(): string {
-  if (typeof window === 'undefined') return '';
-  try {
-    return sanitizeUsername(String(localStorage.getItem(SESSION_USERNAME_STORAGE_KEY) || ''));
-  } catch {}
-  return '';
-}
-
 function buildCleakerUrl(username: string, endpoint: string): string {
   const base = String(endpoint || DEFAULT_ENDPOINT).trim().replace(/\/+$/, '');
   if (!username) return base || DEFAULT_ENDPOINT;
@@ -104,24 +78,37 @@ export default function CleakerQR({
   style,
 }: CleakerQRProps) {
   const [resolvedUsername, setResolvedUsername] = useState<string>(() => {
-    const direct = sanitizeUsername(username || '');
+    const direct = sanitizeCleakerUsername(username || '');
     if (direct) return direct;
     const fromWindow = readUsernameFromWindow();
     if (fromWindow) return fromWindow;
+    const fromLocation = readUsernameFromLocation();
+    if (fromLocation) return fromLocation;
     return readUsernameFromStorage();
   });
 
   useEffect(() => {
-    const next = sanitizeUsername(username || '');
-    if (next) setResolvedUsername(next);
+    const next = sanitizeCleakerUsername(username || '');
+    if (next) {
+      setResolvedUsername(next);
+      return;
+    }
+
+    const fallback =
+      readUsernameFromWindow() ||
+      readUsernameFromLocation() ||
+      readUsernameFromStorage();
+
+    setResolvedUsername(fallback || '');
   }, [username]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const sync = () => {
       const fromWindow = readUsernameFromWindow();
+      const fromLocation = readUsernameFromLocation();
       const fromStorage = readUsernameFromStorage();
-      const next = fromWindow || fromStorage || '';
+      const next = fromWindow || fromLocation || fromStorage || '';
       if (next && next !== resolvedUsername) setResolvedUsername(next);
       if (!next && resolvedUsername) setResolvedUsername('');
     };
@@ -136,6 +123,34 @@ export default function CleakerQR({
       window.removeEventListener(SESSION_CREDENTIALS_EVENT, onSession as any);
     };
   }, [resolvedUsername]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || value || resolvedUsername) return;
+
+    let cancelled = false;
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const origins = Array.from(new Set([
+      window.location.origin,
+      endpoint,
+    ].map((origin) => String(origin || '').trim().replace(/\/+$/, '')).filter(Boolean)));
+
+    if (origins.length === 0) return;
+
+    (async () => {
+      for (const origin of origins) {
+        const next = await readUsernameFromBootstrap(origin, controller?.signal);
+        if (cancelled) return;
+        if (!next) continue;
+        setResolvedUsername(next);
+        return;
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      controller?.abort();
+    };
+  }, [endpoint, resolvedUsername, value]);
 
   const qrValue = useMemo(() => {
     if (value) return String(value);

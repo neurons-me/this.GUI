@@ -55,10 +55,10 @@ export { default as Icon } from '@/gui/Theme/Icon/Icon';
 export { default as DomIcon } from '@/gui/Theme/Icon/DomIcon';
 export { default as ThemeModeToggle } from '@/gui/Theme/ToggleMode/ToggleMode';
 export { default as Blockchain } from '@/gui/components/Blockchain/blockchain';
-export { default as Cleaker } from '@/gui/Session/Cleaker';
+export { default as Cleaker } from '@/gui/Session/cleaker/Cleaker';
 export { default as FaceRecognition } from '@/gui/widgets/FaceRecognition/FaceRecognition';
-export { default as Monad } from '@/gui/widgets/Monad/Monad';
-export type { MonadProps } from '@/gui/widgets/Monad/Monad';
+export { default as Monad } from '@/gui/Session/monad.ai/monad.ai';
+export type { MonadProps } from '@/gui/Session/monad.ai/monad.ai';
 export { default as HighLighter } from '@/gui/widgets/HighLighter/HighLighter';
 export { default as CodeBlock } from '@/gui/molecules/CodeBlock/CodeBlock';
 export { default as Modal } from '@/gui/molecules/Modal/Modal';
@@ -90,7 +90,7 @@ import DomIcon from '@/gui/Theme/Icon/DomIcon';
 import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 import Blockchain from '@/gui/components/Blockchain/blockchain';
 import FaceRecognition from '@/gui/widgets/FaceRecognition/FaceRecognition';
-import Monad from '@/gui/widgets/Monad/Monad';
+import Monad from '@/gui/Session/monad.ai/monad.ai';
 import HighLighter from '@/gui/widgets/HighLighter/HighLighter';
 import HighLightsDrawer from '@/gui/widgets/HighLighter/HighLightsDrawer';
 import CodeBlock from '@/gui/molecules/CodeBlock/CodeBlock';
@@ -103,7 +103,7 @@ import GUITools, {
   guiToolsElements,
   guiToolsLeftSidebarConfig,
 } from '@/gui/molecules/menus/GUI-Tools/GUI-Tools';
-import Cleaker from '@/gui/Session/Cleaker';
+import Cleaker from '@/gui/Session/cleaker/Cleaker';
 
 export const Atoms = {
   Box,
@@ -166,5 +166,14 @@ export const menus = {
 // GuiNode → renderer → ReactDOM, expects React/ReactDOM globals in UMD usage.
 export { mount } from '@/runtime/mount';
 export type { MountTarget } from '@/runtime/mount';
+export {
+  ensureRuntimeControlSurface,
+  getAdminViewEnabled,
+  getInspectorEnabled,
+  setAdminViewEnabled,
+  setInspectorEnabled,
+  toggleAdminView,
+  toggleInspector,
+} from '@/runtime/controlSurface';
 export { Router, RouterProvider } from '@/Router/Router';
 export { RunMe } from '@/runtime/run-me';

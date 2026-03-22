@@ -4,7 +4,7 @@
  * Exported here so consumers can import from a single namespace.
  */
 import Blockchain from '@/gui/components/Blockchain/blockchain';
-import Cleaker from '@/gui/Session/Cleaker';
+import Cleaker from '@/gui/Session/cleaker/Cleaker';
 // IMPORTANT:
 // - Keep this registry explicit.
 // - Do not `export *` from here.

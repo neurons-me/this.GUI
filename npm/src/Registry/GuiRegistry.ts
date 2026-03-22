@@ -9,8 +9,9 @@ import FooterResolver from "@/gui/Layout/Footer/Footer.resolver";
 import LeftSidebarResolver from "@/gui/Layout/Sidebars/LeftSidebar/LeftSidebar.resolver";
 import RightSidebarResolver from "@/gui/Layout/Sidebars/RightSidebar/RightSidebar.resolver";
 import SessionQRResolver from "@/gui/Session/me/QR.resolver";
+import MeResolver from "@/gui/Session/me/me.resolver";
 import CleakerQRResolver from "@/gui/Session/cleaker/CleakerQR.resolver";
-import CleakerResolver from "@/gui/Session/Session.resolver";
+import CleakerResolver from "@/gui/Session/cleaker/Cleaker.resolver";
 // etc...
 export const GuiRegistry = createRegistry([
   //Atoms
@@ -24,6 +25,7 @@ export const GuiRegistry = createRegistry([
   LeftSidebarResolver,
   RightSidebarResolver,
   FooterResolver,
+  MeResolver,
   SessionQRResolver,
   CleakerQRResolver,
   CleakerResolver,

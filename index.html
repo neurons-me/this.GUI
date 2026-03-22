@@ -316,7 +316,6 @@
   (async function () {
     const SOURCE_STORAGE_KEY = 'gui.runtime.source.v2';
     const COLLAPSE_STORAGE_KEY = 'gui.runtime.collapsed.v2';
-    const INSPECTOR_STORAGE_KEY = 'gui.runtime.inspector.v2';
     const ADMIN_VIEW_STORAGE_KEY = 'gui.runtime.admin.view.v2';
     const LEGACY_ADMIN_VIEW_STORAGE_KEY = 'gui.runtime.admin.view.v1';
     const LOCAL_PATHS_KEY = 'gui.runtime.local.paths.v1';
@@ -600,20 +599,6 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
       } catch {}
     }
 
-    function readInspectorState() {
-      try {
-        return localStorage.getItem(INSPECTOR_STORAGE_KEY) === 'true';
-      } catch {
-        return false;
-      }
-    }
-
-    function writeInspectorState(enabled) {
-      try {
-        localStorage.setItem(INSPECTOR_STORAGE_KEY, String(enabled));
-      } catch {}
-    }
-
     function syncCollapseUi() {
       const isCollapsed = document.body.classList.contains('runtime-collapsed');
       if (toggleButton) {
@@ -632,84 +617,28 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
 
     window.__guiToggleRuntimeControls = toggleCollapsedState;
 
-    let inspectorEnabled = readInspectorState();
-    let adminViewEnabled = readAdminViewState();
-
-    function readAdminViewState() {
-      try {
-        return localStorage.getItem(ADMIN_VIEW_STORAGE_KEY) === 'true';
-      } catch {
-        return false;
-      }
+    function getInspectorEnabled() {
+      return typeof GUI.getInspectorEnabled === 'function'
+        ? Boolean(GUI.getInspectorEnabled())
+        : false;
     }
 
-    function writeAdminViewState(enabled) {
-      try {
-        const serialized = String(Boolean(enabled));
-        localStorage.setItem(ADMIN_VIEW_STORAGE_KEY, serialized);
-        localStorage.setItem(LEGACY_ADMIN_VIEW_STORAGE_KEY, serialized);
-      } catch {}
+    function getAdminViewEnabled() {
+      return typeof GUI.getAdminViewEnabled === 'function'
+        ? Boolean(GUI.getAdminViewEnabled())
+        : false;
     }
 
-    function setAdminViewEnabled(next, options = { persist: true, dispatch: true }) {
-      adminViewEnabled = Boolean(next);
-      if (options.persist) {
-        writeAdminViewState(adminViewEnabled);
-      }
-      if (options.dispatch) {
-        window.dispatchEvent(
-          new CustomEvent('this.gui:adminView:set', { detail: { enabled: adminViewEnabled } })
-        );
-      }
-      rerender();
-    }
-
-    function toggleAdminView() {
-      if (window.__guiToggleAdminView && window.__guiToggleAdminView !== toggleAdminView) {
-        window.__guiToggleAdminView();
-        return;
-      }
-      setAdminViewEnabled(!adminViewEnabled);
-    }
-
-    window.__guiToggleAdminView = toggleAdminView;
-    function setInspectorEnabled(next, options = { persist: true, dispatch: true }) {
-      inspectorEnabled = Boolean(next);
-      if (options.persist) writeInspectorState(inspectorEnabled);
-      if (options.dispatch) {
-        window.dispatchEvent(new CustomEvent('this.gui:inspector:set', { detail: { enabled: inspectorEnabled } }));
-      }
-      rerender();
-    }
-    function toggleInspector() {
-      setInspectorEnabled(!inspectorEnabled);
-    }
-    window.__guiToggleInspector = toggleInspector;
-
-    window.addEventListener('this.gui:inspector:set', (ev) => {
-      const detail = ev && ev.detail ? ev.detail : {};
-      if (typeof detail.enabled === 'boolean' && detail.enabled !== inspectorEnabled) {
-        setInspectorEnabled(detail.enabled, { persist: true, dispatch: false });
-      }
-    });
+    let inspectorEnabled = getInspectorEnabled();
+    let adminViewEnabled = getAdminViewEnabled();
 
     window.addEventListener('this.gui:inspector:changed', (ev) => {
-      const detail = ev && ev.detail ? ev.detail : {};
-      if (typeof detail.enabled === 'boolean') {
-        inspectorEnabled = detail.enabled;
-        writeInspectorState(inspectorEnabled);
-        rerender();
-      }
+      inspectorEnabled = getInspectorEnabled();
+      rerender();
     });
 
     window.addEventListener('this.gui:adminView:changed', (ev) => {
-      const detail = ev && ev.detail ? ev.detail : {};
-      if (typeof detail.enabled === 'boolean') {
-        adminViewEnabled = detail.enabled;
-        writeAdminViewState(adminViewEnabled);
-      } else {
-        adminViewEnabled = readAdminViewState();
-      }
+      adminViewEnabled = getAdminViewEnabled();
       rerender();
     });
 
@@ -738,10 +667,9 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
     }
     window.addEventListener('storage', (ev) => {
       if (ev.key !== ADMIN_VIEW_STORAGE_KEY && ev.key !== LEGACY_ADMIN_VIEW_STORAGE_KEY) return;
-      adminViewEnabled = readAdminViewState();
+      adminViewEnabled = getAdminViewEnabled();
       rerender();
     });
-    writeAdminViewState(adminViewEnabled);
 
     if (localSkip) {
       localSkip.addEventListener('click', () => {
@@ -1174,7 +1102,7 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
                 {
                   label: adminViewEnabled ? 'Admin View · ON' : 'Admin View · OFF',
                   icon: adminViewEnabled ? 'visibility' : 'visibility_off',
-                  onClick: () => window.__guiToggleAdminView && window.__guiToggleAdminView()
+                  onClick: () => GUI.toggleAdminView && GUI.toggleAdminView()
                 },
                 {
                   label: 'Themes',
@@ -1186,7 +1114,7 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
                 {
                   label: inspectorEnabled ? 'Inspector · ON' : 'Inspector · OFF',
                   icon: inspectorEnabled ? 'code' : 'code_off',
-                  onClick: () => window.__guiToggleInspector && window.__guiToggleInspector()
+                  onClick: () => GUI.toggleInspector && GUI.toggleInspector()
                 },
                 {
                   label: runtimeCollapsed ? 'Runtime Controls · Hidden' : 'Runtime Controls · Visible',
@@ -1321,8 +1249,6 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
                           props: {
                             component: 'a',
                             href: runtimeCss,
-                            target: '_blank',
-                            rel: 'noopener noreferrer',
                             sx: { color: 'text.secondary', display: 'block' },
                           },
                           children: [runtimeDetail[0]],
@@ -1334,8 +1260,6 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
                           props: {
                             component: 'a',
                             href: runtimeJs,
-                            target: '_blank',
-                            rel: 'noopener noreferrer',
                             sx: { color: 'text.secondary', display: 'block' },
                           },
                           children: [runtimeDetail[1]],
@@ -1411,7 +1335,7 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
                                 size: 'small',
                                 variant: inspectorEnabled ? 'contained' : 'outlined',
                                 color: inspectorEnabled ? 'success' : 'inherit',
-                                onClick: () => window.__guiToggleInspector && window.__guiToggleInspector(),
+                                onClick: () => GUI.toggleInspector && GUI.toggleInspector(),
                                 'data-gui-inspector-control': true,
                                 sx: { textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 },
                               },
@@ -1456,8 +1380,6 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
                           props: {
                             component: 'a',
                             href: 'https://neurons-me.github.io/GUI/docs/storybook/index.html',
-                            target: '_blank',
-                            rel: 'noopener noreferrer',
                             sx: {
                               display: 'flex',
                               flexDirection: 'column',
@@ -1516,8 +1438,6 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
                           props: {
                             component: 'a',
                             href: 'https://neurons-me.github.io/GUI/docs/storybook/index.html',
-                            target: '_blank',
-                            rel: 'noopener noreferrer',
                             sx: {
                               display: 'flex',
                               flexDirection: 'column',
@@ -1584,34 +1504,19 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
     }
 
     function renderSpec() {
+      inspectorEnabled = getInspectorEnabled();
+      adminViewEnabled = getAdminViewEnabled();
       const spec = buildSpec();
       GUI.mount(spec, '#root', { inspectorEnabled, adminViewEnabled });
       installLeftbarViewObserver();
-      const syncRuntimeAdminView = () => {
-        writeAdminViewState(adminViewEnabled);
-        if (typeof window.__guiSetAdminViewEnabled === 'function') {
-          window.__guiSetAdminViewEnabled(Boolean(adminViewEnabled));
-          return true;
-        }
-        window.dispatchEvent(
-          new CustomEvent('this.gui:adminView:set', { detail: { enabled: adminViewEnabled } })
-        );
-        return false;
-      };
-      const syncedImmediately = syncRuntimeAdminView();
-      if (!syncedImmediately) {
-        requestAnimationFrame(() => {
-          const syncedOnFrame = syncRuntimeAdminView();
-          if (!syncedOnFrame) {
-            setTimeout(syncRuntimeAdminView, 0);
-          }
-        });
-      }
       console.log('[GUI] ✅ Runtime mounted via GUI.mount');
     }
     rerender = renderSpec;
 
     try {
+      if (typeof GUI.ensureRuntimeControlSurface === 'function') {
+        GUI.ensureRuntimeControlSurface();
+      }
       renderSpec();
     } catch (err) {
       const msg = err && err.message ? err.message : String(err);

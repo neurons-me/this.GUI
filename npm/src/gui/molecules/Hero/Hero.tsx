@@ -15,7 +15,6 @@ function resolveOverlayColor(
   overlayColor?: string
 ): string {
   const paletteBlur = blur ? theme?.palette?.blur?.[blur] : undefined;
-
   const resolved =
     customColor
       ? customColor
@@ -24,10 +23,8 @@ function resolveOverlayColor(
       : typeof paletteBlur === 'string'
       ? paletteBlur
       : overlayColor || 'transparent';
-
   console.log('resolveOverlayColor inputs:', { blur, customColor, overlayColor, paletteBlur });
   console.log('resolveOverlayColor resolved:', resolved);
-
   return resolved;
 }
 
@@ -68,14 +65,12 @@ export const Hero: React.FC<HeroProps & Record<string, any>> = ({
 }) => {
   const theme = useTheme();
   const { sx: sxProp, ...boxProps } = rest ?? {};
-
   //console.log('theme.palette.blur:', theme.palette.blur);
   //console.log('theme.custom.blurRadius:', theme.custom.blurRadius);
   //console.log(theme.palette.blur);
   const blurRadius = resolveBlurRadius(theme, blur);
   const overlayBg  = resolveOverlayColor(theme, blur, customColor, overlayColor);
   const mediaFilter = resolveMediaFilter(blurRadius, blur);
-
   const modeConfig = (() => {
     switch (mode) {
       case 'left':
@@ -104,9 +99,7 @@ export const Hero: React.FC<HeroProps & Record<string, any>> = ({
     brand || header || subheader || typography || options
   );
   const renderStructuredFromProps = hasStructuredContent && !__renderStructuredChildren;
-
   const subheaderIsOverline = subheaderVariant === 'overline';
-
   const renderSubheader = () =>
     subheader ? (
       <Typography
@@ -116,7 +109,6 @@ export const Hero: React.FC<HeroProps & Record<string, any>> = ({
         {subheader}
       </Typography>
     ) : null;
-
   const brandNode = brand?.src ? (
     <Box
       component="img"
@@ -133,9 +125,7 @@ export const Hero: React.FC<HeroProps & Record<string, any>> = ({
       }}
     />
   ) : null;
-
   const isFixedLayout = layout === 'fixed';
-
   return (
     <Box
       component="section"

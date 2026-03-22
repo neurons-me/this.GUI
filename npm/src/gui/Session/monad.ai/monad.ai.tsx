@@ -70,7 +70,6 @@ export default function Monad({ variant = "bubble", mode = "float", children }: 
   const [dragging, setDragging] = useState(false);
   const clickTimeout = useRef<number | null>(null);
   const dragMoved = useRef(false);
-
   const handleMouseDown = (e: React.MouseEvent) => {
     setDragging(true);
     setOffset({ x: e.clientX - pos.x, y: e.clientY - pos.y });
@@ -104,7 +103,6 @@ export default function Monad({ variant = "bubble", mode = "float", children }: 
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   });
-
   useEffect(() => {
     const handleResize = () => {
       if (!dragging) {
@@ -115,13 +113,11 @@ export default function Monad({ variant = "bubble", mode = "float", children }: 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [dragging]);
-
   useEffect(() => {
     if (mode !== "contained") return;
     const node = containerRef.current;
     if (!node || !node.parentElement) return;
     const parent = node.parentElement;
-
     const update = () => {
       const w = parent.clientWidth || 0;
       const h = parent.clientHeight || 0;
@@ -140,7 +136,6 @@ export default function Monad({ variant = "bubble", mode = "float", children }: 
       if (ro) ro.disconnect();
     };
   }, [mode]);
-
   useEffect(() => {
     if (meContext.hasMe) return;
     let attempts = 0;
@@ -155,7 +150,6 @@ export default function Monad({ variant = "bubble", mode = "float", children }: 
     }, 250);
     return () => window.clearInterval(id);
   }, [meContext.hasMe]);
-
   const badgeSide = pos.x > window.innerWidth / 2 ? "left" : "right";
   const badgeStyle =
     mode === "contained"
@@ -163,7 +157,6 @@ export default function Monad({ variant = "bubble", mode = "float", children }: 
       : badgeSide === "left"
         ? ({ right: 120 + 10 } as const)
         : ({ left: 120 + 10 } as const);
-
   const connectorKey = `${badgeSide}:${open ? "open" : "closed"}`;
   const connector = useMemo(() => {
     const radius = 30;
@@ -182,7 +175,8 @@ export default function Monad({ variant = "bubble", mode = "float", children }: 
     const d = `M ${start.x} ${start.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${end.x} ${end.y}`;
     return { d, start, end };
   }, [badgeSide]);
-
+  // Inline keeps Monad in the tree without rendering the floating orb.
+  // It is present as a surface wrapper, but not in floating form.
   if (variant === "inline") {
     return (
       <Box>

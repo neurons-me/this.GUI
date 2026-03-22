@@ -1,17 +1,13 @@
 # Runtime Contract
-
 This document defines how `this.GUI` connects routes, runtime expressions, and security policy.
 
 ## 1. Mapping URLs to Identity
-
 `Router` supports exact routes, dynamic params (`:id`), and wildcards (`*`).
 Resolved params are injected into `ctx.params`.
 
 ```ts
 import { Router } from 'this.gui';
-
 const router = new Router({ runtime });
-
 router.set('/dashboard', () => ({ type: 'Page', props: { title: 'Dashboard' } }));
 router.set('/shops/:id', ({ ctx }) => ({
   type: 'Page',
@@ -33,7 +29,6 @@ Behavior:
 - Params are decoded safely (`decodeURIComponent` fallback if malformed).
 
 ## 2. The Power of `$Tokens`
-
 `this.GUI` resolves dynamic props in the runtime renderer:
 
 - `{$expr: "..."}` for reads

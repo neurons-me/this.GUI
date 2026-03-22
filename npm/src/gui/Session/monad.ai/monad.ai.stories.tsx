@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import Monad from './Monad';
-
+import Monad from './monad.ai';
 const meta: Meta<typeof Monad> = {
   title: 'Users/monad.ai',
   component: Monad,
@@ -11,7 +10,6 @@ const meta: Meta<typeof Monad> = {
 
 export default meta;
 type Story = StoryObj<typeof Monad>;
-
 export const Bubble: Story = {
   args: {
     variant: 'bubble',
@@ -21,6 +19,7 @@ export const Bubble: Story = {
 export const Inline: Story = {
   args: {
     variant: 'inline',
+    children: 'monad.ai is present with no shape.',
   },
   parameters: {
     layout: 'padded',

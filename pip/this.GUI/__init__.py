@@ -1,2 +1,2 @@
 def greet():
-    return "Hello from this.documents"
+    return "Hello from this.GUI!"

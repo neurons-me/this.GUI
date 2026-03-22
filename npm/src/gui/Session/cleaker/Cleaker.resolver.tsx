@@ -1,10 +1,10 @@
 import * as React from 'react';
 import type { RegistryEntry } from '@/Registry/types';
-import Cleaker from './Cleaker';
+import Cleaker, { type CleakerProps } from './Cleaker';
 
 type CleakerSpec = {
   type: 'Cleaker';
-  props?: Record<string, never>;
+  props?: CleakerProps;
 };
 
 export const meta = {
@@ -22,8 +22,9 @@ export const meta = {
 
 const CleakerResolver: RegistryEntry = {
   type: 'Cleaker',
-  resolve(_spec: CleakerSpec) {
-    return <Cleaker />;
+  resolve(spec: CleakerSpec) {
+    const props = spec.props ?? {};
+    return <Cleaker {...props} />;
   },
 };
 

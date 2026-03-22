@@ -1,10 +1,19 @@
 // .storybook/preview.tsx
 import React from 'react'
 import 'material-symbols/rounded.css';
-import { Theme, CodeBlock, Typography, Link, Box } from '../index';
 import { DocsContainer } from '@storybook/addon-docs/blocks';
 import { MemoryRouter } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
+import { Theme } from '../src/gui/Theme/Theme';
+import CodeBlock from '../src/gui/molecules/CodeBlock/CodeBlock';
+import Typography from '../src/gui/atoms/Typography/Typography';
+import Link from '../src/gui/atoms/Link/Link';
+import Box from '../src/gui/atoms/Box/Box';
+
+const routerFuture = {
+  v7_startTransition: true,
+  v7_relativeSplatPath: true,
+} as const;
 
 const mdxComponents = {
   h1: (props: any) => <Typography variant="h3" sx={{ mt: 3, mb: 1.5, color: 'text.primary' }} {...props} />,
@@ -60,7 +69,7 @@ const mdxComponents = {
 export const decorators = [
   (Story: React.FC) => (
     <Theme initialThemeId="neurons.me" initialMode="light">
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter initialEntries={['/']} future={routerFuture}>
         <MDXProvider components={mdxComponents}>
           <Story />
         </MDXProvider>

@@ -5,4 +5,5 @@ export * from './adapter';
 export * from './run-me';
 export * from './selection';
 export * from './adminView';
+export * from './controlSurface';
 export { mount } from './mount';

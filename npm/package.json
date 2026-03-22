@@ -1,7 +1,7 @@
 {
   "name": "this.gui",
   "private": false,
-  "version": "1.4.92",
+  "version": "1.4.93",
   "type": "module",
   "main": "./dist/this.gui.cjs",
   "module": "./dist/this.gui.es.js",
@@ -111,7 +111,6 @@
     "@storybook/addon-a11y": "^10.1.11",
     "@storybook/addon-docs": "^10.1.11",
     "@storybook/addon-links": "^10.1.11",
-    "@storybook/addon-onboarding": "^10.1.11",
     "@storybook/addon-themes": "^10.1.11",
     "@storybook/addon-vitest": "^10.1.11",
     "@storybook/react-vite": "^10.1.11",

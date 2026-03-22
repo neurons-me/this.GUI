@@ -1,6 +1,11 @@
 import React, { ReactNode } from "react";
 import { BrowserRouter, useInRouterContext } from "react-router-dom";
 
+const ROUTER_FUTURE_FLAGS = {
+  v7_startTransition: true,
+  v7_relativeSplatPath: true,
+} as const;
+
 export type RouteSpec = any;
 export type RouterRuntime = {
   resolve?: (value: any, context?: RouterResolveContext) => any | Promise<any>;
@@ -246,7 +251,7 @@ export class Router {
  */
 export const RouterProvider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const inRouter = useInRouterContext();
-  return inRouter ? <>{children}</> : <BrowserRouter>{children}</BrowserRouter>;
+  return inRouter ? <>{children}</> : <BrowserRouter future={ROUTER_FUTURE_FLAGS}>{children}</BrowserRouter>;
 };
 
 export default RouterProvider;

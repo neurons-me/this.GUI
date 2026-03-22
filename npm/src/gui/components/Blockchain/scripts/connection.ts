@@ -1,17 +1,98 @@
 import React from "react";
+
 export type ConnectionStatus = 'idle' | 'connecting' | 'online' | 'offline' | 'declined';
 export type UsernameStatus = 'idle' | 'checking' | 'exists' | 'available' | 'error';
+
 export function normalizeBlockchain(raw: string): string {
-  return raw.trim()
+  return String(raw || '').trim()
     .replace(/^https?:\/\//i, '')
     .replace(/\/$/, '');
 }
 
-function getBlockchainProtocol(host: string): 'http' | 'https' {
+export function getBlockchainProtocol(host: string): 'http' | 'https' {
   const normalized = String(host || '').trim().toLowerCase();
   const isLocalhost = /^(localhost|127(?:\.\d{1,3}){3}|0\.0\.0\.0)(:\d+)?$/.test(normalized);
   const isLocalDomain = /\.local(:\d+)?$/.test(normalized);
   return isLocalhost || isLocalDomain ? 'http' : 'https';
+}
+
+export function toBlockchainBaseUrl(raw: string): string {
+  const host = normalizeBlockchain(raw);
+  if (!host) return '';
+  return `${getBlockchainProtocol(host)}://${host}`;
+}
+
+function classifyConnectionError(error: unknown): ConnectionStatus {
+  const message = error instanceof Error ? error.message.toLowerCase() : String(error || '').toLowerCase();
+  if (message.includes('cors') || message.includes('failed to fetch')) {
+    return 'declined';
+  }
+  return 'offline';
+}
+
+function useEndpointPresence(origin: string, debounceMs: number) {
+  const host = normalizeBlockchain(origin);
+  const baseUrl = toBlockchainBaseUrl(origin);
+  const [status, setStatus] = React.useState<ConnectionStatus>('idle');
+
+  React.useEffect(() => {
+    if (!host || !baseUrl) {
+      setStatus('idle');
+      return;
+    }
+
+    let cancelled = false;
+    setStatus('connecting');
+
+    const handle = window.setTimeout(() => {
+      fetch(`${baseUrl}/`)
+        .then((response) => {
+          if (cancelled) return;
+          setStatus(response.ok ? 'online' : 'offline');
+        })
+        .catch((error) => {
+          if (cancelled) return;
+          setStatus(classifyConnectionError(error));
+        });
+    }, debounceMs);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(handle);
+    };
+  }, [baseUrl, debounceMs, host]);
+
+  return {
+    host,
+    baseUrl,
+    status,
+  };
+}
+
+export function useSovereignPresence(params: {
+  parent: string;
+  local: string;
+  debouncePingMs?: number;
+}): {
+  parentHost: string;
+  parentBaseUrl: string;
+  parentStatus: ConnectionStatus;
+  localHost: string;
+  localBaseUrl: string;
+  localStatus: ConnectionStatus;
+} {
+  const { parent, local, debouncePingMs = 400 } = params;
+  const parentPresence = useEndpointPresence(parent, debouncePingMs);
+  const localPresence = useEndpointPresence(local, debouncePingMs);
+
+  return {
+    parentHost: parentPresence.host,
+    parentBaseUrl: parentPresence.baseUrl,
+    parentStatus: parentPresence.status,
+    localHost: localPresence.host,
+    localBaseUrl: localPresence.baseUrl,
+    localStatus: localPresence.status,
+  };
 }
 
 export function useBlockchainConnection(params: {
@@ -32,59 +113,48 @@ export function useBlockchainConnection(params: {
     debouncePingMs = 400,
     debounceUserMs = 350,
   } = params;
-  const blockchainHost = normalizeBlockchain(blockchain);
-  const blockchainBaseUrl = `${getBlockchainProtocol(blockchainHost)}://${blockchainHost}`;
-  const [connectionStatus, setConnectionStatus] = React.useState<ConnectionStatus>('idle');
+
+  const presence = useEndpointPresence(blockchain, debouncePingMs);
   const [usernameStatus, setUsernameStatus] = React.useState<UsernameStatus>('idle');
+
   React.useEffect(() => {
-    if (!blockchainHost) {
-      setConnectionStatus('idle');
-      return;
-    }
-    setConnectionStatus('connecting');
-    const handle = setTimeout(() => {
-      fetch(`${blockchainBaseUrl}/`)
-        .then(res => {
-          if (res.ok) setConnectionStatus('online');
-          else setConnectionStatus('offline');
-        })
-        .catch(err => {
-          const msg = err.message.toLowerCase();
-          if (msg.includes('cors') || msg.includes('failed to fetch')) setConnectionStatus('declined');
-          else setConnectionStatus('offline');
-        });
-    }, debouncePingMs);
-    return () => clearTimeout(handle);
-  }, [blockchainHost, blockchainBaseUrl, debouncePingMs]);
-  React.useEffect(() => {
-    if (connectionStatus !== 'online' || !username) {
+    if (presence.status !== 'online' || !username || !presence.baseUrl) {
       setUsernameStatus('idle');
       return;
     }
+
+    let cancelled = false;
     setUsernameStatus('checking');
-    // Try me['@'](username) to ignore validation errors while typing
+
     try {
-      params.me['@'](username);
+      params.me?.['@']?.(username);
     } catch {
-      // ignore
+      // Ignore validation errors while the UI is still typing.
     }
 
-    const handle = setTimeout(() => {
-      fetch(`${blockchainBaseUrl}/users/${username}`)
-        .then(res => {
-          if (res.status === 200) setUsernameStatus('exists');
-          else if (res.status === 404) setUsernameStatus('available');
+    const handle = window.setTimeout(() => {
+      fetch(`${presence.baseUrl}/users/${encodeURIComponent(username)}`)
+        .then((response) => {
+          if (cancelled) return;
+          if (response.status === 200) setUsernameStatus('exists');
+          else if (response.status === 404) setUsernameStatus('available');
           else setUsernameStatus('error');
         })
-        .catch(() => setUsernameStatus('error'));
+        .catch(() => {
+          if (!cancelled) setUsernameStatus('error');
+        });
     }, debounceUserMs);
 
-    return () => clearTimeout(handle);
-  }, [connectionStatus, username, blockchainBaseUrl, debounceUserMs, params.me]);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(handle);
+    };
+  }, [debounceUserMs, params.me, presence.baseUrl, presence.status, username]);
+
   return {
-    blockchainHost,
-    blockchainBaseUrl,
-    connectionStatus,
+    blockchainHost: presence.host,
+    blockchainBaseUrl: presence.baseUrl,
+    connectionStatus: presence.status,
     usernameStatus,
   };
 }
