@@ -1,0 +1,1 @@
+import{r as o,j as s}from"./iframe-D9h36_NB.js";import{D as t}from"./Divider-D_ifI4VP.js";const r=o.forwardRef(function(i,e){return s.jsx(t,{ref:e,...i})});r.displayName="Divider";r.__docgenInfo={description:"",methods:[],displayName:"Divider"};export{r as D};

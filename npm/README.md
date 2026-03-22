@@ -2,17 +2,21 @@
 A collection of components and building blocks enabling **Graphic User Interface** generation.
 [Docs](https://neurons-me.github.io/GUI/)  -  [Storybook](https://neurons-me.github.io/GUI/docs/storybook)
 
-
-
 <img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/w_320/v1761281165/geometry_shapes-removebg-preview_anrdke.png" alt="Geometry shapes" width="244" />
 
 # Start Here:
-`this.GUI` is a declarative runtime with three layers:
-
+`.GUI` is a declarative runtime with three layers:
 **[ Technical ]**
+1. **GUI spec**: you describe the screen as data: 
+   pages, 
+   cards, 
+   text,
+   buttons, 
+   sidebars,
+  and children.
 
-1. **UI spec (`GUI`)**: you describe the screen as data: pages, cards, text, buttons, sidebars, and children.
 2. **Dynamic tokens (`$expr` / `$action`)**: instead of hardcoding everything, you can say "read this value" or "run this mutation" in a serializable way.
+
 3. **Runtime (`runtime`, optional `.me`)**: the host decides how those reads and writes actually work, for example by resolving profile data, route params, or backend mutations.
 
 In plain terms:

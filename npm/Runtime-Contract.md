@@ -8,7 +8,11 @@ Resolved params are injected into `ctx.params`.
 ```ts
 import { Router } from 'this.gui';
 const router = new Router({ runtime });
-router.set('/dashboard', () => ({ type: 'Page', props: { title: 'Dashboard' } }));
+
+router.set('/dashboard', () => ({ 
+  type: 'Page', 
+  props: { title: 'Dashboard' } }));
+
 router.set('/shops/:id', ({ ctx }) => ({
   type: 'Page',
   props: {
