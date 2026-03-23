@@ -32,18 +32,19 @@ Behavior:
 - Dynamic routes are ranked by specificity (more static segments wins).
 - Params are decoded safely (`decodeURIComponent` fallback if malformed).
 
-## 2. The Power of `$Tokens`
+## 2. The Power of Read/Write Tokens
 `this.GUI` resolves dynamic props in the runtime renderer:
 
-- `{$expr: "..."}` for reads
-- `{$action: "..."}` for mutations/events
+- `{ read: "..." }` for reads
+- `{ write: "..." }` for mutations/events
+- Legacy compatibility: `{ $expr: "..." }` and `{ $action: "..." }`
 
 ```json
 {
   "type": "Button",
   "props": {
-    "label": { "$expr": "me/public/profile/name" },
-    "onClick": { "$action": "me/public/profile/status = 'active'" }
+    "label": { "read": "me/public/profile/name" },
+    "onClick": { "write": "me/public/profile/status = 'active'" }
   }
 }
 ```
@@ -60,7 +61,7 @@ Example:
 {
   "type": "Typography",
   "props": {
-    "children": { "$expr": "me/views/shops[{{params.id}}].price" }
+    "children": { "read": "me/views/shops[{{params.id}}].price" }
   }
 }
 ```

@@ -204,6 +204,26 @@ function resolveProps(
     return !!value && typeof value === 'object' && Object.getPrototypeOf(value) === Object.prototype;
   }
 
+  function getStringToken(
+    value: Record<string, any>,
+    legacyKey: '$expr' | '$action',
+    aliasKey: 'read' | 'write'
+  ): { expression: string; source: '$expr' | '$action' | 'read' | 'write' } | null {
+    const legacy = typeof value[legacyKey] === 'string' ? value[legacyKey] : null;
+    const alias = typeof value[aliasKey] === 'string' ? value[aliasKey] : null;
+
+    if (legacy && alias && legacy !== alias && opt.showUnknown) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[this.GUI runtime] Conflicting token values for "${legacyKey}" and "${aliasKey}" at runtime; preferring "${legacyKey}".`
+      );
+    }
+
+    if (legacy) return { expression: legacy, source: legacyKey };
+    if (alias) return { expression: alias, source: aliasKey };
+    return null;
+  }
+
   function resolvePathValue(source: any, dottedPath: string): any {
     const parts = dottedPath.split('.').filter(Boolean);
     let cursor = source;
@@ -241,18 +261,22 @@ function resolveProps(
   }
 
   function resolveLeaf(value: any, propKey: string): any {
-    // Token mode: { $expr: "..." }
-    if (isPlainObject(value) && typeof value.$expr === 'string') {
-      const expr = interpolate(value.$expr);
+    const readToken = isPlainObject(value) ? getStringToken(value, '$expr', 'read') : null;
+
+    // Token mode: { $expr: "..." } or { read: "..." }
+    if (readToken) {
+      const expr = interpolate(readToken.expression);
       if (!isAllowedExpression(expr)) {
         // eslint-disable-next-line no-console
         console.error(`[Security] Blocked access to non-public expression: ${expr}`);
-        return value.$expr;
+        return readToken.expression;
       }
       if (!runtime.resolve) {
         if (opt.showUnknown) {
           // eslint-disable-next-line no-console
-          console.warn(`[this.GUI runtime] $expr found at "${propKey}" but runtime.resolve is not configured.`);
+          console.warn(
+            `[this.GUI runtime] ${readToken.source} found at "${propKey}" but runtime.resolve is not configured.`
+          );
         }
         return expr;
       }
@@ -269,15 +293,20 @@ function resolveProps(
       } catch (err) {
         if (opt.showUnknown) {
           // eslint-disable-next-line no-console
-          console.warn(`[this.GUI runtime] runtime.resolve("${propKey}") failed for $expr; using raw expression.`, err);
+          console.warn(
+            `[this.GUI runtime] runtime.resolve("${propKey}") failed for ${readToken.source}; using raw expression.`,
+            err
+          );
         }
         return expr;
       }
     }
 
-    // Token mode: { $action: "..." }
-    if (isPlainObject(value) && typeof value.$action === 'string') {
-      const actionExpr = interpolate(value.$action);
+    const writeToken = isPlainObject(value) ? getStringToken(value, '$action', 'write') : null;
+
+    // Token mode: { $action: "..." } or { write: "..." }
+    if (writeToken) {
+      const actionExpr = interpolate(writeToken.expression);
       if (!isAllowedExpression(actionExpr)) {
         // eslint-disable-next-line no-console
         console.error(`[Security] Blocked action for non-public expression: ${actionExpr}`);
@@ -286,7 +315,9 @@ function resolveProps(
       if (!runtime.action) {
         if (opt.showUnknown) {
           // eslint-disable-next-line no-console
-          console.warn(`[this.GUI runtime] $action found at "${propKey}" but runtime.action is not configured.`);
+          console.warn(
+            `[this.GUI runtime] ${writeToken.source} found at "${propKey}" but runtime.action is not configured.`
+          );
         }
         return () => {};
       }
@@ -295,7 +326,10 @@ function resolveProps(
       } catch (err) {
         if (opt.showUnknown) {
           // eslint-disable-next-line no-console
-          console.warn(`[this.GUI runtime] runtime.action("${propKey}") failed for $action; using noop.`, err);
+          console.warn(
+            `[this.GUI runtime] runtime.action("${propKey}") failed for ${writeToken.source}; using noop.`,
+            err
+          );
         }
         return () => {};
       }
@@ -355,7 +389,12 @@ function resolveProps(
     }
     if (isPlainObject(value)) {
       // Token objects are leaf instructions and should not recurse into internals.
-      if (typeof value.$expr === 'string' || typeof value.$action === 'string') {
+      if (
+        typeof value.$expr === 'string' ||
+        typeof value.read === 'string' ||
+        typeof value.$action === 'string' ||
+        typeof value.write === 'string'
+      ) {
         return resolveLeaf(value, propKey);
       }
       const next: Record<string, any> = {};

@@ -618,26 +618,28 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
     window.__guiToggleRuntimeControls = toggleCollapsedState;
 
     function getInspectorEnabled() {
-      return typeof GUI.getInspectorEnabled === 'function'
-        ? Boolean(GUI.getInspectorEnabled())
+      const gui = window.GUI;
+      return gui && typeof gui.getInspectorEnabled === 'function'
+        ? Boolean(gui.getInspectorEnabled())
         : false;
     }
 
     function getAdminViewEnabled() {
-      return typeof GUI.getAdminViewEnabled === 'function'
-        ? Boolean(GUI.getAdminViewEnabled())
+      const gui = window.GUI;
+      return gui && typeof gui.getAdminViewEnabled === 'function'
+        ? Boolean(gui.getAdminViewEnabled())
         : false;
     }
 
     let inspectorEnabled = getInspectorEnabled();
     let adminViewEnabled = getAdminViewEnabled();
 
-    window.addEventListener('this.gui:inspector:changed', (ev) => {
+    window.addEventListener('this.gui:inspector:changed', () => {
       inspectorEnabled = getInspectorEnabled();
       rerender();
     });
 
-    window.addEventListener('this.gui:adminView:changed', (ev) => {
+    window.addEventListener('this.gui:adminView:changed', () => {
       adminViewEnabled = getAdminViewEnabled();
       rerender();
     });

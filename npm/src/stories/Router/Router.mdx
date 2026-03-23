@@ -75,7 +75,7 @@ Good when the route depends on params, runtime context, or async data.
 router.set('/shops/:id', ({ ctx }) => ({
   type: 'Page',
   props: {
-    title: { $expr: 'me/views/shops[{{params.id}}].name' },
+    title: { read: 'me/views/shops[{{params.id}}].name' },
     subtitle: `shop id=${ctx.params.id}`,
   },
 }));
@@ -104,8 +104,8 @@ router.set('/shops', 'me/views/shops/default/page');
 router.set('/shops/:id', ({ ctx }) => ({
   type: 'Page',
   props: {
-    title: { $expr: 'me/views/shops[{{params.id}}].name' },
-    subtitle: { $expr: 'me/views/shops/default/subtitle' },
+    title: { read: 'me/views/shops[{{params.id}}].name' },
+    subtitle: { read: 'me/views/shops/default/subtitle' },
   },
 }));
 ```
