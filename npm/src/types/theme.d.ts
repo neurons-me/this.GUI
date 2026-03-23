@@ -15,7 +15,7 @@ declare module '@mui/material/styles' {
   interface Theme {
     layout: { insets: Insets };
     /** Callback to update insets; injected by Theme */
-    updateInsets?: (next: Partial<Insets>) => void;
+    updateInsets?: (next: Partial<Insets>, source?: string) => void;
     /** Optional legacy field for back-compat (some code reads theme.insets) */
     insets?: Partial<Insets>;
     /** Parking spot for all design tokens not mapped natively to MUI */
@@ -25,7 +25,7 @@ declare module '@mui/material/styles' {
   /** Accepted options when creating the theme */
   interface ThemeOptions {
     layout?: { insets?: Partial<Insets> };
-    updateInsets?: (next: Partial<Insets>) => void;
+    updateInsets?: (next: Partial<Insets>, source?: string) => void;
     /** Optional legacy field for back-compat */
     insets?: Partial<Insets>;
     /** Parking spot for all design tokens not mapped natively to MUI */
@@ -150,7 +150,10 @@ declare module '@mui/material/styles' {
       insets: { left: number; right: number; top: number; bottom: number; nav: number };
     };
     /** Callback exposed by Theme to update insets at runtime. */
-    updateInsets?: (v: Partial<{ left: number; right: number; top: number; bottom: number; nav: number }>) => void;
+    updateInsets?: (
+      v: Partial<{ left: number; right: number; top: number; bottom: number; nav: number }>,
+      source?: string
+    ) => void;
     /** Bag for tokens that don't map 1:1 to MUI. */
     custom?: {
       border?: string;
@@ -172,7 +175,10 @@ declare module '@mui/material/styles' {
     layout?: {
       insets?: Partial<{ left: number; right: number; top: number; bottom: number; nav: number }>;
     };
-    updateInsets?: (v: Partial<{ left: number; right: number; top: number; bottom: number; nav: number }>) => void;
+    updateInsets?: (
+      v: Partial<{ left: number; right: number; top: number; bottom: number; nav: number }>,
+      source?: string
+    ) => void;
     custom?: {
       border?: string;
       gradients?: unknown;

@@ -10,6 +10,7 @@ export interface ModalProps {
   children?: React.ReactNode;
   width?: number | string;
   height?: number | string;
+  zIndex?: number;
   blurBackground?: boolean;
   /**
    * 3D position offsets (per-axis) applied via translate3d.

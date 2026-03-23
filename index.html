@@ -54,6 +54,99 @@
     justify-content: flex-start;
   }
 
+  .gui-leftbar-cleaker-qr {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 72px;
+    justify-content: center;
+    padding: 6px 10px;
+    box-sizing: border-box;
+    color: inherit;
+    overflow: hidden;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 160ms ease;
+  }
+
+  .gui-leftbar-cleaker-qr:hover {
+    opacity: 0.92;
+  }
+
+  .gui-leftbar-cleaker-qr-canvas {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    min-width: 0;
+  }
+
+  .gui-leftbar-cleaker-qr [data-gui-component="Cleaker"] {
+    width: auto !important;
+    display: flex !important;
+    justify-content: center;
+  }
+
+  .gui-leftbar-cleaker-qr [data-gui-component="Cleaker.Card"] {
+    width: auto !important;
+    max-width: none !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .gui-leftbar-cleaker-qr [data-gui-component="Cleaker.Header"] {
+    gap: 0 !important;
+    margin-bottom: 0 !important;
+    justify-content: center !important;
+  }
+
+  .gui-leftbar-cleaker-qr [data-gui-component="Cleaker.IdentityShell"],
+  .gui-leftbar-cleaker-qr [data-gui-component="Cleaker.ClaimState"],
+  .gui-leftbar-cleaker-qr [data-gui-component="Cleaker.Controls"] {
+    display: none !important;
+  }
+
+  .gui-leftbar-cleaker-qr [data-gui-component="Cleaker.AvatarQR"] {
+    width: 58px !important;
+    height: 58px !important;
+    min-width: 58px !important;
+    min-height: 58px !important;
+    cursor: default !important;
+    pointer-events: none;
+    transition: none !important;
+  }
+
+  .gui-leftbar-cleaker-qr [data-gui-component="Cleaker.AvatarQR"] svg {
+    width: 58px !important;
+    height: 58px !important;
+  }
+
+  .gui-leftbar-cleaker-qr-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0.88;
+  }
+
+  .gui-leftbar-rail .gui-leftbar-cleaker-qr {
+    justify-content: center;
+    padding: 6px 4px;
+  }
+
+  .gui-leftbar-rail .gui-leftbar-cleaker-qr-label {
+    display: none;
+  }
+
+  .gui-leftbar-expanded .gui-leftbar-cleaker-qr {
+    justify-content: flex-start;
+  }
+
   .gui-leftbar-footer-logo {
     display: flex;
     align-items: center;
@@ -977,6 +1070,72 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
             iconSize: 'small',
           })
         : null;
+    const leftBarCleakerQR =
+      window.React && window.GUI && window.GUI.Cleaker && typeof window.React.createElement === 'function'
+        ? (() => {
+            const React = window.React;
+            const SESSION_CREDENTIALS_EVENT = 'cleaker:session:credentials-changed';
+            const SESSION_USERNAME_STORAGE_KEY = 'cleaker.session.username.v1';
+            const SESSION_SECRET_STORAGE_KEY = 'cleaker.session.secret.v1';
+
+            function LeftBarCleakerQR() {
+              const [version, setVersion] = React.useState(0);
+
+              React.useEffect(() => {
+                const rerender = () => {
+                  setVersion((value) => value + 1);
+                };
+                const handleStorage = (event) => {
+                  if (!event || !event.key) {
+                    rerender();
+                    return;
+                  }
+
+                  if (
+                    event.key === SESSION_USERNAME_STORAGE_KEY ||
+                    event.key === SESSION_SECRET_STORAGE_KEY
+                  ) {
+                    rerender();
+                  }
+                };
+
+                window.addEventListener(SESSION_CREDENTIALS_EVENT, rerender);
+                window.addEventListener('storage', handleStorage);
+
+                return () => {
+                  window.removeEventListener(SESSION_CREDENTIALS_EVENT, rerender);
+                  window.removeEventListener('storage', handleStorage);
+                };
+              }, []);
+
+              return React.createElement(
+                'a',
+                {
+                  className: 'gui-leftbar-cleaker-qr',
+                  href: 'https://neurons-me.github.io/Cleaker',
+                  title: 'Cleaker',
+                  'aria-label': 'Cleaker',
+                },
+                React.createElement(
+                  'div',
+                  { className: 'gui-leftbar-cleaker-qr-canvas' },
+                  React.createElement(window.GUI.Cleaker, {
+                    key: `leftbar-cleaker-${version}`,
+                    'data-gui-node-id': 'LeftBarCleakerQR',
+                    'data-gui-component': 'Cleaker.LeftBarQR',
+                  })
+                ),
+                React.createElement(
+                  'span',
+                  { className: 'gui-leftbar-cleaker-qr-label' },
+                  'ME'
+                )
+              );
+            }
+
+            return React.createElement(LeftBarCleakerQR);
+          })()
+        : null;
     const heroAvailable = Boolean(
       window.GUI &&
         (window.GUI.Hero ||
@@ -1072,6 +1231,7 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
         initialView: 'rail',
         elements: [
           leftBarLogo ? { type: 'action', props: { element: leftBarLogo } } : null,
+          leftBarCleakerQR ? { type: 'action', props: { element: leftBarCleakerQR } } : null,
           {
             type: 'action',
             props: {

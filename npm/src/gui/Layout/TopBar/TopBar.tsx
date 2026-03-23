@@ -121,7 +121,7 @@ export default function TopBar(props: TopBarProps) {
     const measure = () => {
       const target = appBarRef.current ?? toolbarRef.current;
       const h = target?.offsetHeight ?? 48;
-      updateInsets({ nav: h });
+      updateInsets({ nav: h }, 'top-bar');
     };
 
     // initial measure
@@ -138,7 +138,7 @@ export default function TopBar(props: TopBarProps) {
 
     return () => {
       if (ro) ro.disconnect();
-      updateInsets({ top: 0, nav: 0 });
+      updateInsets({ top: 0, nav: 0 }, 'top-bar');
     };
   }, [isMobile, updateInsets]);
   // Sync insets.left with global CSS variable for layout

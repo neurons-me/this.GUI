@@ -582,7 +582,7 @@
 <main>
   <div class="wrap">
     <div class="note info" style="margin-bottom: 16px;">
-            <strong>Tip:</strong> You are using <code>react-docgen</code> (the default). Generation took <strong>1.4s</strong>. For higher quality prop types, consider switching to <code>react-docgen-typescript</code> in your <code>main.ts</code>:
+            <strong>Tip:</strong> You are using <code>react-docgen</code> (the default). Generation took <strong>1.5s</strong>. For higher quality prop types, consider switching to <code>react-docgen-typescript</code> in your <code>main.ts</code>:
             <pre><code>typescript: {
   reactDocgen: 'react-docgen-typescript',
 }</code></pre>
@@ -2270,7 +2270,7 @@ username?: string</code></pre>
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> CodeBlock</h2>
       <div class="badges">
-        <label for="c-10-molecules-code-codeblock-props" class="badge ok as-toggle">9 prop types</label>
+        <label for="c-10-molecules-code-codeblock-props" class="badge ok as-toggle">10 prop types</label>
         
         <label for="c-10-molecules-code-codeblock-stories" class="badge ok as-toggle">7 stories</label>
         
@@ -2297,7 +2297,7 @@ username?: string</code></pre>
           <div class="note ok">
             <div class="row">
               <span class="ex-name">Prop types <small>(react-docgen)</small></span>
-              <span class="badge ok">9 prop types</span>
+              <span class="badge ok">10 prop types</span>
             </div>
             <pre><code>Component: src/gui/molecules/CodeBlock/CodeBlock.tsx::default</code></pre>
             <pre><code>Props:</code></pre>
@@ -2315,6 +2315,11 @@ code: string
  * Language id (e.g., &quot;ts&quot;, &quot;tsx&quot;, &quot;js&quot;, &quot;json&quot;, &quot;bash&quot;, &quot;html&quot;)
  */
 language?: string
+
+/**
+ * Optional max height for the scrollable code area
+ */
+maxHeight?: number | string
 
 /**
  * Show a copy-to-clipboard button (default: true)
@@ -4893,13 +4898,13 @@ import Typography from "@mui/material/Typography";</code></pre>
     <div class="note err">
       <div class="note-title">Prop type error</div>
       <div class="note-body"><pre><code>No component file found for the &quot;Home&quot; component.
-  590 | };
-  591 | import type { Meta, StoryObj } from &#39;@storybook/react&#39;;
-&gt; 592 | const meta = {
+  206 | };
+  207 | import type { Meta, StoryObj } from &#39;@storybook/react&#39;;
+&gt; 208 | const meta = {
       | ^
-  593 |   title: &#39;Getting Started/GUI Overview&#39;,
-  594 |   component: Home,
-  595 |   parameters: {
+  209 |   title: &#39;Getting Started/GUI Overview&#39;,
+  210 |   component: Home,
+  211 |   parameters: {
 
 ./src/stories/GUI.Overview.stories.tsx:
 import Theme from &#39;@/gui/Theme/Theme&#39;;
@@ -4940,555 +4945,171 @@ import TextField from &#39;@/gui/atoms/TextField/TextField&#39;;
 
 const Home = () =&gt; {
   return (
-  &lt;Theme&gt;
-  &lt;Box
-    sx={{
-      minHeight: &#39;100vh&#39;,
-      color: &#39;text.primary&#39;,
-    }}
-  &gt;
-    &lt;Box
-      component=&quot;section&quot;
-      sx={{
-        display: &#39;flex&#39;,
-        flexDirection: &#39;column&#39;,
-        alignItems: &#39;center&#39;,
-        justifyContent: &#39;center&#39;,
-        minHeight: &#39;21vh&#39;,
-        padding: 5,
-        textAlign: &#39;center&#39;,
-      }}
-    &gt;
-      &lt;Stack direction=&quot;row&quot; spacing={2} alignItems=&quot;center&quot;&gt;
-        &lt;Box
-          component=&quot;img&quot;
-          src=&quot;GUI.png&quot;
-          alt=&quot;.GUI&quot;
-          sx={{ width: 72, height: &#39;auto&#39;, imageRendering: &#39;auto&#39; }}
-        /&gt;
-        &lt;Typography variant=&quot;h2&quot; sx={{ fontWeight: 700, letterSpacing: &#39;-0.04em&#39; }}&gt;
-          .GUI Overview
-        &lt;/Typography&gt;
-      &lt;/Stack&gt;
-    &lt;/Box&gt;
-    &lt;Box component=&quot;section&quot; sx={{ px: { xs: 2, md: 4 }, pb: 6 }}&gt;
-      &lt;Typography variant=&quot;h4&quot; sx={{ mb: 2 }}&gt;
-        Layout preview
-      &lt;/Typography&gt;
-      &lt;Paper variant=&quot;outlined&quot; sx={{ overflow: &#39;hidden&#39;, borderRadius: 2 }}&gt;
-        &lt;Box
-          sx={{
-            display: &#39;flex&#39;,
-            alignItems: &#39;center&#39;,
-            justifyContent: &#39;space-between&#39;,
-            px: 2,
-            py: 1,
-            backgroundColor: &#39;background.nav&#39;,
-            borderBottom: &#39;1px solid&#39;,
-            borderColor: &#39;divider&#39;,
-          }}
-        &gt;
-          &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
-            &lt;Avatar sx={{ width: 28, height: 28 }}&gt;G&lt;/Avatar&gt;
-            &lt;Typography variant=&quot;subtitle2&quot;&gt;TopBar&lt;/Typography&gt;
-          &lt;/Stack&gt;
-          &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
-            &lt;IconButton size=&quot;small&quot;&gt;
-              &lt;Icon name=&quot;search&quot; /&gt;
-            &lt;/IconButton&gt;
-            &lt;ThemeModeToggle variant=&quot;minimal&quot; show=&quot;icons&quot; iconSize=&quot;small&quot; /&gt;
-          &lt;/Stack&gt;
-        &lt;/Box&gt;
-        &lt;Box
-          sx={{
-            display: &#39;grid&#39;,
-            gridTemplateColumns: &#39;72px 1fr 68px&#39;,
-            minHeight: 220,
-          }}
-        &gt;
-          &lt;Box
-            sx={{
-              borderRight: &#39;1px solid&#39;,
-              borderColor: &#39;divider&#39;,
-              py: 2,
-              px: 1,
-              display: &#39;flex&#39;,
-              flexDirection: &#39;column&#39;,
-              gap: 1,
-              alignItems: &#39;center&#39;,
-              backgroundColor: &#39;background.nav&#39;,
-            }}
-          &gt;
-            {[&#39;dashboard&#39;, &#39;hub&#39;, &#39;bolt&#39;, &#39;settings&#39;].map((name) =&gt; (
-              &lt;IconButton key={name} size=&quot;small&quot;&gt;
-                &lt;Icon name={name} /&gt;
-              &lt;/IconButton&gt;
-            ))}
-          &lt;/Box&gt;
-          &lt;Box sx={{ p: 2, display: &#39;grid&#39;, gap: 1.5 }}&gt;
-            &lt;Typography variant=&quot;subtitle1&quot;&gt;Content&lt;/Typography&gt;
-            &lt;Card variant=&quot;outlined&quot;&gt;
-              &lt;CardHeader title=&quot;Hero / Page&quot; subheader=&quot;Core molecules&quot; /&gt;
-              &lt;CardContent&gt;
-                &lt;Typography variant=&quot;body2&quot; sx={{ opacity: 0.8 }}&gt;
-                  Compose sections with Cards, Grids, and layout-aware spacing.
-                &lt;/Typography&gt;
-              &lt;/CardContent&gt;
-              &lt;CardActions&gt;
-                &lt;Button size=&quot;small&quot;&gt;Action&lt;/Button&gt;
-                &lt;Button size=&quot;small&quot; variant=&quot;outlined&quot;&gt;
-                  Secondary
-                &lt;/Button&gt;
-              &lt;/CardActions&gt;
-            &lt;/Card&gt;
-          &lt;/Box&gt;
-          &lt;Box
-            sx={{
-              borderLeft: &#39;1px solid&#39;,
-              borderColor: &#39;divider&#39;,
-              py: 2,
-              px: 1,
-              display: &#39;flex&#39;,
-              flexDirection: &#39;column&#39;,
-              gap: 1,
-              alignItems: &#39;center&#39;,
-              backgroundColor: &#39;background.nav&#39;,
-            }}
-          &gt;
-            &lt;Tooltip title=&quot;Right sidebar&quot;&gt;
-              &lt;IconButton size=&quot;small&quot;&gt;
-                &lt;Icon name=&quot;insights&quot; /&gt;
-              &lt;/IconButton&gt;
-            &lt;/Tooltip&gt;
-            &lt;Tooltip title=&quot;Notifications&quot;&gt;
-              &lt;IconButton size=&quot;small&quot;&gt;
-                &lt;Icon name=&quot;notifications&quot; /&gt;
-              &lt;/IconButton&gt;
-            &lt;/Tooltip&gt;
-          &lt;/Box&gt;
-        &lt;/Box&gt;
-        &lt;Box
-          sx={{
-            px: 2,
-            py: 1,
-            borderTop: &#39;1px solid&#39;,
-            borderColor: &#39;divider&#39;,
-            backgroundColor: &#39;background.nav&#39;,
-            display: &#39;flex&#39;,
-            justifyContent: &#39;space-between&#39;,
-            alignItems: &#39;center&#39;,
-          }}
-        &gt;
-          &lt;Typography variant=&quot;caption&quot;&gt;Footer&lt;/Typography&gt;
-          &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
-            &lt;Link href=&quot;https://neurons.me&quot; underline=&quot;hover&quot;&gt;
-            Docs
-            &lt;/Link&gt;
-            &lt;Divider orientation=&quot;vertical&quot; flexItem /&gt;
-            &lt;Link href=&quot;https://neurons.me&quot; underline=&quot;hover&quot;&gt;
-            Support
-            &lt;/Link&gt;
-          &lt;/Stack&gt;
-        &lt;/Box&gt;
-      &lt;/Paper&gt;
-    &lt;/Box&gt;
-    &lt;Box component=&quot;section&quot; sx={{ px: { xs: 2, md: 4 }, pb: 8 }}&gt;
-      &lt;Typography variant=&quot;h4&quot; sx={{ mb: 2 }}&gt;
-        Component sampler
-      &lt;/Typography&gt;
+    &lt;Theme&gt;
       &lt;Box
         sx={{
-          display: &#39;grid&#39;,
-          gap: 2,
-        gridTemplateColumns: { xs: &#39;1fr&#39;, md: &#39;repeat(2, minmax(0, 1fr))&#39; },
-      }}
-    &gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Buttons &amp; actions&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Stack direction=&quot;row&quot; spacing={1} flexWrap=&quot;wrap&quot;&gt;
-              &lt;Button variant=&quot;contained&quot; startIcon={&lt;Icon name=&quot;auto_awesome&quot; /&gt;}&gt;
-                Primary
-              &lt;/Button&gt;
-              &lt;Button variant=&quot;outlined&quot; color=&quot;secondary&quot;&gt;
-                Outline
-              &lt;/Button&gt;
-              &lt;IconButton size=&quot;small&quot; color=&quot;primary&quot;&gt;
-                &lt;Icon name=&quot;favorite&quot; /&gt;
-              &lt;/IconButton&gt;
-              &lt;Tooltip title=&quot;IconButton + Tooltip&quot;&gt;
-                &lt;IconButton size=&quot;small&quot;&gt;
-                  &lt;Icon name=&quot;bolt&quot; /&gt;
-                &lt;/IconButton&gt;
-              &lt;/Tooltip&gt;
-            &lt;/Stack&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Inputs &amp; toggles&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Stack spacing={1.5}&gt;
-              &lt;TextField size=&quot;small&quot; label=&quot;Search&quot; placeholder=&quot;Type a query&quot; /&gt;
-              &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
-                &lt;Switch defaultChecked /&gt;
-                &lt;Typography variant=&quot;body2&quot;&gt;Notifications&lt;/Typography&gt;
-              &lt;/Stack&gt;
-            &lt;/Stack&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Lists &amp; navigation&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;List dense&gt;
-              {[
-                { label: &#39;Overview&#39;, icon: &#39;dashboard&#39; },
-                { label: &#39;Experiments&#39;, icon: &#39;science&#39; },
-                { label: &#39;Models&#39;, icon: &#39;memory&#39; },
-              ].map((item) =&gt; (
-                &lt;ListItem key={item.label} disablePadding&gt;
-                  &lt;ListItemButton&gt;
-                    &lt;ListItemIcon&gt;
-                      &lt;Icon name={item.icon} /&gt;
-                    &lt;/ListItemIcon&gt;
-                    &lt;ListItemText primary={item.label} /&gt;
-                  &lt;/ListItemButton&gt;
-                &lt;/ListItem&gt;
-              ))}
-            &lt;/List&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Grid layouts&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Grid container spacing={1.5}&gt;
-              {[1, 2, 3, 4].map((i) =&gt; (
-                &lt;Grid item xs={6} md={3} key={i}&gt;
-                  &lt;Paper
-                    variant=&quot;outlined&quot;
-                    sx={{
-                      p: 1.5,
-                      textAlign: &#39;center&#39;,
-                      borderStyle: &#39;dashed&#39;,
-                      borderColor: &#39;divider&#39;,
-                      backgroundColor: &#39;background.paper&#39;,
-                    }}
-                  &gt;
-                    &lt;Typography variant=&quot;caption&quot;&gt;Grid cell {i}&lt;/Typography&gt;
-                  &lt;/Paper&gt;
-                &lt;/Grid&gt;
-              ))}
-            &lt;/Grid&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Avatars &amp; tooltips&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Stack spacing={1.5}&gt;
-              &lt;Stack direction=&quot;row&quot; spacing={1}&gt;
-                {[&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;].map((label) =&gt; (
-                  &lt;Tooltip title={`User ${label}`} key={label}&gt;
-                    &lt;Avatar sx={{ width: 32, height: 32 }}&gt;{label}&lt;/Avatar&gt;
-                  &lt;/Tooltip&gt;
-                ))}
-              &lt;/Stack&gt;
-              &lt;Stack direction=&quot;row&quot; spacing={1}&gt;
-                {[&#39;info&#39;, &#39;favorite&#39;, &#39;bolt&#39;].map((name) =&gt; (
-                  &lt;Tooltip title={name} key={name}&gt;
-                    &lt;IconButton size=&quot;small&quot; color=&quot;primary&quot;&gt;
-                      &lt;Icon name={name} /&gt;
-                    &lt;/IconButton&gt;
-                  &lt;/Tooltip&gt;
-                ))}
-              &lt;/Stack&gt;
-            &lt;/Stack&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Data display&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Stack spacing={1.5}&gt;
-              &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
-                &lt;Avatar sx={{ width: 32, height: 32 }}&gt;A&lt;/Avatar&gt;
-                &lt;Typography variant=&quot;body2&quot;&gt;Avatar + Typography&lt;/Typography&gt;
-              &lt;/Stack&gt;
-              &lt;Table size=&quot;small&quot;&gt;
-                &lt;TableHead&gt;
-                  &lt;TableRow&gt;
-                    &lt;TableCell&gt;Signal&lt;/TableCell&gt;
-                    &lt;TableCell align=&quot;right&quot;&gt;Score&lt;/TableCell&gt;
-                  &lt;/TableRow&gt;
-                &lt;/TableHead&gt;
-                &lt;TableBody&gt;
-                  {[
-                    { label: &#39;Attention&#39;, score: &#39;0.92&#39; },
-                    { label: &#39;Recall&#39;, score: &#39;0.86&#39; },
-                  ].map((row) =&gt; (
-                    &lt;TableRow key={row.label}&gt;
-                      &lt;TableCell&gt;{row.label}&lt;/TableCell&gt;
-                      &lt;TableCell align=&quot;right&quot;&gt;{row.score}&lt;/TableCell&gt;
-                    &lt;/TableRow&gt;
-                  ))}
-                &lt;/TableBody&gt;
-              &lt;/Table&gt;
-            &lt;/Stack&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-      &lt;/Box&gt;
-    &lt;/Box&gt;
-    &lt;Box component=&quot;section&quot; sx={{ px: { xs: 2, md: 4 }, pb: 8 }}&gt;
-      &lt;Typography variant=&quot;h4&quot; sx={{ mb: 2 }}&gt;
-        Interface gallery
-      &lt;/Typography&gt;
-      &lt;Box
-        sx={{
-          display: &#39;grid&#39;,
-          gap: 2,
-          gridTemplateColumns: { xs: &#39;1fr&#39;, md: &#39;1.2fr 0.8fr&#39; },
+          minHeight: &#39;100vh&#39;,
+          color: &#39;text.primary&#39;,
         }}
       &gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Dashboard surface&quot; subheader=&quot;Cards, metrics, lists, and quick actions&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Grid container spacing={1.5}&gt;
-              {[
-                { label: &#39;Signals&#39;, value: &#39;24&#39;, icon: &#39;insights&#39; },
-                { label: &#39;Routes&#39;, value: &#39;08&#39;, icon: &#39;route&#39; },
-                { label: &#39;Themes&#39;, value: &#39;07&#39;, icon: &#39;palette&#39; },
-              ].map((tile) =&gt; (
-                &lt;Grid item xs={4} key={tile.label}&gt;
-                  &lt;Paper variant=&quot;outlined&quot; sx={{ p: 1.5, borderRadius: 2 }}&gt;
-                    &lt;Stack spacing={0.5}&gt;
-                      &lt;Icon name={tile.icon} /&gt;
-                      &lt;Typography variant=&quot;caption&quot; sx={{ opacity: 0.72 }}&gt;
-                        {tile.label}
-                      &lt;/Typography&gt;
-                      &lt;Typography variant=&quot;h5&quot; sx={{ fontWeight: 700 }}&gt;
-                        {tile.value}
-                      &lt;/Typography&gt;
+        &lt;Paper
+          variant=&quot;outlined&quot;
+          sx={{
+            minHeight: &#39;100vh&#39;,
+            display: &#39;flex&#39;,
+            flexDirection: &#39;column&#39;,
+            overflow: &#39;hidden&#39;,
+            borderRadius: 0,
+          }}
+        &gt;
+          &lt;Box
+            sx={{
+              display: &#39;flex&#39;,
+              alignItems: &#39;center&#39;,
+              justifyContent: &#39;space-between&#39;,
+              px: 2,
+              py: 1,
+              backgroundColor: &#39;background.nav&#39;,
+              borderBottom: &#39;1px solid&#39;,
+              borderColor: &#39;divider&#39;,
+            }}
+          &gt;
+            &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
+              &lt;Avatar sx={{ width: 28, height: 28 }}&gt;G&lt;/Avatar&gt;
+              &lt;Typography variant=&quot;subtitle2&quot;&gt;TopBar&lt;/Typography&gt;
+            &lt;/Stack&gt;
+          &lt;/Box&gt;
+
+          &lt;Box
+            sx={{
+              flex: 1,
+              display: &#39;flex&#39;,
+              flexDirection: &#39;column&#39;,
+            }}
+          &gt;
+            &lt;Box
+              component=&quot;section&quot;
+              sx={{
+                minHeight: &#39;72vh&#39;,
+                display: &#39;grid&#39;,
+                placeItems: &#39;center&#39;,
+                px: { xs: 2, md: 4 },
+                py: { xs: 2, md: 3 },
+              }}
+            &gt;
+              &lt;Box sx={{ width: &#39;100%&#39;, maxWidth: 820 }}&gt;
+                &lt;Card variant=&quot;outlined&quot;&gt;
+                  &lt;CardHeader title=&quot;Content&quot; subheader=&quot;Hero / Page&quot; /&gt;
+                  &lt;CardContent&gt;
+                    &lt;Stack spacing={3} alignItems=&quot;center&quot; textAlign=&quot;center&quot;&gt;
+                      &lt;Stack direction=&quot;row&quot; spacing={2} alignItems=&quot;center&quot; justifyContent=&quot;center&quot;&gt;
+                        &lt;Box
+                          component=&quot;img&quot;
+                          src=&quot;GUI.png&quot;
+                          alt=&quot;.GUI&quot;
+                          sx={{ width: 72, height: &#39;auto&#39;, imageRendering: &#39;auto&#39; }}
+                        /&gt;
+                        &lt;Typography variant=&quot;h2&quot; sx={{ fontWeight: 700, letterSpacing: &#39;-0.04em&#39; }}&gt;
+                          .GUI Overview
+                        &lt;/Typography&gt;
+                      &lt;/Stack&gt;
+                      &lt;Stack spacing={1} alignItems=&quot;center&quot;&gt;
+                        &lt;Typography variant=&quot;h5&quot;&gt;Core molecules&lt;/Typography&gt;
+                        &lt;Typography variant=&quot;body1&quot; sx={{ opacity: 0.8, maxWidth: 560 }}&gt;
+                          Compose sections with Cards, Grids, and layout-aware spacing.
+                        &lt;/Typography&gt;
+                      &lt;/Stack&gt;
                     &lt;/Stack&gt;
-                  &lt;/Paper&gt;
-                &lt;/Grid&gt;
-              ))}
-              &lt;Grid item xs={12} md={7}&gt;
-                &lt;Paper
-                  variant=&quot;outlined&quot;
-                  sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    height: &#39;100%&#39;,
-                    background: &#39;linear-gradient(135deg, rgba(17,35,52,0.96) 0%, rgba(12,16,25,0.92) 100%)&#39;,
-                  }}
-                &gt;
-                  &lt;Typography variant=&quot;overline&quot; sx={{ opacity: 0.7 }}&gt;
-                    Runtime card
-                  &lt;/Typography&gt;
-                  &lt;Typography variant=&quot;h5&quot; sx={{ fontWeight: 700, mb: 0.75 }}&gt;
-                    Declarative shell, visual output.
-                  &lt;/Typography&gt;
-                  &lt;Typography variant=&quot;body2&quot; sx={{ opacity: 0.82, mb: 1.5 }}&gt;
-                    Use the same visual language for docs, dashboards, and runtime-driven screens.
-                  &lt;/Typography&gt;
-                  &lt;Stack direction=&quot;row&quot; spacing={1}&gt;
-                    &lt;Button size=&quot;small&quot; variant=&quot;contained&quot; startIcon={&lt;Icon name=&quot;play_arrow&quot; /&gt;}&gt;
-                      Mount
-                    &lt;/Button&gt;
-                    &lt;Button size=&quot;small&quot; variant=&quot;outlined&quot; startIcon={&lt;Icon name=&quot;code&quot; /&gt;}&gt;
-                      Inspect
-                    &lt;/Button&gt;
-                  &lt;/Stack&gt;
-                &lt;/Paper&gt;
-              &lt;/Grid&gt;
-              &lt;Grid item xs={12} md={5}&gt;
-                &lt;Paper variant=&quot;outlined&quot; sx={{ p: 1.5, borderRadius: 2, height: &#39;100%&#39; }}&gt;
-                  &lt;Typography variant=&quot;subtitle2&quot; sx={{ mb: 1 }}&gt;
-                    Activity feed
-                  &lt;/Typography&gt;
-                  &lt;List dense&gt;
-                    {[
-                      { label: &#39;Theme switched&#39;, hint: &#39;neurons.me -&gt; GhostShell&#39;, icon: &#39;palette&#39; },
-                      { label: &#39;Route resolved&#39;, hint: &#39;/runtime/overview&#39;, icon: &#39;route&#39; },
-                      { label: &#39;Action fired&#39;, hint: &quot;me/public/status = &#39;active&#39;&quot;, icon: &#39;bolt&#39; },
-                    ].map((item) =&gt; (
-                      &lt;ListItem key={item.label} disablePadding&gt;
-                        &lt;ListItemButton&gt;
-                          &lt;ListItemIcon&gt;
-                            &lt;Icon name={item.icon} /&gt;
-                          &lt;/ListItemIcon&gt;
-                          &lt;ListItemText primary={item.label} secondary={item.hint} /&gt;
-                        &lt;/ListItemButton&gt;
-                      &lt;/ListItem&gt;
-                    ))}
-                  &lt;/List&gt;
-                &lt;/Paper&gt;
-              &lt;/Grid&gt;
-            &lt;/Grid&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Stack spacing={2}&gt;
-          &lt;Card variant=&quot;outlined&quot;&gt;
-            &lt;CardHeader title=&quot;Theme gallery&quot; subheader=&quot;Theming is part of the product surface&quot; /&gt;
-            &lt;CardContent sx={{ p: 1.25 }}&gt;
-              &lt;Catalog minimal /&gt;
-            &lt;/CardContent&gt;
-          &lt;/Card&gt;
-          &lt;Card variant=&quot;outlined&quot;&gt;
-            &lt;CardHeader title=&quot;Compact control panel&quot; subheader=&quot;Dense controls for app shells&quot; /&gt;
-            &lt;CardContent&gt;
-              &lt;Stack spacing={1.5}&gt;
-                &lt;TextField size=&quot;small&quot; label=&quot;Workspace&quot; defaultValue=&quot;Neuroverse&quot; /&gt;
-                &lt;TextField size=&quot;small&quot; label=&quot;Semantic path&quot; defaultValue=&quot;me/views/dashboard/title&quot; /&gt;
-                &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
-                  &lt;Switch defaultChecked /&gt;
-                  &lt;Typography variant=&quot;body2&quot;&gt;Live mode&lt;/Typography&gt;
-                &lt;/Stack&gt;
-                &lt;Stack direction=&quot;row&quot; spacing={1} flexWrap=&quot;wrap&quot;&gt;
-                  &lt;Button size=&quot;small&quot; variant=&quot;contained&quot;&gt;Save&lt;/Button&gt;
-                  &lt;Button size=&quot;small&quot; variant=&quot;outlined&quot;&gt;Preview&lt;/Button&gt;
-                  &lt;Button size=&quot;small&quot; variant=&quot;text&quot;&gt;Reset&lt;/Button&gt;
-                &lt;/Stack&gt;
-              &lt;/Stack&gt;
-            &lt;/CardContent&gt;
-          &lt;/Card&gt;
-        &lt;/Stack&gt;
-      &lt;/Box&gt;
-    &lt;/Box&gt;
-    &lt;Box component=&quot;section&quot; sx={{ px: { xs: 2, md: 4 }, pb: 8 }}&gt;
-      &lt;Typography variant=&quot;h4&quot; sx={{ mb: 2 }}&gt;
-        Patterns
-      &lt;/Typography&gt;
-      &lt;Typography variant=&quot;body2&quot; sx={{ maxWidth: 860, opacity: 0.85, mb: 2 }}&gt;
-        Quick, copy/paste-friendly examples of common patterns used across This.GUI.
-      &lt;/Typography&gt;
-      &lt;Box
-        sx={{
-          display: &#39;grid&#39;,
-          gap: 2,
-          gridTemplateColumns: { xs: &#39;1fr&#39;, md: &#39;repeat(2, minmax(0, 1fr))&#39; },
-        }}
-      &gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Icon + tokens&quot; subheader=&quot;Material Symbols + GUI CSS vars&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Stack spacing={1.25}&gt;
-              &lt;Typography variant=&quot;body2&quot; sx={{ opacity: 0.8 }}&gt;
-                Icons come from Material Symbols. Colors typically use GUI tokens like{&#39; &#39;}
-                &lt;code&gt;var(--gui-primary)&lt;/code&gt;.
-              &lt;/Typography&gt;
-              &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot; flexWrap=&quot;wrap&quot;&gt;
-                &lt;Icon name=&quot;auto_awesome&quot; style={{ color: &#39;var(--gui-primary)&#39; }} /&gt;
-                &lt;Icon name=&quot;insights&quot; style={{ color: &#39;var(--gui-info)&#39; }} /&gt;
-                &lt;Icon name=&quot;warning&quot; style={{ color: &#39;var(--gui-warning)&#39; }} /&gt;
-                &lt;Icon name=&quot;error&quot; style={{ color: &#39;var(--gui-error)&#39; }} /&gt;
-                &lt;Typography variant=&quot;caption&quot; sx={{ opacity: 0.7 }}&gt;
-                  (These are just icons + tokens — minimal + readable.)
-                &lt;/Typography&gt;
-              &lt;/Stack&gt;
+                  &lt;/CardContent&gt;
+                &lt;/Card&gt;
+              &lt;/Box&gt;
+            &lt;/Box&gt;
+
+            &lt;Box
+              component=&quot;section&quot;
+              sx={{
+                px: { xs: 2, md: 4 },
+                py: { xs: 1, md: 2 },
+              }}
+            &gt;
+              &lt;Box sx={{ width: &#39;100%&#39;, maxWidth: 960, mx: &#39;auto&#39; }}&gt;
+                &lt;Card variant=&quot;outlined&quot;&gt;
+                  &lt;CardHeader title=&quot;Section 1&quot; subheader=&quot;First content block&quot; /&gt;
+                  &lt;CardContent&gt;
+                    &lt;Typography variant=&quot;body1&quot; sx={{ opacity: 0.82 }}&gt;
+                      A clean section for introducing the first layer of the system, keeping the layout
+                      simple, readable, and aligned with the main showcase.
+                    &lt;/Typography&gt;
+                  &lt;/CardContent&gt;
+                &lt;/Card&gt;
+              &lt;/Box&gt;
+            &lt;/Box&gt;
+
+            &lt;Box
+              component=&quot;section&quot;
+              sx={{
+                px: { xs: 2, md: 4 },
+                py: { xs: 1, md: 2 },
+              }}
+            &gt;
+              &lt;Box sx={{ width: &#39;100%&#39;, maxWidth: 960, mx: &#39;auto&#39; }}&gt;
+                &lt;Card variant=&quot;outlined&quot;&gt;
+                  &lt;CardHeader title=&quot;Section 2&quot; subheader=&quot;Second content block&quot; /&gt;
+                  &lt;CardContent&gt;
+                    &lt;Typography variant=&quot;body1&quot; sx={{ opacity: 0.82 }}&gt;
+                      Another landing-page section to present structure, composition, and visual rhythm
+                      without adding unnecessary complexity.
+                    &lt;/Typography&gt;
+                  &lt;/CardContent&gt;
+                &lt;/Card&gt;
+              &lt;/Box&gt;
+            &lt;/Box&gt;
+
+            &lt;Box
+              component=&quot;section&quot;
+              sx={{
+                px: { xs: 2, md: 4 },
+                py: { xs: 1, md: 2 },
+              }}
+            &gt;
+              &lt;Box sx={{ width: &#39;100%&#39;, maxWidth: 960, mx: &#39;auto&#39; }}&gt;
+                &lt;Card variant=&quot;outlined&quot;&gt;
+                  &lt;CardHeader title=&quot;Section 3&quot; subheader=&quot;Third content block&quot; /&gt;
+                  &lt;CardContent&gt;
+                    &lt;Typography variant=&quot;body1&quot; sx={{ opacity: 0.82 }}&gt;
+                      A final section to close the page with one more simple block before the footer.
+                    &lt;/Typography&gt;
+                  &lt;/CardContent&gt;
+                &lt;/Card&gt;
+              &lt;/Box&gt;
+            &lt;/Box&gt;
+          &lt;/Box&gt;
+
+          &lt;Box
+            sx={{
+              px: 2,
+              py: 1,
+              borderTop: &#39;1px solid&#39;,
+              borderColor: &#39;divider&#39;,
+              backgroundColor: &#39;background.nav&#39;,
+              display: &#39;flex&#39;,
+              justifyContent: &#39;space-between&#39;,
+              alignItems: &#39;center&#39;,
+            }}
+          &gt;
+            &lt;Typography variant=&quot;caption&quot;&gt;Footer&lt;/Typography&gt;
+            &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
+              &lt;Link href=&quot;https://neurons.me&quot; underline=&quot;hover&quot;&gt;
+                Docs
+              &lt;/Link&gt;
+              &lt;Divider orientation=&quot;vertical&quot; flexItem /&gt;
+              &lt;Link href=&quot;https://neurons.me&quot; underline=&quot;hover&quot;&gt;
+                Support
+              &lt;/Link&gt;
             &lt;/Stack&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Actions + feedback&quot; subheader=&quot;Tooltip, loading, disabled&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Stack spacing={1.25}&gt;
-              &lt;Typography variant=&quot;body2&quot; sx={{ opacity: 0.8 }}&gt;
-                Common micro-interactions: tooltip hints, disabled states, and icon-first actions.
-              &lt;/Typography&gt;
-              &lt;Stack direction=&quot;row&quot; spacing={1} flexWrap=&quot;wrap&quot; alignItems=&quot;center&quot;&gt;
-                &lt;Tooltip title=&quot;Primary action&quot;&gt;
-                  &lt;span&gt;
-                    &lt;Button variant=&quot;contained&quot; startIcon={&lt;Icon name=&quot;bolt&quot; /&gt;}&gt;
-                      Run
-                    &lt;/Button&gt;
-                  &lt;/span&gt;
-                &lt;/Tooltip&gt;
-                &lt;Button variant=&quot;outlined&quot; disabled startIcon={&lt;Icon name=&quot;lock&quot; /&gt;}&gt;
-                  Restricted
-                &lt;/Button&gt;
-                &lt;Tooltip title=&quot;Copy&quot;&gt;
-                  &lt;IconButton size=&quot;small&quot;&gt;
-                    &lt;Icon name=&quot;content_copy&quot; /&gt;
-                  &lt;/IconButton&gt;
-                &lt;/Tooltip&gt;
-                &lt;Tooltip title=&quot;Open&quot;&gt;
-                  &lt;IconButton size=&quot;small&quot;&gt;
-                    &lt;Icon name=&quot;open_in_new&quot; /&gt;
-                  &lt;/IconButton&gt;
-                &lt;/Tooltip&gt;
-              &lt;/Stack&gt;
-            &lt;/Stack&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Navigation row&quot; subheader=&quot;Link + secondary text&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;List dense&gt;
-              {[
-                { label: &#39;Docs&#39;, icon: &#39;menu_book&#39;, hint: &#39;Read the component guides&#39; },
-                { label: &#39;Storybook&#39;, icon: &#39;auto_stories&#39;, hint: &#39;Browse atoms → organisms&#39; },
-                { label: &#39;GitHub&#39;, icon: &#39;code&#39;, hint: &#39;Source + issues + PRs&#39; },
-              ].map((item) =&gt; (
-                &lt;ListItem key={item.label} disablePadding&gt;
-                  &lt;ListItemButton&gt;
-                    &lt;ListItemIcon&gt;
-                      &lt;Icon name={item.icon} /&gt;
-                    &lt;/ListItemIcon&gt;
-                    &lt;ListItemText primary={item.label} secondary={item.hint} /&gt;
-                  &lt;/ListItemButton&gt;
-                &lt;/ListItem&gt;
-              ))}
-          &lt;/List&gt;
-        &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Declarative layout (mental model)&quot; subheader=&quot;Think: config → shell&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Typography variant=&quot;body2&quot; sx={{ opacity: 0.8, mb: 1.25 }}&gt;
-              Most UI in This.GUI can be expressed as a config object that maps to components.
-              (Storybook stories are a great place to see what props matter.)
-            &lt;/Typography&gt;
-            &lt;Paper variant=&quot;outlined&quot; sx={{ p: 1.25, borderRadius: 2, backgroundColor: &#39;background.nav&#39; }}&gt;
-              &lt;Typography
-                component=&quot;pre&quot;
-                sx={{
-                  m: 0,
-                  fontFamily: &#39;ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace&#39;,
-                  fontSize: 12,
-                  lineHeight: 1.4,
-                  whiteSpace: &#39;pre-wrap&#39;,
-                  color: &#39;text.primary&#39;,
-                }}
-              &gt;{`{
-  &quot;type&quot;: &quot;Layout&quot;,
-  &quot;props&quot;: {
-    &quot;topBarConfig&quot;: { &quot;title&quot;: &quot;Workspace&quot; },
-    &quot;leftSidebarConfig&quot;: {
-      &quot;elements&quot;: [
-        { &quot;type&quot;: &quot;link&quot;, &quot;props&quot;: { &quot;label&quot;: &quot;Dashboard&quot;, &quot;icon&quot;: &quot;dashboard&quot; } },
-        { &quot;type&quot;: &quot;link&quot;, &quot;props&quot;: { &quot;label&quot;: &quot;Insights&quot;, &quot;icon&quot;: &quot;insights&quot; } }
-      ]
-    }
-  }
-}`}&lt;/Typography&gt;
-          &lt;/Paper&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+          &lt;/Box&gt;
+        &lt;/Paper&gt;
       &lt;/Box&gt;
-    &lt;/Box&gt;
-      &lt;Typography
-        variant=&quot;caption&quot;
-        sx={{
-          maxWidth: 640,
-          mb: 3,
-          mx: &#39;auto&#39;,
-          opacity: 0.48,
-          letterSpacing: &#39;0.08em&#39;,
-          textTransform: &#39;uppercase&#39;,
-          textAlign: &#39;center&#39;,
-        }}
-      &gt;
-        Veracruz, Mexico
-      &lt;/Typography&gt;
-  &lt;/Box&gt;
     &lt;/Theme&gt;
   );
 };
@@ -5529,34 +5150,14 @@ export const Default: Story = {
                 <pre><code>import {
     Avatar,
     Box,
-    Button,
     Card,
-    CardActions,
     CardContent,
     CardHeader,
-    Catalog,
     Divider,
-    Grid,
-    Icon,
-    IconButton,
     Link,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
     Paper,
     Stack,
-    Switch,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    TextField,
     Theme,
-    ThemeModeToggle,
-    Tooltip,
     Typography,
 } from "this.gui";</code></pre>
               </div>
@@ -9098,7 +8699,7 @@ import { Icon, Menu, MenuItem } from "this.gui";</code></pre>
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> Modal</h2>
       <div class="badges">
-        <label for="c-39-molecules-display-modalbox-props" class="badge ok as-toggle">12 prop types</label>
+        <label for="c-39-molecules-display-modalbox-props" class="badge ok as-toggle">13 prop types</label>
         <label for="c-39-molecules-display-modalbox-info" class="badge info as-toggle">1 info</label>
         <label for="c-39-molecules-display-modalbox-stories" class="badge ok as-toggle">1 story</label>
         
@@ -9132,7 +8733,7 @@ import { Icon, Menu, MenuItem } from "this.gui";</code></pre>
           <div class="note ok">
             <div class="row">
               <span class="ex-name">Prop types <small>(react-docgen)</small></span>
-              <span class="badge ok">12 prop types</span>
+              <span class="badge ok">13 prop types</span>
             </div>
             <pre><code>Component: src/gui/molecules/Modal/Modal.tsx::default</code></pre>
             <pre><code>Props:</code></pre>
@@ -9173,7 +8774,9 @@ width?: number | string = 400
 /**
  * 3D position offsets (per-axis) applied via translate3d.
  */
-xyz?: { x?: number; y?: number; z?: number }</code></pre>
+xyz?: { x?: number; y?: number; z?: number }
+
+zIndex?: number</code></pre>
           </div>
         </div>
     
@@ -13278,13 +12881,13 @@ Ideal for inspecting changes in real-time while modifying theme-related code or 
     <div class="note err">
       <div class="note-title">Prop type error</div>
       <div class="note-body"><pre><code>No component file found for the &quot;Home&quot; component.
-  590 | };
-  591 | import type { Meta, StoryObj } from &#39;@storybook/react&#39;;
-&gt; 592 | const meta = {
+  206 | };
+  207 | import type { Meta, StoryObj } from &#39;@storybook/react&#39;;
+&gt; 208 | const meta = {
       | ^
-  593 |   title: &#39;Getting Started/GUI Overview&#39;,
-  594 |   component: Home,
-  595 |   parameters: {
+  209 |   title: &#39;Getting Started/GUI Overview&#39;,
+  210 |   component: Home,
+  211 |   parameters: {
 
 ./src/stories/GUI.Overview.stories.tsx:
 import Theme from &#39;@/gui/Theme/Theme&#39;;
@@ -13325,555 +12928,171 @@ import TextField from &#39;@/gui/atoms/TextField/TextField&#39;;
 
 const Home = () =&gt; {
   return (
-  &lt;Theme&gt;
-  &lt;Box
-    sx={{
-      minHeight: &#39;100vh&#39;,
-      color: &#39;text.primary&#39;,
-    }}
-  &gt;
-    &lt;Box
-      component=&quot;section&quot;
-      sx={{
-        display: &#39;flex&#39;,
-        flexDirection: &#39;column&#39;,
-        alignItems: &#39;center&#39;,
-        justifyContent: &#39;center&#39;,
-        minHeight: &#39;21vh&#39;,
-        padding: 5,
-        textAlign: &#39;center&#39;,
-      }}
-    &gt;
-      &lt;Stack direction=&quot;row&quot; spacing={2} alignItems=&quot;center&quot;&gt;
-        &lt;Box
-          component=&quot;img&quot;
-          src=&quot;GUI.png&quot;
-          alt=&quot;.GUI&quot;
-          sx={{ width: 72, height: &#39;auto&#39;, imageRendering: &#39;auto&#39; }}
-        /&gt;
-        &lt;Typography variant=&quot;h2&quot; sx={{ fontWeight: 700, letterSpacing: &#39;-0.04em&#39; }}&gt;
-          .GUI Overview
-        &lt;/Typography&gt;
-      &lt;/Stack&gt;
-    &lt;/Box&gt;
-    &lt;Box component=&quot;section&quot; sx={{ px: { xs: 2, md: 4 }, pb: 6 }}&gt;
-      &lt;Typography variant=&quot;h4&quot; sx={{ mb: 2 }}&gt;
-        Layout preview
-      &lt;/Typography&gt;
-      &lt;Paper variant=&quot;outlined&quot; sx={{ overflow: &#39;hidden&#39;, borderRadius: 2 }}&gt;
-        &lt;Box
-          sx={{
-            display: &#39;flex&#39;,
-            alignItems: &#39;center&#39;,
-            justifyContent: &#39;space-between&#39;,
-            px: 2,
-            py: 1,
-            backgroundColor: &#39;background.nav&#39;,
-            borderBottom: &#39;1px solid&#39;,
-            borderColor: &#39;divider&#39;,
-          }}
-        &gt;
-          &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
-            &lt;Avatar sx={{ width: 28, height: 28 }}&gt;G&lt;/Avatar&gt;
-            &lt;Typography variant=&quot;subtitle2&quot;&gt;TopBar&lt;/Typography&gt;
-          &lt;/Stack&gt;
-          &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
-            &lt;IconButton size=&quot;small&quot;&gt;
-              &lt;Icon name=&quot;search&quot; /&gt;
-            &lt;/IconButton&gt;
-            &lt;ThemeModeToggle variant=&quot;minimal&quot; show=&quot;icons&quot; iconSize=&quot;small&quot; /&gt;
-          &lt;/Stack&gt;
-        &lt;/Box&gt;
-        &lt;Box
-          sx={{
-            display: &#39;grid&#39;,
-            gridTemplateColumns: &#39;72px 1fr 68px&#39;,
-            minHeight: 220,
-          }}
-        &gt;
-          &lt;Box
-            sx={{
-              borderRight: &#39;1px solid&#39;,
-              borderColor: &#39;divider&#39;,
-              py: 2,
-              px: 1,
-              display: &#39;flex&#39;,
-              flexDirection: &#39;column&#39;,
-              gap: 1,
-              alignItems: &#39;center&#39;,
-              backgroundColor: &#39;background.nav&#39;,
-            }}
-          &gt;
-            {[&#39;dashboard&#39;, &#39;hub&#39;, &#39;bolt&#39;, &#39;settings&#39;].map((name) =&gt; (
-              &lt;IconButton key={name} size=&quot;small&quot;&gt;
-                &lt;Icon name={name} /&gt;
-              &lt;/IconButton&gt;
-            ))}
-          &lt;/Box&gt;
-          &lt;Box sx={{ p: 2, display: &#39;grid&#39;, gap: 1.5 }}&gt;
-            &lt;Typography variant=&quot;subtitle1&quot;&gt;Content&lt;/Typography&gt;
-            &lt;Card variant=&quot;outlined&quot;&gt;
-              &lt;CardHeader title=&quot;Hero / Page&quot; subheader=&quot;Core molecules&quot; /&gt;
-              &lt;CardContent&gt;
-                &lt;Typography variant=&quot;body2&quot; sx={{ opacity: 0.8 }}&gt;
-                  Compose sections with Cards, Grids, and layout-aware spacing.
-                &lt;/Typography&gt;
-              &lt;/CardContent&gt;
-              &lt;CardActions&gt;
-                &lt;Button size=&quot;small&quot;&gt;Action&lt;/Button&gt;
-                &lt;Button size=&quot;small&quot; variant=&quot;outlined&quot;&gt;
-                  Secondary
-                &lt;/Button&gt;
-              &lt;/CardActions&gt;
-            &lt;/Card&gt;
-          &lt;/Box&gt;
-          &lt;Box
-            sx={{
-              borderLeft: &#39;1px solid&#39;,
-              borderColor: &#39;divider&#39;,
-              py: 2,
-              px: 1,
-              display: &#39;flex&#39;,
-              flexDirection: &#39;column&#39;,
-              gap: 1,
-              alignItems: &#39;center&#39;,
-              backgroundColor: &#39;background.nav&#39;,
-            }}
-          &gt;
-            &lt;Tooltip title=&quot;Right sidebar&quot;&gt;
-              &lt;IconButton size=&quot;small&quot;&gt;
-                &lt;Icon name=&quot;insights&quot; /&gt;
-              &lt;/IconButton&gt;
-            &lt;/Tooltip&gt;
-            &lt;Tooltip title=&quot;Notifications&quot;&gt;
-              &lt;IconButton size=&quot;small&quot;&gt;
-                &lt;Icon name=&quot;notifications&quot; /&gt;
-              &lt;/IconButton&gt;
-            &lt;/Tooltip&gt;
-          &lt;/Box&gt;
-        &lt;/Box&gt;
-        &lt;Box
-          sx={{
-            px: 2,
-            py: 1,
-            borderTop: &#39;1px solid&#39;,
-            borderColor: &#39;divider&#39;,
-            backgroundColor: &#39;background.nav&#39;,
-            display: &#39;flex&#39;,
-            justifyContent: &#39;space-between&#39;,
-            alignItems: &#39;center&#39;,
-          }}
-        &gt;
-          &lt;Typography variant=&quot;caption&quot;&gt;Footer&lt;/Typography&gt;
-          &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
-            &lt;Link href=&quot;https://neurons.me&quot; underline=&quot;hover&quot;&gt;
-            Docs
-            &lt;/Link&gt;
-            &lt;Divider orientation=&quot;vertical&quot; flexItem /&gt;
-            &lt;Link href=&quot;https://neurons.me&quot; underline=&quot;hover&quot;&gt;
-            Support
-            &lt;/Link&gt;
-          &lt;/Stack&gt;
-        &lt;/Box&gt;
-      &lt;/Paper&gt;
-    &lt;/Box&gt;
-    &lt;Box component=&quot;section&quot; sx={{ px: { xs: 2, md: 4 }, pb: 8 }}&gt;
-      &lt;Typography variant=&quot;h4&quot; sx={{ mb: 2 }}&gt;
-        Component sampler
-      &lt;/Typography&gt;
+    &lt;Theme&gt;
       &lt;Box
         sx={{
-          display: &#39;grid&#39;,
-          gap: 2,
-        gridTemplateColumns: { xs: &#39;1fr&#39;, md: &#39;repeat(2, minmax(0, 1fr))&#39; },
-      }}
-    &gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Buttons &amp; actions&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Stack direction=&quot;row&quot; spacing={1} flexWrap=&quot;wrap&quot;&gt;
-              &lt;Button variant=&quot;contained&quot; startIcon={&lt;Icon name=&quot;auto_awesome&quot; /&gt;}&gt;
-                Primary
-              &lt;/Button&gt;
-              &lt;Button variant=&quot;outlined&quot; color=&quot;secondary&quot;&gt;
-                Outline
-              &lt;/Button&gt;
-              &lt;IconButton size=&quot;small&quot; color=&quot;primary&quot;&gt;
-                &lt;Icon name=&quot;favorite&quot; /&gt;
-              &lt;/IconButton&gt;
-              &lt;Tooltip title=&quot;IconButton + Tooltip&quot;&gt;
-                &lt;IconButton size=&quot;small&quot;&gt;
-                  &lt;Icon name=&quot;bolt&quot; /&gt;
-                &lt;/IconButton&gt;
-              &lt;/Tooltip&gt;
-            &lt;/Stack&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Inputs &amp; toggles&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Stack spacing={1.5}&gt;
-              &lt;TextField size=&quot;small&quot; label=&quot;Search&quot; placeholder=&quot;Type a query&quot; /&gt;
-              &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
-                &lt;Switch defaultChecked /&gt;
-                &lt;Typography variant=&quot;body2&quot;&gt;Notifications&lt;/Typography&gt;
-              &lt;/Stack&gt;
-            &lt;/Stack&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Lists &amp; navigation&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;List dense&gt;
-              {[
-                { label: &#39;Overview&#39;, icon: &#39;dashboard&#39; },
-                { label: &#39;Experiments&#39;, icon: &#39;science&#39; },
-                { label: &#39;Models&#39;, icon: &#39;memory&#39; },
-              ].map((item) =&gt; (
-                &lt;ListItem key={item.label} disablePadding&gt;
-                  &lt;ListItemButton&gt;
-                    &lt;ListItemIcon&gt;
-                      &lt;Icon name={item.icon} /&gt;
-                    &lt;/ListItemIcon&gt;
-                    &lt;ListItemText primary={item.label} /&gt;
-                  &lt;/ListItemButton&gt;
-                &lt;/ListItem&gt;
-              ))}
-            &lt;/List&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Grid layouts&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Grid container spacing={1.5}&gt;
-              {[1, 2, 3, 4].map((i) =&gt; (
-                &lt;Grid item xs={6} md={3} key={i}&gt;
-                  &lt;Paper
-                    variant=&quot;outlined&quot;
-                    sx={{
-                      p: 1.5,
-                      textAlign: &#39;center&#39;,
-                      borderStyle: &#39;dashed&#39;,
-                      borderColor: &#39;divider&#39;,
-                      backgroundColor: &#39;background.paper&#39;,
-                    }}
-                  &gt;
-                    &lt;Typography variant=&quot;caption&quot;&gt;Grid cell {i}&lt;/Typography&gt;
-                  &lt;/Paper&gt;
-                &lt;/Grid&gt;
-              ))}
-            &lt;/Grid&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Avatars &amp; tooltips&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Stack spacing={1.5}&gt;
-              &lt;Stack direction=&quot;row&quot; spacing={1}&gt;
-                {[&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;].map((label) =&gt; (
-                  &lt;Tooltip title={`User ${label}`} key={label}&gt;
-                    &lt;Avatar sx={{ width: 32, height: 32 }}&gt;{label}&lt;/Avatar&gt;
-                  &lt;/Tooltip&gt;
-                ))}
-              &lt;/Stack&gt;
-              &lt;Stack direction=&quot;row&quot; spacing={1}&gt;
-                {[&#39;info&#39;, &#39;favorite&#39;, &#39;bolt&#39;].map((name) =&gt; (
-                  &lt;Tooltip title={name} key={name}&gt;
-                    &lt;IconButton size=&quot;small&quot; color=&quot;primary&quot;&gt;
-                      &lt;Icon name={name} /&gt;
-                    &lt;/IconButton&gt;
-                  &lt;/Tooltip&gt;
-                ))}
-              &lt;/Stack&gt;
-            &lt;/Stack&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Data display&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Stack spacing={1.5}&gt;
-              &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
-                &lt;Avatar sx={{ width: 32, height: 32 }}&gt;A&lt;/Avatar&gt;
-                &lt;Typography variant=&quot;body2&quot;&gt;Avatar + Typography&lt;/Typography&gt;
-              &lt;/Stack&gt;
-              &lt;Table size=&quot;small&quot;&gt;
-                &lt;TableHead&gt;
-                  &lt;TableRow&gt;
-                    &lt;TableCell&gt;Signal&lt;/TableCell&gt;
-                    &lt;TableCell align=&quot;right&quot;&gt;Score&lt;/TableCell&gt;
-                  &lt;/TableRow&gt;
-                &lt;/TableHead&gt;
-                &lt;TableBody&gt;
-                  {[
-                    { label: &#39;Attention&#39;, score: &#39;0.92&#39; },
-                    { label: &#39;Recall&#39;, score: &#39;0.86&#39; },
-                  ].map((row) =&gt; (
-                    &lt;TableRow key={row.label}&gt;
-                      &lt;TableCell&gt;{row.label}&lt;/TableCell&gt;
-                      &lt;TableCell align=&quot;right&quot;&gt;{row.score}&lt;/TableCell&gt;
-                    &lt;/TableRow&gt;
-                  ))}
-                &lt;/TableBody&gt;
-              &lt;/Table&gt;
-            &lt;/Stack&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-      &lt;/Box&gt;
-    &lt;/Box&gt;
-    &lt;Box component=&quot;section&quot; sx={{ px: { xs: 2, md: 4 }, pb: 8 }}&gt;
-      &lt;Typography variant=&quot;h4&quot; sx={{ mb: 2 }}&gt;
-        Interface gallery
-      &lt;/Typography&gt;
-      &lt;Box
-        sx={{
-          display: &#39;grid&#39;,
-          gap: 2,
-          gridTemplateColumns: { xs: &#39;1fr&#39;, md: &#39;1.2fr 0.8fr&#39; },
+          minHeight: &#39;100vh&#39;,
+          color: &#39;text.primary&#39;,
         }}
       &gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Dashboard surface&quot; subheader=&quot;Cards, metrics, lists, and quick actions&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Grid container spacing={1.5}&gt;
-              {[
-                { label: &#39;Signals&#39;, value: &#39;24&#39;, icon: &#39;insights&#39; },
-                { label: &#39;Routes&#39;, value: &#39;08&#39;, icon: &#39;route&#39; },
-                { label: &#39;Themes&#39;, value: &#39;07&#39;, icon: &#39;palette&#39; },
-              ].map((tile) =&gt; (
-                &lt;Grid item xs={4} key={tile.label}&gt;
-                  &lt;Paper variant=&quot;outlined&quot; sx={{ p: 1.5, borderRadius: 2 }}&gt;
-                    &lt;Stack spacing={0.5}&gt;
-                      &lt;Icon name={tile.icon} /&gt;
-                      &lt;Typography variant=&quot;caption&quot; sx={{ opacity: 0.72 }}&gt;
-                        {tile.label}
-                      &lt;/Typography&gt;
-                      &lt;Typography variant=&quot;h5&quot; sx={{ fontWeight: 700 }}&gt;
-                        {tile.value}
-                      &lt;/Typography&gt;
+        &lt;Paper
+          variant=&quot;outlined&quot;
+          sx={{
+            minHeight: &#39;100vh&#39;,
+            display: &#39;flex&#39;,
+            flexDirection: &#39;column&#39;,
+            overflow: &#39;hidden&#39;,
+            borderRadius: 0,
+          }}
+        &gt;
+          &lt;Box
+            sx={{
+              display: &#39;flex&#39;,
+              alignItems: &#39;center&#39;,
+              justifyContent: &#39;space-between&#39;,
+              px: 2,
+              py: 1,
+              backgroundColor: &#39;background.nav&#39;,
+              borderBottom: &#39;1px solid&#39;,
+              borderColor: &#39;divider&#39;,
+            }}
+          &gt;
+            &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
+              &lt;Avatar sx={{ width: 28, height: 28 }}&gt;G&lt;/Avatar&gt;
+              &lt;Typography variant=&quot;subtitle2&quot;&gt;TopBar&lt;/Typography&gt;
+            &lt;/Stack&gt;
+          &lt;/Box&gt;
+
+          &lt;Box
+            sx={{
+              flex: 1,
+              display: &#39;flex&#39;,
+              flexDirection: &#39;column&#39;,
+            }}
+          &gt;
+            &lt;Box
+              component=&quot;section&quot;
+              sx={{
+                minHeight: &#39;72vh&#39;,
+                display: &#39;grid&#39;,
+                placeItems: &#39;center&#39;,
+                px: { xs: 2, md: 4 },
+                py: { xs: 2, md: 3 },
+              }}
+            &gt;
+              &lt;Box sx={{ width: &#39;100%&#39;, maxWidth: 820 }}&gt;
+                &lt;Card variant=&quot;outlined&quot;&gt;
+                  &lt;CardHeader title=&quot;Content&quot; subheader=&quot;Hero / Page&quot; /&gt;
+                  &lt;CardContent&gt;
+                    &lt;Stack spacing={3} alignItems=&quot;center&quot; textAlign=&quot;center&quot;&gt;
+                      &lt;Stack direction=&quot;row&quot; spacing={2} alignItems=&quot;center&quot; justifyContent=&quot;center&quot;&gt;
+                        &lt;Box
+                          component=&quot;img&quot;
+                          src=&quot;GUI.png&quot;
+                          alt=&quot;.GUI&quot;
+                          sx={{ width: 72, height: &#39;auto&#39;, imageRendering: &#39;auto&#39; }}
+                        /&gt;
+                        &lt;Typography variant=&quot;h2&quot; sx={{ fontWeight: 700, letterSpacing: &#39;-0.04em&#39; }}&gt;
+                          .GUI Overview
+                        &lt;/Typography&gt;
+                      &lt;/Stack&gt;
+                      &lt;Stack spacing={1} alignItems=&quot;center&quot;&gt;
+                        &lt;Typography variant=&quot;h5&quot;&gt;Core molecules&lt;/Typography&gt;
+                        &lt;Typography variant=&quot;body1&quot; sx={{ opacity: 0.8, maxWidth: 560 }}&gt;
+                          Compose sections with Cards, Grids, and layout-aware spacing.
+                        &lt;/Typography&gt;
+                      &lt;/Stack&gt;
                     &lt;/Stack&gt;
-                  &lt;/Paper&gt;
-                &lt;/Grid&gt;
-              ))}
-              &lt;Grid item xs={12} md={7}&gt;
-                &lt;Paper
-                  variant=&quot;outlined&quot;
-                  sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    height: &#39;100%&#39;,
-                    background: &#39;linear-gradient(135deg, rgba(17,35,52,0.96) 0%, rgba(12,16,25,0.92) 100%)&#39;,
-                  }}
-                &gt;
-                  &lt;Typography variant=&quot;overline&quot; sx={{ opacity: 0.7 }}&gt;
-                    Runtime card
-                  &lt;/Typography&gt;
-                  &lt;Typography variant=&quot;h5&quot; sx={{ fontWeight: 700, mb: 0.75 }}&gt;
-                    Declarative shell, visual output.
-                  &lt;/Typography&gt;
-                  &lt;Typography variant=&quot;body2&quot; sx={{ opacity: 0.82, mb: 1.5 }}&gt;
-                    Use the same visual language for docs, dashboards, and runtime-driven screens.
-                  &lt;/Typography&gt;
-                  &lt;Stack direction=&quot;row&quot; spacing={1}&gt;
-                    &lt;Button size=&quot;small&quot; variant=&quot;contained&quot; startIcon={&lt;Icon name=&quot;play_arrow&quot; /&gt;}&gt;
-                      Mount
-                    &lt;/Button&gt;
-                    &lt;Button size=&quot;small&quot; variant=&quot;outlined&quot; startIcon={&lt;Icon name=&quot;code&quot; /&gt;}&gt;
-                      Inspect
-                    &lt;/Button&gt;
-                  &lt;/Stack&gt;
-                &lt;/Paper&gt;
-              &lt;/Grid&gt;
-              &lt;Grid item xs={12} md={5}&gt;
-                &lt;Paper variant=&quot;outlined&quot; sx={{ p: 1.5, borderRadius: 2, height: &#39;100%&#39; }}&gt;
-                  &lt;Typography variant=&quot;subtitle2&quot; sx={{ mb: 1 }}&gt;
-                    Activity feed
-                  &lt;/Typography&gt;
-                  &lt;List dense&gt;
-                    {[
-                      { label: &#39;Theme switched&#39;, hint: &#39;neurons.me -&gt; GhostShell&#39;, icon: &#39;palette&#39; },
-                      { label: &#39;Route resolved&#39;, hint: &#39;/runtime/overview&#39;, icon: &#39;route&#39; },
-                      { label: &#39;Action fired&#39;, hint: &quot;me/public/status = &#39;active&#39;&quot;, icon: &#39;bolt&#39; },
-                    ].map((item) =&gt; (
-                      &lt;ListItem key={item.label} disablePadding&gt;
-                        &lt;ListItemButton&gt;
-                          &lt;ListItemIcon&gt;
-                            &lt;Icon name={item.icon} /&gt;
-                          &lt;/ListItemIcon&gt;
-                          &lt;ListItemText primary={item.label} secondary={item.hint} /&gt;
-                        &lt;/ListItemButton&gt;
-                      &lt;/ListItem&gt;
-                    ))}
-                  &lt;/List&gt;
-                &lt;/Paper&gt;
-              &lt;/Grid&gt;
-            &lt;/Grid&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Stack spacing={2}&gt;
-          &lt;Card variant=&quot;outlined&quot;&gt;
-            &lt;CardHeader title=&quot;Theme gallery&quot; subheader=&quot;Theming is part of the product surface&quot; /&gt;
-            &lt;CardContent sx={{ p: 1.25 }}&gt;
-              &lt;Catalog minimal /&gt;
-            &lt;/CardContent&gt;
-          &lt;/Card&gt;
-          &lt;Card variant=&quot;outlined&quot;&gt;
-            &lt;CardHeader title=&quot;Compact control panel&quot; subheader=&quot;Dense controls for app shells&quot; /&gt;
-            &lt;CardContent&gt;
-              &lt;Stack spacing={1.5}&gt;
-                &lt;TextField size=&quot;small&quot; label=&quot;Workspace&quot; defaultValue=&quot;Neuroverse&quot; /&gt;
-                &lt;TextField size=&quot;small&quot; label=&quot;Semantic path&quot; defaultValue=&quot;me/views/dashboard/title&quot; /&gt;
-                &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
-                  &lt;Switch defaultChecked /&gt;
-                  &lt;Typography variant=&quot;body2&quot;&gt;Live mode&lt;/Typography&gt;
-                &lt;/Stack&gt;
-                &lt;Stack direction=&quot;row&quot; spacing={1} flexWrap=&quot;wrap&quot;&gt;
-                  &lt;Button size=&quot;small&quot; variant=&quot;contained&quot;&gt;Save&lt;/Button&gt;
-                  &lt;Button size=&quot;small&quot; variant=&quot;outlined&quot;&gt;Preview&lt;/Button&gt;
-                  &lt;Button size=&quot;small&quot; variant=&quot;text&quot;&gt;Reset&lt;/Button&gt;
-                &lt;/Stack&gt;
-              &lt;/Stack&gt;
-            &lt;/CardContent&gt;
-          &lt;/Card&gt;
-        &lt;/Stack&gt;
-      &lt;/Box&gt;
-    &lt;/Box&gt;
-    &lt;Box component=&quot;section&quot; sx={{ px: { xs: 2, md: 4 }, pb: 8 }}&gt;
-      &lt;Typography variant=&quot;h4&quot; sx={{ mb: 2 }}&gt;
-        Patterns
-      &lt;/Typography&gt;
-      &lt;Typography variant=&quot;body2&quot; sx={{ maxWidth: 860, opacity: 0.85, mb: 2 }}&gt;
-        Quick, copy/paste-friendly examples of common patterns used across This.GUI.
-      &lt;/Typography&gt;
-      &lt;Box
-        sx={{
-          display: &#39;grid&#39;,
-          gap: 2,
-          gridTemplateColumns: { xs: &#39;1fr&#39;, md: &#39;repeat(2, minmax(0, 1fr))&#39; },
-        }}
-      &gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Icon + tokens&quot; subheader=&quot;Material Symbols + GUI CSS vars&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Stack spacing={1.25}&gt;
-              &lt;Typography variant=&quot;body2&quot; sx={{ opacity: 0.8 }}&gt;
-                Icons come from Material Symbols. Colors typically use GUI tokens like{&#39; &#39;}
-                &lt;code&gt;var(--gui-primary)&lt;/code&gt;.
-              &lt;/Typography&gt;
-              &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot; flexWrap=&quot;wrap&quot;&gt;
-                &lt;Icon name=&quot;auto_awesome&quot; style={{ color: &#39;var(--gui-primary)&#39; }} /&gt;
-                &lt;Icon name=&quot;insights&quot; style={{ color: &#39;var(--gui-info)&#39; }} /&gt;
-                &lt;Icon name=&quot;warning&quot; style={{ color: &#39;var(--gui-warning)&#39; }} /&gt;
-                &lt;Icon name=&quot;error&quot; style={{ color: &#39;var(--gui-error)&#39; }} /&gt;
-                &lt;Typography variant=&quot;caption&quot; sx={{ opacity: 0.7 }}&gt;
-                  (These are just icons + tokens — minimal + readable.)
-                &lt;/Typography&gt;
-              &lt;/Stack&gt;
+                  &lt;/CardContent&gt;
+                &lt;/Card&gt;
+              &lt;/Box&gt;
+            &lt;/Box&gt;
+
+            &lt;Box
+              component=&quot;section&quot;
+              sx={{
+                px: { xs: 2, md: 4 },
+                py: { xs: 1, md: 2 },
+              }}
+            &gt;
+              &lt;Box sx={{ width: &#39;100%&#39;, maxWidth: 960, mx: &#39;auto&#39; }}&gt;
+                &lt;Card variant=&quot;outlined&quot;&gt;
+                  &lt;CardHeader title=&quot;Section 1&quot; subheader=&quot;First content block&quot; /&gt;
+                  &lt;CardContent&gt;
+                    &lt;Typography variant=&quot;body1&quot; sx={{ opacity: 0.82 }}&gt;
+                      A clean section for introducing the first layer of the system, keeping the layout
+                      simple, readable, and aligned with the main showcase.
+                    &lt;/Typography&gt;
+                  &lt;/CardContent&gt;
+                &lt;/Card&gt;
+              &lt;/Box&gt;
+            &lt;/Box&gt;
+
+            &lt;Box
+              component=&quot;section&quot;
+              sx={{
+                px: { xs: 2, md: 4 },
+                py: { xs: 1, md: 2 },
+              }}
+            &gt;
+              &lt;Box sx={{ width: &#39;100%&#39;, maxWidth: 960, mx: &#39;auto&#39; }}&gt;
+                &lt;Card variant=&quot;outlined&quot;&gt;
+                  &lt;CardHeader title=&quot;Section 2&quot; subheader=&quot;Second content block&quot; /&gt;
+                  &lt;CardContent&gt;
+                    &lt;Typography variant=&quot;body1&quot; sx={{ opacity: 0.82 }}&gt;
+                      Another landing-page section to present structure, composition, and visual rhythm
+                      without adding unnecessary complexity.
+                    &lt;/Typography&gt;
+                  &lt;/CardContent&gt;
+                &lt;/Card&gt;
+              &lt;/Box&gt;
+            &lt;/Box&gt;
+
+            &lt;Box
+              component=&quot;section&quot;
+              sx={{
+                px: { xs: 2, md: 4 },
+                py: { xs: 1, md: 2 },
+              }}
+            &gt;
+              &lt;Box sx={{ width: &#39;100%&#39;, maxWidth: 960, mx: &#39;auto&#39; }}&gt;
+                &lt;Card variant=&quot;outlined&quot;&gt;
+                  &lt;CardHeader title=&quot;Section 3&quot; subheader=&quot;Third content block&quot; /&gt;
+                  &lt;CardContent&gt;
+                    &lt;Typography variant=&quot;body1&quot; sx={{ opacity: 0.82 }}&gt;
+                      A final section to close the page with one more simple block before the footer.
+                    &lt;/Typography&gt;
+                  &lt;/CardContent&gt;
+                &lt;/Card&gt;
+              &lt;/Box&gt;
+            &lt;/Box&gt;
+          &lt;/Box&gt;
+
+          &lt;Box
+            sx={{
+              px: 2,
+              py: 1,
+              borderTop: &#39;1px solid&#39;,
+              borderColor: &#39;divider&#39;,
+              backgroundColor: &#39;background.nav&#39;,
+              display: &#39;flex&#39;,
+              justifyContent: &#39;space-between&#39;,
+              alignItems: &#39;center&#39;,
+            }}
+          &gt;
+            &lt;Typography variant=&quot;caption&quot;&gt;Footer&lt;/Typography&gt;
+            &lt;Stack direction=&quot;row&quot; spacing={1} alignItems=&quot;center&quot;&gt;
+              &lt;Link href=&quot;https://neurons.me&quot; underline=&quot;hover&quot;&gt;
+                Docs
+              &lt;/Link&gt;
+              &lt;Divider orientation=&quot;vertical&quot; flexItem /&gt;
+              &lt;Link href=&quot;https://neurons.me&quot; underline=&quot;hover&quot;&gt;
+                Support
+              &lt;/Link&gt;
             &lt;/Stack&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Actions + feedback&quot; subheader=&quot;Tooltip, loading, disabled&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Stack spacing={1.25}&gt;
-              &lt;Typography variant=&quot;body2&quot; sx={{ opacity: 0.8 }}&gt;
-                Common micro-interactions: tooltip hints, disabled states, and icon-first actions.
-              &lt;/Typography&gt;
-              &lt;Stack direction=&quot;row&quot; spacing={1} flexWrap=&quot;wrap&quot; alignItems=&quot;center&quot;&gt;
-                &lt;Tooltip title=&quot;Primary action&quot;&gt;
-                  &lt;span&gt;
-                    &lt;Button variant=&quot;contained&quot; startIcon={&lt;Icon name=&quot;bolt&quot; /&gt;}&gt;
-                      Run
-                    &lt;/Button&gt;
-                  &lt;/span&gt;
-                &lt;/Tooltip&gt;
-                &lt;Button variant=&quot;outlined&quot; disabled startIcon={&lt;Icon name=&quot;lock&quot; /&gt;}&gt;
-                  Restricted
-                &lt;/Button&gt;
-                &lt;Tooltip title=&quot;Copy&quot;&gt;
-                  &lt;IconButton size=&quot;small&quot;&gt;
-                    &lt;Icon name=&quot;content_copy&quot; /&gt;
-                  &lt;/IconButton&gt;
-                &lt;/Tooltip&gt;
-                &lt;Tooltip title=&quot;Open&quot;&gt;
-                  &lt;IconButton size=&quot;small&quot;&gt;
-                    &lt;Icon name=&quot;open_in_new&quot; /&gt;
-                  &lt;/IconButton&gt;
-                &lt;/Tooltip&gt;
-              &lt;/Stack&gt;
-            &lt;/Stack&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Navigation row&quot; subheader=&quot;Link + secondary text&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;List dense&gt;
-              {[
-                { label: &#39;Docs&#39;, icon: &#39;menu_book&#39;, hint: &#39;Read the component guides&#39; },
-                { label: &#39;Storybook&#39;, icon: &#39;auto_stories&#39;, hint: &#39;Browse atoms → organisms&#39; },
-                { label: &#39;GitHub&#39;, icon: &#39;code&#39;, hint: &#39;Source + issues + PRs&#39; },
-              ].map((item) =&gt; (
-                &lt;ListItem key={item.label} disablePadding&gt;
-                  &lt;ListItemButton&gt;
-                    &lt;ListItemIcon&gt;
-                      &lt;Icon name={item.icon} /&gt;
-                    &lt;/ListItemIcon&gt;
-                    &lt;ListItemText primary={item.label} secondary={item.hint} /&gt;
-                  &lt;/ListItemButton&gt;
-                &lt;/ListItem&gt;
-              ))}
-          &lt;/List&gt;
-        &lt;/CardContent&gt;
-        &lt;/Card&gt;
-        &lt;Card variant=&quot;outlined&quot;&gt;
-          &lt;CardHeader title=&quot;Declarative layout (mental model)&quot; subheader=&quot;Think: config → shell&quot; /&gt;
-          &lt;CardContent&gt;
-            &lt;Typography variant=&quot;body2&quot; sx={{ opacity: 0.8, mb: 1.25 }}&gt;
-              Most UI in This.GUI can be expressed as a config object that maps to components.
-              (Storybook stories are a great place to see what props matter.)
-            &lt;/Typography&gt;
-            &lt;Paper variant=&quot;outlined&quot; sx={{ p: 1.25, borderRadius: 2, backgroundColor: &#39;background.nav&#39; }}&gt;
-              &lt;Typography
-                component=&quot;pre&quot;
-                sx={{
-                  m: 0,
-                  fontFamily: &#39;ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace&#39;,
-                  fontSize: 12,
-                  lineHeight: 1.4,
-                  whiteSpace: &#39;pre-wrap&#39;,
-                  color: &#39;text.primary&#39;,
-                }}
-              &gt;{`{
-  &quot;type&quot;: &quot;Layout&quot;,
-  &quot;props&quot;: {
-    &quot;topBarConfig&quot;: { &quot;title&quot;: &quot;Workspace&quot; },
-    &quot;leftSidebarConfig&quot;: {
-      &quot;elements&quot;: [
-        { &quot;type&quot;: &quot;link&quot;, &quot;props&quot;: { &quot;label&quot;: &quot;Dashboard&quot;, &quot;icon&quot;: &quot;dashboard&quot; } },
-        { &quot;type&quot;: &quot;link&quot;, &quot;props&quot;: { &quot;label&quot;: &quot;Insights&quot;, &quot;icon&quot;: &quot;insights&quot; } }
-      ]
-    }
-  }
-}`}&lt;/Typography&gt;
-          &lt;/Paper&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+          &lt;/Box&gt;
+        &lt;/Paper&gt;
       &lt;/Box&gt;
-    &lt;/Box&gt;
-      &lt;Typography
-        variant=&quot;caption&quot;
-        sx={{
-          maxWidth: 640,
-          mb: 3,
-          mx: &#39;auto&#39;,
-          opacity: 0.48,
-          letterSpacing: &#39;0.08em&#39;,
-          textTransform: &#39;uppercase&#39;,
-          textAlign: &#39;center&#39;,
-        }}
-      &gt;
-        Veracruz, Mexico
-      &lt;/Typography&gt;
-  &lt;/Box&gt;
     &lt;/Theme&gt;
   );
 };
@@ -13914,34 +13133,14 @@ export const Default: Story = {
                 <pre><code>import {
     Avatar,
     Box,
-    Button,
     Card,
-    CardActions,
     CardContent,
     CardHeader,
-    Catalog,
     Divider,
-    Grid,
-    Icon,
-    IconButton,
     Link,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
     Paper,
     Stack,
-    Switch,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    TextField,
     Theme,
-    ThemeModeToggle,
-    Tooltip,
     Typography,
 } from "this.gui";</code></pre>
               </div>
@@ -14681,13 +13880,14 @@ import { QueryExpressionsDemo } from &#39;./Router/components/RouterSemanticsDem
 It is a declarative runtime with three layers:
 
 1. **UI spec (`this.GUI`)**: you describe the screen as data: pages, cards, text, buttons, sidebars, and children.
-2. **Dynamic tokens (`$expr` / `$action`)**: instead of hardcoding everything, you can say &quot;read this value&quot; or &quot;run this mutation&quot; in a serializable way.
+2. **Dynamic read/write tokens (`read` / `write`)**: instead of hardcoding everything, you can say &quot;read this value&quot; or &quot;run this mutation&quot; in a serializable way.  
+   `this.GUI` also accepts the legacy aliases `$expr` / `$action`.
 3. **Runtime (`runtime`, optional `.me`)**: the host decides how those reads and writes actually work, for example by resolving profile data, route params, or backend mutations.
 
 In plain terms:
 
 - `this.GUI` defines **what to render**
-- `$expr` and `$action` define **what should be dynamic**
+- `read` and `write` define **what should be dynamic**
 - `runtime` defines **where the data comes from and what actions do**
 
 ## Mental Model
@@ -14695,7 +13895,7 @@ In plain terms:
 You can run `this.GUI` in two modes:
 
 - **JS-Only mode**: plain functions and local state.
-- **Data-Driven mode**: dynamic tokens resolved by runtime (`$expr`, `$action`).
+- **Data-Driven mode**: dynamic tokens resolved by runtime (`read`, `write`).
 
 The same spec can evolve from local UI to data-driven app without rewriting components.
 
@@ -14807,7 +14007,7 @@ Once you want live data, switch props from literals to tokens.
   &quot;type&quot;: &quot;Typography&quot;,
   &quot;props&quot;: {
     &quot;variant&quot;: &quot;body1&quot;,
-    &quot;children&quot;: { &quot;$expr&quot;: &quot;me/public/profile/name&quot; }
+    &quot;children&quot;: { &quot;read&quot;: &quot;me/public/profile/name&quot; }
   }
 }
 ```
@@ -14819,7 +14019,7 @@ And for mutations:
   &quot;type&quot;: &quot;Button&quot;,
   &quot;props&quot;: {
     &quot;label&quot;: &quot;Set active&quot;,
-    &quot;onClick&quot;: { &quot;$action&quot;: &quot;me/public/profile/status = &#39;active&#39;&quot; }
+    &quot;onClick&quot;: { &quot;write&quot;: &quot;me/public/profile/status = &#39;active&#39;&quot; }
   }
 }
 ```
@@ -14827,27 +14027,28 @@ And for mutations:
 This is the core idea:
 
 - static prop -&gt; fixed UI
-- `$expr` -&gt; read data
-- `$action` -&gt; mutate data
+- `read` -&gt; read data
+- `write` -&gt; mutate data
 
 ---
 
-## Dynamic Props with `$Tokens`
+## Dynamic Props with Read/Write Tokens
 
 ```json
 {
   &quot;type&quot;: &quot;Button&quot;,
   &quot;props&quot;: {
-    &quot;label&quot;: { &quot;$expr&quot;: &quot;me/public/profile/name&quot; },
-    &quot;onClick&quot;: { &quot;$action&quot;: &quot;me/public/profile/status = &#39;active&#39;&quot; }
+    &quot;label&quot;: { &quot;read&quot;: &quot;me/public/profile/name&quot; },
+    &quot;onClick&quot;: { &quot;write&quot;: &quot;me/public/profile/status = &#39;active&#39;&quot; }
   }
 }
 ```
 
 What happens:
 
-- `$expr` is resolved before render.
-- `$action` is hydrated into a callback.
+- `read` is resolved before render.
+- `write` is hydrated into a callback.
+- `$expr` / `$action` are still accepted as aliases.
 - If runtime is missing, GUI falls back safely (no crash).
 
 ---
@@ -14860,8 +14061,8 @@ When you add routes like `/shops/:id`, the router places route params into `ctx.
 router.set(&#39;/shops/:id&#39;, ({ ctx }) =&gt; ({
   type: &#39;Page&#39;,
   props: {
-    // Inside $expr, {{...}} injects route/context values into the expression string.
-    title: { $expr: &#39;me/views/shops[{{params.id}}].name&#39; },
+    // Inside read, {{...}} injects route/context values into the expression string.
+    title: { read: &#39;me/views/shops[{{params.id}}].name&#39; },
   },
 }));
 ```
@@ -15176,7 +14377,7 @@ Good when the route depends on params, runtime context, or async data.
 router.set(&#39;/shops/:id&#39;, ({ ctx }) =&gt; ({
   type: &#39;Page&#39;,
   props: {
-    title: { $expr: &#39;me/views/shops[{{params.id}}].name&#39; },
+    title: { read: &#39;me/views/shops[{{params.id}}].name&#39; },
     subtitle: `shop id=${ctx.params.id}`,
   },
 }));
@@ -15205,8 +14406,8 @@ router.set(&#39;/shops&#39;, &#39;me/views/shops/default/page&#39;);
 router.set(&#39;/shops/:id&#39;, ({ ctx }) =&gt; ({
   type: &#39;Page&#39;,
   props: {
-    title: { $expr: &#39;me/views/shops[{{params.id}}].name&#39; },
-    subtitle: { $expr: &#39;me/views/shops/default/subtitle&#39; },
+    title: { read: &#39;me/views/shops[{{params.id}}].name&#39; },
+    subtitle: { read: &#39;me/views/shops/default/subtitle&#39; },
   },
 }));
 ```

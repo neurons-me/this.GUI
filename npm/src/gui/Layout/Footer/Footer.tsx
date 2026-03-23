@@ -193,7 +193,10 @@ export default function Footer(props: FooterProps) {
     const measure = () => {
       const target = BarRef.current ?? toolbarRef.current;
       const h = target?.offsetHeight ?? 56;
-      updateInsets({ bottom: position === 'fixed' || position === 'sticky' ? h : 0 });
+      updateInsets(
+        { bottom: position === 'fixed' || position === 'sticky' ? h : 0 },
+        'footer'
+      );
     };
     measure();
 
@@ -208,7 +211,7 @@ export default function Footer(props: FooterProps) {
 
     return () => {
       if (ro) ro.disconnect();
-      updateInsets({ bottom: 0 });
+      updateInsets({ bottom: 0 }, 'footer');
     };
   }, [position, updateInsets, isMobile, isTablet]);
 

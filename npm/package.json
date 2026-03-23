@@ -1,7 +1,8 @@
 {
   "name": "this.gui",
+  "description": "Generative User Interface",
   "private": false,
-  "version": "2.0.2",
+  "version": "2.0.3",
   "type": "module",
   "main": "./dist/this.gui.cjs",
   "module": "./dist/this.gui.es.js",
@@ -9,14 +10,10 @@
   "license": "MIT",
   "author": "suiGn - neurons.me",
   "keywords": [
-    "gui",
-    "ui",
-    "react",
-    "components",
+    "Generative",
+    "UI",
     "declarative-ui",
-    "json-ui",
-    "runtime",
-    "layout"
+    "json-ui"
   ],
   "sideEffects": [
     "**/*.css"

@@ -78,8 +78,8 @@ const LeftSidebar = ({
   useEffect(() => {
     if (typeof setInsets !== 'function') return;
     const desired = view === 'expanded' ? 220 : view === 'rail' ? 72 : 0;
-    setInsets({ left: desired });
-    return () => setInsets({ left: 0 });
+    setInsets({ left: desired }, 'left-sidebar');
+    return () => setInsets({ left: 0 }, 'left-sidebar');
   }, [setInsets, view]);
 
   useEffect(() => {

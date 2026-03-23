@@ -33,10 +33,14 @@ const RightSidebar = ({
   const setInsets = useUpdateInsets();
   const insets = useInsets();
   const navInset = Math.max(0, Number(insets?.nav ?? insets?.top ?? 0));
+  const totalRightInset = Math.max(0, Number(insets?.right ?? 0));
   const headerHeight = navInset > 0 ? navInset : 48;
   const toggleOffset = (navInset > 0 ? navInset : 0) + 12;
   const hasFooterElements = Array.isArray(footerElements) && footerElements.length > 0;
   const initialViewApplied = useRef(false);
+  const sidebarWidth =
+    isMobile || view === 'mobile' ? 0 : view === 'expanded' ? EXPANDED_WIDTH : RAIL_WIDTH;
+  const layoutRightOffset = Math.max(0, totalRightInset - sidebarWidth);
   const adminNodeId = id ? String(id) : 'RightSidebar';
   const adminAttrs = {
     'data-gui-node-id': adminNodeId,
@@ -47,8 +51,8 @@ const RightSidebar = ({
     if (typeof setInsets !== 'function') return;
     const desired =
       isMobile || view === 'mobile' ? 0 : view === 'expanded' ? EXPANDED_WIDTH : RAIL_WIDTH;
-    setInsets({ right: desired });
-    return () => setInsets({ right: 0 });
+    setInsets({ right: desired }, 'right-sidebar');
+    return () => setInsets({ right: 0 }, 'right-sidebar');
   }, [isMobile, setInsets, view]);
 
   useEffect(() => {
@@ -120,7 +124,7 @@ const RightSidebar = ({
         sx={{
           position: 'fixed',
           top: 0,
-          right: 0,
+          right: `${layoutRightOffset}px`,
           bottom: 0,
           height: '100vh',
           display: 'flex',
@@ -131,6 +135,7 @@ const RightSidebar = ({
         borderColor: 'divider',
         backgroundColor: 'background.paper',
         zIndex: (theme) => theme.zIndex.drawer + 2,
+        transition: 'right 0.3s ease',
       }}
     >
         <Box
@@ -181,9 +186,10 @@ const RightSidebar = ({
           sx={{
             position: 'fixed',
             top: `${toggleOffset}px`,
-            right: 0,
+            right: `${layoutRightOffset}px`,
             zIndex: ((theme as any)?.zIndex?.drawer ?? 1200) + 1,
             display: mobileOpen ? 'none' : 'flex',
+            transition: 'right 0.3s ease',
           }}
         >
           <IconButton
@@ -215,11 +221,13 @@ const RightSidebar = ({
             '& .MuiDrawer-paper': {
               width: EXPANDED_WIDTH,
               top: `${navInset}px`,
+              right: `${layoutRightOffset}px`,
               height: `calc(100vh - ${navInset}px)`,
               display: 'flex',
               flexDirection: 'column',
               borderLeft: '1px solid',
               borderColor: 'divider',
+              transition: 'right 0.3s ease',
             },
           }}
           PaperProps={{ id, 'data-testid': dataTestId, style, className, ...adminAttrs }}
@@ -273,7 +281,7 @@ const RightSidebar = ({
       sx={{
         position: 'fixed',
         top: 0,
-        right: 0,
+        right: `${layoutRightOffset}px`,
         bottom: 0,
         height: '100vh',
         display: 'flex',
@@ -284,6 +292,7 @@ const RightSidebar = ({
         borderColor: 'divider',
         backgroundColor: 'background.paper',
         zIndex: (theme) => theme.zIndex.drawer + 2,
+        transition: 'right 0.3s ease',
       }}
     >
       <Box

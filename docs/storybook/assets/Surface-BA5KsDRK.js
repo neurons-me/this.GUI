@@ -1,0 +1,5 @@
+import{ax as S,j as w}from"./iframe-ByX3ETbE.js";import{P as b}from"./Paper-Bdr9tTxc.js";const i=S.forwardRef((d,c)=>{const{variant:o="elevation",elevation:l,sx:a,...p}=d,e=o==="card",u=e?"outlined":o,m=e?0:l,v=e?[r=>{var s,n,t;return{borderRadius:((s=r.shape)==null?void 0:s.borderRadius)??8,borderColor:"divider",backgroundColor:"background.paper",boxShadow:((n=r.customShadows)==null?void 0:n.card)??((t=r.shadows)==null?void 0:t[3])??"none"}}]:[],f=Array.isArray(a)?a:a?[a]:[],x=e?[...v,...f]:a;return w.jsx(b,{ref:c,variant:u,elevation:m,sx:x,...p})});i.displayName="Surface";i.__docgenInfo={description:`Surface
+-------
+A visual container primitive.
+Acts as a thin wrapper around MUI's Paper.
+Supports elevation, variant, square, and sx overrides.`,methods:[],displayName:"Surface",props:{variant:{required:!1,tsType:{name:"union",raw:"'elevation' | 'outlined' | 'card'",elements:[{name:"literal",value:"'elevation'"},{name:"literal",value:"'outlined'"},{name:"literal",value:"'card'"}]},description:"Visual style for the surface.\n`card` maps to an outlined paper with subtle shadow + rounded corners."}},composes:["Omit"]};export{i as S};

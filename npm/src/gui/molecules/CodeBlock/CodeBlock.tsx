@@ -22,6 +22,8 @@ export type CodeBlockProps = {
   className?: string;
   /** Optional inline style for outer wrapper */
   style?: React.CSSProperties;
+  /** Optional max height for the scrollable code area */
+  maxHeight?: number | string;
 };
 
 /**
@@ -41,6 +43,7 @@ export default function CodeBlock(props: CodeBlockProps) {
     showCopyButton = true,
     className,
     style,
+    maxHeight,
   } = props;
   const guiTheme = useGuiTheme();
   const resolvedVariant: CodeBlockVariant =
@@ -159,6 +162,8 @@ export default function CodeBlock(props: CodeBlockProps) {
           background: 'transparent',
           fontSize: 13,
           lineHeight: 1.55,
+          maxHeight,
+          overflow: maxHeight ? 'auto' : undefined,
         }}
         codeTagProps={{
           style: {

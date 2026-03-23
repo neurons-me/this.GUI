@@ -23,12 +23,14 @@ const Modal: React.FC<ModalProps> = ({
   children,
   width = 400,
   height = "auto",
+  zIndex: explicitZIndex,
   blurBackground = true,
   xyz,
   insets,
 }) => {
   const theme = useGuiTheme();
-  const zIndex = (theme as any)?.zIndex?.modal ?? (theme as any)?.zIndex?.drawer ?? 1300;
+  const zIndex =
+    explicitZIndex ?? ((theme as any)?.zIndex?.modal ?? (theme as any)?.zIndex?.drawer ?? 1300);
 
   if (!open) return null;
 
