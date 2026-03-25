@@ -6,7 +6,7 @@ import { MDXProvider } from '@mdx-js/react';
 // It should NOT depend on `GUI.tsx` (which mounts an app + router).
 import Theme from '@/gui/Theme/Theme';
 import { Button } from '@/gui/Atoms';
-import CodeBlock from '@/gui/Molecules';
+import { CodeBlock } from '@/gui/Molecules';
 export type GuiMDXComponents = Record<string, any>;
 // Export the mapping so other hosts (Storybook/app/editor) can reuse it
 // without being forced into a provider decision.

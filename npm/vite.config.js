@@ -36,21 +36,21 @@ export default defineConfig({
   },
   resolve: {
     alias: [
-      { find: /^@\/gui\/Atoms$/, replacement: resolve(__dirname, 'src/gui/Atoms/atoms.ts') },
-      { find: /^@\/gui\/Atoms\//, replacement: `${resolve(__dirname, 'src/gui/Atoms')}/` },
-      { find: /^@\/gui\/atoms$/, replacement: resolve(__dirname, 'src/gui/Atoms/atoms.ts') },
-      { find: /^@\/gui\/atoms\//, replacement: `${resolve(__dirname, 'src/gui/Atoms')}/` },
-      { find: /^@\/gui\/Molecules$/, replacement: resolve(__dirname, 'src/gui/Molecules/molecules.ts') },
-      { find: /^@\/gui\/Molecules\//, replacement: `${resolve(__dirname, 'src/gui/Molecules')}/` },
-      { find: /^@\/gui\/molecules$/, replacement: resolve(__dirname, 'src/gui/Molecules/molecules.ts') },
-      { find: /^@\/gui\/molecules\//, replacement: `${resolve(__dirname, 'src/gui/Molecules')}/` },
-      { find: /^@\/gui\/Compounds$/, replacement: resolve(__dirname, 'src/gui/Compounds/compounds.ts') },
-      { find: /^@\/gui\/Compounds\//, replacement: `${resolve(__dirname, 'src/gui/Compounds')}/` },
-      { find: /^@\/gui\/compounds$/, replacement: resolve(__dirname, 'src/gui/Compounds/compounds.ts') },
-      { find: /^@\/gui\/compounds\//, replacement: `${resolve(__dirname, 'src/gui/Compounds')}/` },
-      { find: /^@\/gui\/components$/, replacement: resolve(__dirname, 'src/gui/Compounds/compounds.ts') },
-      { find: /^@\/gui\/components\//, replacement: `${resolve(__dirname, 'src/gui/Compounds')}/` },
-      { find: '@', replacement: resolve(__dirname, 'src') },
+      { find: /^@\/gui\/Atoms$/, replacement: resolve(dirname, 'src/gui/Atoms/atoms.ts') },
+      { find: /^@\/gui\/Atoms\//, replacement: `${resolve(dirname, 'src/gui/Atoms')}/` },
+      { find: /^@\/gui\/atoms$/, replacement: resolve(dirname, 'src/gui/Atoms/atoms.ts') },
+      { find: /^@\/gui\/atoms\//, replacement: `${resolve(dirname, 'src/gui/Atoms')}/` },
+      { find: /^@\/gui\/Molecules$/, replacement: resolve(dirname, 'src/gui/Molecules/molecules.ts') },
+      { find: /^@\/gui\/Molecules\//, replacement: `${resolve(dirname, 'src/gui/Molecules')}/` },
+      { find: /^@\/gui\/molecules$/, replacement: resolve(dirname, 'src/gui/Molecules/molecules.ts') },
+      { find: /^@\/gui\/molecules\//, replacement: `${resolve(dirname, 'src/gui/Molecules')}/` },
+      { find: /^@\/gui\/Compounds$/, replacement: resolve(dirname, 'src/gui/Compounds/compounds.ts') },
+      { find: /^@\/gui\/Compounds\//, replacement: `${resolve(dirname, 'src/gui/Compounds')}/` },
+      { find: /^@\/gui\/compounds$/, replacement: resolve(dirname, 'src/gui/Compounds/compounds.ts') },
+      { find: /^@\/gui\/compounds\//, replacement: `${resolve(dirname, 'src/gui/Compounds')}/` },
+      { find: /^@\/gui\/components$/, replacement: resolve(dirname, 'src/gui/Compounds/compounds.ts') },
+      { find: /^@\/gui\/components\//, replacement: `${resolve(dirname, 'src/gui/Compounds')}/` },
+      { find: '@', replacement: resolve(dirname, 'src') },
     ],
     dedupe: ['react', 'react-dom', 'react-router', 'react-router-dom']
   },
@@ -64,8 +64,8 @@ export default defineConfig({
           //   UMD_TARGET=bootstrap -> dist/this.gui.bootstrap.umd.js
           entry:
             umdTarget === 'bootstrap'
-              ? resolve(__dirname, 'src/runtime/bootstrap-umd.ts')
-              : resolve(__dirname, 'index.ts'),
+              ? resolve(dirname, 'src/runtime/bootstrap-umd.ts')
+              : resolve(dirname, 'index.ts'),
           name: 'GUI',
           fileName: (format) => {
             if (format === 'umd') {
@@ -82,11 +82,11 @@ export default defineConfig({
         }
       : {
           entry: {
-            index: resolve(__dirname, 'index.ts'),
-            atoms: resolve(__dirname, 'src/gui/Atoms/atoms.ts'),
-            molecules: resolve(__dirname, 'src/gui/Molecules/molecules.ts'),
-            compounds: resolve(__dirname, 'src/gui/Compounds/compounds.ts'),
-            components: resolve(__dirname, 'src/gui/Compounds/compounds.ts'), //deprecated
+            index: resolve(dirname, 'index.ts'),
+            atoms: resolve(dirname, 'src/gui/Atoms/atoms.ts'),
+            molecules: resolve(dirname, 'src/gui/Molecules/molecules.ts'),
+            compounds: resolve(dirname, 'src/gui/Compounds/compounds.ts'),
+            components: resolve(dirname, 'src/gui/Compounds/compounds.ts'), //deprecated
           },
           name: 'GUI',
           fileName: (format, entryName) => {
@@ -197,8 +197,8 @@ export default defineConfig({
   optimizeDeps: isStorybook ? {} : {
     include: ['@uiw/react-md-editor', '@uiw/react-markdown-preview']
   },
-  root: isDemo ? resolve(__dirname, 'demo') : '.',
-  publicDir: isDemo ? resolve(__dirname, 'demo/public') : 'public',
+  root: isDemo ? resolve(dirname, 'demo') : '.',
+  publicDir: isDemo ? resolve(dirname, 'demo/public') : 'public',
   server: isDemo ? {
     open: true
   } : false,
@@ -227,7 +227,7 @@ export default defineConfig({
   }
 });
 
-const CLI_DIST_PATH = resolve(__dirname, 'dist/bin/cli.js');
+const CLI_DIST_PATH = resolve(dirname, 'dist/bin/cli.js');
 
 async function ensureNodeShebang(filePath) {
   const contents = await fsp.readFile(filePath, 'utf8');

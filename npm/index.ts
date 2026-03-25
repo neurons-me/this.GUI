@@ -81,6 +81,7 @@ export {
 // NOTE: We still import concrete modules (not barrels) to preserve tree-shaking.
 import ThemeComponent from '@/gui/Theme/Theme';
 import { GuiRegistry as RegistryEntries } from '@/Registry';
+import { atoms as AtomsBundle } from '@/gui/Atoms';
 import Box from '@/gui/Atoms/Box/Box';
 import Button from '@/gui/Atoms/Button/Button';
 import Checkbox from '@/gui/Atoms/Checkbox/Checkbox';
@@ -100,6 +101,7 @@ import HighLightsDrawer from '@/gui/widgets/HighLighter/HighLightsDrawer';
 import CodeBlock from '@/gui/Molecules/CodeBlock/CodeBlock';
 import Dialog from '@/gui/Molecules/Dialog/Dialog';
 import { Hero } from '@/gui/Molecules/Hero/Hero';
+import MoleculesBundle from '@/gui/Molecules';
 import Modal from '@/gui/Molecules/Modal/Modal';
 import Page from '@/gui/Molecules/Page/Page';
 import { ThemesCatalog } from '@/gui/Theme';
@@ -107,25 +109,12 @@ import GUITools, {
   guiToolsElements,
   guiToolsLeftSidebarConfig,
 } from '@/gui/Molecules/menus/GUI-Tools/GUI-Tools';
+import CompoundsBundle from '@/gui/Compounds';
 import Cleaker from '@/gui/All.This/Cleaker/Cleaker';
 
-export const Atoms = {
-  Box,
-  Button,
-  Checkbox,
-  Link,
-  Paper,
-  TextField,
-  Typography,
-} as const;
+export const Atoms = AtomsBundle;
 
-export const Molecules = {
-  Dialog,
-  Hero,
-  Modal,
-  Page,
-  CodeBlock,
-} as const;
+export const Molecules = MoleculesBundle;
 
 export const Widgets = {
   FaceRecognition,
@@ -135,8 +124,7 @@ export const Widgets = {
 } as const;
 
 export const Compounds = {
-  AllThis,
-  Cleaker,
+  ...CompoundsBundle,
   Icon,
   DomIcon,
   ThemeModeToggle,

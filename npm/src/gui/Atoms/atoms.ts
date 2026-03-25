@@ -25,6 +25,9 @@ export type { BoxProps } from './Box/Box';
 import Avatar, { type AvatarProps } from './Avatar/Avatar';
 export { default as Avatar } from './Avatar/Avatar';
 export type { AvatarProps } from './Avatar/Avatar';
+import Badge, { type BadgeProps } from './Badge/Badge';
+export { default as Badge } from './Badge/Badge';
+export type { BadgeProps } from './Badge/Badge';
 // Checkbox is not polymorphic so we wrap it with forwardRef
 import Checkbox, { type CheckboxProps } from './Checkbox/Checkbox';
 export { default as Checkbox } from './Checkbox/Checkbox';
@@ -33,6 +36,21 @@ export type { CheckboxProps } from './Checkbox/Checkbox';
 import Button from './Button/Button';
 export { default as Button } from './Button/Button';
 export type { GuiButtonProps as ButtonProps } from './Button/Button';
+import Card, { type CardProps } from './Card/Card';
+export { default as Card } from './Card/Card';
+export type { CardProps } from './Card/Card';
+import CardActions, { type CardActionsProps } from './Card/CardActions/CardActions';
+export { default as CardActions } from './Card/CardActions/CardActions';
+export type { CardActionsProps } from './Card/CardActions/CardActions';
+import CardContent, { type CardContentProps } from './Card/CardContent/CardContent';
+export { default as CardContent } from './Card/CardContent/CardContent';
+export type { CardContentProps } from './Card/CardContent/CardContent';
+import CardHeader, { type CardHeaderProps } from './Card/CardHeader/CardHeader';
+export { default as CardHeader } from './Card/CardHeader/CardHeader';
+export type { CardHeaderProps } from './Card/CardHeader/CardHeader';
+import Chip, { type ChipProps } from './Chip/Chip';
+export { default as Chip } from './Chip/Chip';
+export type { ChipProps } from './Chip/Chip';
 // Grid is polymorphic so we re-export it directly
 import Grid from '../Molecules/Grid/Grid';
 export { default as Grid } from '../Molecules/Grid/Grid';
@@ -57,6 +75,9 @@ export type { DrawerProps } from '../Molecules/Drawer/Drawer';
 import Link from './Link/Link';
 export { default as Link } from './Link/Link';
 export type { LinkProps } from './Link/Link';
+import Input, { type InputProps } from './Input/Input';
+export { default as Input } from './Input/Input';
+export type { InputProps } from './Input/Input';
 // Menu and related are polymorphic so we re-export them directly
 import Menu, { type MenuProps } from '../Molecules/Menu/Menu';
 export { default as Menu } from '../Molecules/Menu/Menu';
@@ -68,6 +89,9 @@ export type { MenuItemProps } from '../Molecules/Menu/MenuItem/MenuItem';
 import Paper, { type PaperProps } from './Paper/Paper';
 export { default as Paper } from './Paper/Paper';
 export type { PaperProps } from './Paper/Paper';
+import Progress, { type ProgressProps } from './Progress/Progress';
+export { default as Progress } from './Progress/Progress';
+export type { ProgressProps } from './Progress/Progress';
 // TextField is not polymorphic so we wrap it with forwardRef
 import TextField, { type TextFieldProps } from './TextField/TextField';
 export { default as TextField } from './TextField/TextField';
@@ -80,6 +104,12 @@ export type { StackProps } from '../Molecules/Stack/Stack';
 import Switch, { type SwitchProps } from './Switch/Switch';
 export { default as Switch } from './Switch/Switch';
 export type { SwitchProps } from './Switch/Switch';
+import Slider, { type SliderProps } from './Slider/Slider';
+export { default as Slider } from './Slider/Slider';
+export type { SliderProps } from './Slider/Slider';
+import Surface, { type SurfaceProps } from './Surface/Surface';
+export { default as Surface } from './Surface/Surface';
+export type { SurfaceProps } from './Surface/Surface';
 // Tables
 import Table from '../Molecules/Table/Table';
 export { default as Table } from '../Molecules/Table/Table';
@@ -125,8 +155,10 @@ export type GuiSx = SxProps<Theme>;
  */
 export const atoms = {
   Box,
+  Badge,
   Typography,
   TextField,
+  Input,
   Link,
   Stack,
   Divider,
@@ -138,7 +170,15 @@ export const atoms = {
   Drawer,
   Collapse,
   Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Chip,
   Grid,
+  Progress,
+  Slider,
+  Surface,
   Tooltip,
   Checkbox,
   Switch,
