@@ -10,9 +10,7 @@ The system is built on a simple but powerful premise: aligning three things that
 2.  **Structure in Space (Matrix)**: The spatial relationship between those things.
 3.  **Rendering (UI)**: The projection of that meaning and space.
 
-Most systems follow a path of `data → components → layout → hacks → UI`.
-
-This architecture follows a more direct path: `meaning → space → projection`.
+This architecture follows a direct path: `meaning → space → projection`.
 
 ```jsx
 <Namespace>        // Meaning
