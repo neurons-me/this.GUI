@@ -15,7 +15,13 @@
  *  5) named exports
  *  6) type exports
  *  7) default export
- */
+ * 
+Atoms:
+“I can do X”
+Molecules:
+“Use these atoms to achieve Y”
+
+Configurations emerge from constraints.*/
 
 // Components
 import Dialog from './Dialog/Dialog';

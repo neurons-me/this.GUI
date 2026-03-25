@@ -576,13 +576,13 @@
 <header>
   <div class="wrap">
     <h1>Manifest Debugger</h1>
-    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><a class="filter-pill err" data-k="errors" href="#filter-errors">6/64 prop type errors</a><a class="filter-pill info" data-k="infos" href="#filter-infos">52/64 infos</a><span class="filter-pill ok" aria-disabled="true">191 stories ok</span><a class="filter-pill ok" data-k="docs" href="#filter-docs">6 docs ok</a></div>
+    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><a class="filter-pill err" data-k="errors" href="#filter-errors">5/64 prop type errors</a><a class="filter-pill info" data-k="infos" href="#filter-infos">52/64 infos</a><span class="filter-pill ok" aria-disabled="true">191 stories ok</span><a class="filter-pill ok" data-k="docs" href="#filter-docs">6 docs ok</a></div>
   </div>
 </header>
 <main>
   <div class="wrap">
     <div class="note info" style="margin-bottom: 16px;">
-            <strong>Tip:</strong> You are using <code>react-docgen</code> (the default). Generation took <strong>1.2s</strong>. For higher quality prop types, consider switching to <code>react-docgen-typescript</code> in your <code>main.ts</code>:
+            <strong>Tip:</strong> You are using <code>react-docgen</code> (the default). Generation took <strong>1.4s</strong>. For higher quality prop types, consider switching to <code>react-docgen-typescript</code> in your <code>main.ts</code>:
             <pre><code>typescript: {
   reactDocgen: 'react-docgen-typescript',
 }</code></pre>
@@ -846,7 +846,7 @@ variant?: union</code></pre>
         
       </div>
     </div>
-    <div class="meta" title="./src/gui/Atoms/Bar/Bar.stories.tsx">atoms-bars · ./src/gui/Atoms/Bar/Bar.stories.tsx</div>
+    <div class="meta" title="./src/gui/Atoms/AppBar/AppBar.stories.tsx">atoms-bars · ./src/gui/Atoms/AppBar/AppBar.stories.tsx</div>
     
     
     
@@ -876,7 +876,7 @@ variant?: union</code></pre>
               <span class="ex-name">Prop types <small>(react-docgen)</small></span>
               <span class="badge ok">5 prop types</span>
             </div>
-            <pre><code>Component: src/gui/Atoms/Bar/Bar.tsx::default</code></pre>
+            <pre><code>Component: src/gui/Atoms/AppBar/AppBar.tsx::default</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>/**
  * Optional data-testid for testing
@@ -1091,7 +1091,7 @@ variant?: &#39;mui&#39; | &#39;glass&#39;</code></pre>
               <span class="ex-name">Prop types <small>(react-docgen)</small></span>
               <span class="badge ok">5 prop types</span>
             </div>
-            <pre><code>Component: src/gui/Atoms/Bar/Bar.tsx::default</code></pre>
+            <pre><code>Component: src/gui/Atoms/AppBar/AppBar.tsx::default</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>/**
  * Optional data-testid for testing
@@ -5006,7 +5006,7 @@ variant?: &#39;compact&#39; | &#39;modal&#39; = &#39;compact&#39;</code></pre>
 </article>
 <article
   class="card 
-  has-error 
+  no-error 
   has-info 
   no-story-error
   no-doc-error"
@@ -5014,9 +5014,9 @@ variant?: &#39;compact&#39; | &#39;modal&#39; = &#39;compact&#39;</code></pre>
   aria-label="Icon">
   <div class="head">
     <div class="title">
-      <h2><span class="status-dot dot-err"></span> Icon</h2>
+      <h2><span class="status-dot dot-ok"></span> Icon</h2>
       <div class="badges">
-        <label for="c-26-atoms-icon-err" class="badge err as-toggle">prop type error</label>
+        <label for="c-26-atoms-icon-props" class="badge ok as-toggle">7 prop types</label>
         <label for="c-26-atoms-icon-info" class="badge info as-toggle">1 info</label>
         <label for="c-26-atoms-icon-stories" class="badge ok as-toggle">5 stories</label>
         
@@ -5029,97 +5029,14 @@ variant?: &#39;compact&#39; | &#39;modal&#39; = &#39;compact&#39;</code></pre>
   </div>
 
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
-  <input id="c-26-atoms-icon-err" class="tg tg-err" type="checkbox" hidden />
+  
   <input id="c-26-atoms-icon-info" class="tg tg-info" type="checkbox" hidden />
   <input id="c-26-atoms-icon-stories" class="tg tg-stories" type="checkbox" hidden />
   
-  
+  <input id="c-26-atoms-icon-props" class="tg tg-props" type="checkbox" hidden />
 
   <div class="panels">
     
-        <div class="panel panel-err">
-          
-    <div class="note err">
-      <div class="note-title">Prop type error</div>
-      <div class="note-body"><pre><code>File: /Users/suign/Desktop/Neuroverse/neurons.me/this/GUI/npm/src/gui/Atoms/Icon/Icon.tsx
-Error:
-No suitable component definition found.
-You can debug your component file in this playground: https://react-docgen.dev/playground
-Code:
-import * as React from &#39;react&#39;;
-import clsx from &#39;clsx&#39;;
-import * as LucideIcons from &#39;lucide-react&#39;;
-import type { LucideProps } from &#39;lucide-react&#39;;
-import * as MuiIcons from &#39;@mui/icons-material&#39;;
-import &#39;material-symbols&#39;;
-
-export type IconProps = React.HTMLAttributes&lt;HTMLSpanElement&gt; &amp; {
-  name: string; // &#39;home&#39;, &#39;lucide:Menu&#39;, &#39;mui:Favorite&#39;
-  fontSize?: number | string;
-  iconColor?: string;
-  weight?: number;
-  fill?: number;
-  grade?: number;
-  opticalSize?: number;
-};
-
-type IconRegistry = Record&lt;string, (name: string, props: any) =&gt; React.ReactNode&gt;;
-
-const DEFAULT_ICON_REGISTRY: IconRegistry = {
-  lucide: (name, props) =&gt; {
-    const LucideIcon = (LucideIcons as any)[name];
-    // Forward lucide-specific props, filter others.
-    const { size, color, strokeWidth } = props;
-    const lucideProps: LucideProps = { size, color, strokeWidth };
-    return LucideIcon ? &lt;LucideIcon {...lucideProps} /&gt; : null;
-  },
-  mui: (name, props) =&gt; {
-    const MuiIcon = (MuiIcons as any)[name];
-    // Forward MUI-specific props like sx, filter others.
-    const { sx, fontSize, iconColor, style, ...rest } = props;
-    const muiSx = { fontSize, color: iconColor, ...style, ...sx };
-    return MuiIcon ? &lt;MuiIcon sx={muiSx} {...rest} /&gt; : null;
-  },
-  material: (name, props) =&gt; {
-    const { fill, weight, grade, opticalSize, className, style, iconColor, fontSize, ...rest } = props;
-    const variationSettings = `&quot;FILL&quot; ${fill ?? 0}, &quot;wght&quot; ${weight ?? 400}, &quot;GRAD&quot; ${grade ?? 0}, &quot;opsz&quot; ${opticalSize ?? 24}`;
-    return (
-      &lt;span
-        {...rest}
-        className={clsx(&#39;material-symbols-rounded&#39;, className)}
-        style={{ fontVariationSettings: variationSettings, fontSize, color: iconColor, ...style }}
-      &gt;
-        {name}
-      &lt;/span&gt;
-    );
-  },
-};
-
-export default function Icon({
-  name,
-  fontSize,
-  iconColor,
-  weight = 400,
-  fill = 0,
-  grade = 0,
-  opticalSize = 24,
-  className,
-  style,
-  ...rest
-}: IconProps) {
-  const [prefix, iconKey] = name.includes(&#39;:&#39;) ? name.split(&#39;:&#39;) : [&#39;material&#39;, name];
-
-  const resolver = DEFAULT_ICON_REGISTRY[prefix];
-
-  if (!resolver) return null;
-
-  // Pass all original props down to the specific resolver.
-  // The resolver is responsible for picking the props it cares about.
-  return resolver(iconKey, { name, fontSize, iconColor, weight, fill, grade, opticalSize, className, style, ...rest });
-}
-</code></pre></div>
-    </div>
-        </div>
     
         <div class="panel panel-info">
           
@@ -5129,6 +5046,29 @@ export default function Icon({
     </div>
         </div>
     
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">7 prop types</span>
+            </div>
+            <pre><code>Component: src/gui/Atoms/Icon/Icon.tsx::default</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>fill?: number = 0
+
+fontSize?: number | string
+
+grade?: number = 0
+
+iconColor?: string
+
+name: string
+
+opticalSize?: number = 24
+
+weight?: number = 400</code></pre>
+          </div>
+        </div>
     
         <div class="panel panel-stories">
           
@@ -12848,476 +12788,6 @@ Ideal for inspecting changes in real-time while modifying theme-related code or 
         </section>
       
         <section class="group">
-          <input id="no-component-definition-found-toggle" class="group-tg" type="checkbox" hidden />
-          <label for="no-component-definition-found-toggle" class="group-header">
-            <span class="caret">▸</span>
-            <span class="group-title">No component definition found</span>
-            <span class="group-count">2</span>
-          </label>
-          <div class="group-cards">
-<article
-  class="card 
-  has-error 
-  has-info 
-  no-story-error
-  no-doc-error"
-  role="listitem"
-  aria-label="Icon">
-  <div class="head">
-    <div class="title">
-      <h2><span class="status-dot dot-err"></span> Icon</h2>
-      <div class="badges">
-        <label for="c-error-0-atoms-icon-err" class="badge err as-toggle">prop type error</label>
-        <label for="c-error-0-atoms-icon-info" class="badge info as-toggle">1 info</label>
-        <label for="c-error-0-atoms-icon-stories" class="badge ok as-toggle">5 stories</label>
-        
-      </div>
-    </div>
-    <div class="meta" title="./src/gui/Atoms/Icon/Icon.stories.tsx">atoms-icon · ./src/gui/Atoms/Icon/Icon.stories.tsx</div>
-    
-    
-    
-  </div>
-
-  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
-  <input id="c-error-0-atoms-icon-err" class="tg tg-err" type="checkbox" hidden />
-  <input id="c-error-0-atoms-icon-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-error-0-atoms-icon-stories" class="tg tg-stories" type="checkbox" hidden />
-  
-  
-
-  <div class="panels">
-    
-        <div class="panel panel-err">
-          
-    <div class="note err">
-      <div class="note-title">Prop type error</div>
-      <div class="note-body"><pre><code>File: /Users/suign/Desktop/Neuroverse/neurons.me/this/GUI/npm/src/gui/Atoms/Icon/Icon.tsx
-Error:
-No suitable component definition found.
-You can debug your component file in this playground: https://react-docgen.dev/playground
-Code:
-import * as React from &#39;react&#39;;
-import clsx from &#39;clsx&#39;;
-import * as LucideIcons from &#39;lucide-react&#39;;
-import type { LucideProps } from &#39;lucide-react&#39;;
-import * as MuiIcons from &#39;@mui/icons-material&#39;;
-import &#39;material-symbols&#39;;
-
-export type IconProps = React.HTMLAttributes&lt;HTMLSpanElement&gt; &amp; {
-  name: string; // &#39;home&#39;, &#39;lucide:Menu&#39;, &#39;mui:Favorite&#39;
-  fontSize?: number | string;
-  iconColor?: string;
-  weight?: number;
-  fill?: number;
-  grade?: number;
-  opticalSize?: number;
-};
-
-type IconRegistry = Record&lt;string, (name: string, props: any) =&gt; React.ReactNode&gt;;
-
-const DEFAULT_ICON_REGISTRY: IconRegistry = {
-  lucide: (name, props) =&gt; {
-    const LucideIcon = (LucideIcons as any)[name];
-    // Forward lucide-specific props, filter others.
-    const { size, color, strokeWidth } = props;
-    const lucideProps: LucideProps = { size, color, strokeWidth };
-    return LucideIcon ? &lt;LucideIcon {...lucideProps} /&gt; : null;
-  },
-  mui: (name, props) =&gt; {
-    const MuiIcon = (MuiIcons as any)[name];
-    // Forward MUI-specific props like sx, filter others.
-    const { sx, fontSize, iconColor, style, ...rest } = props;
-    const muiSx = { fontSize, color: iconColor, ...style, ...sx };
-    return MuiIcon ? &lt;MuiIcon sx={muiSx} {...rest} /&gt; : null;
-  },
-  material: (name, props) =&gt; {
-    const { fill, weight, grade, opticalSize, className, style, iconColor, fontSize, ...rest } = props;
-    const variationSettings = `&quot;FILL&quot; ${fill ?? 0}, &quot;wght&quot; ${weight ?? 400}, &quot;GRAD&quot; ${grade ?? 0}, &quot;opsz&quot; ${opticalSize ?? 24}`;
-    return (
-      &lt;span
-        {...rest}
-        className={clsx(&#39;material-symbols-rounded&#39;, className)}
-        style={{ fontVariationSettings: variationSettings, fontSize, color: iconColor, ...style }}
-      &gt;
-        {name}
-      &lt;/span&gt;
-    );
-  },
-};
-
-export default function Icon({
-  name,
-  fontSize,
-  iconColor,
-  weight = 400,
-  fill = 0,
-  grade = 0,
-  opticalSize = 24,
-  className,
-  style,
-  ...rest
-}: IconProps) {
-  const [prefix, iconKey] = name.includes(&#39;:&#39;) ? name.split(&#39;:&#39;) : [&#39;material&#39;, name];
-
-  const resolver = DEFAULT_ICON_REGISTRY[prefix];
-
-  if (!resolver) return null;
-
-  // Pass all original props down to the specific resolver.
-  // The resolver is responsible for picking the props it cares about.
-  return resolver(iconKey, { name, fontSize, iconColor, weight, fill, grade, opticalSize, className, style, ...rest });
-}
-</code></pre></div>
-    </div>
-        </div>
-    
-        <div class="panel panel-info">
-          
-    <div class="note info">
-      <div class="note-title">Info</div>
-      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
-    </div>
-        </div>
-    
-    
-        <div class="panel panel-stories">
-          
-          
-          
-          <div class="note ok">
-                <div class="row">
-                  <span class="ex-name">Imports</span>
-                </div>
-                <pre><code>import { Icon, Theme } from "this.gui";</code></pre>
-              </div>
-          
-          
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">Playground</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const Playground = () =&gt; &lt;div
-    style={{
-      padding: 24,
-      display: &#39;flex&#39;,
-      alignItems: &#39;center&#39;,
-      gap: 12,
-    }}&gt;
-    &lt;Icon
-        name=&quot;palette&quot;
-        iconColor=&quot;var(--gui-primary)&quot;
-        fontSize={28}
-        weight={500}
-        fill={0}
-        grade={0}
-        opticalSize={24} /&gt;
-    &lt;div
-        style={{ opacity: 0.8, fontFamily: &#39;ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace&#39; }}&gt;
-        &lt;div&gt;name: {String(args.name)}&lt;/div&gt;
-        &lt;div&gt;fill: {String(args.fill)}· wght: {String(args.weight)}· GRAD: {String(args.grade)}· opsz:{&#39; &#39;}
-            {String(args.opticalSize)}
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;;</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">Registry Showcase</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const AllRegistries = () =&gt; (
-  &lt;div style={{ padding: 24, display: &#39;flex&#39;, flexDirection: &#39;column&#39;, gap: 28, alignItems: &#39;start&#39; }}&gt;
-    &lt;div style={{ display: &#39;flex&#39;, gap: 16, alignItems: &#39;center&#39; }}&gt;
-      &lt;Icon name=&quot;home&quot; fontSize={34} iconColor=&quot;var(--gui-primary)&quot; /&gt;
-      &lt;Icon name=&quot;lucide:Home&quot; fontSize={34} iconColor=&quot;var(--gui-secondary)&quot; /&gt;
-      &lt;Icon name=&quot;mui:Home&quot; fontSize={34} iconColor=&quot;var(--gui-success)&quot; /&gt;
-    &lt;/div&gt;
-    &lt;div style={{ display: &#39;flex&#39;, gap: 16, alignItems: &#39;center&#39; }}&gt;
-      &lt;Icon name=&quot;settings&quot; fontSize={34} iconColor=&quot;var(--gui-primary)&quot; /&gt;
-      &lt;Icon name=&quot;lucide:Settings&quot; fontSize={34} iconColor=&quot;var(--gui-secondary)&quot; /&gt;
-      &lt;Icon name=&quot;mui:Settings&quot; fontSize={34} iconColor=&quot;var(--gui-success)&quot; /&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-);</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">Common Icons</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const CommonIcons = () =&gt; {
-  const items = [
-    &#39;home&#39;,
-    &#39;palette&#39;,
-    &#39;settings&#39;,
-    &#39;menu&#39;,
-    &#39;search&#39;,
-    &#39;favorite&#39;,
-    &#39;account_circle&#39;,
-    &#39;dashboard&#39;,
-    &#39;folder&#39;,
-    &#39;insights&#39;,
-    &#39;logout&#39;,
-    &#39;help&#39;,
-    &#39;code&#39;,
-    &#39;menu_book&#39;,
-  ];
-
-  return (
-    &lt;div style={{ padding: 24 }}&gt;
-      &lt;div
-        style={{
-          display: &#39;grid&#39;,
-          gridTemplateColumns: &#39;repeat(auto-fit, minmax(140px, 1fr))&#39;,
-          gap: 14,
-        }}
-      &gt;
-        {items.map((name) =&gt; (
-          &lt;div
-            key={name}
-            style={{
-              display: &#39;flex&#39;,
-              alignItems: &#39;center&#39;,
-              gap: 10,
-              padding: 12,
-              borderRadius: 12,
-              border: &#39;1px solid rgba(255,255,255,0.10)&#39;,
-              background: &#39;rgba(255,255,255,0.03)&#39;,
-            }}
-          &gt;
-            &lt;Icon name={name} fontSize={26} iconColor=&quot;var(--gui-primary)&quot; /&gt;
-            &lt;span style={{ fontSize: 12, opacity: 0.85 }}&gt;{name}&lt;/span&gt;
-          &lt;/div&gt;
-        ))}
-      &lt;/div&gt;
-    &lt;/div&gt;
-  );
-};</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">Filled Vs Outlined</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const FilledVsOutlined = () =&gt; (
-  &lt;div style={{ padding: 24, display: &#39;flex&#39;, gap: 28, alignItems: &#39;center&#39; }}&gt;
-    &lt;div style={{ display: &#39;flex&#39;, gap: 10, alignItems: &#39;center&#39; }}&gt;
-      &lt;Icon name=&quot;palette&quot; fill={0} weight={500} fontSize={34} iconColor=&quot;var(--gui-primary)&quot; /&gt;
-      &lt;span style={{ fontSize: 12, opacity: 0.85 }}&gt;fill=0&lt;/span&gt;
-    &lt;/div&gt;
-    &lt;div style={{ display: &#39;flex&#39;, gap: 10, alignItems: &#39;center&#39; }}&gt;
-      &lt;Icon name=&quot;palette&quot; fill={1} weight={500} fontSize={34} iconColor=&quot;var(--gui-primary)&quot; /&gt;
-      &lt;span style={{ fontSize: 12, opacity: 0.85 }}&gt;fill=1&lt;/span&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-);</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">Weight Ramp</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const WeightRamp = () =&gt; {
-  const weights = [100, 200, 300, 400, 500, 600, 700];
-  return (
-    &lt;div style={{ padding: 24, display: &#39;flex&#39;, flexWrap: &#39;wrap&#39;, gap: 16, alignItems: &#39;center&#39; }}&gt;
-      {weights.map((w) =&gt; (
-        &lt;div key={w} style={{ display: &#39;flex&#39;, alignItems: &#39;center&#39;, gap: 10 }}&gt;
-          &lt;Icon name=&quot;settings&quot; weight={w} fill={0} fontSize={30} iconColor=&quot;var(--gui-secondary)&quot; /&gt;
-          &lt;span style={{ fontSize: 12, opacity: 0.85 }}&gt;wght={w}&lt;/span&gt;
-        &lt;/div&gt;
-      ))}
-    &lt;/div&gt;
-  );
-};</code></pre>
-            </div>
-        </div>
-    
-  </div>
-</article>
-<article
-  class="card 
-  has-error 
-  has-info 
-  no-story-error
-  no-doc-error"
-  role="listitem"
-  aria-label="Stack">
-  <div class="head">
-    <div class="title">
-      <h2><span class="status-dot dot-err"></span> Stack</h2>
-      <div class="badges">
-        <label for="c-error-1-molecules-stack-err" class="badge err as-toggle">prop type error</label>
-        <label for="c-error-1-molecules-stack-info" class="badge info as-toggle">1 info</label>
-        <label for="c-error-1-molecules-stack-stories" class="badge ok as-toggle">6 stories</label>
-        
-      </div>
-    </div>
-    <div class="meta" title="./src/gui/Molecules/Stack/Stack.stories.tsx">molecules-stack · ./src/gui/Molecules/Stack/Stack.stories.tsx</div>
-    
-    
-    
-  </div>
-
-  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
-  <input id="c-error-1-molecules-stack-err" class="tg tg-err" type="checkbox" hidden />
-  <input id="c-error-1-molecules-stack-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-error-1-molecules-stack-stories" class="tg tg-stories" type="checkbox" hidden />
-  
-  
-
-  <div class="panels">
-    
-        <div class="panel panel-err">
-          
-    <div class="note err">
-      <div class="note-title">Prop type error</div>
-      <div class="note-body"><pre><code>File: /Users/suign/Desktop/Neuroverse/neurons.me/this/GUI/npm/src/gui/Molecules/Stack/Stack.tsx
-Error:
-No suitable component definition found.
-You can debug your component file in this playground: https://react-docgen.dev/playground
-Code:
-/*
- * This.GUI — Stack (polymorphic)
- * Thin wrapper that preserves MUI&#39;s own typing and `component` API.
- * Examples:
- *   &lt;Stack direction=&quot;row&quot; spacing={2} /&gt;
- *   &lt;Stack component=&quot;section&quot; gap={1} /&gt;
- *   &lt;Stack component=&quot;a&quot; href=&quot;/docs&quot; /&gt;
- */
-import MuiStack from &#39;@mui/material/Stack&#39;;
-import * as React from &#39;react&#39;;
-// Re-export using MUI&#39;s own component type to keep polymorphism and full typing
-const Stack = MuiStack;
-export type StackProps = React.ComponentProps&lt;typeof Stack&gt;;
-(Stack as any).displayName = &#39;Gui.Stack&#39;;
-export default Stack;
-</code></pre></div>
-    </div>
-        </div>
-    
-        <div class="panel panel-info">
-          
-    <div class="note info">
-      <div class="note-title">Info</div>
-      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
-    </div>
-        </div>
-    
-    
-        <div class="panel panel-stories">
-          
-          
-          
-          <div class="note ok">
-                <div class="row">
-                  <span class="ex-name">Imports</span>
-                </div>
-                <pre><code>import { Link, Paper, Stack } from "this.gui";</code></pre>
-              </div>
-          
-          
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">Playground</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const Playground = () =&gt; &lt;Stack direction=&quot;row&quot; spacing={1.5} useFlexGap sx={{}}&gt;
-    &lt;Item&gt;A&lt;/Item&gt;
-    &lt;Item&gt;B&lt;/Item&gt;
-    &lt;Item&gt;C&lt;/Item&gt;
-&lt;/Stack&gt;;</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">Row Spacing</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const RowSpacing = () =&gt; &lt;Stack direction=&quot;row&quot; spacing={2} useFlexGap sx={{}}&gt;
-    &lt;Item&gt;A&lt;/Item&gt;
-    &lt;Item&gt;B&lt;/Item&gt;
-    &lt;Item&gt;C&lt;/Item&gt;
-&lt;/Stack&gt;;</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">Column Spacing</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const ColumnSpacing = () =&gt; &lt;Stack direction=&quot;column&quot; spacing={1.5} useFlexGap sx={{ width: 240 }}&gt;
-    &lt;Item&gt;A&lt;/Item&gt;
-    &lt;Item&gt;B&lt;/Item&gt;
-    &lt;Item&gt;C&lt;/Item&gt;
-&lt;/Stack&gt;;</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">With Divider</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const WithDivider = () =&gt; &lt;Stack
-    useFlexGap
-    sx={{}}
-    direction=&quot;row&quot;
-    spacing={2}
-    divider={&lt;span style={{ opacity: 0.5 }}&gt;|&lt;/span&gt;}&gt;
-    &lt;Item&gt;A&lt;/Item&gt;
-    &lt;Item&gt;B&lt;/Item&gt;
-    &lt;Item&gt;C&lt;/Item&gt;
-&lt;/Stack&gt;;</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">Polymorphic Section</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const PolymorphicSection = () =&gt; &lt;Stack direction=&quot;row&quot; useFlexGap sx={{}} component=&quot;section&quot; spacing={1.5}&gt;
-    &lt;Item&gt;Section A&lt;/Item&gt;
-    &lt;Item&gt;Section B&lt;/Item&gt;
-&lt;/Stack&gt;;</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">Polymorphic Router Link</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const PolymorphicRouterLink = () =&gt; &lt;Link to=&quot;/docs&quot; style={{ textDecoration: &#39;none&#39; }}&gt;
-    &lt;Stack direction=&quot;row&quot; useFlexGap sx={{}} spacing={1.5}&gt;
-        &lt;Item&gt;Go to Docs&lt;/Item&gt;
-    &lt;/Stack&gt;
-&lt;/Link&gt;;</code></pre>
-            </div>
-        </div>
-    
-  </div>
-</article></div>
-        </section>
-      
-        <section class="group">
           <input id="no-component-found-toggle" class="group-tg" type="checkbox" hidden />
           <label for="no-component-found-toggle" class="group-header">
             <span class="caret">▸</span>
@@ -13575,6 +13045,184 @@ export const Default: StoryFn = () =&gt; &lt;PaletteViewer /&gt;;</code></pre></
               
               
               <pre><code>const Default = () =&gt; &lt;PaletteViewer /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article></div>
+        </section>
+      
+        <section class="group">
+          <input id="no-component-definition-found-toggle" class="group-tg" type="checkbox" hidden />
+          <label for="no-component-definition-found-toggle" class="group-header">
+            <span class="caret">▸</span>
+            <span class="group-title">No component definition found</span>
+            <span class="group-count">1</span>
+          </label>
+          <div class="group-cards">
+<article
+  class="card 
+  has-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Stack">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-err"></span> Stack</h2>
+      <div class="badges">
+        <label for="c-error-0-molecules-stack-err" class="badge err as-toggle">prop type error</label>
+        <label for="c-error-0-molecules-stack-info" class="badge info as-toggle">1 info</label>
+        <label for="c-error-0-molecules-stack-stories" class="badge ok as-toggle">6 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/gui/Molecules/Stack/Stack.stories.tsx">molecules-stack · ./src/gui/Molecules/Stack/Stack.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  <input id="c-error-0-molecules-stack-err" class="tg tg-err" type="checkbox" hidden />
+  <input id="c-error-0-molecules-stack-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-error-0-molecules-stack-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  
+
+  <div class="panels">
+    
+        <div class="panel panel-err">
+          
+    <div class="note err">
+      <div class="note-title">Prop type error</div>
+      <div class="note-body"><pre><code>File: /Users/suign/Desktop/Neuroverse/neurons.me/this/GUI/npm/src/gui/Molecules/Stack/Stack.tsx
+Error:
+No suitable component definition found.
+You can debug your component file in this playground: https://react-docgen.dev/playground
+Code:
+/*
+ * This.GUI — Stack (polymorphic)
+ * Thin wrapper that preserves MUI&#39;s own typing and `component` API.
+ * Examples:
+ *   &lt;Stack direction=&quot;row&quot; spacing={2} /&gt;
+ *   &lt;Stack component=&quot;section&quot; gap={1} /&gt;
+ *   &lt;Stack component=&quot;a&quot; href=&quot;/docs&quot; /&gt;
+ */
+import MuiStack from &#39;@mui/material/Stack&#39;;
+import * as React from &#39;react&#39;;
+// Re-export using MUI&#39;s own component type to keep polymorphism and full typing
+const Stack = MuiStack;
+export type StackProps = React.ComponentProps&lt;typeof Stack&gt;;
+(Stack as any).displayName = &#39;Gui.Stack&#39;;
+export default Stack;
+</code></pre></div>
+    </div>
+        </div>
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Link, Paper, Stack } from "this.gui";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Playground</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Playground = () =&gt; &lt;Stack direction=&quot;row&quot; spacing={1.5} useFlexGap sx={{}}&gt;
+    &lt;Item&gt;A&lt;/Item&gt;
+    &lt;Item&gt;B&lt;/Item&gt;
+    &lt;Item&gt;C&lt;/Item&gt;
+&lt;/Stack&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Row Spacing</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const RowSpacing = () =&gt; &lt;Stack direction=&quot;row&quot; spacing={2} useFlexGap sx={{}}&gt;
+    &lt;Item&gt;A&lt;/Item&gt;
+    &lt;Item&gt;B&lt;/Item&gt;
+    &lt;Item&gt;C&lt;/Item&gt;
+&lt;/Stack&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Column Spacing</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const ColumnSpacing = () =&gt; &lt;Stack direction=&quot;column&quot; spacing={1.5} useFlexGap sx={{ width: 240 }}&gt;
+    &lt;Item&gt;A&lt;/Item&gt;
+    &lt;Item&gt;B&lt;/Item&gt;
+    &lt;Item&gt;C&lt;/Item&gt;
+&lt;/Stack&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">With Divider</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const WithDivider = () =&gt; &lt;Stack
+    useFlexGap
+    sx={{}}
+    direction=&quot;row&quot;
+    spacing={2}
+    divider={&lt;span style={{ opacity: 0.5 }}&gt;|&lt;/span&gt;}&gt;
+    &lt;Item&gt;A&lt;/Item&gt;
+    &lt;Item&gt;B&lt;/Item&gt;
+    &lt;Item&gt;C&lt;/Item&gt;
+&lt;/Stack&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Polymorphic Section</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const PolymorphicSection = () =&gt; &lt;Stack direction=&quot;row&quot; useFlexGap sx={{}} component=&quot;section&quot; spacing={1.5}&gt;
+    &lt;Item&gt;Section A&lt;/Item&gt;
+    &lt;Item&gt;Section B&lt;/Item&gt;
+&lt;/Stack&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Polymorphic Router Link</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const PolymorphicRouterLink = () =&gt; &lt;Link to=&quot;/docs&quot; style={{ textDecoration: &#39;none&#39; }}&gt;
+    &lt;Stack direction=&quot;row&quot; useFlexGap sx={{}} spacing={1.5}&gt;
+        &lt;Item&gt;Go to Docs&lt;/Item&gt;
+    &lt;/Stack&gt;
+&lt;/Link&gt;;</code></pre>
             </div>
         </div>
     

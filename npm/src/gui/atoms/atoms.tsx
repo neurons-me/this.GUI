@@ -15,8 +15,8 @@
 
 import type { SxProps, Theme } from '@mui/material/styles';
 // Bars are not polymorphic so we wrap it with forwardRef
-import Bar from './Bar/Bar';
-export { default as Bar } from './Bar/Bar';
+import Bar from './AppBar/AppBar';
+export { default as Bar } from './AppBar/AppBar';
 // Box is polymorphic so we re-export it directly
 import Box, { type BoxProps } from './Box/Box';
 export { default as Box } from './Box/Box';

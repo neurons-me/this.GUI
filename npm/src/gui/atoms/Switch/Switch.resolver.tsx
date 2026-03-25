@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Switch from './Switch';
 import { FormControlLabel } from '@mui/material';
+import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
 import { SxProps, Theme } from '@mui/material/styles';
 import { ensureNodeId } from '@/gui/utils/nodeID';
 
@@ -23,13 +24,19 @@ import { ensureNodeId } from '@/gui/utils/nodeID';
  *  }
  */
 
-export type SwitchResolverProps = React.ComponentProps<typeof Switch> & {
-  /** Optional text/element label to render alongside the switch */
-  label?: React.ReactNode;
-  /** Label position when `label` is provided */
-  labelPlacement?: 'end' | 'start' | 'top' | 'bottom';
-  sx?: SxProps<Theme>;
-  guiId?: string;
+export type SwitchSpec = {
+  type: 'Switch';
+  props?: React.ComponentProps<typeof Switch> & {
+    /** Optional text/element label to render alongside the switch */
+    label?: React.ReactNode;
+    /** Label position when `label` is provided */
+    labelPlacement?: 'end' | 'start' | 'top' | 'bottom';
+    sx?: SxProps<Theme>;
+    id?: string; // Allow passing id directly
+
+    // Arbitrary passthrough
+    [key: string]: any;
+  };
 };
 
 // =========================================
@@ -54,22 +61,26 @@ export const meta = {
   },
 } as const;
 
-export default function resolveSwitch(props: SwitchResolverProps) {
-  const { label, labelPlacement = 'end', guiId, sx, ...rest } = props || ({} as SwitchResolverProps);
+const SwitchResolver: RegistryEntry = {
+  type: 'Switch',
+  resolve(spec: SwitchSpec, _ctx?: ResolveCtx) {
+    const { label, labelPlacement = 'end', id, sx, ...rest } = spec.props ?? {};
+    const nodeId = ensureNodeId('Switch', id);
 
-  const nodeId = ensureNodeId('Switch', guiId);
+    const control = <Switch id={nodeId} sx={sx} {...rest} />;
 
-  const control = <Switch id={nodeId} sx={sx} {...rest} />;
+    if (label != null) {
+      return (
+        <FormControlLabel
+          control={control}
+          label={label}
+          labelPlacement={labelPlacement}
+        />
+      );
+    }
 
-  if (label != null) {
-    return (
-      <FormControlLabel
-        control={control}
-        label={label}
-        labelPlacement={labelPlacement}
-      />
-    );
-  }
+    return control;
+  },
+};
 
-  return control;
-}
+export default SwitchResolver;
