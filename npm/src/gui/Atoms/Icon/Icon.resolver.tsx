@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
-import Icon from '@/gui/Theme/Icon/Icon';
+import Icon from './Icon';
 
 export type IconSpec = {
   type: 'Icon';

@@ -73,10 +73,10 @@ export default defineConfig({
       : {
           entry: {
             index: resolve(__dirname, 'index.ts'),
-            atoms: resolve(__dirname, 'src/gui/atoms/index.ts'),
-            molecules: resolve(__dirname, 'src/gui/molecules/index.ts'),
-            compounds: resolve(__dirname, 'src/gui/compounds/index.ts'),
-            components: resolve(__dirname, 'src/gui/compounds/index.ts'),
+            atoms: resolve(__dirname, 'src/gui/Atoms/index.ts'),
+            molecules: resolve(__dirname, 'src/gui/Molecules/index.ts'),
+            compounds: resolve(__dirname, 'src/gui/Compounds/index.ts'),
+            components: resolve(__dirname, 'src/gui/Compounds/index.ts'), //deprecated
           },
           name: 'GUI',
           fileName: (format, entryName) => {
