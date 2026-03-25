@@ -16,7 +16,7 @@ export type LeftSidebarActionProps = {
   active?: boolean;
   className?: string;
   style?: React.CSSProperties;
-  resolver?: string; // optional resolver name or JS function string
+  resolver?: string; // legacy global action name; inline JS execution is disabled for CSP safety
   view: LeftSidebarMode; // added line
 };
 
@@ -33,19 +33,19 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
   resolver,
   view,
 }) => {
+  const legacyResolver = typeof resolver === 'string' ? resolver.trim() : '';
   const handleClick =
     onClick ||
     (typeof action !== 'undefined'
       ? () => {
           resolveLeftSidebarAction({ action });
         }
-      : resolver
+      : legacyResolver
         ? () => {
-            try {
-              new Function(resolver)();
-            } catch (e) {
-              console.error(e);
-            }
+            console.warn(
+              '[LeftSidebarAction] `resolver` string execution is disabled. Use `action` with a global function name or pass `onClick`.'
+            );
+            resolveLeftSidebarAction({ action: legacyResolver });
           }
         : undefined);
 
