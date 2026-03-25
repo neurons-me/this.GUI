@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Bar, Toolbar, Typography, Box, Button } from '@/gui/atoms';
+import { Bar, Toolbar, Typography, Box, Button, Stack } from '@/gui/Atoms';
 
 // ======================= Meta =======================
 const meta: Meta<typeof Bar> = {
-  title: 'Atoms/Containers/Bar',
+  title: 'Atoms/Bars',
   component: Bar,
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-        <div style={{ padding: 0, minHeight: 240 }}>
-          <Story />
-        </div>
+      <div style={{ padding: 0, width: '100%', minHeight: 240 }}>
+        <Story />
+      </div>
     ),
   ],
   parameters: {
@@ -102,150 +102,46 @@ This GUI's **resolver** lets you describe an app bar via a config object. Exampl
     // component polymorphism is supported but not exposed as a control in SB
     component: { table: { disable: true } },
   },
-  args: {
-    variant: undefined,
-    position: 'fixed',
-    elevation: 0,
-    enableColorOnDark: false,
-    sx: { borderBottom: '1px solid', borderColor: 'divider' },
-  },
 };
 export default meta;
 
 type Story = StoryObj<typeof Bar>;
 
 // ======================= Stories =======================
-export const Playground: Story = {
-  render: (args) => (
-    <Bar {...args}>
-      <Toolbar variant="dense">
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>Playground</Typography>
-        <Button variant="text">Action</Button>
-      </Toolbar>
-    </Bar>
-  ),
-};
-
-export const Positions: Story = {
-  render: (args) => (
-    <div style={{ display: 'grid', gap: 16 }}>
-      {(['fixed', 'absolute', 'sticky', 'static', 'relative'] as const).map((pos) => (
-        <Bar key={pos} {...args} position={pos}>
-          <Toolbar variant="dense">
-            <Typography variant="subtitle1" sx={{ flexGrow: 1 }}>
-              position = {pos}
-            </Typography>
-            <Button variant="text">Action</Button>
-          </Toolbar>
-        </Bar>
-      ))}
-    </div>
-  ),
-};
-
-export const Colors: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: `
-The Bar component only supports the following values for the \`color\` prop: \`default\`, \`inherit\`, \`primary\`, \`secondary\`, and \`transparent\`.
-For colors like \`success\`, \`info\`, \`warning\`, and \`error\`, use the \`sx\` prop with \`bgcolor\` instead, e.g. \`sx={{ bgcolor: 'success.main' }}\`.
-        `,
-      },
-    },
-  },
-  args: { position: 'static' },
-  render: (args) => (
-    <div style={{ display: 'grid', gap: 12 }}>
-      {(['default', 'inherit', 'primary', 'secondary', 'transparent'] as const).map((c) => (
-        <Bar key={c} {...args} color={c}>
-          <Toolbar variant="dense">
-            <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>color = {c}</Typography>
-            <Button variant="text">Action</Button>
-          </Toolbar>
-        </Bar>
-      ))}
-    </div>
-  ),
-};
-
-/**
- * The Bar component does not support 'success', 'info', 'warning', or 'error' as values for the color prop.
- * To use these colors, apply them via the sx prop with bgcolor instead.
- */
-export const CustomColorsWithSx: Story = {
-  args: { position: 'static' },
-  render: (args) => (
-    <div style={{ display: 'grid', gap: 12 }}>
-      {(['success.main', 'info.main', 'warning.main', 'error.main'] as const).map((bgcolor) => (
-        <Bar key={bgcolor} {...args} sx={{ bgcolor }}>
-          <Toolbar variant="dense">
-            <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>{`sx.bgcolor = ${bgcolor}`}</Typography>
-            <Button variant="text">Action</Button>
-          </Toolbar>
-        </Bar>
-      ))}
-    </div>
-  ),
-};
-
-export const WithToolbar: Story = {
-  args: { position: 'static', color: 'default' },
-  render: (args) => (
-    <Bar {...args} sx={{ px: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
-      <Toolbar variant="dense">
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>With Toolbar</Typography>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button variant="text">Login</Button>
-          <Button variant="contained" color="primary">Sign up</Button>
-        </Box>
-      </Toolbar>
-    </Bar>
-  ),
-};
-
-export const Elevation: Story = {
-  args: { position: 'static', color: 'default' },
-  render: (args) => (
-    <div style={{ display: 'grid', gap: 12 }}>
-      {[0, 1, 2, 4, 8].map((elev) => (
-        <Bar key={elev} {...args} elevation={elev}>
-          <Toolbar variant="dense">
-            <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>elevation = {elev}</Typography>
-            <Button variant="text">Action</Button>
-          </Toolbar>
-        </Bar>
-      ))}
-    </div>
-  ),
-};
-
-export const EnableColorOnDark: Story = {
-  args: { position: 'static', color: 'primary', enableColorOnDark: true },
-  render: (args) => (
-    <Bar {...args}>
-      <Toolbar variant="dense">
-        <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>enableColorOnDark = true</Typography>
-        <Button variant="text">Action</Button>
-      </Toolbar>
-    </Bar>
-  ),
-};
-
 export const Variants: Story = {
-  args: { position: 'static', color: 'default', variant: undefined },
-  render: (args) => (
-    <div style={{ display: 'grid', gap: 12 }}>
-      {(['mui', 'glass'] as const).map((v) => (
-        <Bar key={v} {...args} variant={v as any}>
-          <Toolbar variant="dense">
-            <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-              variant = {v}
-            </Typography>
-            <Button variant="text">Action</Button>
-          </Toolbar>
-        </Bar>
-      ))}
-    </div>
+  render: () => (
+    <Stack spacing={2} sx={{ width: '100%' }}>
+      <Typography variant="h6">Default Bar</Typography>
+      <Bar position="static" color="default" sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>Default</Typography>
+          <Button color="inherit">Action</Button>
+        </Toolbar>
+      </Bar>
+
+      <Typography variant="h6" sx={{ mt: 2 }}>Primary Color</Typography>
+      <Bar position="static" color="primary">
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>Primary</Typography>
+          <Button color="inherit">Action</Button>
+        </Toolbar>
+      </Bar>
+
+      <Typography variant="h6" sx={{ mt: 2 }}>Glass Variant</Typography>
+      <Bar position="static" variant={'glass' as any}>
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>Glass</Typography>
+          <Button color="inherit">Action</Button>
+        </Toolbar>
+      </Bar>
+
+      <Typography variant="h6" sx={{ mt: 2 }}>With Elevation</Typography>
+      <Bar position="static" color="default" elevation={4}>
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>Elevation</Typography>
+          <Button color="inherit">Action</Button>
+        </Toolbar>
+      </Bar>
+    </Stack>
   ),
 };

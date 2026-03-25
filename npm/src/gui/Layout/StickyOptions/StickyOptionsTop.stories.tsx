@@ -1,9 +1,9 @@
 import React from 'react';
-import Box from '@/gui/atoms/Box/Box';
-import Paper from '@/gui/atoms/Paper/Paper';
-import Typography from '@/gui/atoms/Typography/Typography';
-import StickyOptionsTop from './StickyOptionsTop';
-import Icon from '@/gui/Theme/Icon/Icon'; 
+import Box from '@/gui/Atoms/Box/Box';
+import Paper from '@/gui/Atoms/Paper/Paper';
+import Typography from '@/gui/Atoms/Typography/Typography';
+import StickyOptionsTop from './StickyOptionsTop'; 
+import Icon from '@/gui/Atoms/Icon/Icon';
 import NavBar from '../TopBar/TopBar';
 import type { Meta, StoryObj } from '@storybook/react';
 

@@ -1,18 +1,21 @@
 //src/gui/atoms/Button/Button.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
-import { Button, Link } from '@/gui/atoms';
-import Icon from '@/gui/Theme/Icon/Icon';
+import { Button, Link, Stack, Typography } from '@/gui/Atoms';
+import Icon from '@/gui/Atoms/Icon/Icon';
+import Theme from '@/gui/Theme/Theme';
 
 // ======================= Meta =======================
 const meta: Meta<typeof Button> = {
-  title: 'Atoms/Forms & Inputs/Button',
+  title: 'Atoms/Buttons',
   component: Button,
   tags: ['autodocs'],
   decorators: [
-    (Story) => (
-        <div style={{ padding: 16, minHeight: 240 }}>
+    (Story: any) => (
+      <Theme>
+        <div style={{ padding: 16, minHeight: 240, width: '100%' }}>
           <Story />
         </div>
+      </Theme>
     ),
   ],
   parameters: {
@@ -130,91 +133,56 @@ Another example with a RouterLink:
   },
 };
 export default meta;
-
 type Story = StoryObj<typeof Button>;
-
 // ======================= Stories =======================
-export const Playground: Story = {};
+export const Playground: Story = {
+  name: 'Playground',
+};
 
 export const Variants: Story = {
-  args: { color: 'primary' },
-  render: (args) => (
-    <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-      <Button {...args} variant="contained">Contained</Button>
-      <Button {...args} variant="outlined">Outlined</Button>
-      <Button {...args} variant="text">Text</Button>
-    </div>
+  name: 'Variants Showcase',
+  render: () => (
+    <Stack spacing={4} sx={{ width: '100%' }}>
+      <Typography variant="h6">Variants</Typography>
+      <Stack direction="row" spacing={2} alignItems="center">
+        <Button variant="contained" color="primary">Contained</Button>
+        <Button variant="outlined" color="primary">Outlined</Button>
+        <Button variant="text" color="primary">Text</Button>
+      </Stack>
+      <Typography variant="h6">Colors</Typography>
+      <Stack direction="row" spacing={2} alignItems="center" sx={{ flexWrap: 'wrap' }}>
+        <Button variant="contained" color="primary">Primary</Button>
+        <Button variant="contained" color="secondary">Secondary</Button>
+        <Button variant="contained" color="success">Success</Button>
+        <Button variant="contained" color="error">Error</Button>
+      </Stack>
+      <Typography variant="h6">Sizes</Typography>
+      <Stack direction="row" spacing={2} alignItems="center">
+        <Button variant="contained" color="primary" size="small">Small</Button>
+        <Button variant="contained" color="primary" size="medium">Medium</Button>
+        <Button variant="contained" color="primary" size="large">Large</Button>
+      </Stack>
+      <Typography variant="h6">With Icons</Typography>
+      <Stack direction="row" spacing={2} alignItems="center">
+        <Button variant="contained" color="secondary" startIcon={<Icon name="Send" />}>
+          Start Icon
+        </Button>
+        <Button variant="outlined" color="secondary" endIcon={<Icon name="bolt" />}>
+          End Icon
+        </Button>
+      </Stack>
+
+      <Typography variant="h6">Polymorphic Link</Typography>
+      <Stack direction="row" spacing={2} alignItems="center">
+        <Button component={Link} to="/docs" color="primary">
+          Router Link
+        </Button>
+      </Stack>
+
+      <Typography variant="h6">Disabled State</Typography>
+      <Stack direction="row" spacing={2} alignItems="center">
+        <Button variant="contained" disabled>Disabled</Button>
+      </Stack>
+    </Stack>
   ),
-};
-
-export const Colors: Story = {
-  args: { variant: 'contained' },
-  render: (args) => {
-    const colors: Array<'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'error'> =
-      ['primary', 'secondary', 'success', 'info', 'warning', 'error'];
-    return (
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        {colors.map((c) => (
-          <Button key={c} {...args} color={c}>
-            {c[0].toUpperCase() + c.slice(1)}
-          </Button>
-        ))}
-      </div>
-    );
-  },
-};
-
-export const Sizes: Story = {
-  args: { color: 'primary', variant: 'contained' },
-  render: (args) => (
-    <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-      <Button {...args} size="small">Small</Button>
-      <Button {...args} size="medium">Medium</Button>
-      <Button {...args} size="large">Large</Button>
-    </div>
-  ),
-};
-
-export const WithIcons: Story = {
-  args: {
-    variant: 'contained',
-    color: 'secondary',
-    startIcon: <Icon name="Power" />,
-    endIcon: <Icon name="bolt" />,
-    children: 'Send',
-  },
-};
-
-export const PolymorphicAnchor: Story = {
-  args: {
-    variant: 'text',
-    color: 'primary',
-    children: 'Go to neurons.me',
-  },
-  render: (args) => (
-    <Button component="a" href="https://neurons.me">
-      {args.children}
-    </Button>
-  ),
-};
-
-export const PolymorphicRouterLink: Story = {
-  args: {
-    variant: 'text',
-    color: 'primary',
-    children: 'Go to /docs',
-  },
-  render: (args) => (
-    <Button component={Link} to="/docs">
-      {args.children}
-    </Button>
-  ),
-};
-
-export const Disabled: Story = {
-  args: { variant: 'contained', color: 'primary', disabled: true, children: 'Disabled' },
-};
-
-export const FullWidth: Story = {
-  args: { variant: 'contained', color: 'primary', fullWidth: true, children: 'Full Width' },
 };

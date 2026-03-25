@@ -2,6 +2,7 @@
 import React from 'react'
 import 'material-symbols/rounded.css';
 import { DocsContainer } from '@storybook/addon-docs/blocks';
+import { create } from 'storybook/theming';
 import { MemoryRouter } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
 import { Theme } from '../src/gui/Theme/Theme';
@@ -66,6 +67,34 @@ const mdxComponents = {
     );
   },
 };
+
+const docsTheme = create({
+  base: 'dark',
+  brandTitle: '.GUI',
+  brandUrl: 'https://neurons-me.github.io/GUI',
+  brandImage: 'GUI.png',
+  appBg: 'var(--mui-palette-background-default, #121214)',
+  appContentBg: 'var(--mui-palette-background-default, #121214)',
+  appPreviewBg: 'var(--docs-surface, #191b20)',
+  appBorderColor: 'var(--mui-palette-divider, rgba(255,255,255,0.14))',
+  appBorderRadius: 16,
+  colorPrimary: 'var(--mui-palette-primary-main, #90caf9)',
+  colorSecondary: 'var(--mui-palette-secondary-main, #6FC7B5)',
+  textColor: 'var(--mui-palette-text-primary, #ffffff)',
+  textInverseColor: 'var(--mui-palette-primary-contrastText, #111111)',
+  textMutedColor: 'var(--mui-palette-text-secondary, rgba(255,255,255,0.75))',
+  barTextColor: 'var(--mui-palette-text-secondary, rgba(255,255,255,0.75))',
+  barSelectedColor: 'var(--mui-palette-primary-main, #90caf9)',
+  barBg: 'var(--docs-surface, #191b20)',
+  inputBg: 'var(--docs-surface, #191b20)',
+  inputBorder: 'var(--mui-palette-divider, rgba(255,255,255,0.14))',
+  inputTextColor: 'var(--mui-palette-text-primary, #ffffff)',
+  fontBase:
+    'var(--mui-typography-fontFamily, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif)',
+  fontCode:
+    'ui-monospace, SFMono-Regular, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace',
+});
+
 export const decorators = [
   (Story: React.FC) => (
     <Theme initialThemeId="neurons.me" initialMode="light">
@@ -83,20 +112,33 @@ export const parameters = {
   backgrounds: { disable: true },
   docs: {
     page: null,
+    theme: docsTheme,
     container: ({ children, context }: any) => (
       <Theme initialThemeId="neurons.me" initialMode="light">
-        <div
-          style={{
+        <Box
+          sx={{
             minHeight: '100vh',
-            background: 'var(--mui-palette-background-default, #0f1115)',
-            color: 'var(--mui-palette-text-primary, #e6e6e6)',
-            fontFamily: 'var(--mui-typography-fontFamily, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif)',
+            bgcolor: 'background.default',
+            color: 'text.primary',
+            fontFamily:
+              'var(--mui-typography-fontFamily, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif)',
           }}
         >
-          <MDXProvider components={mdxComponents}>
-            <DocsContainer context={context}>{children}</DocsContainer>
-          </MDXProvider>
-        </div>
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: 1440,
+              mx: 'auto',
+              px: { xs: 2, md: 3 },
+              py: { xs: 3, md: 4 },
+              boxSizing: 'border-box',
+            }}
+          >
+            <MDXProvider components={mdxComponents}>
+              <DocsContainer context={context}>{children}</DocsContainer>
+            </MDXProvider>
+          </Box>
+        </Box>
       </Theme>
     ),
   },

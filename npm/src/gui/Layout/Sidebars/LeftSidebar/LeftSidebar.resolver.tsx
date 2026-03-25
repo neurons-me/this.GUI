@@ -2,7 +2,7 @@
 import * as React from 'react';
 import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
 import LeftSidebar from './LeftSidebar';
-import Icon from '@/gui/Theme/Icon/Icon';
+import Icon from '@/gui/Atoms/Icon/Icon';
 /**
  * Declarative spec for LeftSidebar.
  * This is the JSON-friendly shape your renderer/LLM can emit.

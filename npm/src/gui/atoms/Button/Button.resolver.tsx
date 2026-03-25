@@ -1,7 +1,7 @@
 // src/gui/atoms/Button/Button.resolver.tsx
 import * as React from 'react';
 import Button from './Button';
-import Icon from '@/gui/Theme/Icon/Icon';
+import Icon from '@/gui/Atoms/Icon/Icon';
 import Link from '../Link/Link';
 import type { RegistryEntry } from '@/Registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';

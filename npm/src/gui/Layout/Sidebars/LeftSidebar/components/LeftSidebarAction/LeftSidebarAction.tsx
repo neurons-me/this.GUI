@@ -1,9 +1,9 @@
 import React from 'react';
 import clsx from 'clsx';
-import { Box, Typography, Tooltip } from '@/gui/atoms';
-import Icon from '@/gui/Theme/Icon/Icon';
+import { Box, Typography, Tooltip } from '@/gui/Atoms';
+import Icon from '@/gui/Atoms/Icon/Icon';
 import type { LeftSidebarMode } from '../../LeftSidebar.types';
-import { useLeftSidebar } from '@/gui/hooks';
+import { useLeftSidebar } from '@/gui/Hooks';
 import resolveLeftSidebarAction from './LeftSidebarAction.resolver';
 
 export type LeftSidebarActionProps = {

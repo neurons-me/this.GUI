@@ -1,7 +1,7 @@
 // src/gui/atoms/ListItemIcon/ListItemIcon.resolver.tsx
 import * as React from 'react';
 import ListItemIcon from './ListItemIcon';
-import Icon from '@/gui/Theme/Icon/Icon';
+import Icon from '@/gui/Atoms/Icon/Icon';
 import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { ensureNodeId } from '@/gui/utils/nodeID';

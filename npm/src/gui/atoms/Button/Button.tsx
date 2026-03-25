@@ -5,7 +5,7 @@ import MuiButton from '@mui/material/Button';
 import type { OverridableComponent } from '@mui/material/OverridableComponent';
 import type { ButtonTypeMap } from '@mui/material/Button';
 import type { ButtonProps as MuiButtonProps } from '@mui/material/Button';
-import Icon from '@/gui/Theme/Icon/Icon';
+import Icon from '@/gui/Atoms/Icon/Icon';
 /**
  * Button (This.GUI primitive)
  * ----------------------------------------

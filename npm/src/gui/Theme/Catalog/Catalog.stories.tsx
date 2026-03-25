@@ -30,8 +30,8 @@ const meta: Meta<typeof ThemesCatalog> = {
           style={{
             minHeight: '100vh',
             display: 'flex',
-            flexDirection: 'column',
-            background: 'var(--gui-bg, #0b0f14)',
+            flexDirection: 'column', // Use theme variable for background
+            background: 'var(--mui-palette-background-default, #0b0f14)',
           }}
         >
           {/* TopBar */}
@@ -43,10 +43,11 @@ const meta: Meta<typeof ThemesCatalog> = {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '10px 12px',
-              borderBottom: '1px solid rgba(255,255,255,0.08)',
+              padding: '10px 12px', // Use theme variables
+              borderBottom: '1px solid var(--mui-palette-divider, rgba(255,255,255,0.08))',
               backdropFilter: 'blur(10px)',
-              background: 'rgba(10, 14, 20, 0.72)',
+              background: 'color-mix(in srgb, var(--mui-palette-background-paper, #0a0e14) 72%, transparent)',
+              color: 'var(--mui-palette-text-primary, #fff)',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -66,9 +67,9 @@ const meta: Meta<typeof ThemesCatalog> = {
                 width: 36,
                 height: 36,
                 borderRadius: 10,
-                border: '1px solid rgba(255,255,255,0.12)',
-                background: 'rgba(255,255,255,0.04)',
-                color: 'rgba(255,255,255,0.92)',
+                border: '1px solid var(--mui-palette-divider, rgba(255,255,255,0.12))',
+                background: 'var(--mui-palette-action-hover, rgba(255,255,255,0.04))',
+                color: 'var(--mui-palette-text-primary, rgba(255,255,255,0.92))',
                 cursor: 'pointer',
               }}
             >
@@ -91,46 +92,115 @@ const meta: Meta<typeof ThemesCatalog> = {
     docs: {
       description: {
         component: `
-The **ThemesCatalog** component renders a visual interface to explore and select available GUI themes for your application.
+The **ThemesCatalog** is a *state-aware theme selector* that renders available GUI themes as interactive cards.
 
-It fetches all theme configurations from the \`getGuiThemes()\` utility and displays them using a visually rich card interface. You can toggle between **grid** and **list** layouts and switch between light/dark previews per theme. When a theme is selected, it is applied globally via the context provided by \`useThemeContext()\`.
-
----
-## Features
-- Visual layout for theme browsing.
-- Switch between **grid** and **list** variants.
-- Light/dark mode preview toggle.
-- Swatches preview for key palette values: \`primary\`, \`secondary\`, and \`background\`.
-- Selectable themes that apply across your GUI via context.
-- JSON-compatible configuration for declarative UI building.
-- Fully themed with **This.GUI** primitives.
+Think of it as a **visual controller over your ThemeContext**, not just a list.
 
 ---
-## Props
-- \`variant?: 'grid' | 'list'\` — controls layout format. Defaults to \`grid\`.
-- \`sx?: SxProps\` — accepts style overrides via MUI’s \`sx\` prop.
-- \`hideDescription?: boolean\` — hide the theme description text inside each card.
-- \`hideAuthor?: boolean\` — hide the theme author text inside each card.
-- \`minimal?: boolean\` — compact view (equivalent to \`hideAuthor\` + \`hideDescription\`).
+## Mental Model
+
+The component operates across **three layers**:
+
+1. **Data Layer**
+   - Sources themes from \`getGuiThemes()\`
+   - Each theme is a \`ThemeManifest\`
+
+2. **State Layer**
+   - Reads and writes from \`useThemeContext()\`
+   - Controls:
+     - \`themeId\`
+     - \`mode\` (light / dark)
+
+3. **Presentation Layer**
+   - Renders themes as cards
+   - Supports layout + density variants
 
 ---
-## Basic Usage
+## Variants (Layout vs Density)
+
+### Layout Variants
+- \`grid\` → visual gallery (default)
+- \`list\` → vertical stack
+
+### Density Modifiers
+These *override layout behavior*:
+
+- \`minimal\`
+  - Hides author + description
+  - Keeps structure
+
+- \`compact\`
+  - Forces grid layout
+  - Reduces spacing, typography, and sizing
+  - Optimized for dashboards / side panels
+
+👉 **Important:**
+\`compact\` is not just visual — it *changes layout rules*.
+
+---
+## Behavior
+
+- Selecting a card:
+  - Updates global theme (\`themeId\`)
+  - Syncs mode (light/dark)
+  - Stores history via \`meRef\`
+
+- Active theme:
+  - Highlighted
+  - Shows mode toggle (unless disabled)
+
+---
+## Usage
+
+### Basic
 ~~~jsx
-<ThemesCatalog variant="grid" />
+<ThemesCatalog />
+~~~
+
+### List View
+~~~jsx
 <ThemesCatalog variant="list" />
 ~~~
 
-## Declarative JSON Configuration
+### Minimal UI
+~~~jsx
+<ThemesCatalog minimal />
+~~~
+
+### Compact (Dense Grid)
+~~~jsx
+<ThemesCatalog compact />
+~~~
+
+---
+## Declarative
 ~~~json
 {
   "type": "ThemesCatalog",
   "props": {
-    "variant": "list"
+    "compact": true
   }
 }
 ~~~
 
-This component is ideal for apps that allow users to select their visual theme from a set of predefined theme options. It pairs well with This.GUI’s theme management context and is useful in both developer-facing configuration tools and end-user customization interfaces.
+---
+## When to use
+
+- Theme pickers (user settings)
+- Design system previews
+- Admin / dev tools
+- Embedded UI panels
+
+---
+## Key Insight
+
+This is not just a component.
+
+It is a **bridge between theme data, global state, and UI representation**.
+
+That’s why it supports both:
+- Imperative React usage
+- Declarative GUI specs
         `,
       },
     },
@@ -191,6 +261,29 @@ export const Minimal: Story = {
   name: 'Minimal (no author, no description)',
   args: {
     variant: 'grid',
+    minimal: true,
+  },
+};
+
+export const Compact: Story = {
+  name: 'Compact (dense grid)',
+  args: {
+    compact: true,
+  },
+};
+
+export const CompactMinimal: Story = {
+  name: 'Compact + Minimal',
+  args: {
+    compact: true,
+    minimal: true,
+  },
+};
+
+export const ListMinimal: Story = {
+  name: 'List + Minimal',
+  args: {
+    variant: 'list',
     minimal: true,
   },
 };

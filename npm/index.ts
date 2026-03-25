@@ -27,8 +27,8 @@
 //   // import { Hero } from 'this.gui/molecules';
 //
 // Notes:
-// - Keep the *root exports* SMALL (core primitives + a few top-level components) to protect tree-shaking.
-// - Large aggregates (GUI.atoms / GUI.molecules / GUI.Components) should live in a separate
+// - Keep the *root exports* SMALL (core primitives + a few top-level compounds) to protect tree-shaking.
+// - Large aggregates (GUI.atoms / GUI.molecules / GUI.Compounds) should live in a separate
 //   entrypoint (e.g. `this.gui/full`) if you decide to offer that convenience.
 // =========================================
 // 1) constants
@@ -39,35 +39,40 @@ export type { Theme as MuiTheme } from '@mui/material/styles';
 // 2) named exports (tree-shakeable)
 // Core primitives (ergonomic root exports)
 // NOTE: Export from concrete modules (not barrels) to preserve tree-shaking and avoid pulling in the whole atoms surface.
-export { default as Box } from '@/gui/atoms/Box/Box';
-export { default as Button } from '@/gui/atoms/Button/Button';
-export { default as Checkbox } from '@/gui/atoms/Checkbox/Checkbox';
-export { default as Link } from '@/gui/atoms/Link/Link';
-export { default as Paper } from '@/gui/atoms/Paper/Paper';
-export { default as TextField } from '@/gui/atoms/TextField/TextField';
-export { default as Typography } from '@/gui/atoms/Typography/Typography';
+export { default as Box } from '@/gui/Atoms/Box/Box';
+export { default as Button } from '@/gui/Atoms/Button/Button';
+export { default as Checkbox } from '@/gui/Atoms/Checkbox/Checkbox';
+export { default as Link } from '@/gui/Atoms/Link/Link';
+export { default as Paper } from '@/gui/Atoms/Paper/Paper';
+export { default as TextField } from '@/gui/Atoms/TextField/TextField';
+export { default as Typography } from '@/gui/Atoms/Typography/Typography';
 // Friendly aliases (optional ergonomics)
-export { default as Text } from '@/gui/atoms/Typography/Typography';
-export { default as Input } from '@/gui/atoms/TextField/TextField';
+export { default as Text } from '@/gui/Atoms/Typography/Typography';
+export { default as Input } from '@/gui/Atoms/TextField/TextField';
 export { default as Theme } from '@/gui/Theme/Theme';
 export { default as Layout } from '@/gui/Layout/Layout';
-export { default as Icon } from '@/gui/Theme/Icon/Icon';
-export { default as DomIcon } from '@/gui/Theme/Icon/DomIcon';
+export { default as Icon } from '@/gui/Atoms/Icon/Icon';
+export { default as DomIcon } from '@/gui/Atoms/Icon/DomIcon';
 export { default as ThemeModeToggle } from '@/gui/Theme/ToggleMode/ToggleMode';
-export { default as Blockchain } from '@/gui/components/Blockchain/blockchain';
-export { default as Cleaker } from '@/gui/Session/cleaker/Cleaker';
+export { default as AllThis } from '@/gui/All.This/All.This';
+export { default as ModuleCard } from '@/gui/All.This/src/ModuleCard/ModuleCard';
+export { default as ModuleRow } from '@/gui/All.This/src/ModuleRow/ModuleRow';
+export { default as ModulesGrid } from '@/gui/All.This/src/ModulesGrid/ModulesGrid';
+export { default as ModulesList } from '@/gui/All.This/src/ModulesList/ModulesList';
+export { default as Blockchain } from '@/gui/Compounds/Blockchain/blockchain';
+export { default as Cleaker } from '@/gui/All.This/Cleaker/Cleaker';
 export { default as FaceRecognition } from '@/gui/widgets/FaceRecognition/FaceRecognition';
-export { default as Monad } from '@/gui/Session/monad.ai/monad.ai';
-export type { MonadProps } from '@/gui/Session/monad.ai/monad.ai';
+export { default as Monad } from '@/gui/All.This/monad.ai/monad.ai';
+export type { MonadProps } from '@/gui/All.This/monad.ai/monad.ai';
 export { default as HighLighter } from '@/gui/widgets/HighLighter/HighLighter';
-export { default as CodeBlock } from '@/gui/molecules/CodeBlock/CodeBlock';
-export { default as Modal } from '@/gui/molecules/Modal/Modal';
+export { default as CodeBlock } from '@/gui/Molecules/CodeBlock/CodeBlock';
+export { default as Modal } from '@/gui/Molecules/Modal/Modal';
 export { ThemesCatalog, Catalog } from '@/gui/Theme';
 export {
   default as GUITools,
   guiToolsElements,
   guiToolsLeftSidebarConfig,
-} from '@/gui/molecules/menus/GUI-Tools/GUI-Tools';
+} from '@/gui/Molecules/menus/GUI-Tools/GUI-Tools';
 // 3) runtime aggregates (UMD/global convenience)
 // These are *named exports* so in UMD builds you can do:
 //   window.GUI.mount(...)
@@ -77,33 +82,34 @@ export {
 // NOTE: We still import concrete modules (not barrels) to preserve tree-shaking.
 import ThemeComponent from '@/gui/Theme/Theme';
 import { GuiRegistry as RegistryEntries } from '@/Registry';
-import Box from '@/gui/atoms/Box/Box';
-import Button from '@/gui/atoms/Button/Button';
-import Checkbox from '@/gui/atoms/Checkbox/Checkbox';
-import Link from '@/gui/atoms/Link/Link';
-import Paper from '@/gui/atoms/Paper/Paper';
-import TextField from '@/gui/atoms/TextField/TextField';
-import Typography from '@/gui/atoms/Typography/Typography';
+import Box from '@/gui/Atoms/Box/Box';
+import Button from '@/gui/Atoms/Button/Button';
+import Checkbox from '@/gui/Atoms/Checkbox/Checkbox';
+import Link from '@/gui/Atoms/Link/Link';
+import Paper from '@/gui/Atoms/Paper/Paper';
+import TextField from '@/gui/Atoms/TextField/TextField';
+import Typography from '@/gui/Atoms/Typography/Typography';
 import Layout from '@/gui/Layout/Layout';
-import Icon from '@/gui/Theme/Icon/Icon';
-import DomIcon from '@/gui/Theme/Icon/DomIcon';
+import Icon from '@/gui/Atoms/Icon/Icon';
+import DomIcon from '@/gui/Atoms/Icon/DomIcon';
 import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
-import Blockchain from '@/gui/components/Blockchain/blockchain';
+import AllThis from '@/gui/All.This/All.This';
+import Blockchain from '@/gui/Compounds/Blockchain/blockchain';
 import FaceRecognition from '@/gui/widgets/FaceRecognition/FaceRecognition';
-import Monad from '@/gui/Session/monad.ai/monad.ai';
+import Monad from '@/gui/All.This/monad.ai/monad.ai';
 import HighLighter from '@/gui/widgets/HighLighter/HighLighter';
 import HighLightsDrawer from '@/gui/widgets/HighLighter/HighLightsDrawer';
-import CodeBlock from '@/gui/molecules/CodeBlock/CodeBlock';
-import Dialog from '@/gui/molecules/Dialog/Dialog';
-import { Hero } from '@/gui/molecules/Hero/Hero';
-import Modal from '@/gui/molecules/Modal/Modal';
-import Page from '@/gui/molecules/Page/Page';
+import CodeBlock from '@/gui/Molecules/CodeBlock/CodeBlock';
+import Dialog from '@/gui/Molecules/Dialog/Dialog';
+import { Hero } from '@/gui/Molecules/Hero/Hero';
+import Modal from '@/gui/Molecules/Modal/Modal';
+import Page from '@/gui/Molecules/Page/Page';
 import { ThemesCatalog } from '@/gui/Theme';
 import GUITools, {
   guiToolsElements,
   guiToolsLeftSidebarConfig,
-} from '@/gui/molecules/menus/GUI-Tools/GUI-Tools';
-import Cleaker from '@/gui/Session/cleaker/Cleaker';
+} from '@/gui/Molecules/menus/GUI-Tools/GUI-Tools';
+import Cleaker from '@/gui/All.This/Cleaker/Cleaker';
 
 export const Atoms = {
   Box,
@@ -130,13 +136,17 @@ export const Widgets = {
   Monad,
 } as const;
 
-export const Components = {
+export const Compounds = {
+  AllThis,
   Blockchain,
   Cleaker,
   Icon,
   DomIcon,
   ThemeModeToggle,
 } as const;
+
+// Legacy alias kept so older UMD consumers keep working.
+export const Components = Compounds;
 
 export const ThemeRuntime = {
   Theme: ThemeComponent,
@@ -150,7 +160,9 @@ export const ThemeRuntime = {
 export const atoms = Atoms;
 export const molecules = Molecules;
 export const widgets = Widgets;
-export const components = Components;
+export const compounds = Compounds;
+// Legacy lowercase alias kept for compatibility.
+export const components = compounds;
 export const theme = ThemeRuntime;
 export const Registry = RegistryEntries;
 export const registry = RegistryEntries;

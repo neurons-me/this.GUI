@@ -2,6 +2,17 @@
 <style>
   :root {
     color-scheme: light dark;
+    --docs-surface: color-mix(
+      in srgb,
+      var(--mui-palette-background-default, #121214) 92%,
+      var(--mui-palette-common-white, #ffffff) 8%
+    );
+    --docs-surface-strong: color-mix(
+      in srgb,
+      var(--mui-palette-background-default, #121214) 84%,
+      var(--mui-palette-common-white, #ffffff) 16%
+    );
+    --docs-border: var(--mui-palette-divider, rgba(255, 255, 255, 0.14));
   }
   html,
   body,
@@ -25,17 +36,201 @@
   .sbdocs-wrapper {
     padding: 32px 24px !important;
   }
+  .sbdocs-content {
+    max-width: 1200px !important;
+  }
+  .sbdocs,
+  .sbdocs-wrapper,
+  .sbdocs-content,
+  .sbdocs-content * {
+    box-sizing: border-box;
+  }
+  .sbdocs .sbdocs-title,
+  .sbdocs .sbdocs-subtitle,
+  .sbdocs h1,
+  .sbdocs h2,
+  .sbdocs h3,
+  .sbdocs h4,
+  .sbdocs h5,
+  .sbdocs h6 {
+    color: var(--mui-palette-text-primary, #e6e6e6) !important;
+  }
+  .sbdocs .sbdocs-title {
+    margin-bottom: 1rem !important;
+  }
+  .sbdocs .sbdocs-subtitle,
+  .sbdocs .sbdocs-caption {
+    color: var(--mui-palette-text-secondary, rgba(255,255,255,0.75)) !important;
+  }
   .sbdocs p,
   .sbdocs li,
+  .sbdocs div,
   .sbdocs span,
-  .sbdocs a {
+  .sbdocs a,
+  .sbdocs td,
+  .sbdocs th,
+  .sbdocs label {
     color: var(--mui-palette-text-primary, #e6e6e6) !important;
     opacity: 1 !important;
+  }
+  .sbdocs a {
+    text-decoration-color: color-mix(
+      in srgb,
+      var(--mui-palette-primary-main, #90caf9) 56%,
+      transparent
+    ) !important;
+  }
+  .sbdocs hr {
+    border-color: var(--docs-border) !important;
   }
   .sbdocs code {
     color: var(--mui-palette-text-primary, #e6e6e6) !important;
     background: rgba(255,255,255,0.08) !important;
     border-radius: 6px !important;
     padding: 2px 6px !important;
+  }
+  .sbdocs pre,
+  .sbdocs .docblock-source,
+  .sbdocs .docblock-source pre {
+    background: var(--docs-surface) !important;
+    color: var(--mui-palette-text-primary, #e6e6e6) !important;
+    border-color: var(--docs-border) !important;
+  }
+  .sbdocs .sb-unstyled,
+  .sbdocs .sb-unstyled div,
+  .sbdocs .sb-unstyled span {
+    color: inherit !important;
+  }
+  .sbdocs .docs-story,
+  .sbdocs .sbdocs-preview,
+  .sbdocs .docblock-argstable,
+  .sbdocs table,
+  .sbdocs .os-host,
+  .sbdocs .innerZoomElementWrapper > div {
+    background: transparent !important;
+    border-color: var(--docs-border) !important;
+  }
+  .sbdocs .docs-story,
+  .sbdocs .sbdocs-preview {
+    border-radius: 16px !important;
+    overflow: hidden !important;
+  }
+  .sbdocs .sb-bar {
+    background: var(--docs-surface) !important;
+    border-bottom: 1px solid var(--docs-border) !important;
+    color: var(--mui-palette-text-secondary, rgba(255,255,255,0.75)) !important;
+    box-shadow: none !important;
+  }
+  .sbdocs .sb-bar button,
+  .sbdocs .sb-bar a,
+  .sbdocs .sb-bar svg {
+    color: var(--mui-palette-text-secondary, rgba(255,255,255,0.75)) !important;
+  }
+  .sbdocs .sb-bar button:hover,
+  .sbdocs .sb-bar a:hover {
+    color: var(--mui-palette-text-primary, #e6e6e6) !important;
+    background: color-mix(
+      in srgb,
+      var(--mui-palette-text-primary, #e6e6e6) 8%,
+      transparent
+    ) !important;
+  }
+  .sbdocs .docblock-code-toggle,
+  .sbdocs .docblock-code-toggle span,
+  .sbdocs .docblock-code-toggle svg {
+    color: var(--mui-palette-text-secondary, rgba(255,255,255,0.75)) !important;
+  }
+  .sbdocs .docblock-code-toggle:hover,
+  .sbdocs .docblock-code-toggle:hover span,
+  .sbdocs .docblock-code-toggle:hover svg {
+    color: var(--mui-palette-text-primary, #e6e6e6) !important;
+  }
+  .sbdocs table thead tr,
+  .sbdocs .docblock-argstable-head tr {
+    background: var(--docs-surface) !important;
+  }
+  .sbdocs table tr,
+  .sbdocs table td,
+  .sbdocs table th {
+    border-color: var(--docs-border) !important;
+  }
+  .sbdocs table tbody tr:nth-of-type(odd) {
+    background: color-mix(
+      in srgb,
+      var(--mui-palette-background-default, #121214) 96%,
+      var(--mui-palette-common-white, #ffffff) 4%
+    ) !important;
+  }
+  .sbdocs .docblock-argstable {
+    background: var(--docs-surface) !important;
+    border: 1px solid var(--docs-border) !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+  }
+  .sbdocs .docblock-argstable table,
+  .sbdocs .docblock-argstable thead,
+  .sbdocs .docblock-argstable tbody,
+  .sbdocs .docblock-argstable tr {
+    background: transparent !important;
+  }
+  .sbdocs .docblock-argstable thead th {
+    background: var(--docs-surface-strong) !important;
+    color: var(--mui-palette-text-primary, #e6e6e6) !important;
+    border-bottom: 1px solid var(--docs-border) !important;
+  }
+  .sbdocs .docblock-argstable tbody td {
+    background: var(--docs-surface) !important;
+    color: var(--mui-palette-text-primary, #e6e6e6) !important;
+    border-top: 1px solid var(--docs-border) !important;
+    vertical-align: top !important;
+  }
+  .sbdocs .docblock-argstable tbody td *,
+  .sbdocs .docblock-argstable tbody th *,
+  .sbdocs .docblock-argstable thead th * {
+    color: inherit !important;
+  }
+  .sbdocs .docblock-argstable tbody tr:nth-of-type(odd) td {
+    background: color-mix(
+      in srgb,
+      var(--docs-surface) 94%,
+      var(--mui-palette-common-white, #ffffff) 6%
+    ) !important;
+  }
+  .sbdocs .docblock-argstable code,
+  .sbdocs .docblock-argstable pre,
+  .sbdocs .docblock-argstable [class*='token'],
+  .sbdocs .docblock-argstable [class*='css-'] code {
+    color: var(--mui-palette-text-primary, #e6e6e6) !important;
+    background: color-mix(
+      in srgb,
+      var(--mui-palette-background-default, #121214) 88%,
+      var(--mui-palette-common-white, #ffffff) 12%
+    ) !important;
+    border-color: var(--docs-border) !important;
+  }
+  .sbdocs .docblock-argstable button,
+  .sbdocs .docblock-argstable input,
+  .sbdocs .docblock-argstable select,
+  .sbdocs .docblock-argstable textarea {
+    background: color-mix(
+      in srgb,
+      var(--mui-palette-background-default, #121214) 90%,
+      var(--mui-palette-common-white, #ffffff) 10%
+    ) !important;
+    color: var(--mui-palette-text-primary, #e6e6e6) !important;
+    border: 1px solid var(--docs-border) !important;
+    box-shadow: none !important;
+  }
+  .sbdocs .docblock-argstable button svg,
+  .sbdocs .docblock-argstable button span,
+  .sbdocs .docblock-argstable svg {
+    color: inherit !important;
+    fill: currentColor !important;
+  }
+  .sbdocs button,
+  .sbdocs input,
+  .sbdocs select,
+  .sbdocs textarea {
+    font: inherit !important;
   }
 </style>

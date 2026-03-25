@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box } from '@/gui/atoms';
-import { useInsets, useGuiTheme } from '@/gui/hooks';
+import { Box } from '@/gui/Atoms';
+import { useInsets, useGuiTheme } from '@/gui/Hooks';
 import type { SectionProps } from './Section.types';
 
 const Section: React.FC<SectionProps> = ({

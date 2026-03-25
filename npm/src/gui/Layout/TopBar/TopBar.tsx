@@ -7,7 +7,7 @@ import TopBarMenu from './components/TopBarMenu/TopBarMenu';
 import TopBarAction from './components/TopBarAction/TopBarAction';
 import { AppBar, Toolbar, Typography, Box, Avatar } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import { useGuiTheme, useGuiMediaQuery, useInsets, useUpdateInsets } from '@/gui/hooks';
+import { useGuiTheme, useGuiMediaQuery, useInsets, useUpdateInsets } from '@/gui/Hooks';
 const sxN = (...parts: Array<SxProps<Theme> | undefined>): SxProps<Theme> => (parts.filter(Boolean) as unknown) as SxProps<Theme>;
 const buildCollapsedItems = (elements: TopBarElement[]): TopBarMenuItemProps[] => {
   const items: TopBarMenuItemProps[] = [];

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import CardActions from './CardActions';
-import Button from '@/gui/atoms/Button/Button';
+import Button from '@/gui/Atoms/Button/Button';
 
 const meta: Meta<typeof CardActions> = {
   title: 'Molecules/Cards/Card/CardActions',

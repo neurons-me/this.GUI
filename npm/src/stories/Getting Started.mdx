@@ -1,8 +1,8 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import GettingStartedHero from './Sections/GettingStartedHero';
+import GUIHero from './Sections/GUIHero';
 import FirstGuiPreview from './Sections/FirstGuiPreview';
 import Theme from '@/gui/Theme/Theme';
-import { Box } from '@/gui/atoms';
+import { Box } from '@/gui/Atoms';
 import { QueryExpressionsDemo } from './Router/components/RouterSemanticsDemos';
 
 <Meta title="Getting Started/Quick Start" />
@@ -20,7 +20,7 @@ import { QueryExpressionsDemo } from './Router/components/RouterSemanticsDemos';
       textAlign: 'center',
     }}
   >
-    <GettingStartedHero />
+    <GUIHero />
     <Box
       sx={{
         width: 'min(100%, 720px)',
@@ -42,10 +42,10 @@ import { QueryExpressionsDemo } from './Router/components/RouterSemanticsDemos';
   }}
 >
 
-# Start Here: Runtime, Not Widgets
-
-`this.GUI` is not only a component catalog.  
-It is a declarative runtime with three layers:
+# Start Here: 
+Welcome to .GUI's storybook! 
+Explore the components and tools that make up the .GUI ecosystem, and see how they can help you build powerful generative user interfaces with ease.
+`this.GUI` is a UI framework built around three core concepts:
 
 1. **UI spec (`this.GUI`)**: you describe the screen as data: pages, cards, text, buttons, sidebars, and children.
 2. **Dynamic read/write tokens (`read` / `write`)**: instead of hardcoding everything, you can say "read this value" or "run this mutation" in a serializable way.  
@@ -59,20 +59,15 @@ In plain terms:
 - `runtime` defines **where the data comes from and what actions do**
 
 ## Mental Model
-
 You can run `this.GUI` in two modes:
-
 - **JS-Only mode**: plain functions and local state.
 - **Data-Driven mode**: dynamic tokens resolved by runtime (`read`, `write`).
-
 The same spec can evolve from local UI to data-driven app without rewriting components.
 
 ---
 
 ## First GUI
-
 Start with a tiny spec and mount it.
-
 `Page` here is a built-in `this.GUI` node, so you can use it directly without registering it yourself.
 
 ```ts

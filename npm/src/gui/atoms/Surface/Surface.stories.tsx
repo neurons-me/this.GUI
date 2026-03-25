@@ -1,106 +1,125 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import React from 'react';
-
+import { Stack, Typography } from '@/gui/Atoms';
 import Surface from './Surface';
-import type { SurfaceProps } from './Surface.types';
+import Theme from '@/gui/Theme/Theme';
 
 const meta: Meta<typeof Surface> = {
   title: 'Atoms/Surface',
   component: Surface,
   tags: ['autodocs'],
   parameters: {
-    layout: 'padded',
+    layout: 'centered',
+    decorators: [
+      (Story: any) => (
+        <Theme>
+          <Story />
+        </Theme>
+      ),
+    ],
+    docs: {
+      description: {
+        component: `
+The **Surface** atom is a fundamental container component, acting as a wrapper around MUI's \`Paper\`. It serves as the base "canvas" upon which other components and content are placed.
+---
+## Features
+- Provides physical properties like elevation (shadow).
+- Supports custom variants like \`glass\` for a blurred, semi-transparent effect, and \`outline\`.
+- Can be configured to have square or rounded corners.
+- Fully themeable and stylable via the \`sx\` prop.
+
+---
+## Key Props
+- \`variant?: 'default' | 'glass' | 'outline'\`: The semantic preset for the surface style.
+- \`elevation?: number\`: The shadow depth, from 0 to 24.
+- \`square?: boolean\`: If \`true\`, the surface will have square corners.
+- \`children\`: The content to be rendered inside the surface.
+- \`sx?: object\`: For applying custom styles.
+
+---
+## Basic usage (React)
+~~~tsx
+import { Surface, Typography } from '@/gui/atoms';
+
+<Surface elevation={3} sx={{ padding: 4, width: 300 }}>
+  <Typography>This is a surface.</Typography>
+</Surface>
+~~~
+
+---
+## Declarative JSON / Config usage
+The resolver can instantiate a Surface from a JSON spec, making it a core layout primitive.
+
+~~~json
+{
+  "type": "Surface",
+  "props": {
+    "elevation": 1,
+    "sx": { "padding": 2 },
+    "children": {
+      "type": "Typography",
+      "props": {
+        "children": "Content inside a resolved surface."
+      }
+    }
+  }
+}
+~~~
+`,
+      },
+    },
   },
   argTypes: {
     variant: {
       control: { type: 'select' },
-      options: ['elevation', 'outlined', 'card'],
+      options: ['default', 'glass', 'outline'],
+      description: 'The semantic style variant of the surface.',
     },
     elevation: {
-      control: { type: 'number' },
+      control: { type: 'range', min: 0, max: 24, step: 1 },
     },
     square: {
       control: { type: 'boolean' },
     },
-    sx: {
-      control: false,
-      description: 'MUI sx prop (object/function/array). Disabled in controls to avoid noisy UI.',
-    },
-    children: {
-      control: false,
+    color: {
+      table: { disable: true },
     },
   },
 };
 
 export default meta;
-
 type Story = StoryObj<typeof Surface>;
 
-const DemoContent = () => (
-  <div>
-    <div style={{ fontWeight: 700, marginBottom: 6 }}>Surface</div>
-    <div style={{ opacity: 0.78, fontSize: 13 }}>
-      A visual container primitive (MUI Paper wrapper).
-    </div>
-  </div>
-);
+export const Variants: Story = {
+  render: (args) => (
+    <Stack spacing={4} sx={{ padding: 4, width: '50vw', minWidth: 400, alignItems: 'stretch' }}>
+      <Surface variant="default" elevation={2} sx={{ p: 2 }}>
+        <Typography>Default Surface (elevation=2)</Typography>
+      </Surface>
 
-const baseArgs: Partial<SurfaceProps> = {
-  sx: {
-    padding: 16,
-    width: 360,
-    maxWidth: '100%',
-  },
-  children: <DemoContent />,
-};
+      <Surface variant="outline" elevation={3} sx={{ p: 2 }}>
+        <Typography>Outline Variant (elevation=3)</Typography>
+      </Surface>
 
-export const Elevation: Story = {
+      <Surface
+        variant="glass"
+        elevation={5}
+        sx={{
+          p: 2,
+          // Add a background for the glass effect to be visible in Storybook
+          backgroundImage: 'url(https://source.unsplash.com/random/400x200)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <Typography>Glass Variant (elevation=5)</Typography>
+      </Surface>
+
+      <Surface variant="default" elevation={8} sx={{ p: 2 }}>
+        <Typography>Solid Variant (elevation=8)</Typography>
+      </Surface>
+    </Stack>
+  ),
   args: {
-    ...baseArgs,
-    variant: 'elevation',
-    elevation: 2,
-  },
-};
-
-export const Outlined: Story = {
-  args: {
-    ...baseArgs,
-    variant: 'outlined',
-  },
-};
-
-export const Card: Story = {
-  args: {
-    ...baseArgs,
-    variant: 'card',
-    sx: [
-      (theme) => ({
-        padding: 18,
-        borderRadius: theme.shape?.borderRadius ?? 8,
-      }),
-    ],
-  },
-};
-
-export const Square: Story = {
-  args: {
-    ...baseArgs,
-    variant: 'outlined',
-    square: true,
-  },
-};
-
-export const CustomSx: Story = {
-  args: {
-    ...baseArgs,
-    variant: 'elevation',
-    elevation: 1,
-    sx: [
-      baseArgs.sx as any,
-      {
-        border: '1px dashed',
-        borderColor: 'divider',
-      },
-    ],
+    // Default args can be set here if needed
   },
 };

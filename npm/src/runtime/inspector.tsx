@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
-import { RightSidebarContext } from '@/gui/contexts/RightSidebarContext';
+import { RightSidebarContext } from '@/gui/Contexts/RightSidebarContext';
 import { useSelection } from './selection';
-import CodeBlock from '@/gui/molecules/CodeBlock/CodeBlock';
-import { useGuiTheme } from '@/gui/hooks/useGuiTheme';
+import CodeBlock from '@/gui/Molecules/CodeBlock/CodeBlock';
+import { useGuiTheme } from '@/gui/Hooks/useGuiTheme';
 
 const DATA_URI_PREFIXES = ['data:', 'blob:'];
 const DATA_URI_PREVIEW_CHARS = 32;

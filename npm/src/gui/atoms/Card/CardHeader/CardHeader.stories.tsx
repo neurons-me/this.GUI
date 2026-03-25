@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import CardHeader from './CardHeader';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
-import Icon from '@/gui/Theme/Icon/Icon';
+import Icon from '@/gui/Atoms/Icon/Icon';
 const meta: Meta<typeof CardHeader> = {
   title: 'Molecules/Cards/Card/CardHeader',
   component: CardHeader,

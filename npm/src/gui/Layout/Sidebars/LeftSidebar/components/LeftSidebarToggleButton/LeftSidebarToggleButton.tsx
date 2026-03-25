@@ -1,7 +1,7 @@
 //@/gui/Layouts/ResponsiveUI/Sidebars/LeftSidebar/components/LeftSidebarToggleButton/LeftSidebarToggleButton.tsx
 import React from 'react';
 import IconButton from '@mui/material/IconButton';
-import Icon from '@/gui/Theme/Icon/Icon';
+import Icon from '@/gui/Atoms/Icon/Icon';
 
 type LeftSidebarToggleButtonProps = {
   expanded: boolean;

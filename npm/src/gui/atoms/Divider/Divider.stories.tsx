@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Divider, Box, Typography, Stack } from '@/gui/atoms';
+import { Divider, Box, Typography, Stack } from '@/gui/Atoms';
 
-const meta: Meta<typeof Divider> = {
-  title: 'Atoms/Content/Divider',
+ const meta: Meta<typeof Divider> = {
+  title: 'Atoms/Divider',
   component: Divider,
   tags: ['autodocs'],
   parameters: {
     docs: {
       description: {
         component:
-          'The Divider component is a thin wrapper over MUI\'s `MuiDivider`. It preserves all props and allows styling via the `sx` prop.',
+          'The Divider component is a thin wrapper over MUI\'s `MuiDivider`. It preserves all props and allows styling via the `sx` prop.  \n\nUse it to divide content, lists or layouts.',
       },
     },
   },
@@ -17,7 +17,7 @@ const meta: Meta<typeof Divider> = {
     orientation: {
       control: { type: 'radio' },
       options: ['horizontal', 'vertical'],
-      description: 'The divider orientation.',
+      description: 'The orientation of the divider.',
     },
     variant: {
       control: { type: 'radio' },
@@ -39,70 +39,28 @@ const meta: Meta<typeof Divider> = {
 export default meta;
 type Story = StoryObj<typeof Divider>;
 
-export const Playground: Story = {
+export const Variants: Story = {
   render: (args) => (
-    <Stack spacing={2} sx={{ width: 300 }}>
-      <Typography>Item One</Typography>
-      <Divider {...args} />
-      <Typography>Item Two</Typography>
-      <Divider {...args} />
-      <Typography>Item Three</Typography>
-    </Stack>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Demonstrates the Divider component with customizable props in a vertical stack.',
-      },
-    },
-  },
-};
+    <Stack spacing={2} sx={{ width: 300, display: 'flex' }}>
+      <Typography variant="h6">Horizontal Divider</Typography>
+       <Typography>Item One</Typography>
+      <Divider  />
+       <Typography>Item Two</Typography>
 
-export const VerticalDivider: Story = {
-  render: () => (
-    <Stack direction="row" spacing={2} alignItems="center" sx={{ height: 100 }}>
-      <Typography>Left</Typography>
-      <Divider orientation="vertical" flexItem />
-      <Typography>Right</Typography>
-    </Stack>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Shows a vertical divider between two items in a horizontal stack.',
-      },
-    },
-  },
-};
+      <Typography variant="h6">Vertical Divider</Typography>
+      <Box sx={{display: "flex", flexDirection: "row", gap: "20px", alignItems: "center", height: "100px"}}>
+        <Typography>Left</Typography>
+        <Divider orientation="vertical" flexItem />
+        <Typography>Right</Typography>
+      </Box>
 
-export const InsetDivider: Story = {
-  render: () => (
-    <Stack spacing={2} sx={{ width: 300 }}>
-      <Typography>First</Typography>
+      <Typography variant="h6">Inset Divider</Typography>
+       <Typography>First</Typography>
       <Divider variant="inset" />
-      <Typography>Second</Typography>
+       <Typography>Second</Typography>
+
+      <Typography variant="h6">Text Divider</Typography>
+      <Divider>Text Content</Divider>
     </Stack>
   ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Demonstrates the inset variant of the Divider between text items.',
-      },
-    },
-  },
-};
-
-export const TextDivider: Story = {
-  render: () => (
-    <Box sx={{ width: 300 }}>
-      <Divider>Text Content</Divider>
-    </Box>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Shows a divider with text content in the middle.',
-      },
-    },
-  },
 };

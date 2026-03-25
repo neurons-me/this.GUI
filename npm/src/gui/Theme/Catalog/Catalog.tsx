@@ -3,19 +3,25 @@ import React, { useEffect, useMemo, useState, useId } from 'react';
 import type { ThemesCatalogProps } from './Catalog.types';
 import { getGuiThemes } from '@/gui/Theme/utils/catalog';
 import type { ThemeManifest } from '@/types/theme';
-import Grid from '@/gui/atoms/Grid/Grid';
-import Card from '@/gui/atoms/Card/Card';
-import CardHeader from '@/gui/atoms/Card/CardHeader/CardHeader';
-import CardContent from '@/gui/atoms/Card/CardContent/CardContent';
-import CardActions from '@/gui/atoms/Card/CardActions/CardActions';
-import Typography from '@/gui/atoms/Typography/Typography';
-import Box from '@/gui/atoms/Box/Box';
-import Avatar from '@/gui/atoms/Avatar/Avatar';
-import Checkbox from '@/gui/atoms/Checkbox/Checkbox';
-import Tooltip from '@/gui/atoms/Tooltip/Tooltip';
-import Switch from '@/gui/atoms/Switch/Switch';
-import Icon from '@/gui/Theme/Icon/Icon';
-import { useThemeContext } from '@/gui/contexts/ThemeContext';
+import Grid from '@/gui/Molecules/Grid/Grid';
+import Card from '@/gui/Atoms/Card/Card';
+import CardHeader from '@/gui/Atoms/Card/CardHeader/CardHeader';
+import CardContent from '@/gui/Atoms/Card/CardContent/CardContent';
+import CardActions from '@/gui/Atoms/Card/CardActions/CardActions';
+import Typography from '@/gui/Atoms/Typography/Typography';
+import Box from '@/gui/Atoms/Box/Box';
+import Avatar from '@/gui/Atoms/Avatar/Avatar';
+import Checkbox from '@/gui/Atoms/Checkbox/Checkbox';
+import Tooltip from '@/gui/Molecules/Tooltip/Tooltip';
+import Switch from '@/gui/Atoms/Switch/Switch';
+import Icon from '@/gui/Atoms/Icon/Icon';
+import { useThemeContext } from '@/gui/Contexts/ThemeContext';
+import {
+  alphabetical,
+  applyCollectionRules,
+  recentFirst,
+  selectedFirst,
+} from '@/gui/Collections/rules';
 import { renderWithGUI } from '@/runtime/renderer';
 function getPreviewSwatches(item: ThemeManifest) {
   const swatches = [];
@@ -74,20 +80,11 @@ export default function ThemesCatalog({
     } catch {}
   }, [meRef]);
   const orderedThemes = useMemo(() => {
-    const rank = new Map<string, number>();
-    history.forEach((id, idx) => {
-      if (!rank.has(id)) rank.set(id, idx);
-    });
-    return [...themes].sort((a, b) => {
-      const aId = a.themeId ?? '';
-      const bId = b.themeId ?? '';
-      if (aId && aId === themeId && bId !== themeId) return -1;
-      if (bId && bId === themeId && aId !== themeId) return 1;
-      const aRank = rank.has(aId) ? rank.get(aId)! : Number.MAX_SAFE_INTEGER;
-      const bRank = rank.has(bId) ? rank.get(bId)! : Number.MAX_SAFE_INTEGER;
-      if (aRank !== bRank) return aRank - bRank;
-      return String(a.themeName ?? '').localeCompare(String(b.themeName ?? ''));
-    });
+    return applyCollectionRules(themes, [
+      selectedFirst(themeId, 'themeId'),
+      recentFirst(history, 'themeId'),
+      alphabetical('themeName'),
+    ]);
   }, [themes, themeId, history]);
   if (!themes || themes.length === 0) {
     return <Typography>No themes available.</Typography>;

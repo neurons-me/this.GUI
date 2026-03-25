@@ -1,8 +1,8 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Layout from '@/gui/Layout/Layout';
-import Box from '@/gui/atoms/Box/Box';
-import Typography from '@/gui/atoms/Typography/Typography';
+import Box from '@/gui/Atoms/Box/Box';
+import Typography from '@/gui/Atoms/Typography/Typography';
 const meta: Meta<typeof Layout> = {
   title: 'GUI/Layout/Content',
   component: Layout,

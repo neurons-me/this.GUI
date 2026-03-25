@@ -2,15 +2,15 @@
 import clsx from 'clsx';
 import React, { useEffect, useState, useRef } from 'react';
 import IconButton from '@mui/material/IconButton';
-import Icon from '@/gui/Theme/Icon/Icon';
+import Icon from '@/gui/Atoms/Icon/Icon';
 import { LeftSidebarElement } from './LeftSidebar.types';
 import LeftSidebarLink from './components/LeftSidebarLink/LeftSidebarLink';
 import LeftSidebarMenu from './components/LeftSidebarMenu/LeftSidebarMenu';
 import LeftSidebarAction from './components/LeftSidebarAction/LeftSidebarAction';
 import LeftSidebarToggleButton from './components/LeftSidebarToggleButton/LeftSidebarToggleButton';
-import { useLeftSidebar, useGuiTheme, useGuiMediaQuery, useUpdateInsets, useInsets } from '@/gui/hooks';
-import { Box, Drawer, Typography } from '@/gui/atoms';
-import type { LeftSidebarView } from '@/gui/contexts';
+import { useLeftSidebar, useGuiTheme, useGuiMediaQuery, useUpdateInsets, useInsets } from '@/gui/Hooks';
+import { Box, Drawer, Typography } from '@/gui/Atoms';
+import type { LeftSidebarView } from '@/gui/Contexts';
 
 const LeftSidebar = ({
   elements = [],

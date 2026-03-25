@@ -1,8 +1,8 @@
 import React from 'react';
-import { IconButton, Switch } from '@/gui/atoms';
-import Icon from '@/gui/Theme/Icon/Icon';
+import { IconButton, Switch } from '@/gui/Atoms';
+import Icon from '@/gui/Atoms/Icon/Icon';
 import { useThemeContext } from '@/gui/Theme';
-import { Typography, Box } from '@/gui/atoms';
+import { Typography, Box } from '@/gui/Atoms';
 import type { ThemeModeToggleProps } from './ToggleMode.types';
 
 const ThemeModeToggle: React.FC<ThemeModeToggleProps> = ({

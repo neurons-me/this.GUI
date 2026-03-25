@@ -34,13 +34,13 @@ import Button from './Button/Button';
 export { default as Button } from './Button/Button';
 export type { GuiButtonProps as ButtonProps } from './Button/Button';
 // Grid is polymorphic so we re-export it directly
-import Grid from './Grid/Grid';
-export { default as Grid } from './Grid/Grid';
-export type { GridProps } from './Grid/Grid.types';
+import Grid from '../Molecules/Grid/Grid';
+export { default as Grid } from '../Molecules/Grid/Grid';
+export type { GridProps } from '../Molecules/Grid/Grid.types';
 // Collapse is not polymorphic so we wrap it with forwardRef
-import Collapse, { type CollapseProps } from './Collapse/Collapse';
-export { default as Collapse } from './Collapse/Collapse';
-export type { CollapseProps } from './Collapse/Collapse';
+import Collapse, { type CollapseProps } from '../Molecules/Collapse/Collapse';
+export { default as Collapse } from '../Molecules/Collapse/Collapse';
+export type { CollapseProps } from '../Molecules/Collapse/Collapse';
 // IconButton is polymorphic so we re-export it directly
 import IconButton, { type IconButtonProps } from './IconButton/IconButton';
 export { default as IconButton } from './IconButton/IconButton';
@@ -50,20 +50,20 @@ import Divider, { type DividerProps } from './Divider/Divider';
 export { default as Divider } from './Divider/Divider';
 export type { DividerProps } from './Divider/Divider';
 // Drawer is not polymorphic so we wrap it with forwardRef
-import Drawer, { type DrawerProps } from './Drawer/Drawer';
-export { default as Drawer } from './Drawer/Drawer';
-export type { DrawerProps } from './Drawer/Drawer';
+import Drawer, { type DrawerProps } from '../Molecules/Drawer/Drawer';
+export { default as Drawer } from '../Molecules/Drawer/Drawer';
+export type { DrawerProps } from '../Molecules/Drawer/Drawer';
 // Link is polymorphic so we re-export it directly
 import Link from './Link/Link';
 export { default as Link } from './Link/Link';
 export type { LinkProps } from './Link/Link';
 // Menu and related are polymorphic so we re-export them directly
-import Menu, { type MenuProps } from './Menu/Menu';
-export { default as Menu } from './Menu/Menu';
-export type { MenuProps } from './Menu/Menu';
-import MenuItem, { type MenuItemProps } from './MenuItem/MenuItem';
-export { default as MenuItem } from './MenuItem/MenuItem';
-export type { MenuItemProps } from './MenuItem/MenuItem';
+import Menu, { type MenuProps } from '../Molecules/Menu/Menu';
+export { default as Menu } from '../Molecules/Menu/Menu';
+export type { MenuProps } from '../Molecules/Menu/Menu';
+import MenuItem, { type MenuItemProps } from '../Molecules/Menu/MenuItem/MenuItem';
+export { default as MenuItem } from '../Molecules/Menu/MenuItem/MenuItem';
+export type { MenuItemProps } from '../Molecules/Menu/MenuItem/MenuItem';
 // Paper is not polymorphic so we wrap it with forwardRef
 import Paper, { type PaperProps } from './Paper/Paper';
 export { default as Paper } from './Paper/Paper';
@@ -73,37 +73,37 @@ import TextField, { type TextFieldProps } from './TextField/TextField';
 export { default as TextField } from './TextField/TextField';
 export type { TextFieldProps } from './TextField/TextField';
 // Stack is not polymorphic so we wrap it with forwardRef
-import Stack, { type StackProps } from './Stack/Stack';
-export { default as Stack } from './Stack/Stack';
-export type { StackProps } from './Stack/Stack';
+import Stack, { type StackProps } from '../Molecules/Stack/Stack';
+export { default as Stack } from '../Molecules/Stack/Stack';
+export type { StackProps } from '../Molecules/Stack/Stack';
 // Switch is not polymorphic so we wrap it with forwardRef
 import Switch, { type SwitchProps } from './Switch/Switch';
 export { default as Switch } from './Switch/Switch';
 export type { SwitchProps } from './Switch/Switch';
 // Tables
-import Table from './Table/Table';
-export { default as Table } from './Table/Table';
-export type { TableProps } from './Table/Table';
-import TableBody from './Table/Body/TableBody';
-export { default as TableBody } from './Table/Body/TableBody';
-export type { TableBodyProps } from './Table/Body/TableBody';
-import TableCell from './Table/Cell/TableCell';
-export { default as TableCell } from './Table/Cell/TableCell';
-export type { TableCellProps } from './Table/Cell/TableCell';
-import TableHead from './Table/Head/TableHead';
-export { default as TableHead } from './Table/Head/TableHead';
-export type { TableHeadProps } from './Table/Head/TableHead';
-import TableRow from './Table/Row/TableRow';
-export { default as TableRow } from './Table/Row/TableRow';
-export type { TableRowProps } from './Table/Row/TableRow';
+import Table from '../Molecules/Table/Table';
+export { default as Table } from '../Molecules/Table/Table';
+export type { TableProps } from '../Molecules/Table/Table';
+import TableBody from '../Molecules/Table/Body/TableBody';
+export { default as TableBody } from '../Molecules/Table/Body/TableBody';
+export type { TableBodyProps } from '../Molecules/Table/Body/TableBody';
+import TableCell from '../Molecules/Table/Cell/TableCell';
+export { default as TableCell } from '../Molecules/Table/Cell/TableCell';
+export type { TableCellProps } from '../Molecules/Table/Cell/TableCell';
+import TableHead from '../Molecules/Table/Head/TableHead';
+export { default as TableHead } from '../Molecules/Table/Head/TableHead';
+export type { TableHeadProps } from '../Molecules/Table/Head/TableHead';
+import TableRow from '../Molecules/Table/Row/TableRow';
+export { default as TableRow } from '../Molecules/Table/Row/TableRow';
+export type { TableRowProps } from '../Molecules/Table/Row/TableRow';
 // Toolbar is not polymorphic so we wrap it with forwardRef
-import Toolbar from './Toolbar/Toolbar';
-export { default as Toolbar } from './Toolbar/Toolbar';
-export type { ToolbarProps } from './Toolbar/Toolbar';
+import Toolbar from '../Molecules/Toolbar/Toolbar';
+export { default as Toolbar } from '../Molecules/Toolbar/Toolbar';
+export type { ToolbarProps } from '../Molecules/Toolbar/Toolbar';
 // Tooltip is not polymorphic so we wrap it with forwardRef
-import Tooltip from './Tooltip/Tooltip';
-export { default as Tooltip } from './Tooltip/Tooltip';
-export type { TooltipProps } from './Tooltip/Tooltip';
+import Tooltip from '../Molecules/Tooltip/Tooltip';
+export { default as Tooltip } from '../Molecules/Tooltip/Tooltip';
+export type { TooltipProps } from '../Molecules/Tooltip/Tooltip';
 // Typography is polymorphic so we re-export it directly
 import Typography, { type TypographyProps } from './Typography/Typography';
 export { default as Typography } from './Typography/Typography';

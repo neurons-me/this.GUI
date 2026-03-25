@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Box, Typography, Tooltip } from '@/gui/atoms';
-import Icon from '@/gui/Theme/Icon/Icon';
+import { Box, Typography, Tooltip } from '@/gui/Atoms';
+import Icon from '@/gui/Atoms/Icon/Icon';
 import type { LeftSidebarItemProps } from './LeftSidebarLink.types';
-import { useLeftSidebar } from '@/gui/hooks';
+import { useLeftSidebar } from '@/gui/Hooks';
 import { Link as RouterLink } from 'react-router-dom';
 
 const LeftSidebarLink: React.FC<LeftSidebarItemProps> = ({

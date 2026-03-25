@@ -79,8 +79,8 @@ function isPrimitive(v: any): v is GuiPrimitive {
  * Build a lookup registry from the GUI UMD surface.
  * Expected shape (single namespace, no `default` wrapper):
  * - root exports: GUI.Button, GUI.Layout, GUI.mount, ...
- * - registries: GUI.Atoms, GUI.Molecules, GUI.Components, GUI.Widgets
- * - lowercase aliases (optional): GUI.atoms / molecules / components / widgets / menus / hooks / contexts
+ * - registries: GUI.Atoms, GUI.Molecules, GUI.Compounds, GUI.Widgets
+ * - lowercase aliases (optional): GUI.atoms / molecules / compounds / widgets / menus / hooks / contexts
  */
 export function inferRegistryFromGUI(gui: any): GuiRegistryLike {
   const out: GuiRegistryLike = {};
@@ -99,7 +99,7 @@ export function inferRegistryFromGUI(gui: any): GuiRegistryLike {
     if (out[k] == null) out[k] = gui[k];
   }
   // 2) Capital registries
-  const caps = ['Atoms', 'Molecules', 'Components', 'Widgets'] as const;
+  const caps = ['Atoms', 'Molecules', 'Compounds', 'Components', 'Widgets'] as const;
   for (const key of caps) {
     const reg = gui[key];
     if (reg && typeof reg === 'object') {
@@ -110,7 +110,7 @@ export function inferRegistryFromGUI(gui: any): GuiRegistryLike {
     }
   }
   // 2.5) Root lowercase registries (UMD helpers)
-  const lowers = ['atoms', 'molecules', 'components', 'widgets', 'theme', 'menus', 'hooks', 'contexts'] as const;
+  const lowers = ['atoms', 'molecules', 'compounds', 'components', 'widgets', 'theme', 'menus', 'hooks', 'contexts'] as const;
   for (const key of lowers) {
     const reg = gui[key];
     if (reg && typeof reg === 'object') {

@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { LeftSidebarContext } from "@/gui/contexts";
+import { LeftSidebarContext } from "@/gui/Contexts";
 export const useLeftSidebar = () => {
   const context = useContext(LeftSidebarContext);
   if (!context) {

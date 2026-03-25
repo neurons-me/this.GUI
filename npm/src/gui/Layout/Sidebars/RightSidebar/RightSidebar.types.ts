@@ -1,5 +1,5 @@
 import type React from 'react';
-import type { RightSidebarView } from '@/gui/contexts';
+import type { RightSidebarView } from '@/gui/Contexts';
 export type { RightSidebarView };
 
 export type RightSidebarElement =

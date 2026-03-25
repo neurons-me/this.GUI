@@ -1,7 +1,7 @@
 //@/gui/hooks/useInsets.ts
 import { useContext } from 'react';
-import { useGuiTheme } from '@/gui/hooks';
-import { InsetsContext } from '@/gui/contexts';
+import { useGuiTheme } from '@/gui/Hooks';
+import { InsetsContext } from '@/gui/Contexts';
 /**
  * Returns the current insets from the InsetsContext when available.
  * Falls back to the theme's static layout insets if the provider is missing.

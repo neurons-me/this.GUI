@@ -1,14 +1,14 @@
 // src/gui/atoms/Box/Box.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
-import { Box, Link, Typography, Button } from '@/gui/atoms';
+import { Box, Link, Typography, Stack } from '@/gui/Atoms';
 // ======================= Meta =======================
 const meta: Meta<typeof Box> = {
-  title: 'Atoms/Containers/Box',
+  title: 'Atoms/Box',
   component: Box,
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-        <div style={{ padding: 16, minHeight: 240 }}>
+        <div style={{ padding: 16, minHeight: 240, width: '100%' }}>
           <Story />
         </div>
     ),
@@ -96,168 +96,58 @@ import { Box, Link } from '@/gui/atoms';
     gap: { control: { type: 'number' } },
   },
   args: {
-    p: 2,
-    display: 'block',
-    children: 'Box content',
+    // Default args can be set here for the Playground
   },
 };
 export default meta;
 
 type Story = StoryObj<typeof Box>;
 
-// ======================= Stories =======================
-export const Playground: Story = {};
-
-export const LayoutBasics: Story = {
-  name: 'Layout basics (spacing, border, radius)',
-  render: (args) => (
-    <Box
-      {...args}
-      sx={{
-        border: '1px solid',
-        borderColor: 'divider',
-        borderRadius: 2,
-        bgcolor: 'background.paper',
-      }}
-    />
-  ),
-};
-
-export const FlexRow: Story = {
-  args: {},
+export const Variants: Story = {
   render: () => (
-    <Box display="flex" gap={2}>
-      <Box p={1} sx={{ border: '1px dashed', borderColor: 'divider' }}>A</Box>
-      <Box p={1} sx={{ border: '1px dashed', borderColor: 'divider' }}>B</Box>
-      <Box p={1} sx={{ border: '1px dashed', borderColor: 'divider' }}>C</Box>
-    </Box>
-  ),
-};
-
-export const GridLayout: Story = {
-  render: () => (
-    <Box display="grid" sx={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
-      {Array.from({ length: 6 }).map((_, i) => (
-        <Box key={i} p={2} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
-          Cell {i + 1}
-        </Box>
-      ))}
-    </Box>
-  ),
-};
-
-export const AsSection: Story = {
-  name: 'Polymorphic: section',
-  render: () => (
-    <Box component="section" p={2} sx={{ borderLeft: '4px solid', borderColor: 'primary.main' }}>
-      <Typography variant="h6">Section title</Typography>
-      <Typography variant="body2" sx={{ opacity: 0.8 }}>
-        Section content goes here.
-      </Typography>
-    </Box>
-  ),
-};
-
-export const AsAnchor: Story = {
-  name: 'Polymorphic: anchor (href)',
-  render: () => (
-    <Box
-      component="a"
-      href="https://neurons.me"
-      target="_blank"
-      rel="noreferrer"
-      p={1}
-      sx={{
-        display: 'inline-block',
-        border: '1px solid',
-        borderColor: 'divider',
-        borderRadius: 1,
-        '&:hover': { textDecoration: 'none', bgcolor: 'action.hover' },
-      }}
-    >
-      Visit neurons.me
-    </Box>
-  ),
-};
-
-export const AsRouterLink: Story = {
-  name: 'Polymorphic: Link (to)',
-  render: () => (
-    <Box
-      component={Link}
-      to="/docs"
-      p={1}
-      sx={{
-        display: 'inline-block',
-        border: '1px solid',
-        borderColor: 'divider',
-        borderRadius: 1,
-        '&:hover': { textDecoration: 'none', bgcolor: 'action.hover' },
-      }}
-    >
-      Go to docs
-    </Box>
-  ),
-};
-
-export const ImageMode: Story = {
-  name: 'Image mode (component="img")',
-  render: () => (
-    <Box
-      component="img"
-      src="https://placekitten.com/320/160"
-      alt="Kitten"
-      sx={{ width: 320, height: 'auto', borderRadius: 1, border: '1px solid', borderColor: 'divider' }}
-      loading="lazy"
-      decoding="async"
-    />
-  ),
-};
-
-export const NestedComposition: Story = {
-  render: () => (
-    <Box p={2} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
-      <Typography variant="subtitle1" sx={{ mb: 1 }}>Nested composition</Typography>
-      <Box display="flex" gap={1}>
-        <Button variant="contained" color="primary">Action</Button>
-        <Box component={Link} to="/docs" sx={{ alignSelf: 'center' }}>
-          Learn more
-        </Box>
+    <Stack spacing={4} sx={{ width: '100%' }}>
+      <Typography variant="h6">Basic Box</Typography>
+      <Box p={2} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+        A simple box with padding and a border.
       </Box>
-    </Box>
-  ),
-};
 
-export const SXDeepStyling: Story = {
-  name: 'Deep styling with sx',
-  render: () => (
-    <Box
-      p={2}
-      sx={{
-        borderRadius: 2,
-        bgcolor: 'background.paper',
-        border: '1px solid',
-        borderColor: 'divider',
-        '& .demo-title': {
-          fontWeight: 700,
-          color: 'text.primary',
-          mb: 1,
-        },
-        '& .demo-card': {
-          p: 1.5,
+      <Typography variant="h6">Flex Layout</Typography>
+      <Box display="flex" gap={2}>
+        <Box p={2} sx={{ border: '1px dashed', borderColor: 'divider' }}>Flex Item 1</Box>
+        <Box p={2} sx={{ border: '1px dashed', borderColor: 'divider' }}>Flex Item 2</Box>
+        <Box p={2} sx={{ border: '1px dashed', borderColor: 'divider' }}>Flex Item 3</Box>
+      </Box>
+
+      <Typography variant="h6">Polymorphic (as a section)</Typography>
+      <Box component="section" p={2} sx={{ borderLeft: '4px solid', borderColor: 'primary.main', bgcolor: 'action.hover' }}>
+        <Typography variant="h6" gutterBottom>Section Title</Typography>
+        <Typography>This is a Box rendered as a &lt;section&gt; element.</Typography>
+      </Box>
+
+      <Typography variant="h6">Polymorphic (as a link)</Typography>
+      <Box
+        component={Link}
+        to="/docs"
+        p={1}
+        sx={{
+          display: 'inline-block',
           border: '1px solid',
           borderColor: 'divider',
           borderRadius: 1,
-          '&:hover': { bgcolor: 'action.hover' },
-        },
-      }}
-    >
-      <Typography className="demo-title">Cards</Typography>
-      <Box display="grid" sx={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: 1.5 }}>
-        <Box className="demo-card">One</Box>
-        <Box className="demo-card">Two</Box>
-        <Box className="demo-card">Three</Box>
+          '&:hover': { textDecoration: 'none', bgcolor: 'action.hover' },
+        }}
+      >
+        Go to docs
       </Box>
-    </Box>
-  ),
+
+      <Typography variant="h6">Image Mode</Typography>
+      <Box
+        component="img"
+        src="https://placekitten.com/320/160"
+        alt="Kitten"
+        sx={{ width: 320, height: 'auto', borderRadius: 1, border: '1px solid', borderColor: 'divider' }}
+        loading="lazy"
+      />
+    </Stack>
+  )
 };

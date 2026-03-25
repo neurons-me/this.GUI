@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Box from "@/gui/atoms/Box/Box";
-import Collapse from "@/gui/atoms/Collapse/Collapse";
-import Typography from "@/gui/atoms/Typography/Typography";
-import Icon from "@/gui/Theme/Icon/Icon";
+import Box from "@/gui/Atoms/Box/Box";
+import Collapse from "@/gui/Molecules/Collapse/Collapse";
+import Typography from "@/gui/Atoms/Typography/Typography";
+import Icon from "@/gui/Atoms/Icon/Icon";
 
 const VIEWPORT_MARGIN = 12;
 type LeftSidebarMenuItem = {

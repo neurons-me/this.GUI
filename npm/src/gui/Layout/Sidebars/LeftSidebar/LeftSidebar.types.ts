@@ -1,4 +1,4 @@
-import { LeftSidebarView } from '@/gui/contexts';
+import { LeftSidebarView } from '@/gui/Contexts';
 import { ReactNode } from 'react';
 export type LeftSidebarMode = 'rail' | 'expanded' | 'mobile';
 

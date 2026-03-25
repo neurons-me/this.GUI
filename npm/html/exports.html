@@ -97,8 +97,10 @@
           ['window.GUI.Atoms', GUI.Atoms],
           ['window.GUI.molecules', GUI.molecules],
           ['window.GUI.Molecules', GUI.Molecules],
-          ['window.GUI.components', GUI.components],
-          ['window.GUI.Components', GUI.Components],
+          ['window.GUI.compounds', GUI.compounds],
+          ['window.GUI.Compounds', GUI.Compounds],
+          ['window.GUI.components (legacy)', GUI.components],
+          ['window.GUI.Components (legacy)', GUI.Components],
           ['window.GUI.widgets', GUI.widgets],
           ['window.GUI.Widgets', GUI.Widgets],
           ['window.GUI.menus', GUI.menus],
@@ -122,7 +124,7 @@
 
         const atomsCount = countKeys(GUI.atoms || GUI.Atoms);
         const moleculesCount = countKeys(GUI.molecules || GUI.Molecules);
-        const componentsCount = countKeys(GUI.components || GUI.Components);
+        const compoundsCount = countKeys(GUI.compounds || GUI.Compounds || GUI.components || GUI.Components);
         const widgetsCount = countKeys(GUI.widgets || GUI.Widgets);
         const menusCount = countKeys(GUI.menus || GUI.Menus);
         const themeCount = countKeys(GUI.Theme);
@@ -154,7 +156,7 @@
               props: {
                 title: 'this.GUI — UMD Exports',
                 subtitle:
-                  'Live inspection of window.GUI surfaces from the local UMD bundle (root/atoms/molecules/widgets/components/menus).',
+                  'Live inspection of window.GUI surfaces from the local UMD bundle (root/atoms/molecules/widgets/compounds/menus).',
               },
               children: [
                 {
@@ -324,12 +326,12 @@
                                 {
                                   type: 'Typography',
                                   props: { variant: 'caption', sx: { opacity: 0.7 } },
-                                  children: ['components'],
+                                  children: ['compounds'],
                                 },
                                 {
                                   type: 'Typography',
                                   props: { variant: 'body1', sx: { fontWeight: 800 } },
-                                  children: [String(componentsCount)],
+                                  children: [String(compoundsCount)],
                                 },
                               ],
                             },

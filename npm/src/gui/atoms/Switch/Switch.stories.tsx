@@ -1,12 +1,12 @@
 // src/gui/atoms/Switch/Switch.stories.tsx
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Box, Stack, Typography, Switch } from '@/gui/atoms';
+import { Box, Stack, Typography, Switch } from '@/gui/Atoms';
 import { FormControlLabel } from '@mui/material';
 
 // ======================= Meta =======================
 const meta: Meta<typeof Switch> = {
-  title: 'Atoms/Forms & Inputs/Switch',
+  title: 'Atoms/Switch',
   component: Switch,
   tags: ['autodocs'],
   decorators: [
@@ -131,106 +131,86 @@ type Story = StoryObj<typeof Switch>;
 
 // ======================= Stories =======================
 
-export const Playground: Story = {
-  render: (args) => <Switch {...args} />,
-};
-
-export const LabeledVariants: Story = {
-  name: 'With label & placement',
-  render: () => (
-    <Stack spacing={2}>
-      <FormControlLabel control={<Switch defaultChecked />} label="End (default)" />
-      <FormControlLabel control={<Switch defaultChecked />} label="Start" labelPlacement="start" />
-      <FormControlLabel control={<Switch />} label="Top" labelPlacement="top" />
-      <FormControlLabel control={<Switch />} label="Bottom" labelPlacement="bottom" />
-    </Stack>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'When `label` is present, the atom wraps the control with `FormControlLabel`. Use `labelPlacement` to position it.',
-      },
-    },
-  },
-};
-
-export const SizesAndColors: Story = {
-  name: 'Sizes & colors',
-  render: () => (
-    <Stack spacing={2}>
-      <Stack direction="row" spacing={2} alignItems="center">
-        <Typography variant="body2" sx={{ minWidth: 88 }}>small</Typography>
-        <Switch size="small" color="default" defaultChecked />
-        <Switch size="small" color="primary" defaultChecked />
-        <Switch size="small" color="secondary" defaultChecked />
-      </Stack>
-      <Stack direction="row" spacing={2} alignItems="center">
-        <Typography variant="body2" sx={{ minWidth: 88 }}>medium</Typography>
-        <Switch size="medium" color="default" defaultChecked />
-        <Switch size="medium" color="primary" defaultChecked />
-        <Switch size="medium" color="secondary" defaultChecked />
-      </Stack>
-    </Stack>
-  ),
-};
-
-export const ControlledExample: Story = {
-  name: 'Controlled (React state)',
-  render: () => {
-    const [on, setOn] = React.useState(false);
-    return (
-      <Stack spacing={1.5}>
-        <Typography variant="body2">Value: <b>{on ? 'true' : 'false'}</b></Typography>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={on}
-              onChange={(_, v) => setOn(v)}
-              color={on ? 'primary' : 'secondary'}
-            />
-          }
-          label="Controlled switch"
-        />
-      </Stack>
-    );
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Classic controlled pattern: bind `checked` and update via `onChange`. You can also change appearance based on state.',
-      },
-    },
-  },
-};
-
-export const EdgeAndSx: Story = {
-  name: 'Edge & custom sx',
-  render: () => (
-    <Stack spacing={2}>
-      <FormControlLabel control={<Switch edge="start" defaultChecked />} label="Edge start" />
+// ======= ControlledDemo helper =======
+function ControlledDemo() {
+  const [on, setOn] = React.useState(false);
+  return (
+    <Stack spacing={1.5}>
+      <Typography variant="body2">Value: <b>{on ? 'true' : 'false'}</b></Typography>
       <FormControlLabel
         control={
           <Switch
-            defaultChecked
-            sx={{
-              '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                opacity: 0.7,
-              },
-            }}
+            checked={on}
+            onChange={(_, v) => setOn(v)}
+            color={on ? 'primary' : 'secondary'}
           />
         }
-        label="Custom sx"
+        label="Controlled switch"
       />
     </Stack>
+  );
+}
+
+// ======================= Stories =======================
+
+export const Playground: Story = {};
+
+
+export const Variants: Story = {
+  render: () => (
+    <Stack spacing={4} sx={{ width: '100%' }}>
+      <Box>
+        <Typography variant="h6" gutterBottom>With label & placement</Typography>
+        <Stack spacing={2}>
+          <FormControlLabel control={<Switch defaultChecked />} label="End (default)" />
+          <FormControlLabel control={<Switch defaultChecked />} label="Start" labelPlacement="start" />
+          <FormControlLabel control={<Switch />} label="Top" labelPlacement="top" />
+          <FormControlLabel control={<Switch />} label="Bottom" labelPlacement="bottom" />
+        </Stack>
+      </Box>
+
+      <Box>
+        <Typography variant="h6" gutterBottom>Sizes & colors</Typography>
+        <Stack spacing={2}>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Typography variant="body2" sx={{ minWidth: 88 }}>small</Typography>
+            <Switch size="small" color="default" defaultChecked />
+            <Switch size="small" color="primary" defaultChecked />
+            <Switch size="small" color="secondary" defaultChecked />
+          </Stack>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Typography variant="body2" sx={{ minWidth: 88 }}>medium</Typography>
+            <Switch size="medium" color="default" defaultChecked />
+            <Switch size="medium" color="primary" defaultChecked />
+            <Switch size="medium" color="secondary" defaultChecked />
+          </Stack>
+        </Stack>
+      </Box>
+
+      <Box>
+        <Typography variant="h6" gutterBottom>Controlled</Typography>
+        <ControlledDemo />
+      </Box>
+
+      <Box>
+        <Typography variant="h6" gutterBottom>Edge & custom sx</Typography>
+        <Stack spacing={2}>
+          <FormControlLabel control={<Switch edge="start" defaultChecked />} label="Edge start" />
+          <FormControlLabel
+            control={
+              <Switch
+                defaultChecked
+                sx={{
+                  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                    opacity: 0.7,
+                  },
+                }}
+              />
+            }
+            label="Custom sx"
+          />
+        </Stack>
+      </Box>
+    </Stack>
   ),
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Pass any `sx` overrides exactly as you would with MUI. Useful for fine-grained tuning without creating a new variant.',
-      },
-    },
-  },
 };

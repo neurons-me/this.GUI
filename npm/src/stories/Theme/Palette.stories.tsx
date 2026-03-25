@@ -1,9 +1,9 @@
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { linkTo } from '@storybook/addon-links';
-import { Box, Typography, Toolbar, Bar } from '@/gui/atoms';
-import Icon from '@/gui/Theme/Icon/Icon';
-import { useGuiTheme } from '@/gui/hooks';
+import { Box, Typography, Toolbar, Bar } from '@/gui/Atoms';
+import Icon from '@/gui/Atoms/Icon/Icon';
+import { useGuiTheme } from '@/gui/Hooks';
 
 const meta: Meta = {
   title: 'GUI/Theme/Palette',

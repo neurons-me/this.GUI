@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj, StoryFn } from '@storybook/react';
 import IconButton from './IconButton';
-import Icon from '@/gui/Theme/Icon/Icon';
+import Icon from '@/gui/Atoms/Icon/Icon';
 const meta: Meta<typeof IconButton> = {
-  title: 'Atoms/Forms & Inputs/IconButton',
+  title: 'Atoms/IconButton',
   component: IconButton,
   tags: ['autodocs'],
   decorators: [
-    (Story) => (
+    (Story: StoryFn) => (
         <div style={{ padding: 16, minHeight: 200 }}>
           <Story />
         </div>
@@ -35,7 +35,7 @@ In **declarative** mode (resolver), you can pass an \`icon\` token (e.g., \`"luc
   "props": {
     "color": "primary",
     "size": "medium",
-    "icon": "lucide:menu",
+    "icon": "lucide:Menu",
     "sx": { "border": "1px solid", "borderColor": "divider" },
     "iconSx": { "opacity": 0.9 }
   }
@@ -79,7 +79,7 @@ type Story = StoryObj<typeof IconButton>;
 export const Playground: Story = {
   render: (args) => (
     <IconButton {...args} aria-label="menu">
-      <Icon name="lucide:menu" />
+      <Icon name="lucide:Menu" />
     </IconButton>
   ),
 };
@@ -100,13 +100,13 @@ export const Sizes: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
       <IconButton size="small" aria-label="small">
-        <Icon name="lucide:bell" />
+        <Icon name="lucide:Bell" />
       </IconButton>
       <IconButton size="medium" aria-label="medium">
-        <Icon name="lucide:bell" />
+        <Icon name="lucide:Bell" />
       </IconButton>
       <IconButton size="large" aria-label="large">
-        <Icon name="lucide:bell" />
+        <Icon name="lucide:Bell" />
       </IconButton>
     </div>
   ),
@@ -116,10 +116,10 @@ export const WithEdge: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
       <IconButton edge="start" aria-label="start">
-        <Icon name="lucide:chevron-left" />
+        <Icon name="lucide:ChevronLeft" />
       </IconButton>
       <IconButton edge="end" aria-label="end">
-        <Icon name="lucide:chevron-right" />
+        <Icon name="lucide:ChevronRight" />
       </IconButton>
     </div>
   ),

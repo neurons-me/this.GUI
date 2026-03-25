@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Divider } from '@/gui/components/atoms';
+import { Divider } from '@/gui/Atoms';
 import type { SxProps, Theme } from '@mui/material/styles';
 import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
 import { ensureNodeId } from '@/gui/utils/nodeID';

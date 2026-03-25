@@ -30,12 +30,14 @@
       "@/gui/atoms/*": ["gui/atoms/*"],
       "@/gui/molecules": ["gui/molecules"],
       "@/gui/molecules/*": ["gui/molecules/*"],
+      "@/gui/compounds": ["gui/compounds"],
+      "@/gui/compounds/*": ["gui/compounds/*"],
       "@/gui/Theme": ["gui/Theme"],
       "@/gui/Theme/*": ["gui/Theme/*"],
-      "@/gui/components": ["gui/components"],
-      "@/gui/components/*": ["gui/components/*"],
-      "@/stories": ["gui/components"],
-      "@/stories/*": ["gui/components/*"],
+      "@/gui/components": ["gui/compounds"],
+      "@/gui/components/*": ["gui/compounds/*"],
+      "@/stories": ["stories"],
+      "@/stories/*": ["stories/*"],
       "@/*": ["*"]
     },
     // IMPORTANT:
@@ -55,6 +57,7 @@
     "tests",
     "__tests__",
     "coverage",
+    "src/stories",
     ".storybook",
     "../../../../z.more/neurons-me.github.io/storybook-static"
   ]

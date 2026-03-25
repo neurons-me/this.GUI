@@ -1,18 +1,18 @@
 import * as React from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj, StoryFn } from '@storybook/react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemText from '@/gui/molecules/List/ListItemText/ListItemText';
+import ListItemText from '@/gui/Molecules/List/ListItemText/ListItemText';
 import ListItemIcon from './ListItemIcon';
-import Icon from '@/gui/Theme/Icon/Icon';
+import Icon from '@/gui/Atoms/Icon/Icon';
 import Theme from '@/gui/Theme/Theme';
 
 const meta: Meta<typeof ListItemIcon> = {
-  title: 'Atoms/Organization/ListItemIcon',
+  title: 'Molecules/List/ListItemIcon',
   component: ListItemIcon,
   tags: ['autodocs'],
   decorators: [
-    (Story) => (
+    (Story: StoryFn) => (
       <Theme>
         <div style={{ padding: 16, minHeight: 260, maxWidth: 520 }}>
           <Story />
@@ -88,7 +88,7 @@ const DemoList: React.FC<{ children?: React.ReactNode }> = ({ children }) => (
 export const Playground: Story = {
   render: (args) => (
     <DemoList>
-      <ListItemIcon {...args}>
+      <ListItemIcon {...args} sx={{ minWidth: 36 }}>
         <Icon name="lucide:mail" />
       </ListItemIcon>
       <ListItemText primary="Item with icon slot" />
@@ -102,7 +102,7 @@ export const WithTokenViaResolverExample: Story = {
     <DemoList>
       {/* Emula el resultado del resolver al usar icon="lucide:mail" */}
       <ListItemIcon sx={{ minWidth: 36 }}>
-        <Icon name="mail" fontSize={20} />
+        <Icon name="lucide:Mail" fontSize={20} />
       </ListItemIcon>
       <ListItemText primary="Inbox (token)" />
     </DemoList>
@@ -113,7 +113,7 @@ export const WithReactChild: Story = {
   render: () => (
     <DemoList>
       <ListItemIcon sx={{ minWidth: 40 }}>
-        <Icon name="mui:settings" />
+        <Icon name="mui:Settings" />
       </ListItemIcon>
       <ListItemText primary="Settings (React child)" />
     </DemoList>
@@ -124,7 +124,7 @@ export const WithSx: Story = {
   render: () => (
     <DemoList>
       <ListItemIcon sx={{ minWidth: 48 }}>
-        <Icon name="lucide:user" />
+        <Icon name="lucide:User" />
       </ListItemIcon>
       <ListItemText primary="Custom minWidth via sx" />
     </DemoList>

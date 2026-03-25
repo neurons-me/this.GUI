@@ -1,8 +1,8 @@
 import React from 'react';
 import type { Meta, StoryFn, StoryObj } from '@storybook/react';
 import Layout from './Layout';
-import Page from '@/gui/molecules/Page/Page';
-import { Box, Typography } from '@/gui/atoms';
+import Page from '@/gui/Molecules/Page/Page';
+import { Box, Typography } from '@/gui/Atoms';
 import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 const meta: Meta<typeof Layout> = {
   title: "GUI/Layout",

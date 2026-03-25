@@ -2,10 +2,10 @@
 import * as React from 'react';
 import { alpha, darken, lighten } from '@mui/material/styles';
 import { selectionStore } from './selectionStore';
-import { useUpdateInsets } from '@/gui/hooks';
-import { useGuiTheme } from '@/gui/hooks/useGuiTheme';
-import { Box, Button, Drawer, Typography } from '@/gui/atoms';
-import CodeBlock from '@/gui/molecules/CodeBlock/CodeBlock';
+import { useUpdateInsets } from '@/gui/Hooks';
+import { useGuiTheme } from '@/gui/Hooks/useGuiTheme';
+import { Box, Button, Drawer, Typography } from '@/gui/Atoms';
+import CodeBlock from '@/gui/Molecules/CodeBlock/CodeBlock';
 import type { ResolvedNodeRecord } from './renderer';
 
 const ADMIN_VIEW_STORAGE_KEY = 'gui.runtime.admin.view.v2';

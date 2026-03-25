@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { Bar, Box, Toolbar, Typography, Avatar, Tooltip } from '@/gui/atoms';
+import { Bar, Box, Toolbar, Typography, Avatar, Tooltip } from '@/gui/Atoms';
 import { Link as RouterLink } from 'react-router-dom';
-import Icon from '@/gui/Theme/Icon/Icon';
-import { useGuiTheme, useGuiMediaQuery, useInsets, useUpdateInsets } from '@/gui/hooks';
+import Icon from '@/gui/Atoms/Icon/Icon';
+import { useGuiTheme, useGuiMediaQuery, useInsets, useUpdateInsets } from '@/gui/Hooks';
 import type { FooterProps, FooterElement } from './Footer.types';
 import type { FooterLinkProps, FooterActionProps } from './Footer.types';
 import type { SxProps, Theme } from '@mui/material/styles';

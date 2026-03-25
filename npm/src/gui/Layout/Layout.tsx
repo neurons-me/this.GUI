@@ -1,12 +1,11 @@
 // Layout/Layout/Layout.tsx
-import { LeftBarProvider } from '@/gui/contexts/LeftSidebarContext';
-import { RightBarProvider } from '@/gui/contexts/RightSidebarContext';
-import Box from '@/gui/atoms/Box/Box';
+import { LeftBarProvider } from '@/gui/Contexts/LeftSidebarContext';
+import { RightBarProvider } from '@/gui/Contexts/RightSidebarContext';
+import Box from '@/gui/Atoms/Box/Box';
 import TopBar from '@/gui/Layout/TopBar/TopBar';
 import LeftSidebar from '@/gui/Layout/Sidebars/LeftSidebar/LeftSidebar';
 import RightSidebar from '@/gui/Layout/Sidebars/RightSidebar/RightSidebar';
 import Footer from '@/gui/Layout/Footer/Footer';
-import Namespace from '@/gui/Layout/Namespace/Namespace';
 import Content from '@/gui/Layout/Content/Content';
 import type { LayoutProps } from './Layout.types';
 import React from 'react';
@@ -32,7 +31,6 @@ function Layout({
   const resolvedLeft = leftBar ?? LeftBar ?? legacyLeftBar ?? legacyLeftConfig;
   const resolvedRight = rightBar ?? RightBar ?? legacyRightBar ?? legacyRightConfig;
   const resolvedFooter = footer ?? FooterProp ?? footerConfig;
-
   const hasTopBar = Boolean(resolvedTopBar);
   const hasLeftBar = Boolean(resolvedLeft);
   const hasRightBar = Boolean(resolvedRight);
@@ -54,7 +52,6 @@ function Layout({
     React.isValidElement(child) && child.type === Content;
   let contentChild: ContentElement | null = null;
   const contentExtras: React.ReactNode[] = [];
-
   childArray.forEach((child) => {
     if (!React.isValidElement(child)) {
       contentExtras.push(child);
@@ -95,7 +92,7 @@ function Layout({
         })()
       : (
           <Content>
-            {contentExtras.length ? contentExtras : (children ?? <Namespace />)}
+            {contentExtras.length ? contentExtras : children}
           </Content>
         );
 

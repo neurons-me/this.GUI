@@ -2,7 +2,7 @@
   "name": "this.gui",
   "description": "Generative User Interface",
   "private": false,
-  "version": "2.0.3",
+  "version": "2.0.30",
   "type": "module",
   "main": "./dist/this.gui.cjs",
   "module": "./dist/this.gui.es.js",
@@ -36,6 +36,11 @@
       "import": "./dist/molecules/index.js",
       "require": "./dist/molecules/index.cjs"
     },
+    "./compounds": {
+      "types": "./dist/compounds/index.d.ts",
+      "import": "./dist/compounds/index.js",
+      "require": "./dist/compounds/index.cjs"
+    },
     "./components": {
       "types": "./dist/components/index.d.ts",
       "import": "./dist/components/index.js",
@@ -53,7 +58,7 @@
     "build": "vite build && npm run build:types && npm run build:types:sync && npm run build:cli && npm run build:copy-init && npm run build:umd",
     "build:all": "npm run build",
     "build:types": "tsc -p tsconfig.build.json",
-    "build:types:sync": "node -e \"const fs=require('fs-extra'); const path=require('path'); const copy=(from,to)=>{ if(!fs.existsSync(from)) { throw new Error('Missing type file: ' + from); } fs.ensureDirSync(path.dirname(to)); fs.copyFileSync(from,to); }; copy('dist/src/gui/atoms/index.d.ts','dist/atoms/index.d.ts'); copy('dist/src/gui/molecules/index.d.ts','dist/molecules/index.d.ts'); copy('dist/src/gui/components/index.d.ts','dist/components/index.d.ts');\"",
+    "build:types:sync": "node -e \"const fs=require('fs-extra'); const path=require('path'); const copy=(from,to)=>{ if(!fs.existsSync(from)) { throw new Error('Missing type file: ' + from); } fs.ensureDirSync(path.dirname(to)); fs.copyFileSync(from,to); }; copy('dist/src/gui/atoms/index.d.ts','dist/atoms/index.d.ts'); copy('dist/src/gui/molecules/index.d.ts','dist/molecules/index.d.ts'); copy('dist/src/gui/compounds/index.d.ts','dist/compounds/index.d.ts'); copy('dist/src/gui/compounds/index.d.ts','dist/components/index.d.ts');\"",
     "build:cli": "tsc --project tsconfig.cli.json && node -e \"import('./vite.config.js').then(m => (m.buildFinished ? m.buildFinished() : Promise.reject(new Error('buildFinished() not exported from vite.config.js')))).catch(e => { console.error(e); process.exit(1); })\"",
     "build:copy-init": "node -e \"const fs=require('fs-extra'); if(!fs.existsSync('init')){throw new Error('init directory missing at project root');} fs.removeSync('dist/init'); fs.copySync('init','dist/init');\"",
     "build:umd:core": "UMD=true UMD_TARGET=core vite build",
@@ -78,6 +83,7 @@
     "@lexical/react": "^0.33.1",
     "@lexical/rich-text": "^0.33.1",
     "@mediapipe/tasks-vision": "^0.10.22-rc.20250304",
+    "@mui/icons-material": "^6.5.0",
     "@mui/material": "^6.4.6",
     "@uiw/react-markdown-preview": "^5.1.5",
     "@uiw/react-md-editor": "^4.0.11",
@@ -88,6 +94,7 @@
     "js-sha3": "^0.9.3",
     "kolorist": "^1.8.0",
     "lexical": "^0.33.1",
+    "lucide-react": "^1.6.0",
     "material-symbols": "^0.35.2",
     "prompts": "^2.4.2",
     "qrcode-generator": "^2.0.4",

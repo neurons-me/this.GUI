@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Router } from '@/Router/Router';
 import Theme from '@/gui/Theme/Theme';
-import { Box, Button, Paper, Stack, Typography } from '@/gui/atoms';
-import { useDeferredPending } from '@/gui/hooks';
-import { Page } from '@/gui/molecules';
+import { Box, Button, Paper, Stack, Typography } from '@/gui/Atoms';
+import { useDeferredPending } from '@/gui/Hooks';
+import { Page } from '@/gui/Molecules';
 
 function sleep(ms: number, signal?: AbortSignal) {
   return new Promise<void>((resolve, reject) => {

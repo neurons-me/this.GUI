@@ -1,5 +1,5 @@
-import { Hero } from '@/gui/molecules/Hero/Hero';
-import { InsetsProvider } from '@/gui/contexts/InsetsContext';
+import { Hero } from '@/gui/Molecules/Hero/Hero';
+import { InsetsProvider } from '@/gui/Contexts/InsetsContext';
 import Layout from '@/gui/Layout/Layout';
 import type { Meta, StoryObj } from '@storybook/react';
 import Page from './Page';

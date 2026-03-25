@@ -1,18 +1,18 @@
 import * as React from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj, StoryFn } from '@storybook/react';
 import List from './List';
 import ListItem from './ListItem/ListItem';
-import ListItemIcon from '@/gui/molecules/List/ListItemIcon/ListItemIcon';
-import ListItemText from '@/gui/molecules/List/ListItemText/ListItemText';
-import Icon from '@/gui/Theme/Icon/Icon';
+import ListItemIcon from '@/gui/Molecules/List/ListItemIcon/ListItemIcon';
+import ListItemText from '@/gui/Molecules/List/ListItemText/ListItemText';
+import Icon from '@/gui/Atoms/Icon/Icon';
 import ListSubheader from '@mui/material/ListSubheader';
 
 const meta: Meta<typeof List> = {
-  title: 'Molecules/Organization/List',
+  title: 'Molecules/List/List',
   component: List,
   tags: ['autodocs'],
   decorators: [
-    (Story) => (
+    (Story: StoryFn) => (
         <div style={{ padding: 16, minHeight: 260, maxWidth: 560 }}>
           <Story />
         </div>

@@ -38,7 +38,8 @@ export default defineConfig({
     alias: {
       '@/gui/atoms': resolve(__dirname, 'src/gui/atoms'),
       '@/gui/molecules': resolve(__dirname, 'src/gui/molecules'),
-      '@/gui/components': resolve(__dirname, 'src/gui/components'),
+      '@/gui/compounds': resolve(__dirname, 'src/gui/compounds'),
+      '@/gui/components': resolve(__dirname, 'src/gui/compounds'),
       '@': resolve(__dirname, 'src'),
     },
     dedupe: ['react', 'react-dom', 'react-router', 'react-router-dom']
@@ -74,7 +75,8 @@ export default defineConfig({
             index: resolve(__dirname, 'index.ts'),
             atoms: resolve(__dirname, 'src/gui/atoms/index.ts'),
             molecules: resolve(__dirname, 'src/gui/molecules/index.ts'),
-            components: resolve(__dirname, 'src/gui/components/index.ts'),
+            compounds: resolve(__dirname, 'src/gui/compounds/index.ts'),
+            components: resolve(__dirname, 'src/gui/compounds/index.ts'),
           },
           name: 'GUI',
           fileName: (format, entryName) => {
@@ -96,6 +98,11 @@ export default defineConfig({
               if (format === 'es') return 'molecules/index.js';
               if (format === 'cjs') return 'molecules/index.cjs';
               return `molecules/index.${format}.js`;
+            }
+            if (entryName === 'compounds') {
+              if (format === 'es') return 'compounds/index.js';
+              if (format === 'cjs') return 'compounds/index.cjs';
+              return `compounds/index.${format}.js`;
             }
             if (entryName === 'components') {
               if (format === 'es') return 'components/index.js';

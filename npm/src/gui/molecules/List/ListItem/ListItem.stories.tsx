@@ -1,16 +1,16 @@
 import * as React from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj, StoryFn } from '@storybook/react';
 import ListItem from './ListItem';
 import List from '@mui/material/List';
-import ListItemIcon from '@/gui/molecules/List/ListItemIcon/ListItemIcon';
-import ListItemText from '@/gui/molecules/List/ListItemText/ListItemText';
-import Icon from '@/gui/Theme/Icon/Icon';
+import ListItemIcon from '@/gui/Molecules/List/ListItemIcon/ListItemIcon';
+import ListItemText from '@/gui/Molecules/List/ListItemText/ListItemText';
+import Icon from '@/gui/Atoms/Icon/Icon'; 
 const meta: Meta<typeof ListItem> = {
-  title: 'Atoms/Organization/ListItem',
+  title: 'Molecules/List/ListItem',
   component: ListItem,
   tags: ['autodocs'],
   decorators: [
-    (Story) => (
+    (Story: StoryFn) => (
       <div style={{ padding: 16, minHeight: 260, maxWidth: 560 }}>
         <Story />
       </div>
@@ -87,7 +87,7 @@ export const Playground: Story = {
   render: (args) => (
     <DemoList>
       <ListItem {...args}>
-        <ListItemIcon>
+        <ListItemIcon sx={{ minWidth: 36 }}>
           <Icon name="lucide:inbox" />
         </ListItemIcon>
         <ListItemText primary="Inbox" secondary="Messages" />
@@ -100,31 +100,31 @@ export const Variants: Story = {
   render: () => (
     <DemoList>
       <ListItem>
-        <ListItemIcon>
+        <ListItemIcon sx={{ minWidth: 36 }}>
           <Icon name="lucide:mail" />
         </ListItemIcon>
         <ListItemText primary="Default" secondary="No props" />
       </ListItem>
       <ListItem dense>
-        <ListItemIcon>
+        <ListItemIcon sx={{ minWidth: 36 }}>
           <Icon name="lucide:mail" />
         </ListItemIcon>
         <ListItemText primary="Dense" />
       </ListItem>
       <ListItem divider>
-        <ListItemIcon>
+        <ListItemIcon sx={{ minWidth: 36 }}>
           <Icon name="lucide:mail" />
         </ListItemIcon>
         <ListItemText primary="With divider" />
       </ListItem>
       <ListItem>
-        <ListItemIcon>
+        <ListItemIcon sx={{ minWidth: 36 }}>
           <Icon name="lucide:mail" />
         </ListItemIcon>
         <ListItemText primary="Default (no selected on ListItem)" />
       </ListItem>
       <ListItem alignItems="flex-start">
-        <ListItemIcon>
+        <ListItemIcon sx={{ minWidth: 36 }}>
           <Icon name="lucide:mail" />
         </ListItemIcon>
         <ListItemText primary="Align start" secondary="Secondary text that wraps onto multiple lines for demo." />

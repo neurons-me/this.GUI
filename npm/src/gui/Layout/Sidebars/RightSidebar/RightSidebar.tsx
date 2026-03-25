@@ -1,10 +1,10 @@
 import clsx from 'clsx';
 import { useEffect, useState, useRef } from 'react';
 import IconButton from '@mui/material/IconButton';
-import Icon from '@/gui/Theme/Icon/Icon';
-import { Box, Drawer } from '@/gui/atoms';
-import { useRightSidebar, useGuiTheme, useGuiMediaQuery, useUpdateInsets, useInsets } from '@/gui/hooks';
-import type { RightSidebarView } from '@/gui/contexts';
+import Icon from '@/gui/Atoms/Icon/Icon';
+import { Box, Drawer } from '@/gui/Atoms';
+import { useRightSidebar, useGuiTheme, useGuiMediaQuery, useUpdateInsets, useInsets } from '@/gui/Hooks';
+import type { RightSidebarView } from '@/gui/Contexts';
 import type { RightSidebarElement, RightSidebarProps } from './RightSidebar.types';
 import RightSidebarLink from './components/RightSidebarLink/RightSidebarLink';
 import RightSidebarMenu from './components/RightSidebarMenu/RightSidebarMenu';

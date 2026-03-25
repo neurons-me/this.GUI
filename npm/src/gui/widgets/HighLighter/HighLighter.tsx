@@ -1,12 +1,12 @@
 import * as React from 'react';
 import clsx from 'clsx';
-import Box from '@/gui/atoms/Box/Box';
-import IconButton from '@/gui/atoms/IconButton/IconButton';
+import Box from '@/gui/Atoms/Box/Box';
+import IconButton from '@/gui/Atoms/IconButton/IconButton';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
-
-import Icon from '@/gui/Theme/Icon/Icon';
-import Tooltip from '@/gui/atoms/Tooltip/Tooltip';
-import Drawer from '@/gui/atoms/Drawer/Drawer';
+ 
+import Icon from '@/gui/Atoms/Icon/Icon';
+import Tooltip from '@/gui/Molecules/Tooltip/Tooltip';
+import Drawer from '@/gui/Molecules/Drawer/Drawer';
 import HighLightsDrawer from '@/gui/widgets/HighLighter/HighLightsDrawer';
 
 export type HighLighterColor = string;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Box, Typography, Tooltip } from '@/gui/atoms';
-import Icon from '@/gui/Theme/Icon/Icon';
-import { useRightSidebar } from '@/gui/hooks';
+import { Box, Typography, Tooltip } from '@/gui/Atoms';
+import Icon from '@/gui/Atoms/Icon/Icon';
+import { useRightSidebar } from '@/gui/Hooks';
 
 type RightSidebarLinkProps = {
   label?: string;

@@ -1,7 +1,7 @@
 // src/gui/atoms/Typography/Typography.resolver.tsx
 import * as React from 'react';
 import Typography from './Typography';
-import Link from '@/gui/atoms/Link/Link';
+import Link from '@/gui/Atoms/Link/Link';
 import type { RegistryEntry } from '@/Registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { ensureNodeId } from '@/gui/utils/nodeID';

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { useGuiTheme } from '@/gui/hooks';
+import { useGuiTheme } from '@/gui/Hooks';
 export type CodeBlockVariant = 'dark' | 'light';
 export type CodeBlockProps = {
   /** Code string to render */

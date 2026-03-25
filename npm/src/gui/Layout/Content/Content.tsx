@@ -1,7 +1,7 @@
 import React from 'react';
 import type { SxProps, Theme } from '@mui/system';
-import { Box } from '@/gui/atoms';
-import { useInsets } from '@/gui/hooks';
+import { Box } from '@/gui/Atoms';
+import { useInsets } from '@/gui/Hooks';
 
 export type ContentProps = {
   children?: React.ReactNode;

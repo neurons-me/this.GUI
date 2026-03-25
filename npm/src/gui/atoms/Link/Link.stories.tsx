@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Link, Button } from '@/gui/atoms';
+import { Link, Button } from '@/gui/Atoms';
+import { Typography } from '@mui/material';
 // ======================= Meta =======================
 const meta: Meta<typeof Link> = {
-  title: 'Atoms/Navigation/Link',
+  title: 'Atoms/Link',
   component: Link,
   tags: ['autodocs'],
   decorators: [
@@ -108,50 +109,38 @@ type Story = StoryObj<typeof Link>;
 // ======================= Stories =======================
 export const Playground: Story = {};
 
-export const ExternalHref: Story = {
-  name: 'External (href)',
-  render: () => (
-    <Link href="https://neurons.me" target="_blank" rel="noreferrer">
-      Visit neurons.me
-    </Link>
-  ),
-};
-
-export const InternalTo: Story = {
-  name: 'Internal (to)',
-  render: () => <Link to="/docs">Go to docs</Link>,
-};
-
-export const Colors: Story = {
+export const Variants: Story = {
   render: (args) => {
     const colors: Array<any> = ['primary', 'secondary', 'success', 'info', 'warning', 'error'];
     return (
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        {colors.map((c) => (
-          <Link key={c} {...args} color={c} href="#">
-            {c[0].toUpperCase() + c.slice(1)}
-          </Link>
-        ))}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        <div>
+          <Typography variant="h6" gutterBottom>Colors</Typography>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            {colors.map((c) => (
+              <Link key={c} {...args} color={c} href="#">
+                {c[0].toUpperCase() + c.slice(1)}
+              </Link>
+            ))}
+          </div>
+        </div>
+        <div>
+          <Typography variant="h6" gutterBottom>Underline</Typography>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <Link {...args} underline="none" href="#">None</Link>
+            <Link {...args} underline="hover" href="#">Hover</Link>
+            <Link {...args} underline="always" href="#">Always</Link>
+          </div>
+        </div>
+        <div>
+          <Typography variant="h6" gutterBottom>Usage</Typography>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+            <Link href="https://neurons.me" target="_blank" rel="noreferrer">External (href)</Link>
+            <Link to="/docs">Internal (to)</Link>
+            <Button component={Link} to="/docs">As Button component</Button>
+          </div>
+        </div>
       </div>
     );
   },
-};
-
-export const UnderlineVariants: Story = {
-  render: (args) => (
-    <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-      <Link {...args} underline="none" href="#">None</Link>
-      <Link {...args} underline="hover" href="#">Hover</Link>
-      <Link {...args} underline="always" href="#">Always</Link>
-    </div>
-  ),
-};
-
-export const AsButtonTarget: Story = {
-  name: 'As Button component',
-  render: () => (
-    <Button component={Link} to="/docs">
-      Docs via Link
-    </Button>
-  ),
 };

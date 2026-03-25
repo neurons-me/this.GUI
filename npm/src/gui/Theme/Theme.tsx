@@ -1,14 +1,14 @@
 // src/themes/Theme.tsx
 import React, { useEffect, useMemo } from 'react';
 import { generatePaletteCssVars } from './utils/themeUtils';
-import { ThemeContext } from '@/gui/contexts/ThemeContext';
+import { ThemeContext } from '@/gui/Contexts/ThemeContext';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import type { Theme as MuiTheme } from '@mui/material/styles';
 import { themeTokens } from '@/gui/Theme/styles/theme.tokens';
 import { usePersistentThemeId, usePersistentThemeMode } from './utils/persistence';
 import { makeMuiTheme } from '@/gui/Theme/fromTokens';
 import { GuiThemes, getGuiTheme } from './utils/catalog';
-import { InsetsProvider, useInsetsContext } from '@/gui/contexts/InsetsContext';
+import { InsetsProvider, useInsetsContext } from '@/gui/Contexts/InsetsContext';
 // -------------------------------- Types --------------------------------
 import type {
   GuiContextValue,

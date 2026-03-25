@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from 'react';
 
 import Theme from '@/gui/Theme/Theme';
-import Box from '@/gui/atoms/Box/Box';
-import Paper from '@/gui/atoms/Paper/Paper';
-import Typography from '@/gui/atoms/Typography/Typography';
-import CodeBlock from '@/gui/molecules/CodeBlock/CodeBlock';
+import Box from '@/gui/Atoms/Box/Box';
+import Paper from '@/gui/Atoms/Paper/Paper';
+import Typography from '@/gui/Atoms/Typography/Typography';
+import CodeBlock from '@/gui/Molecules/CodeBlock/CodeBlock';
 
 type Parsed = {
   input: string;

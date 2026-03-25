@@ -1,5 +1,5 @@
 import React from 'react';
-import type { LeftSidebarView } from '@/gui/contexts/LeftSidebarContext';
+import type { LeftSidebarView } from '@/gui/Contexts/LeftSidebarContext';
 export type LeftSidebarItemProps = {
   label?: string;
   icon?: string;

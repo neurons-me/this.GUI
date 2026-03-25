@@ -1,38 +1,18 @@
 import Theme from '@/gui/Theme/Theme';
-import Icon from '@/gui/Theme/Icon/Icon';
-import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
-import Catalog from '@/gui/Theme/Catalog/Catalog';
+
 import {
   Avatar,
   Box,
-  Button,
   Divider,
-  IconButton,
   Link,
   Paper,
   Stack,
-  Grid,
-  Switch,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Tooltip,
   Typography,
-} from '@/gui/atoms';
-import {
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from '@/gui/molecules';
-import Card from '@/gui/atoms/Card/Card';
-import CardActions from '@/gui/atoms/Card/CardActions/CardActions';
-import CardContent from '@/gui/atoms/Card/CardContent/CardContent';
-import CardHeader from '@/gui/atoms/Card/CardHeader/CardHeader';
-import TextField from '@/gui/atoms/TextField/TextField';
+} from '@/gui/Atoms';
+
+import Card from '@/gui/Atoms/Card/Card';
+import CardContent from '@/gui/Atoms/Card/CardContent/CardContent';
+import CardHeader from '@/gui/Atoms/Card/CardHeader/CardHeader';
 
 const Home = () => {
   return (
