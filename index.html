@@ -437,7 +437,7 @@ const LATEST_META_URL = 'https://registry.npmjs.org/this.gui/latest';
 const LATEST_FALLBACK_VERSION = '1.4.89';
 const LATEST_CSS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/styles.css';
 const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.umd.js';
-const REMOTE_ASSET_TIMEOUT_MS = 8000;
+const REMOTE_ASSET_TIMEOUT_MS = 30000;
     const REACT_CDN = 'https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js';
     const REACTDOM_CDN = 'https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js';
     const isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
@@ -474,6 +474,14 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
 
     function getLatestFallbackAssets() {
       return buildVersionedLatestAssets(LATEST_FALLBACK_VERSION);
+    }
+
+    function getSiteFallbackAssets() {
+      return {
+        css: LOCAL_CSS_DEFAULT,
+        js: LOCAL_JS_DEFAULT,
+        version: undefined,
+      };
     }
 
     function readLocalPaths() {
@@ -816,34 +824,65 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
         await loadScript(urls.js);
       } catch (error) {
         if (source === 'latest') {
-          const fallbackUrls = getLatestFallbackAssets();
-          console.warn('[GUI] Latest CDN failed, falling back to', fallbackUrls.version, error);
-          setStatus('pending', fallbackUrls);
-          window.GUI_RUNTIME_INFO = {
-            source: 'latest',
-            state: 'pending',
-            css: fallbackUrls.css,
-            js: fallbackUrls.js,
-            version: fallbackUrls.version,
-          };
-          await loadStyle(fallbackUrls.css);
-          if (!window.React) await loadScript(REACT_CDN);
-          if (!window.ReactDOM) await loadScript(REACTDOM_CDN);
-          await loadScript(fallbackUrls.js);
-          const detectedFallbackVersion = (window.GUI && window.GUI.version) || fallbackUrls.version || undefined;
-          window.GUI_LOAD_SOURCE = 'cdn:latest';
-          document.documentElement.setAttribute('data-gui-source', window.GUI_LOAD_SOURCE);
-          console.log(`[GUI] Loaded from: ${window.GUI_LOAD_SOURCE} (fallback ${detectedFallbackVersion})`);
-          setStatus('loaded', fallbackUrls, detectedFallbackVersion);
-          document.body.classList.add('runtime-ready');
-          window.GUI_RUNTIME_INFO = {
-            source: 'latest',
-            state: 'loaded',
-            css: fallbackUrls.css,
-            js: fallbackUrls.js,
-            version: detectedFallbackVersion,
-          };
-          return source;
+          const siteFallbackUrls = getSiteFallbackAssets();
+          console.warn('[GUI] Latest CDN failed, falling back to site dist assets.', error);
+          try {
+            setStatus('pending', siteFallbackUrls);
+            window.GUI_RUNTIME_INFO = {
+              source: 'site',
+              state: 'pending',
+              css: siteFallbackUrls.css,
+              js: siteFallbackUrls.js,
+              version: undefined,
+            };
+            await loadStyle(siteFallbackUrls.css);
+            if (!window.React) await loadScript(REACT_CDN);
+            if (!window.ReactDOM) await loadScript(REACTDOM_CDN);
+            await loadScript(siteFallbackUrls.js);
+            const detectedSiteVersion = (window.GUI && window.GUI.version) || undefined;
+            window.GUI_LOAD_SOURCE = 'site:dist';
+            document.documentElement.setAttribute('data-gui-source', window.GUI_LOAD_SOURCE);
+            console.log(`[GUI] Loaded from: ${window.GUI_LOAD_SOURCE}`);
+            setStatus('loaded', siteFallbackUrls, detectedSiteVersion);
+            document.body.classList.add('runtime-ready');
+            window.GUI_RUNTIME_INFO = {
+              source: 'site',
+              state: 'loaded',
+              css: siteFallbackUrls.css,
+              js: siteFallbackUrls.js,
+              version: detectedSiteVersion,
+            };
+            return source;
+          } catch (siteError) {
+            const fallbackUrls = getLatestFallbackAssets();
+            console.warn('[GUI] Site dist fallback failed, falling back to', fallbackUrls.version, siteError);
+            setStatus('pending', fallbackUrls);
+            window.GUI_RUNTIME_INFO = {
+              source: 'latest',
+              state: 'pending',
+              css: fallbackUrls.css,
+              js: fallbackUrls.js,
+              version: fallbackUrls.version,
+            };
+            await loadStyle(fallbackUrls.css);
+            if (!window.React) await loadScript(REACT_CDN);
+            if (!window.ReactDOM) await loadScript(REACTDOM_CDN);
+            await loadScript(fallbackUrls.js);
+            const detectedFallbackVersion = (window.GUI && window.GUI.version) || fallbackUrls.version || undefined;
+            window.GUI_LOAD_SOURCE = 'cdn:latest';
+            document.documentElement.setAttribute('data-gui-source', window.GUI_LOAD_SOURCE);
+            console.log(`[GUI] Loaded from: ${window.GUI_LOAD_SOURCE} (fallback ${detectedFallbackVersion})`);
+            setStatus('loaded', fallbackUrls, detectedFallbackVersion);
+            document.body.classList.add('runtime-ready');
+            window.GUI_RUNTIME_INFO = {
+              source: 'latest',
+              state: 'loaded',
+              css: fallbackUrls.css,
+              js: fallbackUrls.js,
+              version: detectedFallbackVersion,
+            };
+            return source;
+          }
         }
         throw error;
       }
@@ -920,6 +959,8 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
     const runtimeSource =
       runtimeInfo.source === 'local'
         ? 'local'
+        : runtimeInfo.source === 'site'
+        ? 'site dist'
         : runtimeInfo.source === 'latest'
         ? 'cdn latest'
         : 'cdn latest';
@@ -941,10 +982,14 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
     const sourceLabel = String(runtimeSource || '');
     const sourceEmphasis = runtimeInfo.source === 'latest'
       ? 'latest'
+      : runtimeInfo.source === 'site'
+      ? 'site'
       : sourceLabel || 'local';
     const sourcePrefix =
       runtimeInfo.source === 'latest'
         ? 'cdn'
+        : runtimeInfo.source === 'site'
+        ? 'dist'
         : runtimeInfo.source === 'local'
         ? ''
         : sourceLabel.replace(sourceEmphasis, '').trim();
