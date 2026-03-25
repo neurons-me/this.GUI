@@ -40,9 +40,9 @@ export default defineConfig({
       { find: /^@\/gui\/Atoms\//, replacement: `${resolve(dirname, 'src/gui/Atoms')}/` },
       { find: /^@\/gui\/atoms$/, replacement: resolve(dirname, 'src/gui/Atoms/atoms.ts') },
       { find: /^@\/gui\/atoms\//, replacement: `${resolve(dirname, 'src/gui/Atoms')}/` },
-      { find: /^@\/gui\/Molecules$/, replacement: resolve(dirname, 'src/gui/Molecules/molecules.ts') },
+      { find: /^@\/gui\/Molecules$/, replacement: resolve(dirname, 'src/gui/molecules/molecules.ts') },
       { find: /^@\/gui\/Molecules\//, replacement: `${resolve(dirname, 'src/gui/Molecules')}/` },
-      { find: /^@\/gui\/molecules$/, replacement: resolve(dirname, 'src/gui/Molecules/molecules.ts') },
+      { find: /^@\/gui\/molecules$/, replacement: resolve(dirname, 'src/gui/molecules/molecules.ts') },
       { find: /^@\/gui\/molecules\//, replacement: `${resolve(dirname, 'src/gui/Molecules')}/` },
       { find: /^@\/gui\/Compounds$/, replacement: resolve(dirname, 'src/gui/Compounds/compounds.ts') },
       { find: /^@\/gui\/Compounds\//, replacement: `${resolve(dirname, 'src/gui/Compounds')}/` },
@@ -84,7 +84,7 @@ export default defineConfig({
           entry: {
             index: resolve(dirname, 'index.ts'),
             atoms: resolve(dirname, 'src/gui/Atoms/atoms.ts'),
-            molecules: resolve(dirname, 'src/gui/Molecules/molecules.ts'),
+            molecules: resolve(dirname, 'src/gui/molecules/molecules.ts'),
             compounds: resolve(dirname, 'src/gui/Compounds/compounds.ts'),
             components: resolve(dirname, 'src/gui/Compounds/compounds.ts'), //deprecated
           },

@@ -3,7 +3,14 @@ import { Box } from '@/gui/Atoms';
 import { useInsets, useGuiTheme } from '@/gui/Hooks';
 import type { SectionProps } from './Section.types';
 
+const DEFAULT_PADDING = {
+  xs: 2,
+  sm: 3,
+  md: 4,
+} as const;
+
 const Section: React.FC<SectionProps> = ({
+  id,
   children,
   sx,
   maxWidth = '100%',
@@ -16,6 +23,11 @@ const Section: React.FC<SectionProps> = ({
   marginBottom,
   marginLeft,
   marginRight,
+  className,
+  elevation,
+  padded = true,
+  centered = false,
+  'data-testid': dataTestId,
 }) => {
   const insets = useInsets();
   const theme = useGuiTheme();
@@ -46,25 +58,37 @@ const Section: React.FC<SectionProps> = ({
     finalBgcolor = theme.palette.section[colorVariant];
   }
 
+  const resolvedPadding =
+    padding !== undefined
+      ? padding
+      : padded === false
+      ? 0
+      : DEFAULT_PADDING;
+
+  const resolvedElevation =
+    typeof elevation === 'number' && Array.isArray(theme.shadows)
+      ? theme.shadows[Math.max(0, Math.min(Math.trunc(elevation), theme.shadows.length - 1))]
+      : undefined;
+
   return (
     <Box
+      id={id}
       component={component}
+      className={className}
+      data-testid={dataTestId}
       sx={{
         // Responsive width/height: fill viewport, but margin aligns with insets
         width: `calc(100vw - ${insets.left + insets.right}px)`,
         height: height ? height : `calc(100vh - ${insets.top + insets.bottom}px)`,
         marginTop: marginTop !== undefined ? marginTop : insets.top,
         marginBottom: marginBottom !== undefined ? marginBottom : insets.bottom,
-        marginLeft: marginLeft !== undefined ? marginLeft : insets.left,
-        marginRight: marginRight !== undefined ? marginRight : insets.right,
+        marginLeft: marginLeft !== undefined ? marginLeft : centered ? 'auto' : insets.left,
+        marginRight: marginRight !== undefined ? marginRight : centered ? 'auto' : insets.right,
         maxWidth,
         // Responsive internal padding
-        padding: padding !== undefined ? padding : {
-          xs: 2,
-          sm: 3,
-          md: 4,
-        },
+        padding: resolvedPadding,
         ...(finalBgcolor ? { bgcolor: finalBgcolor } : {}),
+        ...(resolvedElevation ? { boxShadow: resolvedElevation } : {}),
         ...sx,
       }}
     >

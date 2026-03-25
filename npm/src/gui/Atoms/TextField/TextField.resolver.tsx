@@ -39,8 +39,6 @@ export type TextFieldSpec = {
     sx?: SxProps<Theme>;
     className?: string;
     'data-testid'?: string;
-    component?: React.ElementType;
-    as?: React.ElementType;
     [key: string]: any;
   };
 };
@@ -55,20 +53,14 @@ const TextFieldResolver: RegistryEntry = {
     const p = spec.props ?? {};
     const {
       id,
-      component,
-      as,
-      // Destructure other TextField specific props here
       ...rest
     } = p;
-
-    const resolvedComponent = component ?? as;
     const textFieldId = ensureNodeId('textField', id);
 
     return (
       <TextField
         id={textFieldId}
         data-testid={p['data-testid']}
-        {...(resolvedComponent ? { component: resolvedComponent } : {})}
         {...rest}
       />
     );

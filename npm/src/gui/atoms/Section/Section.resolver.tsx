@@ -1,5 +1,8 @@
+import * as React from 'react';
+import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
+import { ensureNodeId } from '@/gui/utils/nodeID';
 import Section from './Section';
-import type { SectionProps } from './Section.types';
+import type { SectionSpec } from './Section.types';
 
 // =========================================
 // Catalog meta (discoverability)
@@ -23,10 +26,17 @@ export const meta = {
   },
 } as const;
 
-export const SectionResolver = {
+export const SectionResolver: RegistryEntry = {
   type: 'Section',
-  component: Section,
-  resolve: (props: SectionProps) => <Section {...props} />,
+  resolve(spec: SectionSpec, _ctx?: ResolveCtx) {
+    const p = spec.props ?? {};
+    return (
+      <Section
+        {...p}
+        id={ensureNodeId('section', p.id)}
+      />
+    );
+  },
 };
 
 export default SectionResolver;

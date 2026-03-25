@@ -1,12 +1,21 @@
 import type { PaperProps } from '@mui/material/Paper';
 import type { ReactNode } from 'react';
-export type SurfaceVariant = 'elevation' | 'outlined' | 'card';
-export interface SurfaceProps extends Omit<PaperProps, 'variant'> {
+export type SurfaceVariant =
+  | 'default'
+  | 'elevation'
+  | 'solid'
+  | 'outline'
+  | 'outlined'
+  | 'glass'
+  | 'card';
+
+export interface SurfaceProps extends Omit<PaperProps, 'variant' | 'color'> {
   /**
    * Visual style for the surface.
-   * `card` maps to an outlined paper with subtle shadow + rounded corners.
+   * `default`/`elevation` map to the standard solid paper surface.
    */
   variant?: SurfaceVariant;
+  color?: unknown;
 }
 
 export type SurfaceResolverSpec = {

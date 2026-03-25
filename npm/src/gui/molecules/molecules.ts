@@ -24,32 +24,32 @@ Molecules:
 Configurations emerge from constraints.*/
 
 // Components
-import Dialog from './Dialog/Dialog';
-import { Hero } from './Hero/Hero';
-import Modal from './Modal/Modal';
-import type { ModalProps } from './Modal/Modal.types';
-import Page from './Page/Page';
-import CodeBlock from './CodeBlock/CodeBlock';
+import Dialog from '@/gui/Molecules/Dialog/Dialog';
+import { Hero } from '@/gui/Molecules/Hero/Hero';
+import Modal from '@/gui/Molecules/Modal/Modal';
+import type { ModalProps } from '@/gui/Molecules/Modal/Modal.types';
+import Page from '@/gui/Molecules/Page/Page';
+import CodeBlock from '@/gui/Molecules/CodeBlock/CodeBlock';
 
 // Types
 import type { ComponentType } from 'react';
-import type { DialogProps } from './Dialog/Dialog';
-import type { HeroProps } from './Hero/Hero.types';
-import type PageProps from './Page/Page';
-import type { CodeBlockProps } from './CodeBlock/CodeBlock';
+import type { DialogProps } from '@/gui/Molecules/Dialog/Dialog';
+import type { HeroProps } from '@/gui/Molecules/Hero/Hero.types';
+import type PageProps from '@/gui/Molecules/Page/Page';
+import type { CodeBlockProps } from '@/gui/Molecules/CodeBlock/CodeBlock';
 
 //List
 // List and related are not polymorphic so we wrap them with forwardRef
-import List, { type ListProps } from './List/List';
-export type { ListProps } from './List/List';
-import ListItem, { type ListItemProps } from './List/ListItem/ListItem';
-export type { ListItemProps } from './List/ListItem/ListItem';
-import ListItemButton, { type ListItemButtonProps } from './List/ListItemButton/ListItemButton';
-export type { ListItemButtonProps } from './List/ListItemButton/ListItemButton';
-import ListItemIcon, { type ListItemIconProps } from './List/ListItemIcon/ListItemIcon';
-export type { ListItemIconProps } from './List/ListItemIcon/ListItemIcon';
-import ListItemText, { type ListItemTextProps } from './List/ListItemText/ListItemText';
-export type { ListItemTextProps } from './List/ListItemText/ListItemText';
+import List, { type ListProps } from '@/gui/Molecules/List/List';
+export type { ListProps } from '@/gui/Molecules/List/List';
+import ListItem, { type ListItemProps } from '@/gui/Molecules/List/ListItem/ListItem';
+export type { ListItemProps } from '@/gui/Molecules/List/ListItem/ListItem';
+import ListItemButton, { type ListItemButtonProps } from '@/gui/Molecules/List/ListItemButton/ListItemButton';
+export type { ListItemButtonProps } from '@/gui/Molecules/List/ListItemButton/ListItemButton';
+import ListItemIcon, { type ListItemIconProps } from '@/gui/Molecules/List/ListItemIcon/ListItemIcon';
+export type { ListItemIconProps } from '@/gui/Molecules/List/ListItemIcon/ListItemIcon';
+import ListItemText, { type ListItemTextProps } from '@/gui/Molecules/List/ListItemText/ListItemText';
+export type { ListItemTextProps } from '@/gui/Molecules/List/ListItemText/ListItemText';
 
 type MoleculesRegistry = {
   Dialog: typeof Dialog;

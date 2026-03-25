@@ -1,6 +1,7 @@
 import React from 'react';
 import Paper from '@mui/material/Paper';
 import { useTheme, alpha } from '@mui/material/styles';
+import type { SurfaceProps } from './Surface.types';
 
 /**
  * Surface
@@ -11,7 +12,7 @@ import { useTheme, alpha } from '@mui/material/styles';
  */
 const Surface = React.forwardRef<HTMLDivElement, SurfaceProps>((props, ref) => {
   const {
-    variant: variantProp = 'solid',
+    variant: variantProp = 'default',
     color, // Destructure color to prevent it from being passed to Paper
     elevation,
     sx,
@@ -77,16 +78,4 @@ const Surface = React.forwardRef<HTMLDivElement, SurfaceProps>((props, ref) => {
 
 Surface.displayName = 'Surface';
 export default Surface;
-// Definimos los tipos aquí para mantener el archivo autocontenido si es necesario.
-export type SurfaceProps = Omit<React.ComponentProps<typeof Paper>, 'variant' | 'color'> & {
-  /**
-   * The variant to use.
-   * 'default' | 'elevation': Standard surface with shadow.
-   * 'solid': A surface with a solid background and optional shadow.
-   * 'outline': A surface with a border.
-   * 'glass': A semi-transparent surface with a blurred background.
-   * 'card': A pre-styled surface for card-like containers.
-   */
-  variant?: 'default' | 'elevation' | 'solid' | 'outline' | 'outlined' | 'glass' | 'card',
-  color?: any;
-};
+export type { SurfaceProps, SurfaceVariant } from './Surface.types';

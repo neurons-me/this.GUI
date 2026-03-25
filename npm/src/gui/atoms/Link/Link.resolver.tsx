@@ -4,7 +4,6 @@ import type { RegistryEntry } from '@/Registry/types';
 import Link, { LinkProps as GuiLinkProps } from './Link';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { ensureNodeId } from '@/gui/utils/nodeID';
-import { useInRouterContext } from 'react-router-dom';
 
 /** Declarative spec for Link (JSON-friendly) */
 type LinkSpec = {
@@ -57,17 +56,17 @@ const LinkResolver: RegistryEntry = {
   resolve(spec: LinkSpec) {
     const p = spec.props ?? {};
     const nodeId = ensureNodeId('link', p.id as string | undefined);
-    const hasRouter = useInRouterContext();
+    const externalHref = p.href ?? p.to;
 
     // Routing / destino
     const routingProps: Partial<GuiLinkProps> =
       p.external
         ? {
-            href: p.href,
+            href: externalHref,
             ...(p.target ? { target: p.target } : { target: '_blank' }),
             ...(p.rel ? { rel: p.rel } : { rel: 'noopener noreferrer' }),
           }
-        : p.to && hasRouter
+        : p.to
         ? { to: p.to }
         : p.href
         ? { href: p.href }

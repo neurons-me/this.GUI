@@ -22,3 +22,8 @@ export interface SectionProps {
   marginLeft?: number | string | Record<string, any>;
   marginRight?: number | string | Record<string, any>;
 }
+
+export type SectionSpec = {
+  type: 'Section';
+  props?: SectionProps;
+};
