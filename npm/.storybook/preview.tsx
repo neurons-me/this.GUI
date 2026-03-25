@@ -6,10 +6,10 @@ import { create } from 'storybook/theming';
 import { MemoryRouter } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
 import { Theme } from '../src/gui/Theme/Theme';
-import CodeBlock from '../src/gui/molecules/CodeBlock/CodeBlock';
-import Typography from '../src/gui/atoms/Typography/Typography';
-import Link from '../src/gui/atoms/Link/Link';
-import Box from '../src/gui/atoms/Box/Box';
+import CodeBlock from '../src/gui/Molecules/CodeBlock/CodeBlock';
+import Typography from '../src/gui/Atoms/Typography/Typography';
+import Link from '../src/gui/Atoms/Link/Link';
+import Box from '../src/gui/Atoms/Box/Box';
 
 const routerFuture = {
   v7_startTransition: true,
