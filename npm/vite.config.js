@@ -35,13 +35,23 @@ export default defineConfig({
     __GUI_VERSION__: JSON.stringify(pkg.version),
   },
   resolve: {
-    alias: {
-      '@/gui/atoms': resolve(__dirname, 'src/gui/atoms'),
-      '@/gui/molecules': resolve(__dirname, 'src/gui/molecules'),
-      '@/gui/compounds': resolve(__dirname, 'src/gui/compounds'),
-      '@/gui/components': resolve(__dirname, 'src/gui/compounds'),
-      '@': resolve(__dirname, 'src'),
-    },
+    alias: [
+      { find: /^@\/gui\/Atoms$/, replacement: resolve(__dirname, 'src/gui/Atoms/atoms.ts') },
+      { find: /^@\/gui\/Atoms\//, replacement: `${resolve(__dirname, 'src/gui/Atoms')}/` },
+      { find: /^@\/gui\/atoms$/, replacement: resolve(__dirname, 'src/gui/Atoms/atoms.ts') },
+      { find: /^@\/gui\/atoms\//, replacement: `${resolve(__dirname, 'src/gui/Atoms')}/` },
+      { find: /^@\/gui\/Molecules$/, replacement: resolve(__dirname, 'src/gui/Molecules/molecules.ts') },
+      { find: /^@\/gui\/Molecules\//, replacement: `${resolve(__dirname, 'src/gui/Molecules')}/` },
+      { find: /^@\/gui\/molecules$/, replacement: resolve(__dirname, 'src/gui/Molecules/molecules.ts') },
+      { find: /^@\/gui\/molecules\//, replacement: `${resolve(__dirname, 'src/gui/Molecules')}/` },
+      { find: /^@\/gui\/Compounds$/, replacement: resolve(__dirname, 'src/gui/Compounds/compounds.ts') },
+      { find: /^@\/gui\/Compounds\//, replacement: `${resolve(__dirname, 'src/gui/Compounds')}/` },
+      { find: /^@\/gui\/compounds$/, replacement: resolve(__dirname, 'src/gui/Compounds/compounds.ts') },
+      { find: /^@\/gui\/compounds\//, replacement: `${resolve(__dirname, 'src/gui/Compounds')}/` },
+      { find: /^@\/gui\/components$/, replacement: resolve(__dirname, 'src/gui/Compounds/compounds.ts') },
+      { find: /^@\/gui\/components\//, replacement: `${resolve(__dirname, 'src/gui/Compounds')}/` },
+      { find: '@', replacement: resolve(__dirname, 'src') },
+    ],
     dedupe: ['react', 'react-dom', 'react-router', 'react-router-dom']
   },
   build: isDemo ? undefined : {
@@ -73,10 +83,10 @@ export default defineConfig({
       : {
           entry: {
             index: resolve(__dirname, 'index.ts'),
-            atoms: resolve(__dirname, 'src/gui/Atoms/index.ts'),
-            molecules: resolve(__dirname, 'src/gui/Molecules/index.ts'),
-            compounds: resolve(__dirname, 'src/gui/Compounds/index.ts'),
-            components: resolve(__dirname, 'src/gui/Compounds/index.ts'), //deprecated
+            atoms: resolve(__dirname, 'src/gui/Atoms/atoms.ts'),
+            molecules: resolve(__dirname, 'src/gui/Molecules/molecules.ts'),
+            compounds: resolve(__dirname, 'src/gui/Compounds/compounds.ts'),
+            components: resolve(__dirname, 'src/gui/Compounds/compounds.ts'), //deprecated
           },
           name: 'GUI',
           fileName: (format, entryName) => {
