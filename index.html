@@ -1071,9 +1071,10 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
           })
         : null;
     const leftBarCleakerQR =
-      window.React && window.GUI && window.GUI.Cleaker && typeof window.React.createElement === 'function'
+      window.React && window.GUI && window.GUI.CleakerQR && typeof window.React.createElement === 'function'
         ? (() => {
             const React = window.React;
+            const CleakerQR = window.GUI.CleakerQR;
             const SESSION_CREDENTIALS_EVENT = 'cleaker:session:credentials-changed';
             const SESSION_USERNAME_STORAGE_KEY = 'cleaker.session.username.v1';
             const SESSION_SECRET_STORAGE_KEY = 'cleaker.session.secret.v1';
@@ -1119,10 +1120,11 @@ const REMOTE_ASSET_TIMEOUT_MS = 8000;
                 React.createElement(
                   'div',
                   { className: 'gui-leftbar-cleaker-qr-canvas' },
-                  React.createElement(window.GUI.Cleaker, {
-                    key: `leftbar-cleaker-${version}`,
+                  React.createElement(CleakerQR, {
+                    key: `leftbar-cleaker-qr-${version}`,
+                    variant: 'icon',
                     'data-gui-node-id': 'LeftBarCleakerQR',
-                    'data-gui-component': 'Cleaker.LeftBarQR',
+                    'data-gui-component': 'Cleaker.QR.Icon',
                   })
                 ),
                 React.createElement(

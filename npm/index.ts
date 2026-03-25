@@ -60,6 +60,7 @@ export { default as ModuleRow } from '@/gui/All.This/src/ModuleRow/ModuleRow';
 export { default as ModulesGrid } from '@/gui/All.This/src/ModulesGrid/ModulesGrid';
 export { default as ModulesList } from '@/gui/All.This/src/ModulesList/ModulesList';
 export { default as Cleaker } from '@/gui/All.This/Cleaker/Cleaker';
+export { default as CleakerQR } from '@/gui/All.This/Cleaker/QR/CleakerQR';
 export { default as FaceRecognition } from '@/gui/widgets/FaceRecognition/FaceRecognition';
 export { default as Monad } from '@/gui/All.This/monad.ai/monad.ai';
 export type { MonadProps } from '@/gui/All.This/monad.ai/monad.ai';

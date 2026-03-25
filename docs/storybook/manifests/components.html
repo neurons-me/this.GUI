@@ -582,7 +582,7 @@
 <main>
   <div class="wrap">
     <div class="note info" style="margin-bottom: 16px;">
-            <strong>Tip:</strong> You are using <code>react-docgen</code> (the default). Generation took <strong>1.4s</strong>. For higher quality prop types, consider switching to <code>react-docgen-typescript</code> in your <code>main.ts</code>:
+            <strong>Tip:</strong> You are using <code>react-docgen</code> (the default). Generation took <strong>1.9s</strong>. For higher quality prop types, consider switching to <code>react-docgen-typescript</code> in your <code>main.ts</code>:
             <pre><code>typescript: {
   reactDocgen: 'react-docgen-typescript',
 }</code></pre>
@@ -9614,7 +9614,7 @@ variant?: union</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>bgcolor?: string
 
-centered?: boolean
+centered?: boolean = false
 
 children?: React.ReactNode
 
@@ -9642,7 +9642,7 @@ marginTop?: number | string | Record&lt;string, any&gt;
 
 maxWidth?: number | string = &#39;100%&#39;
 
-padded?: boolean
+padded?: boolean = true
 
 padding?: number | string | Record&lt;string, any&gt;
 
@@ -10133,17 +10133,19 @@ visibility?: {
             </div>
             <pre><code>Component: src/gui/Atoms/Surface/Surface.tsx::default</code></pre>
             <pre><code>Props:</code></pre>
-            <pre><code>color?: any
+            <pre><code>color?: unknown
 
 /**
- * The variant to use.
- * &#39;default&#39; | &#39;elevation&#39;: Standard surface with shadow.
- * &#39;solid&#39;: A surface with a solid background and optional shadow.
- * &#39;outline&#39;: A surface with a border.
- * &#39;glass&#39;: A semi-transparent surface with a blurred background.
- * &#39;card&#39;: A pre-styled surface for card-like containers.
+ * Visual style for the surface.
+ * `default`/`elevation` map to the standard solid paper surface.
  */
-variant?: &#39;default&#39; | &#39;elevation&#39; | &#39;solid&#39; | &#39;outline&#39; | &#39;outlined&#39; | &#39;glass&#39; | &#39;card&#39;</code></pre>
+variant?: | &#39;default&#39;
+| &#39;elevation&#39;
+| &#39;solid&#39;
+| &#39;outline&#39;
+| &#39;outlined&#39;
+| &#39;glass&#39;
+| &#39;card&#39;</code></pre>
           </div>
         </div>
     

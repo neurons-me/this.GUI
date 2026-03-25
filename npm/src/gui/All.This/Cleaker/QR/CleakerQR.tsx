@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import QR, { type QREmbedMode } from '@/gui/All.This/me/QR';
+import { selectionStore } from '@/runtime/selectionStore';
 import {
   readUsernameFromBootstrap,
   readUsernameFromLocation,
@@ -11,8 +12,30 @@ import {
 } from '../runtimeUsername';
 
 const DEFAULT_ENDPOINT = 'https://cleaker.me';
+const TRIAD_QR_EMBED_BITMAP = [
+  '000000000000000000000000000111111000',
+  '000000000000000000000000000111111000',
+  '111000111111111110000000111111111111',
+  '111000111111111110000000111000000111',
+  '111000111111111110000000111000000111',
+  '000000111001111001110000111111111111',
+  '000000111001111001110000111111111111',
+  '000000111001111001110000111111111111',
+  '000000111001111001110000111000000000',
+  '000000111001111001110000111000000000',
+  '000000000000000000000000000000000000',
+  '000000111000000001110000111000000000',
+  '000000111000000001110000111000000000',
+  '000000111000000001110000111111111111',
+  '000000111000000001110000000111111111',
+  '000000111000000001110000000111111111',
+] as const;
 
 export type CleakerQRProps = {
+  'data-gui-node-id'?: string;
+  'data-gui-component'?: string;
+  /** Visual preset for compact reusable icon use. */
+  variant?: 'default' | 'icon';
   /** Optional direct value override. If provided, it wins. */
   value?: string;
   /** Optional username to build https://<username>.cleaker.me */
@@ -59,24 +82,37 @@ function buildCleakerUrl(username: string, endpoint: string): string {
 }
 
 export default function CleakerQR({
+  'data-gui-node-id': dataGuiNodeId,
+  'data-gui-component': dataGuiComponent,
+  variant = 'default',
   value,
   username,
   endpoint = DEFAULT_ENDPOINT,
-  size = 136,
-  bg = 'var(--qr-bg, transparent)',
-  fg = 'var(--qr-fg, currentColor)',
+  size,
+  bg,
+  fg,
   moduleRadius = 0,
   quietZone = 4,
   ecc = 'H',
   asciiHeader,
   caption,
-  embedMode = 'positive-overlay',
-  embedScale = 0.36,
+  embedMode,
+  embedScale,
   embedAscii,
   embedBitmap,
   className,
   style,
 }: CleakerQRProps) {
+  const isIcon = variant === 'icon';
+  const rootNodeId = String(dataGuiNodeId || (isIcon ? 'CleakerQRIcon' : 'CleakerQR'));
+  const rootNodeType = String(dataGuiComponent || (isIcon ? 'Cleaker.QR.Icon' : 'CleakerQR'));
+  const qrSize = size ?? (isIcon ? 58 : 136);
+  const qrBg = bg ?? 'var(--qr-bg, transparent)';
+  const qrFg = fg ?? 'var(--qr-fg, currentColor)';
+  const qrEmbedMode = embedMode ?? 'positive-overlay';
+  const qrEmbedScale = embedScale ?? 0.36;
+  const qrEmbedBitmap = embedBitmap?.length ? embedBitmap : isIcon ? [...TRIAD_QR_EMBED_BITMAP] : undefined;
+
   const [resolvedUsername, setResolvedUsername] = useState<string>(() => {
     const direct = sanitizeCleakerUsername(username || '');
     if (direct) return direct;
@@ -157,23 +193,77 @@ export default function CleakerQR({
     return buildCleakerUrl(resolvedUsername, endpoint);
   }, [value, resolvedUsername, endpoint]);
 
+  const resolvedProps = useMemo(
+    () => ({
+      value: qrValue,
+      username: resolvedUsername || undefined,
+      endpoint,
+      variant,
+      size: qrSize,
+      bg: qrBg,
+      fg: qrFg,
+      embed: qrEmbedBitmap?.length ? (isIcon ? 'triad' : 'custom') : 'none',
+      'data-gui-node-id': rootNodeId,
+      'data-gui-component': rootNodeType,
+    }),
+    [
+      endpoint,
+      isIcon,
+      qrBg,
+      qrEmbedBitmap,
+      qrFg,
+      qrSize,
+      qrValue,
+      resolvedUsername,
+      rootNodeId,
+      rootNodeType,
+      variant,
+    ]
+  );
+
+  useEffect(() => {
+    selectionStore.actions.registerNode({
+      id: rootNodeId,
+      path: rootNodeId,
+      type: rootNodeType,
+      spec: {
+        type: rootNodeType,
+        props: resolvedProps,
+      },
+      resolvedProps,
+    });
+
+    return () => {
+      selectionStore.actions.unregisterNode(rootNodeId);
+    };
+  }, [resolvedProps, rootNodeId, rootNodeType]);
+
   return (
-    <QR
-      value={qrValue}
-      size={size}
-      bg={bg}
-      fg={fg}
-      moduleRadius={moduleRadius}
-      quietZone={quietZone}
-      ecc={ecc}
-      caption={caption}
-      asciiHeader={asciiHeader}
-      embedMode={embedMode}
-      embedScale={embedScale}
-      embedAscii={embedAscii}
-      embedBitmap={embedBitmap}
+    <div
+      data-gui-node-id={rootNodeId}
+      data-gui-component={rootNodeType}
       className={className}
-      style={style}
-    />
+      style={{
+        display: 'inline-flex',
+        lineHeight: 0,
+        ...style,
+      }}
+    >
+      <QR
+        value={qrValue}
+        size={qrSize}
+        bg={qrBg}
+        fg={qrFg}
+        moduleRadius={moduleRadius}
+        quietZone={quietZone}
+        ecc={ecc}
+        caption={caption}
+        asciiHeader={asciiHeader}
+        embedMode={qrEmbedMode}
+        embedScale={qrEmbedScale}
+        embedAscii={embedAscii}
+        embedBitmap={qrEmbedBitmap}
+      />
+    </div>
   );
 }

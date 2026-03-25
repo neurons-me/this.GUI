@@ -26,6 +26,7 @@ export type SelectionStore = {
     selectNode: (id: string | null) => void;
     clearSelection: () => void;
     registerNode: (record: ResolvedNodeRecord) => void;
+    unregisterNode: (id: string | null | undefined) => void;
     getNode: (id: string | null | undefined) => ResolvedNodeRecord | null;
     getNodeByPath: (path: string | null | undefined) => ResolvedNodeRecord | null;
     setSelectedMeta: (meta: SelectionMeta | null) => void;
@@ -92,6 +93,26 @@ function createSelectionStore(): SelectionStore {
         };
         notify();
       },
+      unregisterNode: (id: string | null | undefined) => {
+        if (!id) return;
+        const curr = state.records[id];
+        if (!curr) return;
+
+        const nextRecords = { ...state.records };
+        delete nextRecords[id];
+
+        const nextRecordsByPath = { ...state.recordsByPath };
+        delete nextRecordsByPath[curr.path];
+
+        state = {
+          ...state,
+          records: nextRecords,
+          recordsByPath: nextRecordsByPath,
+          selectedNodeId: state.selectedNodeId === id ? null : state.selectedNodeId,
+          selectedMeta: state.selectedNodeId === id ? null : state.selectedMeta,
+        };
+        notify();
+      },
       getNode: (id: string | null | undefined) => {
         if (!id) return null;
         return state.records[id] ?? null;
@@ -118,4 +139,3 @@ function getGlobalStore(): SelectionStore {
 }
 
 export const selectionStore = getGlobalStore();
-

@@ -450,12 +450,15 @@ export default function Cleaker(props: CleakerProps) {
   const secretInputType = showSecret ? 'text' : 'password';
 
   useEffect(() => {
+    const registeredIds: string[] = [];
+
     const registerNode = (
       id: string,
       path: string,
       type: string,
       resolvedProps: Record<string, unknown>
     ) => {
+      registeredIds.push(id);
       selectionStore.actions.registerNode({
         id,
         path,
@@ -468,7 +471,7 @@ export default function Cleaker(props: CleakerProps) {
       });
     };
 
-    registerNode(rootNodeId, rootNodeId, 'Cleaker', {
+    registerNode(rootNodeId, rootNodeId, rootNodeType, {
       namespace: identityNamespace,
       actionTarget,
       actionBaseUrl,
@@ -513,6 +516,10 @@ export default function Cleaker(props: CleakerProps) {
       authProgressMessage,
       authSuccessMessage,
     });
+
+    return () => {
+      registeredIds.forEach((id) => selectionStore.actions.unregisterNode(id));
+    };
   }, [
     actionBaseUrl,
     actionTarget,
