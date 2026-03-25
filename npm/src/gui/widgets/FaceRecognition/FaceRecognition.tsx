@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import Webcam from 'react-webcam';
 import { Box, Button, Typography } from '@/gui/Atoms/atoms';
-import { Modal } from '@/gui/Molecules/molecules';
+import { Modal } from '@/gui/Molecules';
 import { useFaceLandmarker } from './modules/useFaceLandmarker';
 import { useFaceCameraPermission } from './modules/useFaceCameraPermission';
 import { useFaceOverlay } from './modules/useFaceOverlay';
