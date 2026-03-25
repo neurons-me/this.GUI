@@ -576,13 +576,13 @@
 <header>
   <div class="wrap">
     <h1>Manifest Debugger</h1>
-    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><a class="filter-pill err" data-k="errors" href="#filter-errors">6/65 prop type errors</a><a class="filter-pill info" data-k="infos" href="#filter-infos">53/65 infos</a><span class="filter-pill ok" aria-disabled="true">195 stories ok</span><a class="filter-pill ok" data-k="docs" href="#filter-docs">6 docs ok</a></div>
+    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><a class="filter-pill err" data-k="errors" href="#filter-errors">6/64 prop type errors</a><a class="filter-pill info" data-k="infos" href="#filter-infos">52/64 infos</a><span class="filter-pill ok" aria-disabled="true">191 stories ok</span><a class="filter-pill ok" data-k="docs" href="#filter-docs">6 docs ok</a></div>
   </div>
 </header>
 <main>
   <div class="wrap">
     <div class="note info" style="margin-bottom: 16px;">
-            <strong>Tip:</strong> You are using <code>react-docgen</code> (the default). Generation took <strong>1.5s</strong>. For higher quality prop types, consider switching to <code>react-docgen-typescript</code> in your <code>main.ts</code>:
+            <strong>Tip:</strong> You are using <code>react-docgen</code> (the default). Generation took <strong>1.4s</strong>. For higher quality prop types, consider switching to <code>react-docgen-typescript</code> in your <code>main.ts</code>:
             <pre><code>typescript: {
   reactDocgen: 'react-docgen-typescript',
 }</code></pre>
@@ -984,7 +984,7 @@ variant?: &#39;mui&#39; | &#39;glass&#39;</code></pre>
         
       </div>
     </div>
-    <div class="meta" title="./src/gui/Compounds/Blockchain/blockchain.stories.tsx">compounds-blockchain · ./src/gui/Compounds/Blockchain/blockchain.stories.tsx</div>
+    <div class="meta" title="./src/gui/All.This/Cleaker/Blockchain/blockchain.stories.tsx">compounds-blockchain · ./src/gui/All.This/Cleaker/Blockchain/blockchain.stories.tsx</div>
     
     
     
@@ -8971,271 +8971,6 @@ variant?: &quot;bubble&quot; | &quot;inline&quot; = &quot;bubble&quot;</code></p
 <article
   class="card 
   no-error 
-  has-info 
-  no-story-error
-  no-doc-error"
-  role="listitem"
-  aria-label="Noise">
-  <div class="head">
-    <div class="title">
-      <h2><span class="status-dot dot-ok"></span> Noise</h2>
-      <div class="badges">
-        <label for="c-47-compounds-noise-props" class="badge ok as-toggle">16 prop types</label>
-        <label for="c-47-compounds-noise-info" class="badge info as-toggle">1 info</label>
-        <label for="c-47-compounds-noise-stories" class="badge ok as-toggle">4 stories</label>
-        
-      </div>
-    </div>
-    <div class="meta" title="./src/gui/Compounds/IdentityNoise/Noise/Noise.stories.tsx">compounds-noise · ./src/gui/Compounds/IdentityNoise/Noise/Noise.stories.tsx</div>
-    
-    
-    
-  </div>
-
-  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
-  
-  <input id="c-47-compounds-noise-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-47-compounds-noise-stories" class="tg tg-stories" type="checkbox" hidden />
-  
-  <input id="c-47-compounds-noise-props" class="tg tg-props" type="checkbox" hidden />
-
-  <div class="panels">
-    
-    
-        <div class="panel panel-info">
-          
-    <div class="note info">
-      <div class="note-title">Info</div>
-      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
-    </div>
-        </div>
-    
-        <div class="panel panel-props">
-          <div class="note ok">
-            <div class="row">
-              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
-              <span class="badge ok">16 prop types</span>
-            </div>
-            <pre><code>Component: src/gui/Compounds/IdentityNoise/Noise/Noise.tsx::default</code></pre>
-            <pre><code>Props:</code></pre>
-            <pre><code>/**
- * Commit policy
- */
-commitOn?: &#39;change&#39; | &#39;blur&#39; | &#39;check&#39; | &#39;enter&#39; = &#39;check&#39;
-
-/**
- * Initial value to seed draft (if ME read is undefined)
- */
-defaultValue?: any
-
-/**
- * Helpers
- */
-disabled?: boolean
-
-info?: React.ReactNode
-
-/**
- * Optional: help modal content
- */
-infoTitle?: string = &#39;About this field&#39;
-
-/**
- * Input kind
- */
-kind?: &#39;text&#39; | &#39;switch&#39; | &#39;slider&#39; = &#39;text&#39;
-
-/**
- * Label shown above/alongside the input
- */
-label?: string = &#39;Noise&#39;
-
-/**
- * ME runtime (proxy)
- */
-me: any
-
-/**
- * Operator to call at the target path. Common: &quot;=&quot; for assign, &quot;@&quot; identity, &quot;~&quot; noise, &quot;_&quot; secret
- */
-operator?: string = &#39;=&#39;
-
-/**
- * Semantic path inside ME, e.g. &quot;profile.name&quot; or &quot;wallet.netget.keys&quot;
- */
-path: string
-
-/**
- * Placeholder (text kind)
- */
-placeholder?: string
-
-readOnly?: boolean
-
-/**
- * Whether to show the explicit check commit button
- */
-showCheck?: boolean = true
-
-/**
- * Optional: sx overrides
- */
-sx?: any
-
-/**
- * If true, reads from ME on mount and whenever `path` changes
- */
-syncFromMe?: boolean = true
-
-/**
- * Optional: width control (e.g. &#39;25%&#39;)
- */
-width?: number | string = &#39;100%&#39;</code></pre>
-          </div>
-        </div>
-    
-        <div class="panel panel-stories">
-          
-          
-          
-          <div class="note ok">
-                <div class="row">
-                  <span class="ex-name">Imports</span>
-                </div>
-                <pre><code>import { Box, Button, Noise, Typography } from "this.gui";</code></pre>
-              </div>
-          
-          
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">Identity (@) with check</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const UsernameIdentity = () =&gt; {
-  const me = React.useMemo(() =&gt; createMeMock(), []);
-  return (
-    &lt;Box sx={{ display: &#39;flex&#39;, flexDirection: &#39;column&#39;, gap: 2 }}&gt;
-      &lt;Noise
-        me={me}
-        path=&quot;profile&quot;
-        operator=&quot;@&quot;
-        placeholder=&quot;username&quot;
-        width=&quot;25%&quot;
-        showCheck
-      /&gt;
-      &lt;Typography variant=&quot;body2&quot; sx={{ color: &#39;text.secondary&#39; }}&gt;
-        Tip: type a username and click the check icon to commit the identity ref.
-      &lt;/Typography&gt;
-    &lt;/Box&gt;
-  );
-};</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">Readout (shows last committed)</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const InlineValueReadout = () =&gt; {
-  const me = React.useMemo(() =&gt; createMeMock(), []);
-  const [tick, setTick] = React.useState(0);
-
-  return (
-    &lt;Box sx={{ display: &#39;flex&#39;, flexDirection: &#39;column&#39;, gap: 2 }}&gt;
-      &lt;Noise
-        me={me}
-        path=&quot;profile.name&quot;
-        operator=&quot;=&quot;
-        label=&quot;Name&quot;
-        placeholder=&quot;profile.name&quot;
-        width={{ xs: &#39;100%&#39;, sm: &#39;50%&#39;, md: &#39;25%&#39; } as any}
-        showCheck
-      /&gt;
-      &lt;Box sx={{ display: &#39;flex&#39;, alignItems: &#39;center&#39;, gap: 1 }}&gt;
-        &lt;Typography variant=&quot;caption&quot; sx={{ color: &#39;text.secondary&#39; }}&gt;
-          Last committed at &lt;code&gt;profile.name&lt;/code&gt;:
-        &lt;/Typography&gt;
-        &lt;Typography variant=&quot;caption&quot; sx={{ fontFamily: &#39;monospace&#39; }}&gt;
-          {JSON.stringify((me as any)(&#39;profile.name&#39;) ?? null)}
-        &lt;/Typography&gt;
-        &lt;Button size=&quot;small&quot; variant=&quot;outlined&quot; onClick={() =&gt; setTick((t) =&gt; t + 1)}&gt;
-          refresh
-        &lt;/Button&gt;
-      &lt;/Box&gt;
-    &lt;/Box&gt;
-  );
-};</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">Compact row (25% width)</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const CompactRow = () =&gt; {
-  const me = React.useMemo(() =&gt; createMeMock(), []);
-  return (
-    &lt;Box sx={{ display: &#39;flex&#39;, gap: 2, alignItems: &#39;center&#39;, flexWrap: &#39;wrap&#39; }}&gt;
-      &lt;Noise
-        me={me}
-        path=&quot;blockchain.url&quot;
-        operator=&quot;=&quot;
-        label=&quot;Blockchain URL&quot;
-        placeholder=&quot;http://localhost:8161&quot;
-        width=&quot;25%&quot;
-        showCheck
-      /&gt;
-      &lt;Noise
-        me={me}
-        path=&quot;blockchain.port&quot;
-        operator=&quot;=&quot;
-        label=&quot;Port&quot;
-        placeholder=&quot;8161&quot;
-        width={140 as any}
-        showCheck
-      /&gt;
-    &lt;/Box&gt;
-  );
-};</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">Responsive width</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const ResponsiveWidth = () =&gt; {
-  const me = React.useMemo(() =&gt; createMeMock(), []);
-  return (
-    &lt;Box sx={{ display: &#39;flex&#39;, flexDirection: &#39;column&#39;, gap: 2 }}&gt;
-      &lt;Noise
-        me={me}
-        path=&quot;blockchain.url&quot;
-        operator=&quot;=&quot;
-        label=&quot;Blockchain&quot;
-        placeholder=&quot;blockchain&quot;
-        width={{ xs: &#39;100%&#39;, sm: &#39;60%&#39;, md: &#39;40%&#39;, lg: &#39;25%&#39; } as any}
-        showCheck
-      /&gt;
-      &lt;Typography variant=&quot;caption&quot; sx={{ color: &#39;text.secondary&#39; }}&gt;
-        Resize the preview to see width adapt across breakpoints.
-      &lt;/Typography&gt;
-    &lt;/Box&gt;
-  );
-};</code></pre>
-            </div>
-        </div>
-    
-  </div>
-</article>
-<article
-  class="card 
-  no-error 
   no-info 
   no-story-error
   no-doc-error"
@@ -9245,9 +8980,9 @@ width?: number | string = &#39;100%&#39;</code></pre>
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> Page</h2>
       <div class="badges">
-        <label for="c-48-molecules-content-page-props" class="badge ok as-toggle">6 prop types</label>
+        <label for="c-47-molecules-content-page-props" class="badge ok as-toggle">6 prop types</label>
         
-        <label for="c-48-molecules-content-page-stories" class="badge ok as-toggle">7 stories</label>
+        <label for="c-47-molecules-content-page-stories" class="badge ok as-toggle">7 stories</label>
         
       </div>
     </div>
@@ -9260,9 +8995,9 @@ width?: number | string = &#39;100%&#39;</code></pre>
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
   
   
-  <input id="c-48-molecules-content-page-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-47-molecules-content-page-stories" class="tg tg-stories" type="checkbox" hidden />
   
-  <input id="c-48-molecules-content-page-props" class="tg tg-props" type="checkbox" hidden />
+  <input id="c-47-molecules-content-page-props" class="tg tg-props" type="checkbox" hidden />
 
   <div class="panels">
     
@@ -9469,9 +9204,9 @@ sx?: Record&lt;string, any&gt; = {}</code></pre>
     <div class="title">
       <h2><span class="status-dot dot-err"></span> Palette</h2>
       <div class="badges">
-        <label for="c-49-gui-theme-palette-err" class="badge err as-toggle">prop type error</label>
-        <label for="c-49-gui-theme-palette-info" class="badge info as-toggle">1 info</label>
-        <label for="c-49-gui-theme-palette-stories" class="badge ok as-toggle">1 story</label>
+        <label for="c-48-gui-theme-palette-err" class="badge err as-toggle">prop type error</label>
+        <label for="c-48-gui-theme-palette-info" class="badge info as-toggle">1 info</label>
+        <label for="c-48-gui-theme-palette-stories" class="badge ok as-toggle">1 story</label>
         
       </div>
     </div>
@@ -9482,9 +9217,9 @@ sx?: Record&lt;string, any&gt; = {}</code></pre>
   </div>
 
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
-  <input id="c-49-gui-theme-palette-err" class="tg tg-err" type="checkbox" hidden />
-  <input id="c-49-gui-theme-palette-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-49-gui-theme-palette-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-48-gui-theme-palette-err" class="tg tg-err" type="checkbox" hidden />
+  <input id="c-48-gui-theme-palette-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-48-gui-theme-palette-stories" class="tg tg-stories" type="checkbox" hidden />
   
   
 
@@ -9724,9 +9459,9 @@ export const Default: StoryFn = () =&gt; &lt;PaletteViewer /&gt;;</code></pre></
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> Paper</h2>
       <div class="badges">
-        <label for="c-50-atoms-paper-props" class="badge ok as-toggle">9 prop types</label>
-        <label for="c-50-atoms-paper-info" class="badge info as-toggle">1 info</label>
-        <label for="c-50-atoms-paper-stories" class="badge ok as-toggle">2 stories</label>
+        <label for="c-49-atoms-paper-props" class="badge ok as-toggle">9 prop types</label>
+        <label for="c-49-atoms-paper-info" class="badge info as-toggle">1 info</label>
+        <label for="c-49-atoms-paper-stories" class="badge ok as-toggle">2 stories</label>
         
       </div>
     </div>
@@ -9738,10 +9473,10 @@ export const Default: StoryFn = () =&gt; &lt;PaletteViewer /&gt;;</code></pre></
 
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
   
-  <input id="c-50-atoms-paper-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-50-atoms-paper-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-49-atoms-paper-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-49-atoms-paper-stories" class="tg tg-stories" type="checkbox" hidden />
   
-  <input id="c-50-atoms-paper-props" class="tg tg-props" type="checkbox" hidden />
+  <input id="c-49-atoms-paper-props" class="tg tg-props" type="checkbox" hidden />
 
   <div class="panels">
     
@@ -9899,9 +9634,9 @@ variant?: union</code></pre>
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> Section</h2>
       <div class="badges">
-        <label for="c-51-atoms-section-props" class="badge ok as-toggle">18 prop types</label>
-        <label for="c-51-atoms-section-info" class="badge info as-toggle">1 info</label>
-        <label for="c-51-atoms-section-stories" class="badge ok as-toggle">2 stories</label>
+        <label for="c-50-atoms-section-props" class="badge ok as-toggle">18 prop types</label>
+        <label for="c-50-atoms-section-info" class="badge info as-toggle">1 info</label>
+        <label for="c-50-atoms-section-stories" class="badge ok as-toggle">2 stories</label>
         
       </div>
     </div>
@@ -9913,10 +9648,10 @@ variant?: union</code></pre>
 
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
   
-  <input id="c-51-atoms-section-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-51-atoms-section-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-50-atoms-section-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-50-atoms-section-stories" class="tg tg-stories" type="checkbox" hidden />
   
-  <input id="c-51-atoms-section-props" class="tg tg-props" type="checkbox" hidden />
+  <input id="c-50-atoms-section-props" class="tg tg-props" type="checkbox" hidden />
 
   <div class="panels">
     
@@ -10057,9 +9792,9 @@ sx?: SxProps&lt;Theme&gt;</code></pre>
     <div class="title">
       <h2><span class="status-dot dot-err"></span> Stack</h2>
       <div class="badges">
-        <label for="c-52-molecules-stack-err" class="badge err as-toggle">prop type error</label>
-        <label for="c-52-molecules-stack-info" class="badge info as-toggle">1 info</label>
-        <label for="c-52-molecules-stack-stories" class="badge ok as-toggle">6 stories</label>
+        <label for="c-51-molecules-stack-err" class="badge err as-toggle">prop type error</label>
+        <label for="c-51-molecules-stack-info" class="badge info as-toggle">1 info</label>
+        <label for="c-51-molecules-stack-stories" class="badge ok as-toggle">6 stories</label>
         
       </div>
     </div>
@@ -10070,9 +9805,9 @@ sx?: SxProps&lt;Theme&gt;</code></pre>
   </div>
 
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
-  <input id="c-52-molecules-stack-err" class="tg tg-err" type="checkbox" hidden />
-  <input id="c-52-molecules-stack-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-52-molecules-stack-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-51-molecules-stack-err" class="tg tg-err" type="checkbox" hidden />
+  <input id="c-51-molecules-stack-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-51-molecules-stack-stories" class="tg tg-stories" type="checkbox" hidden />
   
   
 
@@ -10225,9 +9960,9 @@ export default Stack;
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> StickyOptionsTop</h2>
       <div class="badges">
-        <label for="c-53-gui-layout-stickyoptionstop-props" class="badge ok as-toggle">7 prop types</label>
+        <label for="c-52-gui-layout-stickyoptionstop-props" class="badge ok as-toggle">7 prop types</label>
         
-        <label for="c-53-gui-layout-stickyoptionstop-stories" class="badge ok as-toggle">7 stories</label>
+        <label for="c-52-gui-layout-stickyoptionstop-stories" class="badge ok as-toggle">7 stories</label>
         
       </div>
     </div>
@@ -10240,9 +9975,9 @@ export default Stack;
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
   
   
-  <input id="c-53-gui-layout-stickyoptionstop-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-52-gui-layout-stickyoptionstop-stories" class="tg tg-stories" type="checkbox" hidden />
   
-  <input id="c-53-gui-layout-stickyoptionstop-props" class="tg tg-props" type="checkbox" hidden />
+  <input id="c-52-gui-layout-stickyoptionstop-props" class="tg tg-props" type="checkbox" hidden />
 
   <div class="panels">
     
@@ -10427,9 +10162,9 @@ visibility?: {
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> Surface</h2>
       <div class="badges">
-        <label for="c-54-atoms-surface-props" class="badge ok as-toggle">2 prop types</label>
+        <label for="c-53-atoms-surface-props" class="badge ok as-toggle">2 prop types</label>
         
-        <label for="c-54-atoms-surface-stories" class="badge ok as-toggle">1 story</label>
+        <label for="c-53-atoms-surface-stories" class="badge ok as-toggle">1 story</label>
         
       </div>
     </div>
@@ -10442,9 +10177,9 @@ visibility?: {
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
   
   
-  <input id="c-54-atoms-surface-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-53-atoms-surface-stories" class="tg tg-stories" type="checkbox" hidden />
   
-  <input id="c-54-atoms-surface-props" class="tg tg-props" type="checkbox" hidden />
+  <input id="c-53-atoms-surface-props" class="tg tg-props" type="checkbox" hidden />
 
   <div class="panels">
     
@@ -10538,8 +10273,8 @@ variant?: &#39;default&#39; | &#39;elevation&#39; | &#39;solid&#39; | &#39;outli
       <h2><span class="status-dot dot-ok"></span> Switch</h2>
       <div class="badges">
         
-        <label for="c-55-atoms-switch-info" class="badge info as-toggle">1 info</label>
-        <label for="c-55-atoms-switch-stories" class="badge ok as-toggle">2 stories</label>
+        <label for="c-54-atoms-switch-info" class="badge info as-toggle">1 info</label>
+        <label for="c-54-atoms-switch-stories" class="badge ok as-toggle">2 stories</label>
         
       </div>
     </div>
@@ -10551,8 +10286,8 @@ variant?: &#39;default&#39; | &#39;elevation&#39; | &#39;solid&#39; | &#39;outli
 
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
   
-  <input id="c-55-atoms-switch-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-55-atoms-switch-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-54-atoms-switch-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-54-atoms-switch-stories" class="tg tg-stories" type="checkbox" hidden />
   
   
 
@@ -10670,9 +10405,9 @@ import { FormControlLabel } from "@mui/material";</code></pre>
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> Table</h2>
       <div class="badges">
-        <label for="c-56-molecules-table-props" class="badge ok as-toggle">8 prop types</label>
-        <label for="c-56-molecules-table-info" class="badge info as-toggle">1 info</label>
-        <label for="c-56-molecules-table-stories" class="badge ok as-toggle">5 stories</label>
+        <label for="c-55-molecules-table-props" class="badge ok as-toggle">8 prop types</label>
+        <label for="c-55-molecules-table-info" class="badge info as-toggle">1 info</label>
+        <label for="c-55-molecules-table-stories" class="badge ok as-toggle">5 stories</label>
         
       </div>
     </div>
@@ -10684,10 +10419,10 @@ import { FormControlLabel } from "@mui/material";</code></pre>
 
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
   
-  <input id="c-56-molecules-table-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-56-molecules-table-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-55-molecules-table-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-55-molecules-table-stories" class="tg tg-stories" type="checkbox" hidden />
   
-  <input id="c-56-molecules-table-props" class="tg tg-props" type="checkbox" hidden />
+  <input id="c-55-molecules-table-props" class="tg tg-props" type="checkbox" hidden />
 
   <div class="panels">
     
@@ -10838,9 +10573,9 @@ sx?: union</code></pre>
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> TextField</h2>
       <div class="badges">
-        <label for="c-57-atoms-textfield-props" class="badge ok as-toggle">38 prop types</label>
+        <label for="c-56-atoms-textfield-props" class="badge ok as-toggle">38 prop types</label>
         
-        <label for="c-57-atoms-textfield-stories" class="badge ok as-toggle">1 story</label>
+        <label for="c-56-atoms-textfield-stories" class="badge ok as-toggle">1 story</label>
         
       </div>
     </div>
@@ -10853,9 +10588,9 @@ sx?: union</code></pre>
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
   
   
-  <input id="c-57-atoms-textfield-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-56-atoms-textfield-stories" class="tg tg-stories" type="checkbox" hidden />
   
-  <input id="c-57-atoms-textfield-props" class="tg tg-props" type="checkbox" hidden />
+  <input id="c-56-atoms-textfield-props" class="tg tg-props" type="checkbox" hidden />
 
   <div class="panels">
     
@@ -11130,8 +10865,8 @@ variant?: enum</code></pre>
       <h2><span class="status-dot dot-ok"></span> ThemesCatalog</h2>
       <div class="badges">
         
-        <label for="c-58-gui-theme-catalog-info" class="badge info as-toggle">1 info</label>
-        <label for="c-58-gui-theme-catalog-stories" class="badge ok as-toggle">7 stories</label>
+        <label for="c-57-gui-theme-catalog-info" class="badge info as-toggle">1 info</label>
+        <label for="c-57-gui-theme-catalog-stories" class="badge ok as-toggle">7 stories</label>
         
       </div>
     </div>
@@ -11143,8 +10878,8 @@ variant?: enum</code></pre>
 
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
   
-  <input id="c-58-gui-theme-catalog-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-58-gui-theme-catalog-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-57-gui-theme-catalog-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-57-gui-theme-catalog-stories" class="tg tg-stories" type="checkbox" hidden />
   
   
 
@@ -11256,9 +10991,9 @@ variant?: enum</code></pre>
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> ToggleMode</h2>
       <div class="badges">
-        <label for="c-59-gui-theme-togglemode-props" class="badge ok as-toggle">11 prop types</label>
-        <label for="c-59-gui-theme-togglemode-info" class="badge info as-toggle">1 info</label>
-        <label for="c-59-gui-theme-togglemode-stories" class="badge ok as-toggle">2 stories</label>
+        <label for="c-58-gui-theme-togglemode-props" class="badge ok as-toggle">11 prop types</label>
+        <label for="c-58-gui-theme-togglemode-info" class="badge info as-toggle">1 info</label>
+        <label for="c-58-gui-theme-togglemode-stories" class="badge ok as-toggle">2 stories</label>
         
       </div>
     </div>
@@ -11270,10 +11005,10 @@ variant?: enum</code></pre>
 
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
   
-  <input id="c-59-gui-theme-togglemode-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-59-gui-theme-togglemode-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-58-gui-theme-togglemode-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-58-gui-theme-togglemode-stories" class="tg tg-stories" type="checkbox" hidden />
   
-  <input id="c-59-gui-theme-togglemode-props" class="tg tg-props" type="checkbox" hidden />
+  <input id="c-58-gui-theme-togglemode-props" class="tg tg-props" type="checkbox" hidden />
 
   <div class="panels">
     
@@ -11380,8 +11115,8 @@ variant?: &#39;minimal&#39; | &#39;switchMinimal&#39; | &#39;switchWithLabel&#39
       <h2><span class="status-dot dot-ok"></span> Toolbar</h2>
       <div class="badges">
         
-        <label for="c-60-molecules-toolbar-info" class="badge info as-toggle">1 info</label>
-        <label for="c-60-molecules-toolbar-stories" class="badge ok as-toggle">6 stories</label>
+        <label for="c-59-molecules-toolbar-info" class="badge info as-toggle">1 info</label>
+        <label for="c-59-molecules-toolbar-stories" class="badge ok as-toggle">6 stories</label>
         
       </div>
     </div>
@@ -11393,8 +11128,8 @@ variant?: &#39;minimal&#39; | &#39;switchMinimal&#39; | &#39;switchWithLabel&#39
 
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
   
-  <input id="c-60-molecules-toolbar-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-60-molecules-toolbar-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-59-molecules-toolbar-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-59-molecules-toolbar-stories" class="tg tg-stories" type="checkbox" hidden />
   
   
 
@@ -11531,9 +11266,9 @@ variant?: &#39;minimal&#39; | &#39;switchMinimal&#39; | &#39;switchWithLabel&#39
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> Tooltip</h2>
       <div class="badges">
-        <label for="c-61-molecules-tooltip-props" class="badge ok as-toggle">2 prop types</label>
-        <label for="c-61-molecules-tooltip-info" class="badge info as-toggle">1 info</label>
-        <label for="c-61-molecules-tooltip-stories" class="badge ok as-toggle">5 stories</label>
+        <label for="c-60-molecules-tooltip-props" class="badge ok as-toggle">2 prop types</label>
+        <label for="c-60-molecules-tooltip-info" class="badge info as-toggle">1 info</label>
+        <label for="c-60-molecules-tooltip-stories" class="badge ok as-toggle">5 stories</label>
         
       </div>
     </div>
@@ -11545,10 +11280,10 @@ variant?: &#39;minimal&#39; | &#39;switchMinimal&#39; | &#39;switchWithLabel&#39
 
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
   
-  <input id="c-61-molecules-tooltip-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-61-molecules-tooltip-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-60-molecules-tooltip-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-60-molecules-tooltip-stories" class="tg tg-stories" type="checkbox" hidden />
   
-  <input id="c-61-molecules-tooltip-props" class="tg tg-props" type="checkbox" hidden />
+  <input id="c-60-molecules-tooltip-props" class="tg tg-props" type="checkbox" hidden />
 
   <div class="panels">
     
@@ -11682,9 +11417,9 @@ slotProps?: MuiTooltipProps[&#39;slotProps&#39;]</code></pre>
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> TopBar</h2>
       <div class="badges">
-        <label for="c-62-gui-layout-topbar-props" class="badge ok as-toggle">19 prop types</label>
+        <label for="c-61-gui-layout-topbar-props" class="badge ok as-toggle">19 prop types</label>
         
-        <label for="c-62-gui-layout-topbar-stories" class="badge ok as-toggle">7 stories</label>
+        <label for="c-61-gui-layout-topbar-stories" class="badge ok as-toggle">7 stories</label>
         
       </div>
     </div>
@@ -11697,9 +11432,9 @@ slotProps?: MuiTooltipProps[&#39;slotProps&#39;]</code></pre>
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
   
   
-  <input id="c-62-gui-layout-topbar-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-61-gui-layout-topbar-stories" class="tg tg-stories" type="checkbox" hidden />
   
-  <input id="c-62-gui-layout-topbar-props" class="tg tg-props" type="checkbox" hidden />
+  <input id="c-61-gui-layout-topbar-props" class="tg tg-props" type="checkbox" hidden />
 
   <div class="panels">
     
@@ -11986,9 +11721,9 @@ toolbarSx?: SxProps&lt;Theme&gt;</code></pre>
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> Typography</h2>
       <div class="badges">
-        <label for="c-63-atoms-typography-props" class="badge ok as-toggle">13 prop types</label>
-        <label for="c-63-atoms-typography-info" class="badge info as-toggle">1 info</label>
-        <label for="c-63-atoms-typography-stories" class="badge ok as-toggle">2 stories</label>
+        <label for="c-62-atoms-typography-props" class="badge ok as-toggle">13 prop types</label>
+        <label for="c-62-atoms-typography-info" class="badge info as-toggle">1 info</label>
+        <label for="c-62-atoms-typography-stories" class="badge ok as-toggle">2 stories</label>
         
       </div>
     </div>
@@ -12000,10 +11735,10 @@ toolbarSx?: SxProps&lt;Theme&gt;</code></pre>
 
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
   
-  <input id="c-63-atoms-typography-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-63-atoms-typography-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-62-atoms-typography-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-62-atoms-typography-stories" class="tg tg-stories" type="checkbox" hidden />
   
-  <input id="c-63-atoms-typography-props" class="tg tg-props" type="checkbox" hidden />
+  <input id="c-62-atoms-typography-props" class="tg tg-props" type="checkbox" hidden />
 
   <div class="panels">
     
@@ -12222,9 +11957,9 @@ variantMapping?: object</code></pre>
     <div class="title">
       <h2><span class="status-dot dot-err"></span> TypographyThemeState</h2>
       <div class="badges">
-        <label for="c-64-gui-theme-typography-err" class="badge err as-toggle">prop type error</label>
-        <label for="c-64-gui-theme-typography-info" class="badge info as-toggle">1 info</label>
-        <label for="c-64-gui-theme-typography-stories" class="badge ok as-toggle">1 story</label>
+        <label for="c-63-gui-theme-typography-err" class="badge err as-toggle">prop type error</label>
+        <label for="c-63-gui-theme-typography-info" class="badge info as-toggle">1 info</label>
+        <label for="c-63-gui-theme-typography-stories" class="badge ok as-toggle">1 story</label>
         
       </div>
     </div>
@@ -12235,9 +11970,9 @@ variantMapping?: object</code></pre>
   </div>
 
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
-  <input id="c-64-gui-theme-typography-err" class="tg tg-err" type="checkbox" hidden />
-  <input id="c-64-gui-theme-typography-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-64-gui-theme-typography-stories" class="tg tg-stories" type="checkbox" hidden />
+  <input id="c-63-gui-theme-typography-err" class="tg tg-err" type="checkbox" hidden />
+  <input id="c-63-gui-theme-typography-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-63-gui-theme-typography-stories" class="tg tg-stories" type="checkbox" hidden />
   
   
 

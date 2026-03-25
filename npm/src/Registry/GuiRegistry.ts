@@ -10,7 +10,7 @@ import LeftSidebarResolver from "@/gui/Layout/Sidebars/LeftSidebar/LeftSidebar.r
 import RightSidebarResolver from "@/gui/Layout/Sidebars/RightSidebar/RightSidebar.resolver";
 import SessionQRResolver from "@/gui/All.This/me/QR.resolver";
 import MeResolver from "@/gui/All.This/me/me.resolver";
-import CleakerQRResolver from "@/gui/All.This/Cleaker/CleakerQR.resolver";
+import CleakerQRResolver from "@/gui/All.This/Cleaker/QR/CleakerQR.resolver";
 import CleakerResolver from "@/gui/All.This/Cleaker/Cleaker.resolver";
 // etc...
 export const GuiRegistry = createRegistry([

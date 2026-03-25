@@ -2,7 +2,7 @@
   "name": "this.gui",
   "description": "Generative User Interface",
   "private": false,
-  "version": "2.0.30",
+  "version": "2.0.31",
   "type": "module",
   "main": "./dist/this.gui.cjs",
   "module": "./dist/this.gui.es.js",

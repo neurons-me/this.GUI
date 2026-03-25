@@ -59,7 +59,6 @@ export { default as ModuleCard } from '@/gui/All.This/src/ModuleCard/ModuleCard'
 export { default as ModuleRow } from '@/gui/All.This/src/ModuleRow/ModuleRow';
 export { default as ModulesGrid } from '@/gui/All.This/src/ModulesGrid/ModulesGrid';
 export { default as ModulesList } from '@/gui/All.This/src/ModulesList/ModulesList';
-export { default as Blockchain } from '@/gui/Compounds/Blockchain/blockchain';
 export { default as Cleaker } from '@/gui/All.This/Cleaker/Cleaker';
 export { default as FaceRecognition } from '@/gui/widgets/FaceRecognition/FaceRecognition';
 export { default as Monad } from '@/gui/All.This/monad.ai/monad.ai';
@@ -94,7 +93,6 @@ import Icon from '@/gui/Atoms/Icon/Icon';
 import DomIcon from '@/gui/Atoms/Icon/DomIcon';
 import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 import AllThis from '@/gui/All.This/All.This';
-import Blockchain from '@/gui/Compounds/Blockchain/blockchain';
 import FaceRecognition from '@/gui/widgets/FaceRecognition/FaceRecognition';
 import Monad from '@/gui/All.This/monad.ai/monad.ai';
 import HighLighter from '@/gui/widgets/HighLighter/HighLighter';
@@ -138,7 +136,6 @@ export const Widgets = {
 
 export const Compounds = {
   AllThis,
-  Blockchain,
   Cleaker,
   Icon,
   DomIcon,

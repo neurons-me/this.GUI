@@ -7,7 +7,7 @@ import Button from '@/gui/Atoms/Button/Button';
 import {
   type ConnectionStatus,
   useSovereignPresence,
-} from "@/gui/Compounds/Blockchain/scripts/connection";
+} from "./Blockchain/scripts/connection";
 import { selectionStore } from '@/runtime/selectionStore';
 import { deriveIdentity } from "../me/identity";
 import QR from "../me/QR";

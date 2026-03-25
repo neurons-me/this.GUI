@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Button, Stack, Typography } from '@/gui/Atoms';
 import ModuleCard from './src/ModuleCard/ModuleCard';
 import ModuleRow from './src/ModuleRow/ModuleRow';
