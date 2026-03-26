@@ -1,6 +1,21 @@
+import type { CleakerSurfaceEntry } from './surfaceModel';
+
 export const SESSION_USERNAME_STORAGE_KEY = 'cleaker.session.username.v1';
 export const SESSION_SECRET_STORAGE_KEY = 'cleaker.session.secret.v1';
 export const SESSION_CREDENTIALS_EVENT = 'cleaker:session:credentials-changed';
+
+export type CleakerBootstrapInfo = {
+  namespace: string;
+  host: string;
+  apiOrigin: string;
+  resolverHostName: string;
+  resolverDisplayName: string;
+  surfaceEntry: CleakerSurfaceEntry | null;
+};
+
+function isNetworkOrigin(origin: string): boolean {
+  return /^https?:\/\//i.test(String(origin || '').trim());
+}
 
 function trimRuntimeValue(raw: string): string {
   return String(raw || '')
@@ -80,8 +95,13 @@ export function readUsernameFromStorage(): string {
 }
 
 export async function readUsernameFromBootstrap(origin: string, signal?: AbortSignal): Promise<string> {
+  const payload = await readCleakerBootstrap(origin, signal);
+  return extractUsernameFromNamespace(String(payload?.namespace || ''));
+}
+
+export async function readCleakerBootstrap(origin: string, signal?: AbortSignal): Promise<CleakerBootstrapInfo | null> {
   const normalizedOrigin = String(origin || '').trim().replace(/\/+$/, '');
-  if (!normalizedOrigin || typeof fetch !== 'function') return '';
+  if (!normalizedOrigin || !isNetworkOrigin(normalizedOrigin) || typeof fetch !== 'function') return null;
 
   try {
     const response = await fetch(`${normalizedOrigin}/__bootstrap`, {
@@ -92,13 +112,35 @@ export async function readUsernameFromBootstrap(origin: string, signal?: AbortSi
     const payload = await response.json().catch(() => null);
     const body = payload as
       | {
-          namespace?: string;
+          namespace?: string | { me?: string; host?: string } | null;
+          host?: string;
+          apiOrigin?: string;
+          resolverHostName?: string;
+          resolverDisplayName?: string;
+          surfaceEntry?: CleakerSurfaceEntry | null;
+          target?: {
+            namespace?: { me?: string; host?: string } | null;
+          } | null;
           value?: { namespace?: string } | null;
         }
       | null;
 
-    return extractUsernameFromNamespace(String(body?.namespace || body?.value?.namespace || ''));
+    const namespace =
+      String(
+        body?.namespace && typeof body.namespace === 'object'
+          ? body.namespace.me
+          : body?.namespace || body?.target?.namespace?.me || body?.value?.namespace || ''
+      ).trim();
+
+    return {
+      namespace,
+      host: String(body?.host || body?.target?.namespace?.host || '').trim(),
+      apiOrigin: String(body?.apiOrigin || normalizedOrigin).trim(),
+      resolverHostName: String(body?.resolverHostName || '').trim(),
+      resolverDisplayName: String(body?.resolverDisplayName || '').trim(),
+      surfaceEntry: body?.surfaceEntry || null,
+    };
   } catch {
-    return '';
+    return null;
   }
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import QR, { type QREmbedMode } from '@/gui/All.This/me/QR';
 import { selectionStore } from '@/runtime/selectionStore';
+import { buildCleakerNamespaceUrl } from '../namespaceExpression';
 import {
   readUsernameFromBootstrap,
   readUsernameFromLocation,
@@ -12,6 +13,10 @@ import {
 } from '../runtimeUsername';
 
 const DEFAULT_ENDPOINT = 'https://cleaker.me';
+function isNetworkOrigin(origin: string): boolean {
+  return /^https?:\/\//i.test(String(origin || '').trim());
+}
+
 const TRIAD_QR_EMBED_BITMAP = [
   '000000000000000000000000000111111000',
   '000000000000000000000000000111111000',
@@ -74,11 +79,15 @@ export type CleakerQRProps = {
 
 function buildCleakerUrl(username: string, endpoint: string): string {
   const base = String(endpoint || DEFAULT_ENDPOINT).trim().replace(/\/+$/, '');
-  if (!username) return base || DEFAULT_ENDPOINT;
-  let host = base.replace(/^https?:\/\//i, '').replace(/\/.*$/, '').replace(/\/+$/, '');
-  if (!host) return DEFAULT_ENDPOINT;
-  const scheme = /^https:\/\//i.test(base) ? 'https://' : 'http://';
-  return `${scheme}${username}.${host}`;
+  try {
+    return buildCleakerNamespaceUrl(base || DEFAULT_ENDPOINT, username || undefined);
+  } catch {
+    if (!username) return base || DEFAULT_ENDPOINT;
+    let host = base.replace(/^https?:\/\//i, '').replace(/\/.*$/, '').replace(/\/+$/, '');
+    if (!host) return DEFAULT_ENDPOINT;
+    const scheme = /^https:\/\//i.test(base) ? 'https://' : 'http://';
+    return `${scheme}${username}.${host}`;
+  }
 }
 
 export default function CleakerQR({
@@ -168,7 +177,9 @@ export default function CleakerQR({
     const origins = Array.from(new Set([
       window.location.origin,
       endpoint,
-    ].map((origin) => String(origin || '').trim().replace(/\/+$/, '')).filter(Boolean)));
+    ]
+      .map((origin) => String(origin || '').trim().replace(/\/+$/, ''))
+      .filter((origin) => Boolean(origin) && isNetworkOrigin(origin))));
 
     if (origins.length === 0) return;
 

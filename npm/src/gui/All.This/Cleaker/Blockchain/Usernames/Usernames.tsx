@@ -25,6 +25,7 @@ const ME_EMBED_BITMAP: string[] = [
 
 export interface UsersTableProps {
   endpoint: string; // e.g. "http://localhost:8161"
+  namespaceLabel?: string;
 }
 
 interface UserEntry {
@@ -73,7 +74,7 @@ async function copyToClipboard(text: string) {
   }
 }
 
-export default function UsersTable({ endpoint }: UsersTableProps) {
+export default function UsersTable({ endpoint, namespaceLabel = '' }: UsersTableProps) {
   const [rows, setRows] = useState<UserEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -126,9 +127,16 @@ export default function UsersTable({ endpoint }: UsersTableProps) {
   return (
     <Box sx={{ p: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h6">
-     
-        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25, minWidth: 0 }}>
+          <Typography variant="h6">
+            Users
+          </Typography>
+          {namespaceLabel ? (
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              Viewing node users for <Box component="span" sx={{ fontFamily: 'monospace', color: 'text.primary' }}>{namespaceLabel}</Box>
+            </Typography>
+          ) : null}
+        </Box>
         <Tooltip title={showTech ? 'Hide advanced columns' : 'Show advanced columns'}>
           <IconButton
             size="small"

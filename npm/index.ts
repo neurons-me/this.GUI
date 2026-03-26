@@ -61,6 +61,7 @@ export { default as ModulesGrid } from '@/gui/All.This/src/ModulesGrid/ModulesGr
 export { default as ModulesList } from '@/gui/All.This/src/ModulesList/ModulesList';
 export { default as Cleaker } from '@/gui/All.This/Cleaker/Cleaker';
 export { default as CleakerQR } from '@/gui/All.This/Cleaker/QR/CleakerQR';
+export { default as Blockchain } from '@/gui/All.This/Cleaker/Blockchain/blockchain';
 export { default as FaceRecognition } from '@/gui/widgets/FaceRecognition/FaceRecognition';
 export { default as Monad } from '@/gui/All.This/monad.ai/monad.ai';
 export type { MonadProps } from '@/gui/All.This/monad.ai/monad.ai';

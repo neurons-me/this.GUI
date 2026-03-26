@@ -11,13 +11,21 @@ export interface IdentityResult {
   identityRoot: string;
 }
 
+export function deriveIdentityRootHash(secret: string, namespace: string): string {
+  const combined = String(secret || "") + String(namespace || "");
+  return "0x" + keccak_256(combined);
+}
+
+export function deriveChildIdentityHash(parentHash: string, segment: string): string {
+  const combined = String(parentHash || "") + String(segment || "");
+  return "0x" + keccak_256(combined);
+}
+
 /**
  * Derives identityRoot using keccak256(secret + namespace)
  */
 export function deriveIdentity({ secret, namespace }: IdentityInput): IdentityResult {
-  const combined = secret + namespace;
-  const hash = keccak_256(combined);
-  const identityRoot = "0x" + hash;
+  const identityRoot = deriveIdentityRootHash(secret, namespace);
   // Log to browser console
   if (typeof window !== "undefined") {
     console.log("ME Identity Derived:");
