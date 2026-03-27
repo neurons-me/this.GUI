@@ -1,4 +1,5 @@
-import { Box, Button, Stack, Typography } from '@/gui/Atoms';
+import { Box, Button, Typography } from '@/gui/Atoms';
+import { Stack } from '@/gui/Molecules';
 import ModuleCard from './src/ModuleCard/ModuleCard';
 import ModuleRow from './src/ModuleRow/ModuleRow';
 import ModulesGrid from './src/ModulesGrid/ModulesGrid';

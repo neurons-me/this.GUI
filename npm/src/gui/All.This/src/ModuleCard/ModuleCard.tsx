@@ -1,5 +1,6 @@
 import React from 'react';
-import { Paper, Stack, Typography } from '@/gui/Atoms';
+import { Paper, Typography } from '@/gui/Atoms';
+import { Stack } from '@/gui/Molecules';
 import type { ModuleCardProps } from '../../All.This.types';
 
 export default function ModuleCard({

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Collapse from './Collapse';
-import { Stack, Typography } from '@/gui/Atoms';
+import { Typography } from '@/gui/Atoms';
+import { Stack } from '@/gui/Molecules';
 const meta: Meta<typeof Collapse> = {
   title: 'Molecules/Collapse',
   component: Collapse,

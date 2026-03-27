@@ -1,4 +1,5 @@
-import { Box, Button, Stack, Typography } from '@/gui/Atoms';
+import { Box, Button, Typography } from '@/gui/Atoms';
+import { Stack } from '@/gui/Molecules';
 
 export default function FirstGuiPreview() {
   return (

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { Bar, Box, Toolbar, Typography, Avatar, Tooltip } from '@/gui/Atoms';
+import { Bar, Box, Typography, Avatar } from '@/gui/Atoms';
+import { Toolbar, Tooltip } from '@/gui/Molecules';
 import { Link as RouterLink } from 'react-router-dom';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import { useGuiTheme, useGuiMediaQuery, useInsets, useUpdateInsets } from '@/gui/Hooks';
@@ -66,14 +67,15 @@ const FooterLink = ({
   };
 
   if (href) {
-    const component = href.startsWith('http')
+    const isAnchorHref = href.startsWith('http') || href.startsWith('#');
+    const component = isAnchorHref
       ? 'a'
       : RouterLink;
     return (
       <Box
         component={component as any}
-        to={!href.startsWith('http') ? href : undefined}
-        href={href.startsWith('http') ? href : undefined}
+        to={!isAnchorHref ? href : undefined}
+        href={isAnchorHref ? href : undefined}
         target={external ? '_blank' : undefined}
         rel={external ? 'noopener noreferrer' : undefined}
         sx={{ display: 'inline-flex' }}
@@ -170,6 +172,8 @@ export default function Footer(props: FooterProps) {
   const isDesktop = useGuiMediaQuery(theme.breakpoints.up('md'));
   const showLabels = isDesktop;
   const showBrandLabel = !isMobile;
+  const brandUsesAnchor = Boolean(brandHref) && (brandHref.startsWith('http') || brandHref.startsWith('#'));
+  const brandUsesRouter = Boolean(brandHref) && !brandUsesAnchor;
 
   const insets = useInsets();
   const updateInsets = useUpdateInsets();
@@ -322,8 +326,9 @@ export default function Footer(props: FooterProps) {
               textDecoration: 'none',
               color: 'inherit',
             }}
-            component={brandHref ? RouterLink : 'div'}
-            to={brandHref ? brandHref : undefined}
+            component={brandHref ? (brandUsesRouter ? RouterLink : 'a') : 'div'}
+            to={brandUsesRouter ? brandHref : undefined}
+            href={brandUsesAnchor ? brandHref : undefined}
           >
             {brandVisual}
             {showBrandLabel && brandLabel && (

@@ -1,6 +1,6 @@
 // src/gui/atoms/Drawer/Drawer.resolver.tsx
 import * as React from 'react';
-import { Drawer } from '@/gui/Atoms';
+import { Drawer } from '@/gui/Molecules';
 import type { RegistryEntry } from '@/Registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { ensureNodeId } from '@/gui/utils/nodeID';

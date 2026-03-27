@@ -1,6 +1,7 @@
 // src/gui/atoms/Box/Box.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
-import { Box, Link, Typography, Stack } from '@/gui/Atoms';
+import { Box, Link, Typography } from '@/gui/Atoms';
+import { Stack } from '@/gui/Molecules';
 // ======================= Meta =======================
 const meta: Meta<typeof Box> = {
   title: 'Atoms/Box',

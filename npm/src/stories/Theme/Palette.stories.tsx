@@ -1,7 +1,8 @@
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { linkTo } from '@storybook/addon-links';
-import { Box, Typography, Toolbar, Bar } from '@/gui/Atoms';
+import { Box, Typography, Bar } from '@/gui/Atoms';
+import { Toolbar } from '@/gui/Molecules';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import { useGuiTheme } from '@/gui/Hooks';
 

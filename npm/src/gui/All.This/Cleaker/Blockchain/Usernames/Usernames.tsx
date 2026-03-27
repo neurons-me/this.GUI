@@ -1,31 +1,16 @@
 // UsersTable.tsx — Cleaker / Blockchain Viewer
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, IconButton, Avatar } from "@/gui/Atoms";
+import { Box, Typography, IconButton, Avatar } from "@/gui/Atoms";
+import { Table, TableBody, TableCell, TableHead, TableRow, Tooltip } from "@/gui/Molecules";
 import Icon from "@/gui/Atoms/Icon/Icon";
-import QR from "./QR";
-
-const ME_EMBED_BITMAP: string[] = [
-  "000000000000000000000000000111111000",
-  "000000000000000000000000000111111000",
-  "111000111111111110000000111111111111",
-  "111000111111111110000000111000000111",
-  "111000111111111110000000111000000111",
-  "000000111001111001110000111111111111",
-  "000000111001111001110000111111111111",
-  "000000111001111001110000111111111111",
-  "000000111001111001110000111000000000",
-  "000000111001111001110000111000000000",
-  "000000000000000000000000000000000000",
-  "000000111000000001110000111000000000",
-  "000000111000000001110000111000000000",
-  "000000111000000001110000111111111111",
-  "000000111000000001110000000111111111",
-  "000000111000000001110000000111111111",
-];
+import { useGuiTheme } from "@/gui/Hooks";
+import QR from "../../../me/QR";
+import { buildCleakerNamespaceUrl } from "../../namespaceExpression";
 
 export interface UsersTableProps {
   endpoint: string; // e.g. "http://localhost:8161"
   namespaceLabel?: string;
+  namespaceRootUrl?: string;
 }
 
 interface UserEntry {
@@ -74,7 +59,12 @@ async function copyToClipboard(text: string) {
   }
 }
 
-export default function UsersTable({ endpoint, namespaceLabel = '' }: UsersTableProps) {
+export default function UsersTable({
+  endpoint,
+  namespaceLabel = '',
+  namespaceRootUrl = '',
+}: UsersTableProps) {
+  const theme = useGuiTheme();
   const [rows, setRows] = useState<UserEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -103,25 +93,13 @@ export default function UsersTable({ endpoint, namespaceLabel = '' }: UsersTable
   const getUserHostUrl = (username: string) => {
     const u = String(username || '').trim().toLowerCase();
     if (!u) return '';
-
-    // Turn endpoint into a host (strip scheme + path) and then prefix with username.
-    // Example:
-    //   endpoint: http://localhost:8161  -> host: localhost:8161  -> username host: jabellae.localhost:8161
-    //   endpoint: https://cleaker.me     -> host: cleaker.me      -> username host: jabellae.cleaker.me
-    let host = String(endpoint || '').trim();
-    host = host.replace(/^https?:\/\//i, '').replace(/\/.*$/, '').replace(/\/+$/, '');
-    if (!host) return '';
-
-    // Preserve whether the caller is using https.
-    const scheme = /^https:\/\//i.test(String(endpoint || '')) ? 'https://' : 'http://';
-    return `${scheme}${u}.${host}`;
-  };
-
-  const getQrUrlForUser = (u: UserEntry) => {
-    const pk = String(u.publicKey || '').trim();
-    if (!pk) return '';
-    const base = String(endpoint || '').replace(/\/+$/, '');
-    return `${base}/?pk=${encodeURIComponent(pk)}`;
+    const base = String(namespaceRootUrl || endpoint || '').trim();
+    if (!base) return '';
+    try {
+      return buildCleakerNamespaceUrl(base, u);
+    } catch {
+      return '';
+    }
   };
 
   return (
@@ -207,14 +185,14 @@ export default function UsersTable({ endpoint, namespaceLabel = '' }: UsersTable
                                    {/* Scan / QR tooltip trigger (low-noise) */}
                   <TableCell sx={{ width: 34, px: 0.5 }}>
                     {(() => {
-                      const pk = String(r.publicKey || '').trim();
-                      const hasPk = pk.length > 0;
+                      const userUrl = getUserHostUrl(r.username);
+                      const hasUserUrl = userUrl.length > 0;
 
                       const trigger = (
                         <IconButton
                           size="small"
-                          disabled={!hasPk}
-                          aria-label={hasPk ? 'Show QR' : 'No public key'}
+                          disabled={!hasUserUrl}
+                          aria-label={hasUserUrl ? 'Show .me QR' : 'No namespace link'}
                           sx={{
                             width: 36,
                             height: 36,
@@ -222,7 +200,7 @@ export default function UsersTable({ endpoint, namespaceLabel = '' }: UsersTable
                             bgcolor: 'transparent',
                             border: 'none',
                             color: 'primary.main',
-                            opacity: hasPk ? 1 : 0.35,
+                            opacity: hasUserUrl ? 1 : 0.35,
                             '&:hover': { bgcolor: 'transparent' },
                             '& .material-symbols-rounded': { fontSize: 22 },
                           }}
@@ -231,7 +209,7 @@ export default function UsersTable({ endpoint, namespaceLabel = '' }: UsersTable
                         </IconButton>
                       );
 
-                      if (!hasPk) return trigger;
+                      if (!hasUserUrl) return trigger;
 
                       return (
                         <Tooltip
@@ -242,14 +220,13 @@ export default function UsersTable({ endpoint, namespaceLabel = '' }: UsersTable
                           slotProps={{
                             tooltip: {
                               sx: {
-                                bgcolor: 'background.paper',
+                                bgcolor: 'transparent',
                                 color: 'text.primary',
-                                border: '1px solid',
-                                borderColor: 'divider',
-                                boxShadow: 6,
-                                p: 1.25,
+                                border: 'none',
+                                boxShadow: 'none',
+                                p: 0,
                                 '& .MuiTooltip-arrow': {
-                                  color: 'background.paper',
+                                  color: 'background.default',
                                 },
                               },
                             },
@@ -261,34 +238,80 @@ export default function UsersTable({ endpoint, namespaceLabel = '' }: UsersTable
                                 flexDirection: 'column',
                                 gap: 1,
                                 alignItems: 'center',
-                                ['--qr-fg' as any]: 'currentColor',
+                                p: 1.25,
+                                borderRadius: 2,
+                                bgcolor: 'background.default',
+                                border: '1px solid',
+                                borderColor: 'divider',
+                                boxShadow: 8,
                               }}
                             >
                               {(() => {
-                                const url = getQrUrlForUser(r);
                                 return (
                                   <Box
                                     sx={{
                                       color: 'primary.main',
+                                      p: 1,
                                       borderRadius: 2,
-                                      p: 0.75,
-                                      bgcolor: 'background.nav',
+                                      bgcolor: 'background.paper',
                                       border: '1px solid',
                                       borderColor: 'divider',
+                                      boxShadow: 4,
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      alignItems: 'center',
+                                      gap: 0.75,
+                                      minWidth: 180,
                                     }}
                                   >
-                                    <QR
-                                      value={url}
-                                      size={144}
-                                      bg="transparent"
-                                      fg="var(--qr-fg, currentColor)"
-                                      moduleRadius={0}
-                                      caption={undefined}
-                                      ecc="H"
-                                      embedMode="positive-overlay"
-                                      embedScale={0.36}
-                                      embedBitmap={ME_EMBED_BITMAP}
-                                    />
+                                    <Box
+                                      sx={{
+                                        width: 96,
+                                        height: 96,
+                                        borderRadius: 2,
+                                        overflow: 'hidden',
+                                        border: '1px solid',
+                                        borderColor: 'divider',
+                                        bgcolor: 'background.default',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                      }}
+                                    >
+                                      <QR
+                                        value={userUrl}
+                                        size={96}
+                                        bg={theme.palette.background.paper}
+                                        fg={theme.palette.primary.main}
+                                        ecc="H"
+                                        embedMode="positive-overlay"
+                                        embedScale={0.32}
+                                      />
+                                    </Box>
+                                    <Typography
+                                      variant="caption"
+                                      sx={{
+                                        color: 'text.primary',
+                                        fontWeight: 700,
+                                        letterSpacing: 0.2,
+                                      }}
+                                    >
+                                      {`@${r.username}`}
+                                    </Typography>
+                                    <Typography
+                                      variant="caption"
+                                      sx={{
+                                        maxWidth: 180,
+                                        color: 'text.secondary',
+                                        fontFamily: 'monospace',
+                                        fontSize: '0.62rem',
+                                        lineHeight: 1.3,
+                                        textAlign: 'center',
+                                        wordBreak: 'break-all',
+                                      }}
+                                    >
+                                      {userUrl}
+                                    </Typography>
                                   </Box>
                                 );
                               })()}
@@ -323,6 +346,7 @@ export default function UsersTable({ endpoint, namespaceLabel = '' }: UsersTable
                               fontSize: 12,
                               fontWeight: 700,
                               bgcolor: 'background.paper',
+                              color: 'text.primary',
                               border: '1px solid',
                               borderColor: 'divider',
                               flexShrink: 0,

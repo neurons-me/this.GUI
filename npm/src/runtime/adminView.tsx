@@ -4,7 +4,8 @@ import { alpha, darken, lighten } from '@mui/material/styles';
 import { selectionStore } from './selectionStore';
 import { useUpdateInsets } from '@/gui/Hooks';
 import { useGuiTheme } from '@/gui/Hooks/useGuiTheme';
-import { Box, Button, Drawer, Typography } from '@/gui/Atoms';
+import { Box, Button, Typography } from '@/gui/Atoms';
+import { Drawer } from '@/gui/Molecules';
 import CodeBlock from '@/gui/Molecules/CodeBlock/CodeBlock';
 import type { ResolvedNodeRecord } from './renderer';
 

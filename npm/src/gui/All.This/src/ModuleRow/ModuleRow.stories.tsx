@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MenuItem, Stack, TextField, Typography } from '@/gui/Atoms';
+import { TextField, Typography } from '@/gui/Atoms';
+import { MenuItem, Stack } from '@/gui/Molecules';
 import ModuleRow from './ModuleRow';
 
 const meta: Meta<typeof ModuleRow> = {

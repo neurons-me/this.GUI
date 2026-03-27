@@ -84,57 +84,36 @@ export {
 import ThemeComponent from '@/gui/Theme/Theme';
 import { GuiRegistry as RegistryEntries } from '@/Registry';
 import { atoms as AtomsBundle } from '@/gui/Atoms';
-import Box from '@/gui/Atoms/Box/Box';
-import Button from '@/gui/Atoms/Button/Button';
-import Checkbox from '@/gui/Atoms/Checkbox/Checkbox';
-import Link from '@/gui/Atoms/Link/Link';
-import Paper from '@/gui/Atoms/Paper/Paper';
-import TextField from '@/gui/Atoms/TextField/TextField';
-import Typography from '@/gui/Atoms/Typography/Typography';
 import Layout from '@/gui/Layout/Layout';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import DomIcon from '@/gui/Atoms/Icon/DomIcon';
 import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
-import AllThis from '@/gui/All.This/All.This';
 import FaceRecognition from '@/gui/widgets/FaceRecognition/FaceRecognition';
 import Monad from '@/gui/All.This/monad.ai/monad.ai';
 import HighLighter from '@/gui/widgets/HighLighter/HighLighter';
 import HighLightsDrawer from '@/gui/widgets/HighLighter/HighLightsDrawer';
-import CodeBlock from '@/gui/Molecules/CodeBlock/CodeBlock';
-import Dialog from '@/gui/Molecules/Dialog/Dialog';
-import { Hero } from '@/gui/Molecules/Hero/Hero';
 import MoleculesBundle from '@/gui/Molecules';
-import Modal from '@/gui/Molecules/Modal/Modal';
-import Page from '@/gui/Molecules/Page/Page';
-import { ThemesCatalog } from '@/gui/Theme';
 import GUITools, {
   guiToolsElements,
   guiToolsLeftSidebarConfig,
 } from '@/gui/Molecules/menus/GUI-Tools/GUI-Tools';
 import CompoundsBundle from '@/gui/Compounds';
-import Cleaker from '@/gui/All.This/Cleaker/Cleaker';
-
 export const Atoms = AtomsBundle;
-
 export const Molecules = MoleculesBundle;
-
 export const Widgets = {
   FaceRecognition,
   HighLighter,
   HighLightsDrawer,
   Monad,
 } as const;
-
 export const Compounds = {
   ...CompoundsBundle,
   Icon,
   DomIcon,
   ThemeModeToggle,
 } as const;
-
 // Legacy alias kept so older UMD consumers keep working.
 export const Components = Compounds;
-
 export const ThemeRuntime = {
   Theme: ThemeComponent,
   Layout,
@@ -142,7 +121,6 @@ export const ThemeRuntime = {
   DomIcon,
   ThemeModeToggle,
 } as const;
-
 // Lowercase aliases for explorer/runtime conventions
 export const atoms = Atoms;
 export const molecules = Molecules;
@@ -162,7 +140,7 @@ export const menus = {
   },
 } as const;
 // Mount API (React runtime)
-// GuiNode → renderer → ReactDOM, expects React/ReactDOM globals in UMD usage.
+// GUINode → renderer → ReactDOM, expects React/ReactDOM globals in UMD usage.
 export { mount } from '@/runtime/mount';
 export type { MountTarget } from '@/runtime/mount';
 export {

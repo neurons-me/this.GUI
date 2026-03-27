@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Button, MenuItem, Stack, TextField, Typography } from '@/gui/Atoms';
+import { Box, Button, TextField, Typography } from '@/gui/Atoms';
+import { MenuItem, Stack } from '@/gui/Molecules';
 import CodeBlock from '@/gui/Molecules/CodeBlock/CodeBlock';
 import ModuleCard from '../src/ModuleCard/ModuleCard';
 import type { ModuleSource, RuntimeModuleProps, RuntimeModuleState } from '../All.This.types';

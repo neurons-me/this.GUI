@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Stack, Typography } from '@/gui/Atoms';
+import { Typography } from '@/gui/Atoms';
+import { Stack } from '@/gui/Molecules';
 import Surface from './Surface';
 import Theme from '@/gui/Theme/Theme';
 

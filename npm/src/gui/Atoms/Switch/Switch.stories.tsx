@@ -1,7 +1,8 @@
 // src/gui/atoms/Switch/Switch.stories.tsx
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Box, Stack, Typography, Switch } from '@/gui/Atoms';
+import { Box, Typography, Switch } from '@/gui/Atoms';
+import { Stack } from '@/gui/Molecules';
 import { FormControlLabel } from '@mui/material';
 
 // ======================= Meta =======================

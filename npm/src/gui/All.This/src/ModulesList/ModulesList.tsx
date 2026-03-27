@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack } from '@/gui/Atoms';
+import { Stack } from '@/gui/Molecules';
 import type { ModulesListProps } from '../../All.This.types';
 
 export default function ModulesList({

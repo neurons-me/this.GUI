@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Collapse, Typography } from '@/gui/Atoms';
+import { Box, Typography } from '@/gui/Atoms';
+import { Collapse } from '@/gui/Molecules';
 import Icon from '@/gui/Atoms/Icon/Icon';
 
 const VIEWPORT_MARGIN = 12;

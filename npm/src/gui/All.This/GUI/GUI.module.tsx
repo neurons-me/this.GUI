@@ -1,5 +1,6 @@
 import React from 'react';
-import { MenuItem, Stack, TextField, Typography } from '@/gui/Atoms';
+import { TextField, Typography } from '@/gui/Atoms';
+import { MenuItem, Stack } from '@/gui/Molecules';
 import ModuleRow from '../src/ModuleRow/ModuleRow';
 import type { RuntimeModuleProps, RuntimeModuleState } from '../All.This.types';
 

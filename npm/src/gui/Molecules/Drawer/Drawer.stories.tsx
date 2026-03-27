@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Drawer, Box, Button, Typography, Stack } from '@/gui/Atoms';
+import { Box, Button, Typography } from '@/gui/Atoms';
+import { Drawer, Stack } from '@/gui/Molecules';
 // ======================= Meta =======================
 const meta: Meta<typeof Drawer> = {
   title: 'Molecules/Drawer',

@@ -6,9 +6,9 @@ import {
   Divider,
   Link,
   Paper,
-  Stack,
   Typography,
 } from '@/gui/Atoms';
+import { Stack } from '@/gui/Molecules';
 
 import Card from '@/gui/Atoms/Card/Card';
 import CardContent from '@/gui/Atoms/Card/CardContent/CardContent';

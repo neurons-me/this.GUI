@@ -35,14 +35,14 @@ export function extractUsernameFromNamespace(namespace: string): string {
   const normalized = trimRuntimeValue(namespace).replace(/\/.*$/, '');
   if (!normalized) return '';
 
+  const labels = normalized.split('.').filter(Boolean);
+  if (labels.length >= 3) return labels[0] || '';
   if (normalized.endsWith('.cleaker.me')) {
     return normalized.slice(0, -'.cleaker.me'.length).replace(/\.+$/, '');
   }
-
   if (normalized.endsWith('.localhost')) {
     return normalized.slice(0, -'.localhost'.length).replace(/\.+$/, '');
   }
-
   return '';
 }
 

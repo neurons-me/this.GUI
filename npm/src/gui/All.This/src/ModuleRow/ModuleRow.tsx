@@ -1,4 +1,5 @@
-import { Paper, Stack, Typography } from '@/gui/Atoms';
+import { Paper, Typography } from '@/gui/Atoms';
+import { Stack } from '@/gui/Molecules';
 import type { ModuleRowProps } from '../../All.This.types';
 
 export default function ModuleRow({

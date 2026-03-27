@@ -1,12 +1,13 @@
 /*
- * This.GUI — Molecules registry
- * Mid-level components composed from atoms and basic primitives.
- *
+ * .GUI — Molecules
+╔╦╗┌─┐┬  ┌─┐┌─┐┬ ┬┬  ┌─┐┌─┐
+║║║│ ││  ├┤ │  │ ││  ├┤ └─┐
+╩ ╩└─┘┴─┘└─┘└─┘└─┘┴─┘└─┘└─┘    
+ * Composed from atoms and basic primitives.
  * Export rules (consistency + ergonomics):
  *  - Keep a `Theme` namespace for theme-related molecules.
  *  - Theme molecules are exported only under `Theme` (no top-level named exports).
  *  - Avoid `export *` patterns here; be explicit to keep the public API stable.
- *
  * Ordering convention:
  *  1) component imports
  *  2) type imports
@@ -15,13 +16,22 @@
  *  5) named exports
  *  6) type exports
  *  7) default export
- * 
 Atoms:
 “I can do X”
 Molecules:
 “Use these atoms to achieve Y”
-
 Configurations emerge from constraints.*/
+
+//rule number 1 of molecules.
+
+// do not expand components faster than the eye can follow. 
+// If you have to add a new component, add it at the end of the list, not in the middle. 
+// This way, when someone is reading through the file, 
+// they won't be surprised by new components appearing in the middle of the list.  
+
+// This also helps with git history, as new components will be added in a consistent place,
+// making it easier to track changes over time.
+
 
 // Components
 import Dialog from '@/gui/Molecules/Dialog/Dialog';
@@ -30,14 +40,12 @@ import Modal from '@/gui/Molecules/Modal/Modal';
 import type { ModalProps } from '@/gui/Molecules/Modal/Modal.types';
 import Page from '@/gui/Molecules/Page/Page';
 import CodeBlock from '@/gui/Molecules/CodeBlock/CodeBlock';
-
 // Types
 import type { ComponentType } from 'react';
 import type { DialogProps } from '@/gui/Molecules/Dialog/Dialog';
 import type { HeroProps } from '@/gui/Molecules/Hero/Hero.types';
 import type PageProps from '@/gui/Molecules/Page/Page';
 import type { CodeBlockProps } from '@/gui/Molecules/CodeBlock/CodeBlock';
-
 //List
 // List and related are not polymorphic so we wrap them with forwardRef
 import List, { type ListProps } from '@/gui/Molecules/List/List';
@@ -50,6 +58,32 @@ import ListItemIcon, { type ListItemIconProps } from '@/gui/Molecules/List/ListI
 export type { ListItemIconProps } from '@/gui/Molecules/List/ListItemIcon/ListItemIcon';
 import ListItemText, { type ListItemTextProps } from '@/gui/Molecules/List/ListItemText/ListItemText';
 export type { ListItemTextProps } from '@/gui/Molecules/List/ListItemText/ListItemText';
+import Grid from '@/gui/Molecules/Grid/Grid';
+export type { GridProps } from '@/gui/Molecules/Grid/Grid.types';
+import Collapse, { type CollapseProps } from '@/gui/Molecules/Collapse/Collapse';
+export type { CollapseProps } from '@/gui/Molecules/Collapse/Collapse';
+import Drawer, { type DrawerProps } from '@/gui/Molecules/Drawer/Drawer';
+export type { DrawerProps } from '@/gui/Molecules/Drawer/Drawer';
+import Menu, { type MenuProps } from '@/gui/Molecules/Menu/Menu';
+export type { MenuProps } from '@/gui/Molecules/Menu/Menu';
+import MenuItem, { type MenuItemProps } from '@/gui/Molecules/Menu/MenuItem/MenuItem';
+export type { MenuItemProps } from '@/gui/Molecules/Menu/MenuItem/MenuItem';
+import Stack, { type StackProps } from '@/gui/Molecules/Stack/Stack';
+export type { StackProps } from '@/gui/Molecules/Stack/Stack';
+import Table, { type TableProps } from '@/gui/Molecules/Table/Table';
+export type { TableProps } from '@/gui/Molecules/Table/Table';
+import TableBody, { type TableBodyProps } from '@/gui/Molecules/Table/Body/TableBody';
+export type { TableBodyProps } from '@/gui/Molecules/Table/Body/TableBody';
+import TableCell, { type TableCellProps } from '@/gui/Molecules/Table/Cell/TableCell';
+export type { TableCellProps } from '@/gui/Molecules/Table/Cell/TableCell';
+import TableHead, { type TableHeadProps } from '@/gui/Molecules/Table/Head/TableHead';
+export type { TableHeadProps } from '@/gui/Molecules/Table/Head/TableHead';
+import TableRow, { type TableRowProps } from '@/gui/Molecules/Table/Row/TableRow';
+export type { TableRowProps } from '@/gui/Molecules/Table/Row/TableRow';
+import Toolbar, { type ToolbarProps } from '@/gui/Molecules/Toolbar/Toolbar';
+export type { ToolbarProps } from '@/gui/Molecules/Toolbar/Toolbar';
+import Tooltip, { type TooltipProps } from '@/gui/Molecules/Tooltip/Tooltip';
+export type { TooltipProps } from '@/gui/Molecules/Tooltip/Tooltip';
 
 type MoleculesRegistry = {
   Dialog: typeof Dialog;
@@ -64,6 +98,19 @@ type MoleculesRegistry = {
   ListItemButton: typeof ListItemButton;
   ListItemIcon: typeof ListItemIcon;
   ListItemText: typeof ListItemText;
+  Grid: typeof Grid;
+  Collapse: typeof Collapse;
+  Drawer: typeof Drawer;
+  Menu: typeof Menu;
+  MenuItem: typeof MenuItem;
+  Stack: typeof Stack;
+  Table: typeof Table;
+  TableBody: typeof TableBody;
+  TableCell: typeof TableCell;
+  TableHead: typeof TableHead;
+  TableRow: typeof TableRow;
+  Toolbar: typeof Toolbar;
+  Tooltip: typeof Tooltip;
 };
 
 const Molecules: MoleculesRegistry = {
@@ -76,7 +123,20 @@ const Molecules: MoleculesRegistry = {
   ListItem,
   ListItemButton,
   ListItemIcon,
-  ListItemText
+  ListItemText,
+  Grid,
+  Collapse,
+  Drawer,
+  Menu,
+  MenuItem,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Toolbar,
+  Tooltip,
 };
 
 export {
@@ -89,7 +149,20 @@ export {
   ListItem,
   ListItemButton,
   ListItemIcon,
-  ListItemText
+  ListItemText,
+  Grid,
+  Collapse,
+  Drawer,
+  Menu,
+  MenuItem,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Toolbar,
+  Tooltip,
 };
 
 export type {
@@ -97,7 +170,7 @@ export type {
   PageProps,
   HeroProps,
   CodeBlockProps,
-  ModalProps
+  ModalProps,
 };
 
 export default Molecules;

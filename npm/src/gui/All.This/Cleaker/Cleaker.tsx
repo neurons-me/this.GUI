@@ -165,6 +165,9 @@ export default function Cleaker(props: CleakerProps) {
   const namespaceOrigin = namespaceConfig.transport.origin;
   const namespaceHost = namespaceConfig.constant;
   const namespaceDisplayHost = namespaceConfig.displayHost;
+  const namespaceSeedFallback = useMemo(() => {
+    return String(namespaceHost || '').trim().toLowerCase().replace(/:\d+$/, '');
+  }, [namespaceHost]);
 
   const validateUsername = useCallback((raw: string) => {
     const value = sanitizeRuntimeUsername(raw);
@@ -222,15 +225,6 @@ export default function Cleaker(props: CleakerProps) {
     return error ? '' : value;
   }, [username, validateUsername]);
 
-  const identityNamespace = useMemo(() => {
-    return normalizedUsername ? `${normalizedUsername}.${namespaceHost}` : namespaceHost;
-  }, [namespaceHost, normalizedUsername]);
-
-  const typingNamespace = useMemo(() => {
-    const draft = sanitizeRuntimeUsername(username);
-    return draft ? `${draft}.${namespaceHost}` : namespaceHost;
-  }, [namespaceHost, sanitizeRuntimeUsername, username]);
-
   const {
     parentHost,
     parentStatus,
@@ -281,19 +275,6 @@ export default function Cleaker(props: CleakerProps) {
     return 'offline';
   }, [actionTarget, namespaceDisplayHost, namespaceHost, parentHost]);
 
-  const liveUsernameState = useMemo(() => {
-    const raw = String(username || '').trim();
-    if (!raw) return 'idle' as const;
-    if (usernameError) return 'invalid' as const;
-    return 'valid' as const;
-  }, [username, usernameError]);
-
-  const liveUsernameNote = useMemo(() => {
-    if (liveUsernameState === 'invalid') return String(usernameError || 'invalid username format');
-    if (liveUsernameState === 'valid') return identityNamespace;
-    return '';
-  }, [identityNamespace, liveUsernameState, usernameError]);
-
   const rootHostNamespace = useMemo(() => {
     return String(namespaceConfig.transport.host || '').trim().toLowerCase();
   }, [namespaceConfig.transport.host]);
@@ -306,11 +287,6 @@ export default function Cleaker(props: CleakerProps) {
     if (!normalizedUsername || !surfaceNamespace) return '';
     return `${normalizedUsername}.${surfaceNamespace}`;
   }, [normalizedUsername, surfaceNamespace]);
-
-  const subjectHandleNamespace = useMemo(() => {
-    if (!normalizedUsername) return '';
-    return `${normalizedUsername}.${namespaceHost}`;
-  }, [namespaceHost, normalizedUsername]);
 
   const resolverHostName = useMemo(() => {
     return String(bootstrapInfo?.resolverHostName || '').trim().toLowerCase();
@@ -355,9 +331,40 @@ export default function Cleaker(props: CleakerProps) {
     });
   }, [hostResolvedSurfaceEntry?.rootName, namespaceHost, resolverHostName, rootHostNamespace]);
 
+  const namespaceSeedHandle = useMemo(() => {
+    return String(semanticRootName || namespaceSeedFallback || '').trim().toLowerCase();
+  }, [namespaceSeedFallback, semanticRootName]);
+
+  const identityNamespace = useMemo(() => {
+    return normalizedUsername ? `${normalizedUsername}.${namespaceSeedHandle}` : namespaceSeedHandle;
+  }, [namespaceSeedHandle, normalizedUsername]);
+
+  const typingNamespace = useMemo(() => {
+    const draft = sanitizeRuntimeUsername(username);
+    return draft ? `${draft}.${namespaceSeedHandle}` : namespaceSeedHandle;
+  }, [namespaceSeedHandle, sanitizeRuntimeUsername, username]);
+
+  const subjectHandleNamespace = useMemo(() => {
+    if (!normalizedUsername) return '';
+    return `${normalizedUsername}.${namespaceSeedHandle}`;
+  }, [namespaceSeedHandle, normalizedUsername]);
+
+  const liveUsernameState = useMemo(() => {
+    const raw = String(username || '').trim();
+    if (!raw) return 'idle' as const;
+    if (usernameError) return 'invalid' as const;
+    return 'valid' as const;
+  }, [username, usernameError]);
+
+  const liveUsernameNote = useMemo(() => {
+    if (liveUsernameState === 'invalid') return String(usernameError || 'invalid username format');
+    if (liveUsernameState === 'valid') return identityNamespace;
+    return '';
+  }, [identityNamespace, liveUsernameState, usernameError]);
+
   const rootNamespaceHash = useMemo(() => {
-    return deriveIdentityRootHash(secret, semanticRootName || namespaceHost || rootHostNamespace);
-  }, [namespaceHost, rootHostNamespace, secret, semanticRootName]);
+    return deriveIdentityRootHash(secret, namespaceSeedHandle || rootHostNamespace);
+  }, [namespaceSeedHandle, rootHostNamespace, secret]);
 
   const surfaceNamespaceHash = useMemo(() => {
     return rootNamespaceHash;
@@ -402,7 +409,7 @@ export default function Cleaker(props: CleakerProps) {
     return createSurfaceEntry({
       namespaceUrl: activeNamespaceUrl,
       endpoint: namespaceOrigin,
-      namespaceHandle: namespaceHost,
+      namespaceHandle: namespaceSeedHandle,
       rootHostNamespace,
       resolverHostName,
       connected: parentStatus === 'online',
@@ -410,7 +417,7 @@ export default function Cleaker(props: CleakerProps) {
   }, [
     activeNamespaceUrl,
     hostResolvedSurfaceEntry,
-    namespaceHost,
+    namespaceSeedHandle,
     namespaceOrigin,
     parentStatus,
     resolverHostName,
@@ -426,8 +433,8 @@ export default function Cleaker(props: CleakerProps) {
   }, [namespaceHost, namespaceOrigin, surfaceNamespace]);
 
   const compactRootLabel = useMemo(() => {
-    return compactNamespaceName(semanticRootName || namespaceHost || rootHostNamespace || '—') || '—';
-  }, [namespaceHost, rootHostNamespace, semanticRootName]);
+    return compactNamespaceName(namespaceSeedHandle || rootHostNamespace || '—') || '—';
+  }, [namespaceSeedHandle, rootHostNamespace]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -566,10 +573,10 @@ export default function Cleaker(props: CleakerProps) {
         if (!response.ok) {
           if (response.status === 403) setClaimResolution('locked');
           if (response.status === 404) setClaimResolution('unclaimed');
-          if (response.status === 404) {
-            throw new Error('Namespace is not claimed yet. Use Register first.');
+          if (response.status === 403 || response.status === 404) {
+            throw new Error('Wrong Credentials');
           }
-          throw new Error(readErrorMessage(payload, response.status, 'Failed to login to namespace'));
+          throw new Error(readErrorMessage(payload, response.status, 'Wrong Credentials'));
         }
         setClaimResolution('openable');
       } else {
@@ -632,7 +639,7 @@ export default function Cleaker(props: CleakerProps) {
     setAuthError(null);
     setRegisterError(null);
 
-    const nextNamespace = `${validated.value}.${namespaceHost}`;
+    const nextNamespace = `${validated.value}.${namespaceSeedHandle}`;
 
     try {
       const response = await fetch(`${actionBaseUrl}/claims`, {
@@ -678,7 +685,7 @@ export default function Cleaker(props: CleakerProps) {
   }, [
     actionBaseUrl,
     commitRuntimeCredentials,
-    namespaceHost,
+    namespaceSeedHandle,
     registerConfirmPassword,
     registerEmail,
     registerPassword,
@@ -770,8 +777,8 @@ export default function Cleaker(props: CleakerProps) {
       target: actionTargetLabel,
     });
     registerNode(nodeId('action-register'), nodePath('action-register'), 'Cleaker.RegisterAction', {
-      label: 'Register',
-      title: 'Register',
+      label: 'Sign Up',
+      title: 'Sign Up',
       disabled: false,
       intent: 'claim',
       target: actionTargetLabel,
@@ -1018,7 +1025,7 @@ export default function Cleaker(props: CleakerProps) {
                       disableUnderline: true,
                       endAdornment: (
                         <Box
-                          sx={{
+                  sx={{
                             pl: 0.55,
                             fontSize: '11px',
                             fontWeight: 700,
@@ -1027,7 +1034,7 @@ export default function Cleaker(props: CleakerProps) {
                             opacity: username ? 1 : 0.7,
                           }}
                         >
-                          .{namespaceHost}
+                          .{namespaceSeedHandle}
                         </Box>
                       ),
                     },
@@ -1147,7 +1154,7 @@ export default function Cleaker(props: CleakerProps) {
                 const next = String(namespaceInput || '').trim() || DEFAULT_CLEAKER_NAMESPACE_EXPRESSION;
                 setNamespaceInput(next);
               }}
-              helperText={`constant: ${namespaceHost} · origin: ${namespaceOrigin} · e.g. cleaker.me or cleaker.me[host:localhost|protocol:http|port:8161]`}
+              helperText={`seed: ${namespaceSeedHandle} · alias: ${namespaceOrigin} · e.g. cleaker.me or cleaker.me[host:localhost|protocol:http|port:8161]`}
               fullWidth
             />
             <Box
@@ -1209,7 +1216,7 @@ export default function Cleaker(props: CleakerProps) {
                   title={`Expression: ${namespaceConfig.expression} · local=${localNamespaceUrl || '—'} · network=${networkNamespaceUrl || '—'} · node=${resolverDisplayName || '—'}`}
                   sx={{ fontSize: '11px', lineHeight: 1.4, color: theme.palette.text.secondary }}
                 >
-                  Monad Node: <Box component="span" sx={{ color: theme.palette.text.primary, fontFamily: 'monospace' }}>{compactMonadLabel}</Box>
+                  monad.ai: <Box component="span" sx={{ color: theme.palette.text.primary, fontFamily: 'monospace' }}>{compactMonadLabel}</Box>
                 </Box>
                 <Box sx={{ fontSize: '11px', lineHeight: 1.35, color: theme.palette.text.secondary }}>
                   Namespace: <Box component="span" sx={{ color: theme.palette.text.primary, fontFamily: 'monospace' }}>{compactRootLabel}</Box>
@@ -1293,7 +1300,7 @@ export default function Cleaker(props: CleakerProps) {
               onClick={() => {
                 openRegisterModal();
               }}
-              aria-label="Register"
+              aria-label="Sign Up"
               sx={{
                 borderRadius: '8px',
                 textTransform: 'none',
@@ -1312,7 +1319,7 @@ export default function Cleaker(props: CleakerProps) {
                 },
               }}
             >
-              Register
+              Sign Up
             </Button>
             <Button
               variant="outlined"
@@ -1379,7 +1386,7 @@ export default function Cleaker(props: CleakerProps) {
       <Modal
         open={registerOpen}
         onClose={closeRegisterModal}
-        title="Register Namespace"
+        title="Sign Up"
         width={420}
       >
         <Box
@@ -1478,7 +1485,7 @@ export default function Cleaker(props: CleakerProps) {
               }}
               disabled={authStatus === 'checking'}
             >
-              Register
+              Sign Up
             </Button>
           </Box>
         </Box>

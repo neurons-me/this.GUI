@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Button, Stack, TextField, Typography } from '@/gui/Atoms';
+import { Button, TextField, Typography } from '@/gui/Atoms';
+import { Stack } from '@/gui/Molecules';
 import ModuleCard from './ModuleCard';
 
 const meta: Meta<typeof ModuleCard> = {

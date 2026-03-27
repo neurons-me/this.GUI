@@ -383,8 +383,12 @@ export function buildCleakerNamespaceUrl(
   const parsed = typeof input === "string" ? parseCleakerNamespaceExpression(input) : input;
   const surfaceHost = formatTransportSurfaceHost(parsed.transport.host, parsed.transport.port);
   const resolvedPrefix = String(prefix ?? parsed.prefix ?? "").trim().toLowerCase();
-  const targetHost = resolvedPrefix ? `${resolvedPrefix}.${surfaceHost}` : surfaceHost;
+  const localishSurface = isLocalishHost(parsed.transport.host);
+  const targetHost = resolvedPrefix && !localishSurface ? `${resolvedPrefix}.${surfaceHost}` : surfaceHost;
 
   if (!targetHost) return "";
+  if (resolvedPrefix && localishSurface) {
+    return `${parsed.transport.protocol}://${targetHost}/@${resolvedPrefix}`;
+  }
   return `${parsed.transport.protocol}://${targetHost}`;
 }

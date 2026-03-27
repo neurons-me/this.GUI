@@ -7,11 +7,12 @@
 // No fetching, no table markup.
 //@/gui/Session/Session.tsx
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Button, IconButton, Tooltip, Typography } from '@/gui/Atoms';
+import { Box, Button, IconButton, Typography } from '@/gui/Atoms';
+import { Tooltip } from '@/gui/Molecules';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import { useGuiTheme, useGuiMediaQuery } from '@/gui/Hooks';
 import UsersTable from './Usernames/Usernames';
-import { BlocksTable } from './Blocks/BlocksTable';
+import { BlocksTable as BlockchainTable } from './Blocks/BlocksTable';
 import QR from '../../me/QR';
 import { buildCleakerNamespaceUrl, parseCleakerNamespaceExpression } from '../namespaceExpression';
 import { deriveChildIdentityHash, deriveIdentityRootHash } from '../../me/identity';
@@ -61,6 +62,10 @@ function formatSurfaceNamespace(host: string, port: number | null): string {
   return port == null ? normalizedHost : `${normalizedHost}:${port}`;
 }
 
+function stripPort(raw: string): string {
+  return String(raw || '').trim().toLowerCase().replace(/:\d+$/, '');
+}
+
 export default function Blockchain({
   endpoint: endpointProp = 'http://localhost:8161',
   defaultTab = 'users',
@@ -83,6 +88,7 @@ export default function Blockchain({
   const [connected, setConnected] = useState(false);
   const [activeTab, setActiveTab] = useState<'users' | 'blocks' | 'details' | 'surface'>(defaultTab);
   const [showEndpointInput, setShowEndpointInput] = useState(false);
+  const [showNamespaceTip, setShowNamespaceTip] = useState(false);
   const [bootstrapInfo, setBootstrapInfo] = useState<CleakerBootstrapInfo | null>(null);
   const theme = useGuiTheme();
   const isMobile = useGuiMediaQuery(theme.breakpoints.down('sm'));
@@ -184,10 +190,14 @@ export default function Blockchain({
     resolvedRootHostNamespace,
   ]);
 
+  const semanticNamespaceHandle = useMemo(() => {
+    return String(semanticRootName || stripPort(resolvedNamespaceHandle) || '').trim().toLowerCase();
+  }, [resolvedNamespaceHandle, semanticRootName]);
+
   const resolvedRootNamespaceHash = useMemo(() => {
-    if (!semanticRootName) return String(rootNamespaceHash || '').trim();
-    return deriveIdentityRootHash('', semanticRootName);
-  }, [rootNamespaceHash, semanticRootName]);
+    if (!semanticNamespaceHandle) return String(rootNamespaceHash || '').trim();
+    return deriveIdentityRootHash('', semanticNamespaceHandle);
+  }, [rootNamespaceHash, semanticNamespaceHandle]);
 
   const resolvedSurfaceNamespaceHash = useMemo(() => {
     return resolvedRootNamespaceHash || String(surfaceNamespaceHash || '').trim();
@@ -204,11 +214,21 @@ export default function Blockchain({
     return `${previewNamespace.transport.protocol}://${label}${resolvedSurfaceNamespace}`;
   }, [previewNamespace, previewUsername, resolvedSurfaceNamespace]);
 
+  const localRootNamespaceUrl = useMemo(() => {
+    if (!resolvedSurfaceNamespace || !previewNamespace) return '';
+    return `${previewNamespace.transport.protocol}://${resolvedSurfaceNamespace}`;
+  }, [previewNamespace, resolvedSurfaceNamespace]);
+
   const networkNamespaceUrl = useMemo(() => {
     if (!resolvedResolverSurfaceNamespace || !previewNamespace) return '';
     const label = previewUsername ? `${previewUsername}.` : '';
     return `${previewNamespace.transport.protocol}://${label}${resolvedResolverSurfaceNamespace}`;
   }, [previewNamespace, previewUsername, resolvedResolverSurfaceNamespace]);
+
+  const networkRootNamespaceUrl = useMemo(() => {
+    if (!resolvedResolverSurfaceNamespace || !previewNamespace) return '';
+    return `${previewNamespace.transport.protocol}://${resolvedResolverSurfaceNamespace}`;
+  }, [previewNamespace, resolvedResolverSurfaceNamespace]);
 
   const surfaceEntry = useMemo(() => {
     if (hostResolvedSurfaceEntry) return hostResolvedSurfaceEntry;
@@ -270,8 +290,12 @@ export default function Blockchain({
   }, [endpointProp, resolvedSurfaceNamespace, safeEndpoint]);
 
   const compactRootLabel = useMemo(() => {
-    return compactNamespaceName(semanticRootName || resolvedRootHostNamespace || '—') || '—';
-  }, [resolvedRootHostNamespace, semanticRootName]);
+    return compactNamespaceName(semanticNamespaceHandle || resolvedRootHostNamespace || '—') || '—';
+  }, [resolvedRootHostNamespace, semanticNamespaceHandle]);
+
+  const namespaceDisplayTitle = useMemo(() => {
+    return compactRootLabel || semanticNamespaceHandle || '—';
+  }, [compactRootLabel, semanticNamespaceHandle]);
 
   useEffect(() => {
     setActiveTab(defaultTab);
@@ -435,18 +459,22 @@ export default function Blockchain({
           </Box>
         </Tooltip>
 
-        <Tooltip title="What is a namespace?" placement="bottom" arrow>
+        <Tooltip title={showNamespaceTip ? 'Hide namespace tip' : 'Show namespace tip'} placement="bottom" arrow>
           <Box component="span" sx={{ display: 'inline-flex' }}>
             <IconButton
               aria-label="Namespace info"
               size="small"
-              onClick={() => setActiveTab('details')}
+              onClick={() => setShowNamespaceTip((value) => !value)}
               sx={{
                 border: '1px solid',
-                borderColor: 'divider',
-                bgcolor: 'background.paper',
-                color: 'text.secondary',
-                '&:hover': { bgcolor: 'background.nav', color: 'text.primary' },
+                borderColor: showNamespaceTip ? 'primary.main' : 'divider',
+                bgcolor: showNamespaceTip ? 'background.nav' : 'background.paper',
+                color: showNamespaceTip ? 'primary.main' : 'text.secondary',
+                '&:hover': {
+                  bgcolor: 'background.nav',
+                  borderColor: showNamespaceTip ? 'primary.main' : 'divider',
+                  color: showNamespaceTip ? 'primary.main' : 'text.primary',
+                },
               }}
             >
               <Icon name="info" />
@@ -454,6 +482,32 @@ export default function Blockchain({
           </Box>
         </Tooltip>
       </Box>
+      {showNamespaceTip ? (
+        <Box
+          sx={{
+            mt: 0.25,
+            mb: 1.25,
+            mr: isMobile ? 0 : 7.5,
+            p: 1.25,
+            borderRadius: 2,
+            border: '1px solid',
+            borderColor: 'primary.main',
+            bgcolor: 'background.default',
+            boxShadow: () => `0 0 0 1px ${theme?.palette?.primary?.main ?? 'currentColor'}22`,
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.primary',
+              lineHeight: 1.5,
+            }}
+          >
+            Tip: <strong>localhost</strong> is only a local access alias. The real namespace comes from
+            the node identity that answered the request.
+          </Typography>
+        </Box>
+      ) : null}
       {/* Connection Input */}
       {showEndpointInput && (
         <Box
@@ -565,12 +619,36 @@ export default function Blockchain({
           </Box>
         </Box>
       )}
+      <Box
+        sx={{
+          mt: 1.5,
+          mb: 1.25,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 0.25,
+        }}
+      >
+        <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.1 }}>
+          Namespace:
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary',
+            fontFamily: 'monospace',
+            fontSize: '0.85rem',
+            wordBreak: 'break-all',
+          }}
+          title={namespaceDisplayTitle}
+        >
+          {namespaceDisplayTitle}
+        </Typography>
+      </Box>
       {/* Tabs */}
       <Box
         sx={{
           display: 'flex',
           gap: '1rem',
-          marginTop: '1.5rem',
           marginBottom: '1rem',
           borderBottom: '1px solid rgba(255,255,255,0.1)',
           paddingBottom: '0.5rem',
@@ -590,7 +668,7 @@ export default function Blockchain({
           sx={{ minHeight: 32, px: 1.25, fontSize: '0.8rem' }}
           onClick={() => setActiveTab('blocks')}
         >
-          Blocks
+          Blockchain
         </Button>
         <Button
           variant={activeTab === 'details' ? 'outlined' : 'text'}
@@ -613,10 +691,26 @@ export default function Blockchain({
       {activeTab === 'users' && safeEndpoint && (
         <UsersTable
           endpoint={safeEndpoint}
-          namespaceLabel={resolvedSubjectHandleNamespace || resolvedNamespaceHandle || resolvedSurfaceNamespace || safeEndpoint}
+          namespaceLabel={namespaceDisplayTitle}
+          namespaceRootUrl={
+            networkRootNamespaceUrl ||
+            localRootNamespaceUrl ||
+            namespaceUrlProp ||
+            ''
+          }
         />
       )}
-      {activeTab === 'blocks' && safeEndpoint && <BlocksTable endpoint={safeEndpoint} />}
+      {activeTab === 'blocks' && safeEndpoint && (
+        <BlockchainTable
+          endpoint={safeEndpoint}
+          namespaceRootUrl={
+            networkRootNamespaceUrl ||
+            localRootNamespaceUrl ||
+            namespaceUrlProp ||
+            ''
+          }
+        />
+      )}
       {activeTab === 'surface' && (
         <Box
           sx={{
@@ -631,7 +725,7 @@ export default function Blockchain({
             Surface
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1.5 }}>
-            This is the current host/surface entry resolved by the monad node that answered the request.
+            This is the current host/surface entry resolved by the monad.ai surface that answered the request.
           </Typography>
           <Box
             sx={{
@@ -841,7 +935,7 @@ export default function Blockchain({
                   title={`Expression: ${String(endpoint || namespaceExpression || '').trim() || '—'} · local=${localNamespaceUrl || '—'} · network=${networkNamespaceUrl || '—'} · node=${resolvedResolverDisplayName || '—'}`}
                   sx={{ color: 'text.secondary' }}
                 >
-                  Monad Node: <Box component="span" sx={{ color: 'text.primary', fontFamily: 'monospace', wordBreak: 'break-all' }}>{compactMonadLabel}</Box>
+                  monad.ai: <Box component="span" sx={{ color: 'text.primary', fontFamily: 'monospace', wordBreak: 'break-all' }}>{compactMonadLabel}</Box>
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                   Namespace: <Box component="span" sx={{ color: 'text.primary', fontFamily: 'monospace' }}>{compactRootLabel}</Box>
@@ -855,46 +949,7 @@ export default function Blockchain({
             </Box>
           ) : null}
 
-          <Typography variant="h6" sx={{ mb: 1 }}>
-            Namespace
-          </Typography>
-
-          <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1.5 }}>
-            This view connects to a monad/blockchain node through a namespace or surface address.
-          </Typography>
-
-          <Typography variant="body2" sx={{ mb: 1.25 }}>
-            <strong>What is a namespace?</strong>
-            <br />
-            It is the address or handle you use to reach a node or namespace surface. Example:
-            <br />
-            <Typography component="span" sx={{ fontFamily: 'monospace' }}>
-              localhost:8161
-            </Typography>
-          </Typography>
-
-          <Typography variant="body2" sx={{ mb: 1.25 }}>
-            <strong>What does this screen do?</strong>
-            <br />
-            When you enter a URL, this page tries to reach that node and then displays:
-          </Typography>
-
-          <Box component="ul" sx={{ m: 0, pl: 2.5, color: 'text.secondary' }}>
-            <li>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                <strong>Users</strong> — identities or usernames registered on that chain (if supported).
-              </Typography>
-            </li>
-            <li>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                <strong>Blocks</strong> — the latest blocks and their data from that chain (if supported).
-              </Typography>
-            </li>
-          </Box>
-
-          <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1.5 }}>
-            Tip: <strong>localhost</strong> means the node is running on your own machine. A remote host or namespace means it is running somewhere else.
-          </Typography>
+          
         </Box>
       )}
     </Box>

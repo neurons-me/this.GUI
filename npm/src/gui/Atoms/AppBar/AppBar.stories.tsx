@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Bar, Toolbar, Typography, Box, Button, Stack } from '@/gui/Atoms';
+import { Bar, Typography, Box, Button } from '@/gui/Atoms';
+import { Toolbar, Stack } from '@/gui/Molecules';
 
 // ======================= Meta =======================
 const meta: Meta<typeof Bar> = {

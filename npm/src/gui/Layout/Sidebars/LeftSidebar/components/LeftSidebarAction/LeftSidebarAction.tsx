@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
-import { Box, Typography, Tooltip } from '@/gui/Atoms';
+import { Box, Typography } from '@/gui/Atoms';
+import { Tooltip } from '@/gui/Molecules';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import type { LeftSidebarMode } from '../../LeftSidebar.types';
 import { useLeftSidebar } from '@/gui/Hooks';

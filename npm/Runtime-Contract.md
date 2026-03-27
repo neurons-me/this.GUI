@@ -8,11 +8,9 @@ Resolved params are injected into `ctx.params`.
 ```ts
 import { Router } from 'this.gui';
 const router = new Router({ runtime });
-
 router.set('/dashboard', () => ({ 
   type: 'Page', 
   props: { title: 'Dashboard' } }));
-
 router.set('/shops/:id', ({ ctx }) => ({
   type: 'Page',
   props: {
@@ -31,10 +29,8 @@ Behavior:
 - Exact routes win over dynamic routes.
 - Dynamic routes are ranked by specificity (more static segments wins).
 - Params are decoded safely (`decodeURIComponent` fallback if malformed).
-
 ## 2. The Power of Read/Write Tokens
 `this.GUI` resolves dynamic props in the runtime renderer:
-
 - `{ read: "..." }` for reads
 - `{ write: "..." }` for mutations/events
 - Legacy compatibility: `{ $expr: "..." }` and `{ $action: "..." }`
@@ -50,7 +46,6 @@ Behavior:
 ```
 
 Interpolation is supported in both tokens:
-
 - `{{params.id}}`
 - `{{ctx.params.id}}`
 - `{{wildcard}}`
@@ -67,18 +62,12 @@ Example:
 ```
 
 If interpolation fails, placeholder is preserved (visible debug) and a warning is emitted in dev.
-
 ## 3. Security Policy (`deny-by-default`)
-
 By default, expression execution is allowlisted to:
-
 - `me/views/`
 - `me/public/`
-
 Anything outside allowlist is blocked in the renderer.
-
 ### Extend allowed roots
-
 ```ts
 GUI.mount(spec, '#root', {
   runtime,
@@ -87,21 +76,16 @@ GUI.mount(spec, '#root', {
 ```
 
 ### Unsafe override (not recommended)
-
 ```ts
 GUI.mount(spec, '#root', {
   runtime,
   unsafeAllowAllExpressions: true,
 });
 ```
-
 Use only in trusted internal environments.
-
 ## 4. Minimal End-to-End Wiring
-
 ```ts
 const router = new Router({ runtime });
-
 router.onChange((spec, meta) => {
   GUI.mount(spec, '#root', {
     runtime,

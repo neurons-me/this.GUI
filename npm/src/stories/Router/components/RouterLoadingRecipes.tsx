@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Router } from '@/Router/Router';
 import Theme from '@/gui/Theme/Theme';
-import { Box, Button, Paper, Stack, Typography } from '@/gui/Atoms';
+import { Box, Button, Paper, Typography } from '@/gui/Atoms';
+import { Stack } from '@/gui/Molecules';
 import { useDeferredPending } from '@/gui/Hooks';
 import { Page } from '@/gui/Molecules';
 
@@ -205,4 +206,3 @@ export function SwapToPendingShellDemo() {
     />
   );
 }
-

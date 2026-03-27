@@ -1,6 +1,7 @@
 import type { Meta, StoryObj, StoryFn } from '@storybook/react';
 // Atoms used in the examples
-import { Toolbar, Bar, Box, IconButton, Typography, Button } from '@/gui/Atoms';
+import { Bar, Box, IconButton, Typography, Button } from '@/gui/Atoms';
+import { Toolbar } from '@/gui/Molecules';
 import Icon from '@/gui/Atoms/Icon/Icon';
 // ======================= Meta =======================
 const meta: Meta<typeof Toolbar> = {
