@@ -74,6 +74,7 @@ export {
   guiToolsElements,
   guiToolsLeftSidebarConfig,
 } from '@/gui/Molecules/menus/GUI-Tools/GUI-Tools';
+export { default as CleakerGroup } from '@/gui/All.This/Cleaker/Group/CleakerGroup';
 // 3) runtime aggregates (UMD/global convenience)
 // These are *named exports* so in UMD builds you can do:
 //   window.GUI.mount(...)

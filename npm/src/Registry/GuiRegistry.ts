@@ -39,6 +39,7 @@ import NavBarResolver from "@/gui/Layout/TopBar/TopBar.resolver";
 // All.This
 import CleakerResolver from "@/gui/All.This/Cleaker/Cleaker.resolver";
 import CleakerQRResolver from "@/gui/All.This/Cleaker/QR/CleakerQR.resolver";
+import CleakerGroupResolver from "@/gui/All.This/Cleaker/Group/CleakerGroup.resolver";
 import QRmeResolver from "@/gui/All.This/me/QR.me/QR.me.resolver";
 import SessionQRResolver from "@/gui/All.This/me/QR.resolver";
 import MeResolver from "@/gui/All.This/me/me.resolver";
@@ -83,4 +84,5 @@ export const GuiRegistry = createRegistry([
   QRmeResolver,
   CleakerQRResolver,
   CleakerResolver,
+  CleakerGroupResolver,
 ]);

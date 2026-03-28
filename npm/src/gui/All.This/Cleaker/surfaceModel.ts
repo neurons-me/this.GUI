@@ -2,6 +2,21 @@ export type CleakerSurfaceType = 'desktop' | 'mobile' | 'server' | 'browser-tab'
 export type CleakerSurfaceTrust = 'owner' | 'trusted-peer' | 'guest';
 export type CleakerSurfaceAvailability = 'online' | 'offline' | 'sleep' | 'unknown';
 
+export type CleakerSurfaceRequestEvent = {
+  id: number;
+  timestamp: number;
+  method: string;
+  url: string;
+  status: number;
+  durationMs: number;
+  host: string;
+  namespace: string;
+  operation: string;
+  nrp: string;
+  lens: string;
+  forwardedHost: string | null;
+};
+
 export type CleakerSurfaceEntry = {
   hostId: string;
   type: CleakerSurfaceType;
@@ -22,6 +37,30 @@ export type CleakerSurfaceEntry = {
   namespace: string;
   endpoint: string;
   rootName: string;
+  usage?: {
+    cpu: number;
+    requestRatePer10s?: number;
+  };
+  pressure?: {
+    cpu: number;
+  };
+  policy?: {
+    gui?: {
+      blockchain?: {
+        limit?: number;
+      };
+    };
+  };
+  budget?: {
+    gui?: {
+      blockchain?: {
+        rows?: number;
+      };
+    };
+  };
+  monitor?: {
+    recentRequests?: CleakerSurfaceRequestEvent[];
+  };
 };
 
 function normalizeToken(raw: string): string {
@@ -132,5 +171,29 @@ export function createSurfaceEntry(input: {
     namespace: String(input.namespaceUrl || '').trim(),
     endpoint: String(input.endpoint || '').trim(),
     rootName: resolveSemanticRootName(input),
+    usage: {
+      cpu: 0,
+      requestRatePer10s: 0,
+    },
+    pressure: {
+      cpu: 0,
+    },
+    policy: {
+      gui: {
+        blockchain: {
+          limit: 80,
+        },
+      },
+    },
+    budget: {
+      gui: {
+        blockchain: {
+          rows: 50,
+        },
+      },
+    },
+    monitor: {
+      recentRequests: [],
+    },
   };
 }

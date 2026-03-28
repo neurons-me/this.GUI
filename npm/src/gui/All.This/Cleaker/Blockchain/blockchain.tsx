@@ -17,11 +17,18 @@ import QR from '../../me/QR';
 import { buildCleakerNamespaceUrl, parseCleakerNamespaceExpression } from '../namespaceExpression';
 import { deriveChildIdentityHash, deriveIdentityRootHash } from '../../me/identity';
 import { type CleakerBootstrapInfo, readCleakerBootstrap } from '../runtimeUsername';
-import { createSurfaceEntry, isLoopbackishHost, resolveSemanticRootName } from '../surfaceModel';
+import {
+  type CleakerSurfaceEntry,
+  type CleakerSurfaceRequestEvent,
+  createSurfaceEntry,
+  isLoopbackishHost,
+  resolveSemanticRootName,
+} from '../surfaceModel';
 
 export interface BlockchainProps {
   endpoint?: string;
   defaultTab?: 'users' | 'blocks' | 'details' | 'surface';
+  blockRowsLimit?: number;
   namespaceExpression?: string;
   namespaceHandle?: string;
   rootHostNamespace?: string;
@@ -66,9 +73,167 @@ function stripPort(raw: string): string {
   return String(raw || '').trim().toLowerCase().replace(/:\d+$/, '');
 }
 
+type BlockchainLimitSnapshot = {
+  meLimit: number;
+  policyLimit: number;
+  budgetRows: number;
+  pressureCpu: number;
+  baseLimit: number;
+  effectiveLimit: number;
+};
+
+function normalizePositiveNumber(raw: unknown, fallback: number): number {
+  const value = Number(raw);
+  return Number.isFinite(value) && value > 0 ? value : fallback;
+}
+
+function normalizePressure(raw: unknown, fallback: number): number {
+  const value = Number(raw);
+  if (!Number.isFinite(value)) return fallback;
+  if (value < 0) return 0;
+  if (value > 1) return 1;
+  return value;
+}
+
+function getSurfaceBlockchainDefaults(surface: {
+  type?: string | null;
+  status?: { availability?: string | null; syncState?: string | null } | null;
+}) {
+  const type = String(surface?.type || '').trim().toLowerCase();
+  const availability = String(surface?.status?.availability || '').trim().toLowerCase();
+  const syncState = String(surface?.status?.syncState || '').trim().toLowerCase();
+  const online = availability === 'online' || syncState === 'current';
+
+  if (type === 'mobile' || type === 'browser-tab') {
+    return {
+      policyLimit: 48,
+      budgetRows: 24,
+      pressureCpu: online ? 0.4 : 0.65,
+    };
+  }
+
+  if (type === 'server' || type === 'node') {
+    return {
+      policyLimit: 100,
+      budgetRows: 60,
+      pressureCpu: online ? 0.2 : 0.45,
+    };
+  }
+
+  return {
+    policyLimit: 80,
+    budgetRows: 50,
+    pressureCpu: online ? 0.3 : 0.55,
+  };
+}
+
+function computeBlockchainLimit(input: {
+  meLimit?: number | null;
+  surface?: {
+    type?: string | null;
+    status?: { availability?: string | null; syncState?: string | null } | null;
+    policy?: { gui?: { blockchain?: { limit?: number | null } | null } | null } | null;
+    budget?: { gui?: { blockchain?: { rows?: number | null } | null } | null } | null;
+    pressure?: { cpu?: number | null } | null;
+  } | null;
+}): BlockchainLimitSnapshot {
+  const surface = input.surface || null;
+  const defaults = getSurfaceBlockchainDefaults(surface || {});
+  const meLimit = normalizePositiveNumber(input.meLimit, 120);
+  const policyLimit = normalizePositiveNumber(
+    surface?.policy?.gui?.blockchain?.limit,
+    defaults.policyLimit,
+  );
+  const budgetRows = normalizePositiveNumber(
+    surface?.budget?.gui?.blockchain?.rows,
+    defaults.budgetRows,
+  );
+  const pressureCpu = normalizePressure(surface?.pressure?.cpu, defaults.pressureCpu);
+  const baseLimit = Math.min(meLimit, policyLimit, budgetRows);
+  const effectiveLimit = Math.max(5, Math.floor(baseLimit * (1 - pressureCpu)));
+
+  return {
+    meLimit,
+    policyLimit,
+    budgetRows,
+    pressureCpu,
+    baseLimit,
+    effectiveLimit,
+  };
+}
+
+function mergeSurfaceEntry(
+  base: CleakerSurfaceEntry,
+  overlay: Partial<CleakerSurfaceEntry> | null,
+  requestEvents: CleakerSurfaceRequestEvent[],
+): CleakerSurfaceEntry {
+  if (!overlay) {
+    return {
+      ...base,
+      monitor: {
+        recentRequests: requestEvents,
+      },
+    };
+  }
+
+  return {
+    ...base,
+    ...overlay,
+    capacity: {
+      ...base.capacity,
+      ...(overlay.capacity || {}),
+    },
+    status: {
+      ...base.status,
+      ...(overlay.status || {}),
+    },
+    usage: {
+      cpu: overlay.usage?.cpu ?? base.usage?.cpu ?? 0,
+      requestRatePer10s:
+        overlay.usage?.requestRatePer10s ??
+        base.usage?.requestRatePer10s ??
+        0,
+    },
+    pressure: {
+      cpu: overlay.pressure?.cpu ?? base.pressure?.cpu ?? 0,
+    },
+    policy: {
+      ...(base.policy || {}),
+      ...(overlay.policy || {}),
+      gui: {
+        ...(base.policy?.gui || {}),
+        ...(overlay.policy?.gui || {}),
+        blockchain: {
+          ...(base.policy?.gui?.blockchain || {}),
+          ...(overlay.policy?.gui?.blockchain || {}),
+        },
+      },
+    },
+    budget: {
+      ...(base.budget || {}),
+      ...(overlay.budget || {}),
+      gui: {
+        ...(base.budget?.gui || {}),
+        ...(overlay.budget?.gui || {}),
+        blockchain: {
+          ...(base.budget?.gui?.blockchain || {}),
+          ...(overlay.budget?.gui?.blockchain || {}),
+        },
+      },
+    },
+    monitor: {
+      recentRequests:
+        overlay.monitor?.recentRequests && overlay.monitor.recentRequests.length > 0
+          ? overlay.monitor.recentRequests
+          : requestEvents,
+    },
+  };
+}
+
 export default function Blockchain({
   endpoint: endpointProp = 'http://localhost:8161',
   defaultTab = 'users',
+  blockRowsLimit = 120,
   namespaceExpression = '',
   namespaceHandle = '',
   rootHostNamespace = '',
@@ -90,9 +255,13 @@ export default function Blockchain({
   const [showEndpointInput, setShowEndpointInput] = useState(false);
   const [showNamespaceTip, setShowNamespaceTip] = useState(false);
   const [bootstrapInfo, setBootstrapInfo] = useState<CleakerBootstrapInfo | null>(null);
+  const [surfaceTelemetry, setSurfaceTelemetry] = useState<Partial<CleakerSurfaceEntry> | null>(null);
+  const [surfaceRequestEvents, setSurfaceRequestEvents] = useState<CleakerSurfaceRequestEvent[]>([]);
+  const [stressMode, setStressMode] = useState(false);
   const theme = useGuiTheme();
   const isMobile = useGuiMediaQuery(theme.breakpoints.down('sm'));
   const debounceRef = useRef<number | null>(null);
+  const stressTimerRef = useRef<number | null>(null);
   function normalizeEndpoint(raw: string) {
     const v = (raw ?? '').trim();
     if (!v) return null;
@@ -230,8 +399,8 @@ export default function Blockchain({
     return `${previewNamespace.transport.protocol}://${resolvedResolverSurfaceNamespace}`;
   }, [previewNamespace, resolvedResolverSurfaceNamespace]);
 
-  const surfaceEntry = useMemo(() => {
-    if (hostResolvedSurfaceEntry) return hostResolvedSurfaceEntry;
+  const surfaceEntryBase = useMemo(() => {
+    if (hostResolvedSurfaceEntry) return hostResolvedSurfaceEntry as CleakerSurfaceEntry;
     return createSurfaceEntry({
       namespaceUrl: networkNamespaceUrl || localNamespaceUrl || namespaceUrlProp || '',
       endpoint: safeEndpoint || endpointProp || '',
@@ -252,6 +421,10 @@ export default function Blockchain({
     resolvedRootHostNamespace,
     safeEndpoint,
   ]);
+
+  const surfaceEntry = useMemo(() => {
+    return mergeSurfaceEntry(surfaceEntryBase, surfaceTelemetry, surfaceRequestEvents);
+  }, [surfaceEntryBase, surfaceTelemetry, surfaceRequestEvents]);
 
   const previewQrValue = useMemo(() => {
     if (previewNamespace && isLoopbackishHost(previewNamespace.transport.host) && networkNamespaceUrl) {
@@ -340,6 +513,7 @@ export default function Blockchain({
   useEffect(() => {
     return () => {
       if (debounceRef.current) window.clearTimeout(debounceRef.current);
+      if (stressTimerRef.current) window.clearInterval(stressTimerRef.current);
     };
   }, []);
 
@@ -371,6 +545,103 @@ export default function Blockchain({
     };
   }, [safeEndpoint]);
 
+  useEffect(() => {
+    if (!safeEndpoint || typeof window === 'undefined' || typeof EventSource === 'undefined') {
+      setSurfaceTelemetry(null);
+      setSurfaceRequestEvents([]);
+      return;
+    }
+
+    const source = new EventSource(`${safeEndpoint}/__surface/events`);
+
+    const mergeTelemetry = (payload: any) => {
+      const telemetry = payload && typeof payload === 'object' && payload.telemetry ? payload.telemetry : payload;
+      if (!telemetry || typeof telemetry !== 'object') return;
+
+      setSurfaceTelemetry((current) => ({
+        ...(current || {}),
+        ...telemetry,
+      }));
+
+      const recentRequests = Array.isArray((telemetry as any)?.monitor?.recentRequests)
+        ? ((telemetry as any).monitor.recentRequests as CleakerSurfaceRequestEvent[])
+        : null;
+      if (recentRequests) {
+        setSurfaceRequestEvents(recentRequests);
+      }
+    };
+
+    const onSurface = (event: MessageEvent) => {
+      try {
+        mergeTelemetry(JSON.parse(String(event.data || 'null')));
+      } catch {
+        // Ignore malformed surface payloads.
+      }
+    };
+
+    const onRequest = (event: MessageEvent) => {
+      try {
+        const payload = JSON.parse(String(event.data || 'null'));
+        mergeTelemetry(payload);
+        const request = payload?.request;
+        if (request && typeof request === 'object') {
+          setSurfaceRequestEvents((current) => {
+            const next = [request as CleakerSurfaceRequestEvent, ...current.filter((item) => item.id !== request.id)];
+            return next.slice(0, 24);
+          });
+        }
+      } catch {
+        // Ignore malformed request payloads.
+      }
+    };
+
+    source.addEventListener('surface', onSurface as EventListener);
+    source.addEventListener('request', onRequest as EventListener);
+    source.onerror = () => {
+      // Let EventSource handle its own reconnect cycle.
+    };
+
+    return () => {
+      source.removeEventListener('surface', onSurface as EventListener);
+      source.removeEventListener('request', onRequest as EventListener);
+      source.close();
+    };
+  }, [safeEndpoint]);
+
+  useEffect(() => {
+    if (stressTimerRef.current) {
+      window.clearInterval(stressTimerRef.current);
+      stressTimerRef.current = null;
+    }
+
+    if (!stressMode || !safeEndpoint || typeof window === 'undefined' || typeof fetch !== 'function') {
+      return;
+    }
+
+    const fireBurst = () => {
+      const base = `${safeEndpoint.replace(/\/+$/, '')}/__surface`;
+      for (let index = 0; index < 3; index += 1) {
+        const marker = `${Date.now()}-${index}`;
+        void fetch(`${base}?stress=${encodeURIComponent(marker)}`, {
+          method: 'GET',
+          cache: 'no-store',
+        }).catch(() => {
+          // Ignore stress burst transport failures.
+        });
+      }
+    };
+
+    fireBurst();
+    stressTimerRef.current = window.setInterval(fireBurst, 650);
+
+    return () => {
+      if (stressTimerRef.current) {
+        window.clearInterval(stressTimerRef.current);
+        stressTimerRef.current = null;
+      }
+    };
+  }, [safeEndpoint, stressMode]);
+
   const surfaceMetaRows = [
     ['Host ID', surfaceEntry.hostId],
     ['Type', surfaceEntry.type],
@@ -399,6 +670,39 @@ export default function Blockchain({
       surfaceEntry.status.lastSeen ? new Date(surfaceEntry.status.lastSeen).toLocaleString() : null,
     ],
   ] as const;
+
+  const blockchainLimit = useMemo(() => {
+    return computeBlockchainLimit({
+      meLimit: blockRowsLimit,
+      surface: surfaceEntry as any,
+    });
+  }, [blockRowsLimit, surfaceEntry]);
+
+  const [appliedBlockchainRowsLimit, setAppliedBlockchainRowsLimit] = useState(blockchainLimit.effectiveLimit);
+
+  useEffect(() => {
+    setAppliedBlockchainRowsLimit((current) => {
+      if (!Number.isFinite(current) || current <= 0) return blockchainLimit.effectiveLimit;
+      return current;
+    });
+  }, [blockchainLimit.effectiveLimit]);
+
+  useEffect(() => {
+    if (appliedBlockchainRowsLimit === blockchainLimit.effectiveLimit) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setAppliedBlockchainRowsLimit((current) => {
+        const target = blockchainLimit.effectiveLimit;
+        if (current === target) return current;
+        const delta = target - current;
+        const step = Math.max(1, Math.ceil(Math.abs(delta) / 3));
+        if (delta > 0) return Math.min(target, current + step);
+        return Math.max(target, current - step);
+      });
+    }, 140);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [appliedBlockchainRowsLimit, blockchainLimit.effectiveLimit]);
 
   return (
     <Box
@@ -703,6 +1007,8 @@ export default function Blockchain({
       {activeTab === 'blocks' && safeEndpoint && (
         <BlockchainTable
           endpoint={safeEndpoint}
+          namespaceLabel={namespaceDisplayTitle}
+          rowsLimit={appliedBlockchainRowsLimit}
           namespaceRootUrl={
             networkRootNamespaceUrl ||
             localRootNamespaceUrl ||
@@ -949,7 +1255,187 @@ export default function Blockchain({
             </Box>
           ) : null}
 
-          
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, minmax(0, 1fr))',
+              gap: 1.5,
+            }}
+          >
+            <Box
+              sx={{
+                p: 1.5,
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                bgcolor: 'background.paper',
+              }}
+            >
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                Effective Budget
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1.25 }}>
+                Blockchain render is negotiated from `.me` intent, `surface` policy, assigned budget, and current CPU pressure.
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 0.75, mb: 1.25, flexWrap: 'wrap' }}>
+                <Button
+                  size="small"
+                  variant={stressMode ? 'outlined' : 'text'}
+                  color={stressMode ? 'warning' : 'primary'}
+                  onClick={() => setStressMode((value) => !value)}
+                  sx={{ minHeight: 30, px: 1.1, fontSize: '0.78rem' }}
+                >
+                  {stressMode ? 'Stop Stress' : 'Stress Test'}
+                </Button>
+                <Typography variant="caption" sx={{ color: 'text.secondary', alignSelf: 'center' }}>
+                  {stressMode ? 'Injecting request bursts into monad.ai' : 'Run a burst loop to watch budget collapse'}
+                </Typography>
+              </Box>
+              {[
+                ['.me limit', blockchainLimit.meLimit],
+                ['Surface policy', blockchainLimit.policyLimit],
+                ['Surface budget', blockchainLimit.budgetRows],
+                ['CPU pressure', blockchainLimit.pressureCpu.toFixed(2)],
+                ['Base', blockchainLimit.baseLimit],
+                ['Target', blockchainLimit.effectiveLimit],
+                ['Applied', appliedBlockchainRowsLimit],
+              ].map(([label, value]) => (
+                <Box
+                  key={label}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: 1,
+                    py: 0.35,
+                  }}
+                >
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    {label}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      textAlign: 'right',
+                      fontFamily: label === 'CPU pressure' ? 'monospace' : 'inherit',
+                      fontWeight: label === 'Effective' ? 700 : 500,
+                    }}
+                  >
+                    {String(value)}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+
+            <Box
+              sx={{
+                p: 1.5,
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                bgcolor: 'background.paper',
+              }}
+            >
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                Runtime Inputs
+              </Typography>
+              {[
+                ['Surface Type', surfaceEntry.type],
+                ['Availability', surfaceEntry.status.availability],
+                ['Sync State', surfaceEntry.status.syncState],
+                ['monad.ai', compactMonadLabel],
+                ['Namespace', namespaceDisplayTitle],
+              ].map(([label, value]) => (
+                <Box key={label} sx={{ py: 0.35 }}>
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    {label}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      mt: 0.2,
+                      fontFamily:
+                        label === 'monad.ai' || label === 'Namespace' ? 'monospace' : 'inherit',
+                      wordBreak: 'break-word',
+                    }}
+                  >
+                    {String(value || '—')}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+
+            <Box
+              sx={{
+                p: 1.5,
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                bgcolor: 'background.paper',
+                gridColumn: isMobile ? 'auto' : '1 / -1',
+              }}
+            >
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                Monad Ledger Monitor
+              </Typography>
+              {surfaceRequestEvents.length === 0 ? (
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Waiting for request traffic...
+                </Typography>
+              ) : (
+                <Box
+                  sx={{
+                    mt: 0.25,
+                    p: 1,
+                    borderRadius: 1.5,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    bgcolor: 'background.default',
+                    height: 220,
+                    minHeight: 140,
+                    resize: 'vertical',
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
+                    fontFamily: 'monospace',
+                    fontSize: '0.76rem',
+                    lineHeight: 1.45,
+                    fontVariantNumeric: 'tabular-nums',
+                  }}
+                >
+                  {surfaceRequestEvents.slice(0, 40).map((event) => (
+                    <Typography
+                      key={event.id}
+                      variant="caption"
+                      title={`${event.method} ${event.status} ${event.durationMs}ms ${event.url} ${new Date(event.timestamp).toLocaleTimeString()} · ${event.namespace || '—'} · ${event.operation || 'read'}`}
+                      sx={{
+                        display: 'block',
+                        color: 'text.primary',
+                        fontFamily: 'inherit',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        '&:not(:last-child)': {
+                          mb: 0.45,
+                        },
+                      }}
+                    >
+                      <Box component="span" sx={{ color: 'primary.main', fontWeight: 700 }}>
+                        {event.method} {event.status}
+                      </Box>{' '}
+                      <Box component="span" sx={{ color: 'text.secondary' }}>
+                        {event.durationMs}ms
+                      </Box>{' '}
+                      <Box component="span" sx={{ color: 'text.primary' }}>
+                        {event.url}
+                      </Box>{' '}
+                      <Box component="span" sx={{ color: 'text.secondary' }}>
+                        {new Date(event.timestamp).toLocaleTimeString()} · {event.namespace || '—'} · {event.operation || 'read'}
+                      </Box>
+                    </Typography>
+                  ))}
+                </Box>
+              )}
+            </Box>
+          </Box>
         </Box>
       )}
     </Box>

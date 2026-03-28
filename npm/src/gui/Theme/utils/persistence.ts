@@ -1,6 +1,79 @@
 //src/themes/utils/persistence.ts
 // Utility to persist user's themeId using localStorage.
 import { useState, useEffect } from 'react';
+
+const LEGACY_THEME_ID_KEY = 'this.gui:themeId';
+const LEGACY_THEME_MODE_KEY = 'this.gui:themeMode';
+const THEME_SCOPE_EVENT = 'this.gui:themeScope:changed';
+
+type ThemeScopeConfig = {
+  scopeId?: string;
+  themeIdKey?: string;
+  themeModeKey?: string;
+  defaultThemeId?: string;
+  defaultMode?: 'light' | 'dark';
+};
+
+function readWindowThemeScope(): ThemeScopeConfig | null {
+  try {
+    const raw = (globalThis as any)?.__thisGuiThemeScope;
+    const resolved = typeof raw === 'function' ? raw() : raw;
+    if (!resolved || typeof resolved !== 'object') return null;
+    return resolved as ThemeScopeConfig;
+  } catch {
+    return null;
+  }
+}
+
+function resolveThemeScope(
+  fallbackThemeId: string,
+  fallbackMode: 'light' | 'dark',
+): Required<ThemeScopeConfig> {
+  const raw = readWindowThemeScope() || {};
+  const themeIdKey = String(raw.themeIdKey || '').trim();
+  const themeModeKey = String(raw.themeModeKey || '').trim();
+  const defaultThemeId = String(raw.defaultThemeId || fallbackThemeId).trim() || fallbackThemeId;
+  const defaultMode = raw.defaultMode === 'dark' ? 'dark' : raw.defaultMode === 'light' ? 'light' : fallbackMode;
+  const scopeId = String(raw.scopeId || '').trim() || 'global';
+
+  return {
+    scopeId,
+    themeIdKey,
+    themeModeKey,
+    defaultThemeId,
+    defaultMode,
+  };
+}
+
+function readStorageValue(key: string): string {
+  if (!key) return '';
+  try {
+    return String(localStorage.getItem(key) || '').trim();
+  } catch {
+    return '';
+  }
+}
+
+function readThemeIdFromScope(fallback: string): string {
+  const scope = resolveThemeScope(fallback, 'light');
+  return (
+    readStorageValue(scope.themeIdKey) ||
+    readStorageValue(LEGACY_THEME_ID_KEY) ||
+    scope.defaultThemeId ||
+    fallback
+  );
+}
+
+function readThemeModeFromScope(fallback: 'light' | 'dark'): 'light' | 'dark' {
+  const scope = resolveThemeScope('neurons.me', fallback);
+  const stored =
+    readStorageValue(scope.themeModeKey) ||
+    readStorageValue(LEGACY_THEME_MODE_KEY) ||
+    scope.defaultMode ||
+    fallback;
+  return stored === 'dark' ? 'dark' : 'light';
+}
+
 /**
  * Retrieves the initial themeId from localStorage.
  * Falls back to the provided default if not found or on error.
@@ -9,11 +82,7 @@ import { useState, useEffect } from 'react';
  * @returns The stored themeId or the fallback value.
  */
 export function getInitialThemeId(fallback: string): string {
-  try {
-    return localStorage.getItem('this.gui:themeId') || fallback;
-  } catch {
-    return fallback;
-  }
+  return readThemeIdFromScope(fallback);
 }
 /**
  * React hook to persist and manage the themeId using localStorage.
@@ -25,34 +94,59 @@ export function getInitialThemeId(fallback: string): string {
 export function usePersistentThemeId(
   fallback: string
 ): [string, React.Dispatch<React.SetStateAction<string>>] {
-  const [themeId, setThemeId] = useState<string>(() => getInitialThemeId(fallback));
+  const [themeId, setThemeIdState] = useState<string>(() => getInitialThemeId(fallback));
+
+  const setThemeId: React.Dispatch<React.SetStateAction<string>> = (next) => {
+    setThemeIdState((prev) => (typeof next === 'function' ? next(prev) : next));
+  };
+
   useEffect(() => {
+    const scope = resolveThemeScope(fallback, 'light');
     try {
-      localStorage.setItem('this.gui:themeId', themeId);
+      if (scope.themeIdKey) {
+        localStorage.setItem(scope.themeIdKey, themeId);
+      }
+      localStorage.setItem(LEGACY_THEME_ID_KEY, themeId);
     } catch {
       // fail silently
     }
-  }, [themeId]);
+  }, [fallback, themeId]);
+
   useEffect(() => {
-    function handleStorage(event: StorageEvent) {
-      if (!event || event.key !== 'this.gui:themeId') return;
-      const next = String(event.newValue || '');
+    const syncFromScope = () => {
+      const next = readThemeIdFromScope(fallback);
       if (!next) return;
-      setThemeId((prev) => (prev === next ? prev : next));
+      setThemeIdState((prev) => (prev === next ? prev : next));
+    };
+
+    function handleStorage(event: StorageEvent) {
+      const scope = resolveThemeScope(fallback, 'light');
+      const watchedKeys = [LEGACY_THEME_ID_KEY, scope.themeIdKey].filter(Boolean);
+      if (!event || !event.key || !watchedKeys.includes(event.key)) return;
+      syncFromScope();
     }
+
     function handleThemeIdEvent(event: Event) {
       const detail = (event as CustomEvent).detail || {};
       const next = String(detail.themeId || '');
       if (!next) return;
-      setThemeId((prev) => (prev === next ? prev : next));
+      setThemeIdState((prev) => (prev === next ? prev : next));
     }
+
+    function handleThemeScopeChanged() {
+      syncFromScope();
+    }
+
     window.addEventListener('storage', handleStorage);
     window.addEventListener('this.gui:themeId:changed', handleThemeIdEvent as EventListener);
+    window.addEventListener(THEME_SCOPE_EVENT, handleThemeScopeChanged as EventListener);
     return () => {
       window.removeEventListener('storage', handleStorage);
       window.removeEventListener('this.gui:themeId:changed', handleThemeIdEvent as EventListener);
+      window.removeEventListener(THEME_SCOPE_EVENT, handleThemeScopeChanged as EventListener);
     };
-  }, []);
+  }, [fallback]);
+
   return [themeId, setThemeId];
 }
 
@@ -66,39 +160,56 @@ export function usePersistentThemeId(
 export function usePersistentThemeMode(
   fallback: 'light' | 'dark'
 ): ['light' | 'dark', React.Dispatch<React.SetStateAction<'light' | 'dark'>>] {
-  const [mode, setMode] = useState<'light' | 'dark'>(() => {
-    try {
-      const stored = localStorage.getItem('this.gui:themeMode');
-      if (stored === 'dark' || stored === 'light') return stored;
-      return fallback;
-    } catch {
-      return fallback;
-    }
-  });
+  const [mode, setModeState] = useState<'light' | 'dark'>(() => readThemeModeFromScope(fallback));
+
+  const setMode: React.Dispatch<React.SetStateAction<'light' | 'dark'>> = (next) => {
+    setModeState((prev) => (typeof next === 'function' ? next(prev) : next));
+  };
+
   useEffect(() => {
+    const scope = resolveThemeScope('neurons.me', fallback);
     try {
-      localStorage.setItem('this.gui:themeMode', mode);
+      if (scope.themeModeKey) {
+        localStorage.setItem(scope.themeModeKey, mode);
+      }
+      localStorage.setItem(LEGACY_THEME_MODE_KEY, mode);
     } catch {
       // fail silently
     }
-  }, [mode]);
+  }, [fallback, mode]);
+
   useEffect(() => {
+    const syncFromScope = () => {
+      const next = readThemeModeFromScope(fallback);
+      setModeState((prev) => (prev === next ? prev : next));
+    };
+
     function handleStorage(event: StorageEvent) {
-      if (!event || event.key !== 'this.gui:themeMode') return;
-      const next = event.newValue === 'dark' ? 'dark' : 'light';
-      setMode((prev) => (prev === next ? prev : next));
+      const scope = resolveThemeScope('neurons.me', fallback);
+      const watchedKeys = [LEGACY_THEME_MODE_KEY, scope.themeModeKey].filter(Boolean);
+      if (!event || !event.key || !watchedKeys.includes(event.key)) return;
+      syncFromScope();
     }
+
     function handleThemeModeEvent(event: Event) {
       const detail = (event as CustomEvent).detail || {};
       const next = detail.mode === 'dark' ? 'dark' : 'light';
-      setMode((prev) => (prev === next ? prev : next));
+      setModeState((prev) => (prev === next ? prev : next));
     }
+
+    function handleThemeScopeChanged() {
+      syncFromScope();
+    }
+
     window.addEventListener('storage', handleStorage);
     window.addEventListener('this.gui:themeMode:changed', handleThemeModeEvent as EventListener);
+    window.addEventListener(THEME_SCOPE_EVENT, handleThemeScopeChanged as EventListener);
     return () => {
       window.removeEventListener('storage', handleStorage);
       window.removeEventListener('this.gui:themeMode:changed', handleThemeModeEvent as EventListener);
+      window.removeEventListener(THEME_SCOPE_EVENT, handleThemeScopeChanged as EventListener);
     };
-  }, []);
+  }, [fallback]);
+
   return [mode, setMode];
 }

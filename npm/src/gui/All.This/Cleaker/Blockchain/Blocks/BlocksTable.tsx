@@ -25,6 +25,8 @@ export interface BlocksTableEntry {
 type BlocksTableProps = {
   endpoint: string;
   namespaceRootUrl?: string;
+  namespaceLabel?: string;
+  rowsLimit?: number;
 };
 
 type ResolvedValuePresentation = {
@@ -34,11 +36,50 @@ type ResolvedValuePresentation = {
   href?: string;
 };
 
+function isSchemaPath(path: string): boolean {
+  return /^schema\./i.test(String(path || '').trim());
+}
+
+function schemaDisplayLabel(path: string): string {
+  const normalized = String(path || '').trim().toLowerCase();
+  if (!normalized) return 'schema';
+  if (normalized.endsWith('.behavior.type')) return 'behavior';
+  if (normalized.endsWith('.suggest.contains')) return 'contains';
+  if (normalized.endsWith('.status')) return 'status';
+  if (normalized.endsWith('.unit')) return 'unit';
+  if (normalized.endsWith('.type')) return 'type';
+  const parts = normalized.split('.').filter(Boolean);
+  return parts[parts.length - 1] || 'schema';
+}
+
+function schemaPreviewText(path: string, value: unknown): string {
+  const label = schemaDisplayLabel(path);
+
+  if (Array.isArray(value)) {
+    const text = value.map((item) => String(item ?? '').trim()).filter(Boolean).join(', ');
+    return `${label}: ${text || '—'}`;
+  }
+
+  if (value && typeof value === 'object') {
+    return `${label}: ${maskValue(stableJson(value), 52)}`;
+  }
+
+  const text = String(value ?? '').trim() || '—';
+  return `${label}: ${text}`;
+}
+
+function rowPriority(row: BlocksTableEntry): number {
+  const path = String(row.path || '').trim().toLowerCase();
+  if (/^users\./.test(path)) return 0;
+  if (isSchemaPath(path)) return 2;
+  return 1;
+}
+
 function maskHash(hash: string): string {
   const value = String(hash || '').trim();
   if (!value) return '—';
-  if (value.length <= 18) return value;
-  return `${value.slice(0, 10)}…${value.slice(-8)}`;
+  if (value.length <= 11) return value;
+  return `${value.slice(0, 5)}…${value.slice(-5)}`;
 }
 
 function sanitizeUrlValue(value: unknown): string | null {
@@ -100,6 +141,20 @@ function isTimeLikePath(path: string): boolean {
 function formatResolvedValue(row: BlocksTableEntry): ResolvedValuePresentation {
   const value = row.data;
   const path = String(row.path || '').trim().toLowerCase();
+
+  if (isSchemaPath(path)) {
+    const preview = schemaPreviewText(path, value);
+    const full = Array.isArray(value)
+      ? value.map((item) => String(item ?? '').trim()).filter(Boolean).join(', ')
+      : value && typeof value === 'object'
+        ? stableJson(value)
+        : String(value ?? '').trim() || '(empty)';
+    return {
+      preview,
+      full,
+      kind: full === '(empty)' ? 'empty' : 'text',
+    };
+  }
 
   if (typeof value === 'number' && isTimeLikePath(path)) {
     const date = new Date(value);
@@ -232,11 +287,22 @@ function renderResolvedValueContent(resolved: ResolvedValuePresentation) {
   return valueNode;
 }
 
-export function BlocksTable({ endpoint, namespaceRootUrl = '' }: BlocksTableProps) {
+export function BlocksTable({
+  endpoint,
+  namespaceRootUrl = '',
+  namespaceLabel = '',
+  rowsLimit = 120,
+}: BlocksTableProps) {
   const theme = useGuiTheme();
   const [data, setData] = React.useState<BlocksTableEntry[]>([]);
   const [copiedHash, setCopiedHash] = React.useState<string | null>(null);
   const [focusedHash, setFocusedHash] = React.useState<string | null>(null);
+  const [expandedHashes, setExpandedHashes] = React.useState<Record<string, boolean>>({});
+  const [expandedNamespaces, setExpandedNamespaces] = React.useState<Record<string, boolean>>({});
+  const safeRenderLimit = React.useMemo(
+    () => Math.max(1, Math.min(500, Number(rowsLimit || 120))),
+    [rowsLimit],
+  );
 
   React.useEffect(() => {
     async function loadBlocks() {
@@ -262,11 +328,12 @@ export function BlocksTable({ endpoint, namespaceRootUrl = '' }: BlocksTableProp
       };
 
       try {
+        const fetchLimit = Math.max(120, Math.min(500, safeRenderLimit * 4));
         let json: any;
         try {
-          json = await tryFetchJson(`${base}/blockchain`);
+          json = await tryFetchJson(`${base}/blockchain?limit=${encodeURIComponent(String(fetchLimit))}`);
         } catch {
-          json = await tryFetchJson(`${base}/blocks`);
+          json = await tryFetchJson(`${base}/blocks?limit=${encodeURIComponent(String(fetchLimit))}`);
         }
 
         if (Array.isArray(json)) setData(json as any);
@@ -281,7 +348,7 @@ export function BlocksTable({ endpoint, namespaceRootUrl = '' }: BlocksTableProp
       }
     }
     loadBlocks();
-  }, [endpoint]);
+  }, [endpoint, safeRenderLimit]);
 
   const namespaceMeta = React.useMemo(() => {
     const meta = new Map<string, { imageUrl: string | null }>();
@@ -313,6 +380,19 @@ export function BlocksTable({ endpoint, namespaceRootUrl = '' }: BlocksTableProp
   const rowByHash = React.useMemo(() => {
     return new Map(data.map((row) => [String(row.hash || '').trim(), row]));
   }, [data]);
+
+  const displayRows = React.useMemo(() => {
+    return data
+      .slice()
+      .sort((a, b) => {
+        const priorityDelta = rowPriority(a) - rowPriority(b);
+        if (priorityDelta !== 0) return priorityDelta;
+        const timestampDelta = Number(b.timestamp || 0) - Number(a.timestamp || 0);
+        if (timestampDelta !== 0) return timestampDelta;
+        return Number(b.id || 0) - Number(a.id || 0);
+      })
+      .slice(0, safeRenderLimit);
+  }, [data, safeRenderLimit]);
 
   const getRowIdentity = React.useCallback((row: BlocksTableEntry) => {
     const pointerMatch = String(row.path || '').trim().match(/^users\.([a-z0-9_-]+)$/i);
@@ -368,6 +448,24 @@ export function BlocksTable({ endpoint, namespaceRootUrl = '' }: BlocksTableProp
     }
   }, []);
 
+  const toggleHashExpanded = React.useCallback((hash: string) => {
+    const normalized = String(hash || '').trim();
+    if (!normalized) return;
+    setExpandedHashes((current) => ({
+      ...current,
+      [normalized]: !current[normalized],
+    }));
+  }, []);
+
+  const toggleNamespaceExpanded = React.useCallback((namespace: string) => {
+    const normalized = String(namespace || '').trim().toLowerCase();
+    if (!normalized) return;
+    setExpandedNamespaces((current) => ({
+      ...current,
+      [normalized]: !current[normalized],
+    }));
+  }, []);
+
   return (
     <Box
       sx={{
@@ -379,6 +477,27 @@ export function BlocksTable({ endpoint, namespaceRootUrl = '' }: BlocksTableProp
         overflowY: 'hidden',
       }}
     >
+      {namespaceLabel ? (
+        <Box
+          sx={{
+            px: 1.5,
+            py: 1,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+          }}
+        >
+          <Typography variant="caption" sx={{ color: 'text.secondary', letterSpacing: 0.2 }}>
+            Namespace:{' '}
+            <Box component="span" sx={{ color: 'text.primary', fontFamily: 'monospace' }}>
+              {namespaceLabel}
+            </Box>
+          </Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary', letterSpacing: 0.2, ml: 1.5 }}>
+            Visible: {displayRows.length}/{safeRenderLimit}
+          </Typography>
+        </Box>
+      ) : null}
       <Table size="small" sx={{ minWidth: 720 }}>
         <TableHead>
           <TableRow sx={{ background: 'background.paper' }}>
@@ -389,7 +508,7 @@ export function BlocksTable({ endpoint, namespaceRootUrl = '' }: BlocksTableProp
         </TableHead>
 
         <TableBody>
-          {data.length === 0 && (
+          {displayRows.length === 0 && (
             <TableRow>
               <TableCell colSpan={3}>
                 <Typography sx={{ opacity: 0.6, py: 3, textAlign: 'center' }}>No blockchain entries yet.</Typography>
@@ -397,7 +516,7 @@ export function BlocksTable({ endpoint, namespaceRootUrl = '' }: BlocksTableProp
             </TableRow>
           )}
 
-          {data.map((r) => (
+          {displayRows.map((r) => (
             <TableRow
               key={`${r.hash}-${r.id}`}
               data-block-hash={r.hash}
@@ -412,12 +531,15 @@ export function BlocksTable({ endpoint, namespaceRootUrl = '' }: BlocksTableProp
                 },
               }}
             >
-              <TableCell sx={{ minWidth: 220 }}>
+              <TableCell sx={{ minWidth: 260 }}>
                 {(() => {
                   const identity = getRowIdentity(r);
                   const namespaceUrl = getRowNamespaceUrl(r);
                   const profileImg = namespaceMeta.get(String(r.namespace || '').trim().toLowerCase())?.imageUrl || null;
                   const fallback = String(identity.subject || '?').slice(0, 1).toUpperCase();
+                  const shortIdentityLabel = String(identity.subject || identity.root || '—').trim();
+                  const namespaceKey = String(r.namespace || '').trim().toLowerCase();
+                  const namespaceExpanded = !!expandedNamespaces[namespaceKey];
 
                   return (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.85 }}>
@@ -587,25 +709,28 @@ export function BlocksTable({ endpoint, namespaceRootUrl = '' }: BlocksTableProp
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.15, minWidth: 0 }}>
                         <Typography
                           variant="body2"
+                          component="button"
+                          type="button"
+                          onClick={() => toggleNamespaceExpanded(namespaceKey)}
                           sx={{
                             color: 'text.primary',
                             fontWeight: 700,
                             fontFamily: 'monospace',
+                            textAlign: 'left',
+                            border: 'none',
+                            bgcolor: 'transparent',
+                            p: 0,
+                            m: 0,
+                            minWidth: 0,
+                            maxWidth: namespaceExpanded ? 'none' : 240,
+                            overflow: namespaceExpanded ? 'visible' : 'hidden',
+                            textOverflow: namespaceExpanded ? 'clip' : 'ellipsis',
+                            whiteSpace: namespaceExpanded ? 'normal' : 'nowrap',
+                            cursor: 'pointer',
                           }}
-                          title={identity.handle}
+                          title={namespaceExpanded ? 'Collapse namespace' : String(identity.handle || shortIdentityLabel)}
                         >
-                          {identity.subject === identity.root ? identity.subject : `@${identity.subject}`}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color: 'text.secondary',
-                            fontFamily: 'monospace',
-                            wordBreak: 'break-all',
-                          }}
-                          title={identity.root}
-                        >
-                          {identity.root}
+                          {identity.subject === identity.root ? shortIdentityLabel : `@${shortIdentityLabel}`}
                         </Typography>
                         <Typography
                           variant="caption"
@@ -685,19 +810,28 @@ export function BlocksTable({ endpoint, namespaceRootUrl = '' }: BlocksTableProp
                   );
                 })()}
               </TableCell>
-              <TableCell sx={{ minWidth: 184 }}>
+              <TableCell sx={{ width: 132, minWidth: 132, maxWidth: 132 }}>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 0.75 }}>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.15, minWidth: 0 }}>
                     <Typography
                       variant="body2"
                       title={r.hash}
+                      component="button"
+                      type="button"
+                      onClick={() => toggleHashExpanded(r.hash)}
                       sx={{
                         fontFamily: 'monospace',
                         color: 'text.primary',
                         whiteSpace: 'nowrap',
+                        border: 'none',
+                        bgcolor: 'transparent',
+                        p: 0,
+                        m: 0,
+                        cursor: 'pointer',
+                        textAlign: 'left',
                       }}
                     >
-                      {maskHash(r.hash)}
+                      {expandedHashes[String(r.hash || '').trim()] ? r.hash : maskHash(r.hash)}
                     </Typography>
                     {r.prevHash ? (
                       <Tooltip
@@ -722,7 +856,12 @@ export function BlocksTable({ endpoint, namespaceRootUrl = '' }: BlocksTableProp
                         <Typography
                           variant="caption"
                           title={r.prevHash}
-                          onClick={() => revealHash(r.prevHash)}
+                          component="button"
+                          type="button"
+                          onClick={() => {
+                            toggleHashExpanded(r.prevHash);
+                            revealHash(r.prevHash);
+                          }}
                           sx={{
                             fontFamily: 'monospace',
                             color: 'primary.main',
@@ -730,9 +869,14 @@ export function BlocksTable({ endpoint, namespaceRootUrl = '' }: BlocksTableProp
                             cursor: 'pointer',
                             textDecoration: 'underline',
                             textUnderlineOffset: '0.15em',
+                            border: 'none',
+                            bgcolor: 'transparent',
+                            p: 0,
+                            m: 0,
+                            textAlign: 'left',
                           }}
                         >
-                          prev {maskHash(r.prevHash)}
+                          prev {expandedHashes[String(r.prevHash || '').trim()] ? r.prevHash : maskHash(r.prevHash)}
                         </Typography>
                       </Tooltip>
                     ) : null}
