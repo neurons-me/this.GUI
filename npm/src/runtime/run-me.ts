@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { RuntimeAdapter } from './adapter';
 
-type RunMeOptions = {
+export type RenderMeOptions = {
   /**
    * Prefix used to detect declarative path bindings in resolve().
    * Default: "me/"
@@ -18,10 +18,10 @@ function normalizePath(value: string, prefix: string): string {
  *
  * Usage:
  *   const me = new Me() as any;
- *   const runtime = RunMe(me);
+ *   const runtime = render(me);
  *   GUI.mount(spec, '#root', { runtime, ctx });
  */
-export function RunMe(me: any, opts: RunMeOptions = {}): RuntimeAdapter {
+export function render(me: any, opts: RenderMeOptions = {}): RuntimeAdapter {
   const prefix = opts.pathPrefix ?? 'me/';
 
   return {
@@ -32,17 +32,17 @@ export function RunMe(me: any, opts: RunMeOptions = {}): RuntimeAdapter {
       if (typeof me === 'function') {
         return me(expression);
       }
-      throw new Error('[RunMe] No runnable .me interface found (expected me.run(...) or callable me(...)).');
+      throw new Error('[render] No runnable .me interface found (expected me.run(...) or callable me(...)).');
     },
 
     resolve: (value: any) => {
       if (typeof value === 'string' && value.startsWith(prefix)) {
         const path = normalizePath(value, prefix);
-        if (typeof me?.get === 'function') {
-          return me.get(path);
-        }
         if (typeof me === 'function') {
           return me(path);
+        }
+        if (typeof me?.get === 'function') {
+          return me.get(path);
         }
       }
       return value;
@@ -50,5 +50,6 @@ export function RunMe(me: any, opts: RunMeOptions = {}): RuntimeAdapter {
   };
 }
 
-export default RunMe;
+export const RunMe = render;
 
+export default render;

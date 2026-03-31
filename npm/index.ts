@@ -60,6 +60,7 @@ export { default as ModuleRow } from '@/gui/All.This/src/ModuleRow/ModuleRow';
 export { default as ModulesGrid } from '@/gui/All.This/src/ModulesGrid/ModulesGrid';
 export { default as ModulesList } from '@/gui/All.This/src/ModulesList/ModulesList';
 export { default as Cleaker } from '@/gui/All.This/Cleaker/Cleaker';
+export { default as CleakerComposer } from '@/gui/All.This/Cleaker/CleakerComposer';
 export { default as CleakerQR } from '@/gui/All.This/Cleaker/QR/CleakerQR';
 export { default as Blockchain } from '@/gui/All.This/Cleaker/Blockchain/blockchain';
 export { default as FaceRecognition } from '@/gui/widgets/FaceRecognition/FaceRecognition';
@@ -75,6 +76,7 @@ export {
   guiToolsLeftSidebarConfig,
 } from '@/gui/Molecules/menus/GUI-Tools/GUI-Tools';
 export { default as CleakerGroup } from '@/gui/All.This/Cleaker/Group/CleakerGroup';
+export { default as CleakerUser } from '@/gui/All.This/Cleaker/User/CleakerUser';
 // 3) runtime aggregates (UMD/global convenience)
 // These are *named exports* so in UMD builds you can do:
 //   window.GUI.mount(...)
@@ -154,4 +156,4 @@ export {
   toggleInspector,
 } from '@/runtime/controlSurface';
 export { Router, RouterProvider } from '@/Router/Router';
-export { RunMe } from '@/runtime/run-me';
+export { render, RunMe } from '@/runtime/run-me';

@@ -16,9 +16,7 @@ export const meta = {
   tags: ['cleaker', 'group', 'schema', 'me'],
   demoSpec: {
     type: 'CleakerGroup',
-    props: {
-      groupKey: 'dev-team',
-    },
+    props: {},
   },
 } as const;
 

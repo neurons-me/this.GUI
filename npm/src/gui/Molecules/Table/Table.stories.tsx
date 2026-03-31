@@ -1,12 +1,8 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Table from './Table';
-import { Box,
-      TableHead,
-      TableRow, 
-      TableCell, 
-      TableBody, 
-      Typography } from '@/gui/Atoms';
+import { Box, Typography } from '@/gui/Atoms';
+import { TableBody, TableCell, TableHead, TableRow } from '@/gui/Molecules';
 
 const meta: Meta<typeof Table> = {
   title: 'Molecules/Table',

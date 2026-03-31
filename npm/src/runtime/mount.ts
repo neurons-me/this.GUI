@@ -17,7 +17,7 @@ export type MountOptions = Omit<RendererOptions, 'gui' | 'React'> & {
   gui?: any;
   React?: any;
   ReactDOM?: any;
-  /** Optional .me instance; if provided, mount() will derive runtime via GUI.RunMe(me). */
+  /** Optional .me instance; if provided, mount() will derive runtime via GUI.render(me). */
   me?: any;
   inspectorEnabled?: boolean;
   adminViewEnabled?: boolean;
@@ -292,8 +292,16 @@ export function mount(
       adminViewEnabled: readAdminViewPreference(),
     };
   }
-  if (!finalOptions.runtime && (finalOptions as any).me && typeof gui?.RunMe === 'function') {
-    finalOptions = { ...finalOptions, runtime: gui.RunMe((finalOptions as any).me) };
+  if (!finalOptions.runtime && (finalOptions as any).me) {
+    const runtimeFactory =
+      typeof gui?.render === 'function'
+        ? gui.render
+        : typeof gui?.RunMe === 'function'
+          ? gui.RunMe
+          : null;
+    if (runtimeFactory) {
+      finalOptions = { ...finalOptions, runtime: runtimeFactory((finalOptions as any).me) };
+    }
   }
 
   if (!gui) throw new Error('[this.GUI] Missing window.GUI (UMD surface).');
