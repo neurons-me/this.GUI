@@ -1,5 +1,7 @@
 import React, { ReactNode } from "react";
 import { BrowserRouter, useInRouterContext } from "react-router-dom";
+import { mount as mountGUI } from "@/runtime/mount";
+import type { MountOptions, MountTarget } from "@/runtime/mount";
 
 const ROUTER_FUTURE_FLAGS = {
   v7_startTransition: true,
@@ -31,6 +33,7 @@ export type RouterNavigateOptions = {
 
 type RouterChangeListener = (spec: RouteSpec, meta: { path: string; ctx: Record<string, any> }) => void;
 type NotFoundHandler = (context: RouterResolveContext, error?: unknown) => RouteSpec;
+type RouterMountOptions = Omit<MountOptions, "runtime" | "ctx">;
 
 const defaultNotFound: NotFoundHandler = () => ({ type: "Page", children: ["404 Not Found"] });
 
@@ -52,25 +55,31 @@ export class Router {
   private routes = new Map<string, CompiledRoute>();
   private listeners = new Set<RouterChangeListener>();
   private popstateHandler?: () => void;
+  private mountTarget: MountTarget | null = null;
+  private mountOptions: RouterMountOptions = {};
   public runtime: RouterRuntime | null;
   public notFound: NotFoundHandler;
   public currentPath: string | null = null;
+  public basePath: string;
 
   constructor({
     runtime = null,
     notFound = defaultNotFound,
     useHistory = true,
+    basePath = "/",
   }: {
     runtime?: RouterRuntime | null;
     notFound?: NotFoundHandler;
     useHistory?: boolean;
+    basePath?: string;
   } = {}) {
     this.runtime = runtime;
     this.notFound = notFound;
+    this.basePath = this.normalizeBasePath(basePath);
 
     if (useHistory && typeof window !== "undefined") {
       this.popstateHandler = () => {
-        void this.navigate(window.location.pathname, { push: false });
+        void this.navigate(this.stripBasePath(window.location.pathname), { push: false });
       };
       window.addEventListener("popstate", this.popstateHandler);
     }
@@ -83,6 +92,33 @@ export class Router {
     this.listeners.clear();
   }
 
+  mount(target: MountTarget, options: RouterMountOptions = {}): this {
+    this.mountTarget = target;
+    this.mountOptions = { ...options };
+    return this;
+  }
+
+  get(path: string, handler: RouteHandler): this {
+    return this.set(path, handler);
+  }
+
+  start(path = "/", ctx: Record<string, any> = {}): Promise<RouteSpec> {
+    return this.navigate(path, { push: false, ctx });
+  }
+
+  go(path: string, ctx: Record<string, any> = {}): Promise<RouteSpec> {
+    return this.navigate(path, { push: true, ctx });
+  }
+
+  private renderMounted(spec: RouteSpec, ctx: Record<string, any>): void {
+    if (!this.mountTarget) return;
+    mountGUI(spec, this.mountTarget, {
+      ...this.mountOptions,
+      runtime: this.runtime ?? undefined,
+      ctx,
+    });
+  }
+
   private normalize(path: string): string {
     const input = String(path ?? "").trim();
     if (!input || input === "/") return "/";
@@ -91,6 +127,31 @@ export class Router {
     const collapsed = noQuery.replace(/\/{2,}/g, "/");
     if (collapsed !== "/" && collapsed.endsWith("/")) return collapsed.replace(/\/+$/, "");
     return collapsed;
+  }
+
+  private normalizeBasePath(basePath: string): string {
+    const input = String(basePath ?? "").trim();
+    if (!input || input === "/") return "";
+    const first = input.startsWith("/") ? input : `/${input}`;
+    const collapsed = first.replace(/\/{2,}/g, "/");
+    return collapsed !== "/" && collapsed.endsWith("/") ? collapsed.replace(/\/+$/, "") : collapsed;
+  }
+
+  private stripBasePath(path: string): string {
+    const normalized = this.normalize(path);
+    if (!this.basePath) return normalized;
+    if (normalized === this.basePath) return "/";
+    if (normalized.startsWith(`${this.basePath}/`)) {
+      const stripped = normalized.slice(this.basePath.length);
+      return stripped || "/";
+    }
+    return normalized;
+  }
+
+  href(path: string): string {
+    const normalized = this.stripBasePath(path);
+    if (!this.basePath) return normalized;
+    return normalized === "/" ? `${this.basePath}/` : `${this.basePath}${normalized}`;
   }
 
   private hasDynamicSegments(path: string): boolean {
@@ -184,7 +245,7 @@ export class Router {
   }
 
   async resolve(path: string, ctx: Record<string, any> = {}): Promise<RouteSpec> {
-    const normalized = this.normalize(path);
+    const normalized = this.stripBasePath(path);
     const found = this.findRoute(normalized);
     const handler = found?.route?.handler ?? this.notFound;
     const params = found?.params ?? {};
@@ -218,12 +279,15 @@ export class Router {
   }
 
   async navigate(path: string, { push = true, ctx = {} }: RouterNavigateOptions = {}): Promise<RouteSpec> {
-    const normalized = this.normalize(path);
+    const normalized = this.stripBasePath(path);
     this.currentPath = normalized;
     const spec = await this.resolve(normalized, ctx);
 
-    if (push && typeof window !== "undefined" && window.location.pathname !== normalized) {
-      window.history.pushState(null, "", normalized);
+    if (push && typeof window !== "undefined") {
+      const href = this.href(normalized);
+      if (window.location.pathname !== href) {
+        window.history.pushState(null, "", href);
+      }
     }
 
     const found = this.findRoute(normalized);
@@ -234,6 +298,7 @@ export class Router {
       wildcard: params.wildcard_1,
     };
     for (const listener of this.listeners) listener(spec, { path: normalized, ctx: enrichedCtx });
+    this.renderMounted(spec, enrichedCtx);
     return spec;
   }
 
@@ -243,6 +308,24 @@ export class Router {
       this.listeners.delete(listener);
     };
   }
+}
+
+export function router(
+  target: MountTarget,
+  {
+    runtime = null,
+    notFound = defaultNotFound,
+    useHistory = true,
+    basePath = "/",
+    ...mountOptions
+  }: {
+    runtime?: RouterRuntime | null;
+    notFound?: NotFoundHandler;
+    useHistory?: boolean;
+    basePath?: string;
+  } & RouterMountOptions = {}
+): Router {
+  return new Router({ runtime, notFound, useHistory, basePath }).mount(target, mountOptions);
 }
 
 /**

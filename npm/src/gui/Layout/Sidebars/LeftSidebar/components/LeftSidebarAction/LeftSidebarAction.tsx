@@ -7,6 +7,8 @@ import type { LeftSidebarMode } from '../../LeftSidebar.types';
 import { useLeftSidebar } from '@/gui/Hooks';
 import resolveLeftSidebarAction from './LeftSidebarAction.resolver';
 
+const SIDEBAR_RAIL_FLYOUT_Z_INDEX = 1705;
+
 export type LeftSidebarActionProps = {
   label?: string;
   icon?: string;
@@ -33,6 +35,7 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
   style,
   resolver,
   view,
+  ...rest
 }) => {
   const legacyResolver = typeof resolver === 'string' ? resolver.trim() : '';
   const handleClick =
@@ -82,6 +85,7 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
   if (element) {
     return (
       <Box
+        {...rest}
         className={clsx('LeftSidebarAction', className)}
         style={style}
         sx={{
@@ -102,6 +106,7 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
     <Box
       component="button"
       onClick={handleClick}
+      {...rest}
       className={clsx('LeftSidebarAction', className)}
       style={style}
       sx={{
@@ -132,7 +137,36 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
           title={label}
           placement="right"
           arrow
-          slotProps={{ tooltip: { sx: { fontSize: '0.9rem', py: 0.5, px: 1 } } }}
+          slotProps={{
+            popper: {
+              sx: {
+                zIndex: SIDEBAR_RAIL_FLYOUT_Z_INDEX,
+                '& .MuiTooltip-tooltip': {
+                  backgroundColor: 'var(--gui-bg-nav) !important',
+                  backgroundImage: 'none !important',
+                  color: 'var(--gui-text-primary) !important',
+                  border: '1px solid var(--gui-border)',
+                  boxShadow: 3,
+                },
+                '& .MuiTooltip-arrow': {
+                  color: 'var(--gui-bg-nav) !important',
+                },
+              },
+            },
+            tooltip: {
+              sx: {
+                fontSize: '0.9rem',
+                py: 0.5,
+                px: 1,
+                bgcolor: 'var(--gui-bg-nav)',
+                color: 'var(--gui-text-primary)',
+                border: '1px solid',
+                borderColor: 'var(--gui-border)',
+                backgroundImage: 'none',
+              },
+            },
+            arrow: { sx: { color: 'var(--gui-bg-nav)' } },
+          }}
         >
           {content}
         </Tooltip>

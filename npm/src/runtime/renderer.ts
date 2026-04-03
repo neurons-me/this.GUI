@@ -11,15 +11,9 @@
 // where GuiNode can also be a string/number/boolean/null.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { defaultAdapter, isPromiseLike, type RuntimeAdapter } from './adapter';
+import type { GuiNode, GuiPrimitive, GuiSpecNode } from '@/types/gui.types';
 
-export type GuiPrimitive = string | number | boolean | null | undefined;
-export type GuiSpecNode = {
-  type: string | any; // string key into registry OR a React component
-  props?: Record<string, any>;
-  children?: GuiNode | GuiNode[];
-};
-
-export type GuiNode = GuiPrimitive | GuiSpecNode | GuiNode[];
+export type { GuiNode, GuiPrimitive, GuiSpecNode } from '@/types/gui.types';
 export type GuiRegistryLike = Record<string, any>;
 export type ResolveResult = {
   Component: any | null;
@@ -67,12 +61,22 @@ function getReact(opt?: RendererOptions): any {
 }
 
 function isSpecNode(v: any): v is GuiSpecNode {
-  return !!v && typeof v === 'object' && !Array.isArray(v) && 'type' in v;
+  return (
+    !!v &&
+    typeof v === 'object' &&
+    !Array.isArray(v) &&
+    !('$$typeof' in v) &&
+    'type' in v
+  );
 }
 
 function isPrimitive(v: any): v is GuiPrimitive {
   const t = typeof v;
   return v == null || t === 'string' || t === 'number' || t === 'boolean';
+}
+
+function isGuiNode(value: any): value is GuiNode {
+  return isPrimitive(value) || Array.isArray(value) || isSpecNode(value);
 }
 
 /**
@@ -454,6 +458,9 @@ export function renderNode(node: GuiNode, opt?: RendererOptions, path = 'r'): an
   // primitives
   if (isPrimitive(node)) return node as any;
 
+  // Allow passing React nodes directly.
+  if (React.isValidElement?.(node)) return node;
+
   // spec
   if (isSpecNode(node)) {
     const next = nextOpt.transformNode ? nextOpt.transformNode(node) : node;
@@ -533,7 +540,12 @@ export function renderNode(node: GuiNode, opt?: RendererOptions, path = 'r'): an
             ...(kids.length > 0 ? { children: kids.length === 1 ? kids[0] : kids } : {}),
           },
         };
-        return Component.resolve(resolverSpec, nextOpt.ctx);
+        const resolved = Component.resolve(resolverSpec, nextOpt.ctx);
+        if (React.isValidElement?.(resolved)) return resolved;
+        if (isGuiNode(resolved)) {
+          return renderNode(resolved, nextOpt, `${path}.resolved`);
+        }
+        return resolved ?? null;
       }
       return React.createElement(Component, props ?? null, ...kids);
     }

@@ -37,6 +37,7 @@ const LayoutResolver: RegistryEntry = {
       ...rest
     } = props as any;
 
+    const resolvedChildren = props.children;
     const normalizedProps = {
       ...rest,
       topBarConfig: topBar ?? TopBar ?? topBarConfig,
@@ -44,21 +45,9 @@ const LayoutResolver: RegistryEntry = {
       rightSidebarConfig: rightBar ?? RightBar ?? RightSideBar ?? rightSidebarConfig,
       footerConfig: footer ?? Footer ?? footerConfig,
     };
-
-    const contentSections = (spec as any).Content ?? [];
     return (
       <Layout {...normalizedProps}>
-        {contentSections.map((section: any, index: number) => (
-          <React.Fragment key={index}>
-            {Array.isArray(section.children)
-              ? section.children.map((child: any, i: number) => (
-                  <div key={`${index}-${i}`} {...(child.props ?? {})}>
-                    {child.type}
-                  </div>
-                ))
-              : null}
-          </React.Fragment>
-        ))}
+        {resolvedChildren}
       </Layout>
     );
   },

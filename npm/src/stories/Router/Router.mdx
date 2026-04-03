@@ -5,11 +5,9 @@ import { PathPrefixesDemo, QueryExpressionsDemo } from './components/RouterSeman
 <Meta title="Router/Router" />
 
 # Router
-
 `this.GUI` Router is the navigation kernel that maps paths to specs.
 
 Use it when you want:
-
 - exact pages like `/dashboard`
 - dynamic routes like `/shops/:id`
 - wildcard routes like `/docs/*`
@@ -18,15 +16,12 @@ Use it when you want:
 ---
 
 ## Basic Shape
-
 ```ts
 import { Router } from 'this.gui';
-
 const router = new Router({ runtime });
 ```
 
 Then register routes:
-
 ```ts
 router.set('/dashboard', 'me/views/dashboard/default');
 ```
@@ -37,15 +32,11 @@ This is usually the best default-first setup.
 ---
 
 ## The Main Forms
-
 You can use the Router in three main ways.
-
 Recommended first to go: start with Semantic Pointer so route resolution is delegated to your runtime.
 
 ### 1. Semantic Pointer (Recommended First)
-
 Good when the route should resolve through your runtime.
-
 ```ts
 router.set('/profile', 'me/views/profile/page');
 ```
@@ -54,7 +45,6 @@ If the handler is a string starting with `me/`, the Router will ask `runtime.res
 This is the handoff point where `this.GUI` stops being just a route matcher and starts behaving like a runtime-driven interface system.
 
 ### 2. Static Spec
-
 Good when the route always renders the same screen.
 
 ```ts
@@ -68,7 +58,6 @@ router.set('/about', {
 ```
 
 ### 3. Route Factory
-
 Good when the route depends on params, runtime context, or async data.
 
 ```ts
@@ -84,11 +73,9 @@ router.set('/shops/:id', ({ ctx }) => ({
 ---
 
 ## Exact, Params, And Wildcards
-
 These are the three routing patterns you will use most often.
 
 ### Exact Route
-
 ```ts
 router.set('/dashboard', () => ({
   type: 'Page',
@@ -97,7 +84,6 @@ router.set('/dashboard', () => ({
 ```
 
 ### Dynamic Params
-
 ```ts
 router.set('/shops', 'me/views/shops/default/page');
 
@@ -130,7 +116,6 @@ For wildcard routes, the first `*` is exposed as `ctx.wildcard` by convention.
 ---
 
 ## Wiring Router To GUI
-
 This is the standard pattern.
 
 ```ts
@@ -148,18 +133,15 @@ router.navigate('/dashboard', { push: false });
 ```
 
 Think of it like this:
-
 - `Router` decides **what screen**
 - `GUI.mount(...)` decides **how to render it**
 
 ---
 
 ## Resolve vs Navigate
-
 These two methods are related, but they do different jobs.
 
 ### `resolve(path, ctx?)`
-
 Use this when you only want the spec back.
 
 ```ts
@@ -169,7 +151,6 @@ const spec = await router.resolve('/dashboard');
 This does **not** update browser history and does **not** notify listeners.
 
 ### `navigate(path, options?)`
-
 Use this when you want actual navigation behavior.
 
 ```ts
@@ -177,7 +158,6 @@ await router.navigate('/dashboard', { push: true });
 ```
 
 This:
-
 - resolves the route
 - updates `currentPath`
 - optionally pushes browser history
@@ -186,7 +166,6 @@ This:
 ---
 
 ## Route Context
-
 Every route handler receives a context object:
 
 ```ts
@@ -200,7 +179,6 @@ router.set('/example/:id', ({ path, router, runtime, ctx }) => ({
 ```
 
 Most of the time, the useful parts are:
-
 - `ctx.params`
 - `ctx.wildcard`
 - `runtime`
@@ -208,7 +186,6 @@ Most of the time, the useful parts are:
 ---
 
 ## URL Expression Semantics
-
 <Box
   sx={{
     p: 2,
@@ -247,7 +224,6 @@ Use path prefixes when you want URL-safe semantic categories such as users, tags
 ---
 
 ## Practical Patterns
-
 Use the Router differently depending on the stage of the app.
 
 1. Prototype phase: static specs
@@ -258,7 +234,6 @@ Use the Router differently depending on the stage of the app.
 ---
 
 ## Rules Of Thumb
-
 1. Start with exact routes first
 2. Add `:params` only when screen reuse is real
 3. Use wildcards for trees, docs, or explorers

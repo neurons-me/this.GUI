@@ -5,6 +5,7 @@ import Typography from "@/gui/Atoms/Typography/Typography";
 import Icon from "@/gui/Atoms/Icon/Icon";
 
 const VIEWPORT_MARGIN = 12;
+const SIDEBAR_RAIL_FLYOUT_Z_INDEX = 1705;
 type LeftSidebarMenuItem = {
   label?: string;
   icon?: string;
@@ -43,6 +44,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({
   onRailTooltipChange,
   onRailTooltipOpen,
   onRailTooltipClose,
+  ...rest
 }) => {
   const [open, setOpen] = useState(false);
   const [anchorTop, setAnchorTop] = useState<number | null>(null);
@@ -135,6 +137,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({
 
   return (
     <Box
+      {...rest}
       onMouseEnter={(e) => {
         if (isRail) {
           const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -200,11 +203,13 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({
               left: 'calc(var(--gui-rail-width, 60px) + 2px)',
               marginLeft: '-2px',
               top: tooltipTop,
-              backgroundColor: 'background.paper',
+              backgroundColor: (theme) =>
+                theme.palette.background.nav || theme.palette.background.paper || theme.palette.background.default,
+              backgroundImage: 'none',
               color: 'text.primary',
               borderRadius: 1,
               boxShadow: 3,
-              zIndex: 1500,
+              zIndex: SIDEBAR_RAIL_FLYOUT_Z_INDEX,
               border: '1px solid',
               borderColor: 'divider',
               minWidth: 180,

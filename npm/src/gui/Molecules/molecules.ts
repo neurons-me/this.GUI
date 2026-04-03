@@ -84,6 +84,10 @@ import Toolbar, { type ToolbarProps } from '@/gui/Molecules/Toolbar/Toolbar';
 export type { ToolbarProps } from '@/gui/Molecules/Toolbar/Toolbar';
 import Tooltip, { type TooltipProps } from '@/gui/Molecules/Tooltip/Tooltip';
 export type { TooltipProps } from '@/gui/Molecules/Tooltip/Tooltip';
+import AdminViewToggle from '@/gui/Molecules/AdminViewToggle/AdminViewToggle';
+export type { AdminViewToggleProps } from '@/gui/Molecules/AdminViewToggle/AdminViewToggle.types';
+import InspectorToggle from '@/gui/Molecules/InspectorToggle/InspectorToggle';
+export type { InspectorToggleProps } from '@/gui/Molecules/InspectorToggle/InspectorToggle.types';
 
 type MoleculesRegistry = {
   Dialog: typeof Dialog;
@@ -111,6 +115,8 @@ type MoleculesRegistry = {
   TableRow: typeof TableRow;
   Toolbar: typeof Toolbar;
   Tooltip: typeof Tooltip;
+  AdminViewToggle: typeof AdminViewToggle;
+  InspectorToggle: typeof InspectorToggle;
 };
 
 const Molecules: MoleculesRegistry = {
@@ -137,6 +143,8 @@ const Molecules: MoleculesRegistry = {
   TableRow,
   Toolbar,
   Tooltip,
+  AdminViewToggle,
+  InspectorToggle,
 };
 
 export {
@@ -163,6 +171,8 @@ export {
   TableRow,
   Toolbar,
   Tooltip,
+  AdminViewToggle,
+  InspectorToggle,
 };
 
 export type {

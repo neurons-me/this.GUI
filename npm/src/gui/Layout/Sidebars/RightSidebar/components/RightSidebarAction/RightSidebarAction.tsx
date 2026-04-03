@@ -5,6 +5,8 @@ import { Tooltip } from '@/gui/Molecules';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import type { RightSidebarView } from '../../RightSidebar.types';
 
+const SIDEBAR_RAIL_FLYOUT_Z_INDEX = 1705;
+
 export type RightSidebarActionProps = {
   label?: string;
   icon?: string;
@@ -27,6 +29,7 @@ const RightSidebarAction: React.FC<RightSidebarActionProps> = ({
   className,
   style,
   view,
+  ...rest
 }) => {
   const hasCustomElement = Boolean(element);
   const content = hasCustomElement ? (
@@ -76,7 +79,36 @@ const RightSidebarAction: React.FC<RightSidebarActionProps> = ({
         title={label}
         placement="left"
         arrow
-        slotProps={{ tooltip: { sx: { fontSize: '0.9rem', py: 0.5, px: 1 } } }}
+        slotProps={{
+          popper: {
+            sx: {
+              zIndex: SIDEBAR_RAIL_FLYOUT_Z_INDEX,
+              '& .MuiTooltip-tooltip': {
+                backgroundColor: 'var(--gui-bg-nav) !important',
+                backgroundImage: 'none !important',
+                color: 'var(--gui-text-primary) !important',
+                border: '1px solid var(--gui-border)',
+                boxShadow: 3,
+              },
+              '& .MuiTooltip-arrow': {
+                color: 'var(--gui-bg-nav) !important',
+              },
+            },
+          },
+          tooltip: {
+            sx: {
+              fontSize: '0.9rem',
+              py: 0.5,
+              px: 1,
+              bgcolor: 'var(--gui-bg-nav)',
+              color: 'var(--gui-text-primary)',
+              border: '1px solid',
+              borderColor: 'var(--gui-border)',
+              backgroundImage: 'none',
+            },
+          },
+          arrow: { sx: { color: 'var(--gui-bg-nav)' } },
+        }}
       >
         {content}
       </Tooltip>
@@ -88,6 +120,7 @@ const RightSidebarAction: React.FC<RightSidebarActionProps> = ({
     <Box
       component={hasCustomElement ? 'div' : 'button'}
       onClick={onClick}
+      {...rest}
       className={clsx('RightSidebarAction', className)}
       style={style}
       sx={{

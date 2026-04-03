@@ -40,6 +40,8 @@ type LeftSidebarSpec = {
     id?: string;
     className?: string;
     'data-testid'?: string;
+    'data-gui-node-id'?: string;
+    'data-gui-component'?: string;
     style?: React.CSSProperties;
   };
 };
@@ -84,6 +86,8 @@ const LeftSidebarResolver: RegistryEntry = {
         className={p.className}
         id={p.id}
         style={p.style}
+        data-gui-node-id={p['data-gui-node-id']}
+        data-gui-component={p['data-gui-component']}
       />
     );
   },

@@ -4,6 +4,7 @@ import { Collapse } from '@/gui/Molecules';
 import Icon from '@/gui/Atoms/Icon/Icon';
 
 const VIEWPORT_MARGIN = 12;
+const SIDEBAR_RAIL_FLYOUT_Z_INDEX = 1705;
 
 type RightSidebarMenuItem = {
   label?: string;
@@ -20,7 +21,14 @@ type RightSidebarMenuProps = {
   view?: 'rail' | 'expanded' | 'mobile';
 };
 
-const RightSidebarMenu: React.FC<RightSidebarMenuProps> = ({ label, icon, iconColor, items, view }) => {
+const RightSidebarMenu: React.FC<RightSidebarMenuProps> = ({
+  label,
+  icon,
+  iconColor,
+  items,
+  view,
+  ...rest
+}) => {
   const [open, setOpen] = useState(false);
   const [anchorTop, setAnchorTop] = useState<number | null>(null);
   const [tooltipTop, setTooltipTop] = useState<number>(VIEWPORT_MARGIN);
@@ -52,6 +60,7 @@ const RightSidebarMenu: React.FC<RightSidebarMenuProps> = ({ label, icon, iconCo
 
   return (
     <Box
+      {...rest}
       onMouseEnter={(e) => {
         if (isRail) {
           const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -103,11 +112,13 @@ const RightSidebarMenu: React.FC<RightSidebarMenuProps> = ({ label, icon, iconCo
               position: 'fixed',
               right: 'var(--gui-rail-width, 72px)',
               top: tooltipTop,
-              backgroundColor: 'background.paper',
+              backgroundColor: (theme) =>
+                theme.palette.background.nav || theme.palette.background.paper || theme.palette.background.default,
+              backgroundImage: 'none',
               color: 'text.primary',
               borderRadius: 1,
               boxShadow: 3,
-              zIndex: 1300,
+              zIndex: SIDEBAR_RAIL_FLYOUT_Z_INDEX,
               border: '1px solid',
               borderColor: 'divider',
               minWidth: 180,

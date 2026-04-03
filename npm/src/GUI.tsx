@@ -6,7 +6,10 @@ import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 import { RouterProvider } from '@/Router/Router';
 import { GuiRegistry as CORE_REGISTRY, extendRegistry } from '@/Registry';
 import type { GuiRegistry as GuiRegistryType } from '@/Registry/types';
-export type GuiSpecNode = { type: string; props?: Record<string, any>; children?: any };
+import type { GuiNode, GuiSpecNode } from '@/types/gui.types';
+import { deriveRouteState, normalizeRoutePath, startApp } from '@/runtime/start-app';
+export type { GuiNode, GuiSpecNode } from '@/types/gui.types';
+
 export type GUIProps = {
   title?: string;
   children?: React.ReactNode;
@@ -22,6 +25,25 @@ let __GUI_REGISTRY__: GuiRegistryType = CORE_REGISTRY as unknown as GuiRegistryT
 export function installResolvers(entries: any[]) {
   if (!Array.isArray(entries) || !entries.length) return;
   __GUI_REGISTRY__ = extendRegistry(__GUI_REGISTRY__, entries);
+}
+
+function isPrimitive(value: any): value is string | number | boolean | null | undefined {
+  const t = typeof value;
+  return value == null || t === 'string' || t === 'number' || t === 'boolean';
+}
+
+function isGuiSpec(value: any): value is GuiSpecNode {
+  return (
+    !!value &&
+    typeof value === 'object' &&
+    !Array.isArray(value) &&
+    !('$$typeof' in value) &&
+    'type' in value
+  );
+}
+
+function isGuiNode(value: any): value is GuiNode {
+  return isPrimitive(value) || Array.isArray(value) || isGuiSpec(value);
 }
 
 function renderSpec(registry: GuiRegistryType, spec: any, ctx?: any): any {
@@ -45,8 +67,13 @@ function renderSpec(registry: GuiRegistryType, spec: any, ctx?: any): any {
     );
   }
 
+  if (isPrimitive(spec)) return spec;
+
   // Allow passing React nodes directly
   if (React.isValidElement(spec)) return spec;
+
+  if (!isGuiSpec(spec)) return null;
+
   const type = (spec as any).type;
   const entry = type ? registry[type] : undefined;
   if (!entry) {
@@ -57,7 +84,10 @@ function renderSpec(registry: GuiRegistryType, spec: any, ctx?: any): any {
     return null;
   }
 
-  return normalizeResolved(entry.resolve(spec, ctx));
+  const resolved = entry.resolve(spec, ctx);
+  if (React.isValidElement(resolved)) return resolved;
+  if (isGuiNode(resolved)) return renderSpec(registry, resolved, ctx);
+  return normalizeResolved(resolved);
 }
 
 export function mountSpec(target: Element | string, spec: any, ctx?: any) {
@@ -125,6 +155,9 @@ if (typeof window !== 'undefined') {
   (window as any).GUI = (window as any).GUI || {};
   (window as any).GUI.install = (entries: any[]) => installResolvers(entries);
   (window as any).GUI.mount = (selector: string, spec?: any, ctx?: any) => mountSpec(selector, spec, ctx);
+  (window as any).GUI.startApp = startApp;
+  (window as any).GUI.deriveRouteState = deriveRouteState;
+  (window as any).GUI.normalizeRoutePath = normalizeRoutePath;
 
   // Expose version on the global (UMD) surface
   const injectedVersion =
@@ -137,6 +170,7 @@ if (typeof window !== 'undefined') {
   (window as any).GUI.ThemeModeToggle = ThemeModeToggle;
 
   window.addEventListener('DOMContentLoaded', () => {
+    if ((window as any).__THIS_GUI_DISABLE_AUTOBOOT__) return;
     const rootTag = document.querySelector('gui-app');
     if (rootTag) return; // already handled by custom element
     const auto = document.getElementById('root');

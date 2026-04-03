@@ -4,6 +4,8 @@ import { Tooltip } from '@/gui/Molecules';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import { useRightSidebar } from '@/gui/Hooks';
 
+const SIDEBAR_RAIL_FLYOUT_Z_INDEX = 1705;
+
 type RightSidebarLinkProps = {
   label?: string;
   icon?: string;
@@ -20,6 +22,7 @@ const RightSidebarLink: React.FC<RightSidebarLinkProps> = ({
   active,
   onClick,
   children,
+  ...rest
 }) => {
   const { view } = useRightSidebar();
   const [expanded, setExpanded] = useState(false);
@@ -32,6 +35,7 @@ const RightSidebarLink: React.FC<RightSidebarLinkProps> = ({
 
   const content = (
     <Box
+      {...rest}
       sx={{
         display: 'flex',
         gap: 1.123,
@@ -90,7 +94,36 @@ const RightSidebarLink: React.FC<RightSidebarLinkProps> = ({
           title={label}
           placement="left"
           arrow
-          slotProps={{ tooltip: { sx: { fontSize: '0.9rem', py: 0.5, px: 1 } } }}
+          slotProps={{
+            popper: {
+              sx: {
+                zIndex: SIDEBAR_RAIL_FLYOUT_Z_INDEX,
+                '& .MuiTooltip-tooltip': {
+                  backgroundColor: 'var(--gui-bg-nav) !important',
+                  backgroundImage: 'none !important',
+                  color: 'var(--gui-text-primary) !important',
+                  border: '1px solid var(--gui-border)',
+                  boxShadow: 3,
+                },
+                '& .MuiTooltip-arrow': {
+                  color: 'var(--gui-bg-nav) !important',
+                },
+              },
+            },
+            tooltip: {
+              sx: {
+                fontSize: '0.9rem',
+                py: 0.5,
+                px: 1,
+                bgcolor: 'var(--gui-bg-nav)',
+                color: 'var(--gui-text-primary)',
+                border: '1px solid',
+                borderColor: 'var(--gui-border)',
+                backgroundImage: 'none',
+              },
+            },
+            arrow: { sx: { color: 'var(--gui-bg-nav)' } },
+          }}
         >
           {content}
         </Tooltip>
@@ -110,11 +143,13 @@ const RightSidebarLink: React.FC<RightSidebarLinkProps> = ({
             position: 'absolute',
             right: '100%',
             top: 0,
-            backgroundColor: 'background.paper',
+            backgroundColor: (theme) =>
+              theme.palette.background.nav || theme.palette.background.paper,
+            backgroundImage: 'none',
             boxShadow: 3,
             borderRadius: 1,
             mt: -1,
-            zIndex: 10,
+            zIndex: SIDEBAR_RAIL_FLYOUT_Z_INDEX,
             p: 1,
             minWidth: 180,
             border: '1px solid',

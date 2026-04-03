@@ -54,6 +54,8 @@ export { default as Layout } from '@/gui/Layout/Layout';
 export { default as Icon } from '@/gui/Atoms/Icon/Icon';
 export { default as DomIcon } from '@/gui/Atoms/Icon/DomIcon';
 export { default as ThemeModeToggle } from '@/gui/Theme/ToggleMode/ToggleMode';
+export { default as AdminViewToggle } from '@/gui/Molecules/AdminViewToggle/AdminViewToggle';
+export { default as InspectorToggle } from '@/gui/Molecules/InspectorToggle/InspectorToggle';
 export { default as AllThis } from '@/gui/All.This/All.This';
 export { default as ModuleCard } from '@/gui/All.This/src/ModuleCard/ModuleCard';
 export { default as ModuleRow } from '@/gui/All.This/src/ModuleRow/ModuleRow';
@@ -91,6 +93,8 @@ import Layout from '@/gui/Layout/Layout';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import DomIcon from '@/gui/Atoms/Icon/DomIcon';
 import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
+import AdminViewToggle from '@/gui/Molecules/AdminViewToggle/AdminViewToggle';
+import InspectorToggle from '@/gui/Molecules/InspectorToggle/InspectorToggle';
 import FaceRecognition from '@/gui/widgets/FaceRecognition/FaceRecognition';
 import Monad from '@/gui/All.This/monad.ai/monad.ai';
 import HighLighter from '@/gui/widgets/HighLighter/HighLighter';
@@ -114,6 +118,8 @@ export const Compounds = {
   Icon,
   DomIcon,
   ThemeModeToggle,
+  AdminViewToggle,
+  InspectorToggle,
 } as const;
 // Legacy alias kept so older UMD consumers keep working.
 export const Components = Compounds;
@@ -123,6 +129,8 @@ export const ThemeRuntime = {
   Icon,
   DomIcon,
   ThemeModeToggle,
+  AdminViewToggle,
+  InspectorToggle,
 } as const;
 // Lowercase aliases for explorer/runtime conventions
 export const atoms = Atoms;
@@ -155,5 +163,7 @@ export {
   toggleAdminView,
   toggleInspector,
 } from '@/runtime/controlSurface';
-export { Router, RouterProvider } from '@/Router/Router';
+export { Router, RouterProvider, router } from '@/Router/Router';
 export { render, RunMe } from '@/runtime/run-me';
+export { deriveRouteState, normalizeRoutePath, startApp } from '@/runtime/start-app';
+export type { GuiRouteState, StartAppOptions } from '@/runtime/start-app';

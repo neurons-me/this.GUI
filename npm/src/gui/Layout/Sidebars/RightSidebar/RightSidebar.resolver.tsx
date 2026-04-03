@@ -11,6 +11,8 @@ type RightSidebarSpec = {
     className?: string;
     id?: string;
     'data-testid'?: string;
+    'data-gui-node-id'?: string;
+    'data-gui-component'?: string;
   };
 };
 
@@ -26,6 +28,8 @@ const RightSidebarResolver: RegistryEntry = {
         className={props.className}
         id={props.id}
         data-testid={props['data-testid']}
+        data-gui-node-id={props['data-gui-node-id']}
+        data-gui-component={props['data-gui-component']}
       />
     );
   },

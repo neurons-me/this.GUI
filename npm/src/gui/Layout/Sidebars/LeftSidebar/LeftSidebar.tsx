@@ -12,6 +12,36 @@ import { useLeftSidebar, useGuiTheme, useGuiMediaQuery, useUpdateInsets, useInse
 import { Box, Typography } from '@/gui/Atoms';
 import { Drawer } from '@/gui/Molecules';
 import type { LeftSidebarView } from '@/gui/Contexts';
+import { selectionStore } from '@/runtime/selectionStore';
+import type { ResolvedNodeRecord } from '@/runtime/renderer';
+
+function getSidebarRootPath(nodeId: string): string {
+  const normalized = String(nodeId || '').trim();
+  if (!normalized) return 'LeftSidebar';
+  const parts = normalized.split(':');
+  if (parts.length > 1) return parts.slice(1).join(':');
+  return normalized.replace(/[^\w.-]+/g, '.');
+}
+
+function buildLeftSidebarElementMeta(
+  el: LeftSidebarElement,
+  rootNodeId: string,
+  section: 'elements' | 'footerElements',
+  idx: number
+) {
+  const componentByType = {
+    link: 'LeftSidebarLink',
+    menu: 'LeftSidebarMenu',
+    action: 'LeftSidebarAction',
+  } as const;
+  const explicitNodeId = el?.props?.['data-gui-node-id'];
+  const explicitComponent = el?.props?.['data-gui-component'];
+  const rootPath = getSidebarRootPath(rootNodeId);
+  const componentName = explicitComponent || componentByType[el.type];
+  const path = `${rootPath}.${section}.${idx}`;
+  const nodeId = explicitNodeId || `${componentName}:${path}`;
+  return { nodeId, path, componentName };
+}
 
 const LeftSidebar = ({
   elements = [],
@@ -21,6 +51,8 @@ const LeftSidebar = ({
   initialView = 'rail',
   footerElements = [],
   header,
+  ['data-gui-node-id']: dataGuiNodeId,
+  ['data-gui-component']: dataGuiComponent,
 }: {
   elements: LeftSidebarElement[];
   className?: string;
@@ -29,6 +61,8 @@ const LeftSidebar = ({
   initialView?: LeftSidebarView;
   footerElements?: LeftSidebarElement[];
   header?: React.ReactNode | { title?: string; icon?: string; iconColor?: string };
+  'data-gui-node-id'?: string;
+  'data-gui-component'?: string;
 }) => {
   const { view, setView } = useLeftSidebar();
   const theme = useGuiTheme();
@@ -42,10 +76,10 @@ const LeftSidebar = ({
   const toggleOffset = (navInset > 0 ? navInset : 0) + 12;
   const hasFooterElements = Array.isArray(footerElements) && footerElements.length > 0;
   const initialViewApplied = useRef(false);
-  const adminNodeId = id ? String(id) : 'LeftSidebar';
+  const adminNodeId = dataGuiNodeId ? String(dataGuiNodeId) : id ? String(id) : 'LeftSidebar';
   const adminAttrs = {
     'data-gui-node-id': adminNodeId,
-    'data-gui-component': 'LeftSidebar',
+    'data-gui-component': dataGuiComponent || 'LeftSidebar',
   };
   const rawHeaderNode = (() => {
     if (!header) return null;
@@ -120,20 +154,63 @@ const LeftSidebar = ({
     }
   }, [mobileOpen, view]);
 
+  useEffect(() => {
+    const syntheticRecords: ResolvedNodeRecord[] = [];
+    const registerRecord = (
+      el: LeftSidebarElement,
+      section: 'elements' | 'footerElements',
+      idx: number
+    ) => {
+      const meta = buildLeftSidebarElementMeta(el, adminNodeId, section, idx);
+      syntheticRecords.push({
+        id: meta.nodeId,
+        type: meta.componentName,
+        path: meta.path,
+        spec: {
+          type: meta.componentName,
+          props: el.props ?? {},
+        },
+        resolvedProps: {
+          ...(el.props ?? {}),
+          'data-gui-node-id': meta.nodeId,
+          'data-gui-component': meta.componentName,
+        },
+      });
+    };
+
+    elements.forEach((el, idx) => registerRecord(el, 'elements', idx));
+    footerElements.forEach((el, idx) => registerRecord(el, 'footerElements', idx));
+    syntheticRecords.forEach((record) => selectionStore.actions.registerNode(record));
+
+    return () => {
+      syntheticRecords.forEach((record) => selectionStore.actions.unregisterNode(record.id));
+    };
+  }, [adminNodeId, elements, footerElements]);
+
   const renderElements = () =>
     elements.map((el, idx) => {
       const key = (el as any)?.props?.id ?? (el as any)?.props?.label ?? idx;
-      if (el.type === 'link') return <LeftSidebarLink key={key} view={view} {...el.props} />;
-      if (el.type === 'menu') return <LeftSidebarMenu key={key} view={view} {...el.props} />;
-      if (el.type === 'action') return <LeftSidebarAction key={key} view={view} {...el.props} />;
+      const adminMeta = buildLeftSidebarElementMeta(el, adminNodeId, 'elements', idx);
+      const adminProps = {
+        'data-gui-node-id': adminMeta.nodeId,
+        'data-gui-component': adminMeta.componentName,
+      };
+      if (el.type === 'link') return <LeftSidebarLink key={key} view={view} {...adminProps} {...el.props} />;
+      if (el.type === 'menu') return <LeftSidebarMenu key={key} view={view} {...adminProps} {...el.props} />;
+      if (el.type === 'action') return <LeftSidebarAction key={key} view={view} {...adminProps} {...el.props} />;
       return null;
     });
   const renderFooterItems = () =>
     footerElements.map((el, idx) => {
       const baseKey = (el as any)?.props?.id ?? (el as any)?.props?.label ?? idx;
-      if (el.type === 'link') return <LeftSidebarLink key={`footer-link-${baseKey}`} view={view} {...el.props} />;
-      if (el.type === 'menu') return <LeftSidebarMenu key={`footer-menu-${baseKey}`} view={view} {...el.props} />;
-      if (el.type === 'action') return <LeftSidebarAction key={`footer-action-${baseKey}`} view={view} {...el.props} />;
+      const adminMeta = buildLeftSidebarElementMeta(el, adminNodeId, 'footerElements', idx);
+      const adminProps = {
+        'data-gui-node-id': adminMeta.nodeId,
+        'data-gui-component': adminMeta.componentName,
+      };
+      if (el.type === 'link') return <LeftSidebarLink key={`footer-link-${baseKey}`} view={view} {...adminProps} {...el.props} />;
+      if (el.type === 'menu') return <LeftSidebarMenu key={`footer-menu-${baseKey}`} view={view} {...adminProps} {...el.props} />;
+      if (el.type === 'action') return <LeftSidebarAction key={`footer-action-${baseKey}`} view={view} {...adminProps} {...el.props} />;
       return null;
     });
 

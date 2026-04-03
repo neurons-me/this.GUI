@@ -6,6 +6,8 @@ import type { LeftSidebarItemProps } from './LeftSidebarLink.types';
 import { useLeftSidebar } from '@/gui/Hooks';
 import { Link as RouterLink } from 'react-router-dom';
 
+const SIDEBAR_RAIL_FLYOUT_Z_INDEX = 1705;
+
 const LeftSidebarLink: React.FC<LeftSidebarItemProps> = ({
   label,
   icon,
@@ -14,7 +16,8 @@ const LeftSidebarLink: React.FC<LeftSidebarItemProps> = ({
   to,
   active,
   onClick,
-  children
+  children,
+  ...rest
 }) => {
   const { view } = useLeftSidebar();
   const [expanded, setExpanded] = useState(false);
@@ -55,6 +58,7 @@ const LeftSidebarLink: React.FC<LeftSidebarItemProps> = ({
       component={to ? (RouterLink as any) : href ? 'a' : 'div'}
       {...(to ? ({ to } as any) : {})}
       {...(!to && href ? ({ href } as any) : {})}
+      {...rest}
       sx={{
         display: 'flex',
         flexDirection: 'column',
@@ -85,7 +89,36 @@ const LeftSidebarLink: React.FC<LeftSidebarItemProps> = ({
           title={label}
           placement="right"
           arrow
-          slotProps={{ tooltip: { sx: { fontSize: '0.9rem', py: 0.5, px: 1 } } }}
+          slotProps={{
+            popper: {
+              sx: {
+                zIndex: SIDEBAR_RAIL_FLYOUT_Z_INDEX,
+                '& .MuiTooltip-tooltip': {
+                  backgroundColor: 'var(--gui-bg-nav) !important',
+                  backgroundImage: 'none !important',
+                  color: 'var(--gui-text-primary) !important',
+                  border: '1px solid var(--gui-border)',
+                  boxShadow: 3,
+                },
+                '& .MuiTooltip-arrow': {
+                  color: 'var(--gui-bg-nav) !important',
+                },
+              },
+            },
+            tooltip: {
+              sx: {
+                fontSize: '0.9rem',
+                py: 0.5,
+                px: 1,
+                bgcolor: 'var(--gui-bg-nav)',
+                color: 'var(--gui-text-primary)',
+                border: '1px solid',
+                borderColor: 'var(--gui-border)',
+                backgroundImage: 'none',
+              },
+            },
+            arrow: { sx: { color: 'var(--gui-bg-nav)' } },
+          }}
         >
           {content}
         </Tooltip>
@@ -107,13 +140,17 @@ const LeftSidebarLink: React.FC<LeftSidebarItemProps> = ({
                 position: 'absolute',
                 left: '100%',
                 top: 0,
-                backgroundColor: 'background.paper',
+                backgroundColor: (theme) =>
+                  theme.palette.background.nav || theme.palette.background.paper,
+                backgroundImage: 'none',
                 boxShadow: 3,
                 borderRadius: 1,
                 mt: -1,
-                zIndex: 10,
+                zIndex: SIDEBAR_RAIL_FLYOUT_Z_INDEX,
                 p: 1,
                 minWidth: 180,
+                border: '1px solid',
+                borderColor: 'divider',
               }}
             >
               {React.Children.toArray(children).map((child) =>

@@ -15,4 +15,6 @@ export type RightSidebarProps = {
   id?: string;
   style?: React.CSSProperties;
   'data-testid'?: string;
+  'data-gui-node-id'?: string;
+  'data-gui-component'?: string;
 };

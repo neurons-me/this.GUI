@@ -21,6 +21,8 @@ export type LeftSidebarProps = {
   expandedWidth?: number;
   expanded?: boolean;
   id?: string;
+  'data-gui-node-id'?: string;
+  'data-gui-component'?: string;
   shouldShowToggle?: boolean;
   railMode?: boolean;
   toggleLocation?: 'sidebar' | 'topbar' | 'none';

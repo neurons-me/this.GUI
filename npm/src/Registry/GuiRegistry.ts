@@ -27,10 +27,15 @@ import TextFieldResolver from "@/gui/Atoms/TextField/TextField.resolver";
 import TypographyResolver from "@/gui/Atoms/Typography/Typography.resolver";
 
 // Molecules
+import HeroResolver from "@/gui/Molecules/Hero/Hero.resolver";
+import PageResolver from "@/gui/Molecules/Page/Page.resolver";
 import DrawerResolver from "@/gui/Molecules/Drawer/Drawer.resolver";
 import TooltipResolver from "@/gui/Molecules/Tooltip/Tooltip.resolver";
+import AdminViewToggleResolver from "@/gui/Molecules/AdminViewToggle/AdminViewToggle.resolver";
+import InspectorToggleResolver from "@/gui/Molecules/InspectorToggle/InspectorToggle.resolver";
 
 // Layout
+import LayoutResolver from "@/gui/Layout/Layout.resolver";
 import FooterResolver from "@/gui/Layout/Footer/Footer.resolver";
 import LeftSidebarResolver from "@/gui/Layout/Sidebars/LeftSidebar/LeftSidebar.resolver";
 import RightSidebarResolver from "@/gui/Layout/Sidebars/RightSidebar/RightSidebar.resolver";
@@ -73,9 +78,14 @@ export const GuiRegistry = createRegistry([
   TextFieldResolver,
   TypographyResolver,
   // Molecules
+  HeroResolver,
+  PageResolver,
   DrawerResolver,
   TooltipResolver,
+  AdminViewToggleResolver,
+  InspectorToggleResolver,
   // Layout
+  LayoutResolver,
   NavBarResolver,
   LeftSidebarResolver,
   RightSidebarResolver,
