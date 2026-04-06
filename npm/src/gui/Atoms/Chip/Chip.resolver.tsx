@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
 import type { ChipProps } from './Chip';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 import Chip from './Chip';
 
 export type ChipSpec = {

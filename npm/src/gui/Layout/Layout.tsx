@@ -1,52 +1,58 @@
 // Layout/Layout/Layout.tsx
-import { LeftBarProvider } from '@/gui/Contexts/LeftSidebarContext';
-import { RightBarProvider } from '@/gui/Contexts/RightSidebarContext';
+import { LeftBarProvider } from '@/gui-internals/Contexts/LeftSidebarContext';
+import { RightBarProvider } from '@/gui-internals/Contexts/RightSidebarContext';
 import Box from '@/gui/Atoms/Box/Box';
-import TopBar from '@/gui/Layout/TopBar/TopBar';
-import LeftSidebar from '@/gui/Layout/Sidebars/LeftSidebar/LeftSidebar';
-import RightSidebar from '@/gui/Layout/Sidebars/RightSidebar/RightSidebar';
-import Footer from '@/gui/Layout/Footer/Footer';
+import TopBarComponent from '@/gui/Layout/Sidebars/TopBar/TopBar';
+import LeftBarComponent from '@/gui/Layout/Sidebars/LeftBar/LeftBar';
+import RightBarComponent from '@/gui/Layout/Sidebars/RightBar/RightBar';
+import FooterComponent from '@/gui/Layout/Sidebars/Footer/Footer';
+import StickyOptionsTop from '@/gui/Layout/StickyOptions/StickyOptionsTop';
 import Content from '@/gui/Layout/Content/Content';
 import type { LayoutProps } from './Layout.types';
 import React from 'react';
 function Layout({
-  topBarConfig = false,
+  TopBar = false,
+  LeftBar = false,
+  RightBar = false,
+  Footer = false,
   topBar,
-  leftSidebarConfig: legacyLeftConfig = false,
   leftBar,
-  rightSidebarConfig: legacyRightConfig = false,
   rightBar,
-  footerConfig = false,
   footer,
-  TopBar: TopBarProp,
-  LeftBar,
-  RightBar,
-  LeftSideBar: legacyLeftBar,
-  RightSideBar: legacyRightBar,
-  Footer: FooterProp,
+  topBarConfig,
+  leftBarConfig,
+  leftSidebarConfig,
+  rightBarConfig,
+  rightSidebarConfig,
+  footerConfig,
+  stickyOptions = false,
+  stickyOptionsConfig,
   children,
 }: LayoutProps) {
-  // Normalize preferred + legacy props into the config fields the layout consumes.
-  const resolvedTopBar = topBar ?? TopBarProp ?? topBarConfig;
-  const resolvedLeft = leftBar ?? LeftBar ?? legacyLeftBar ?? legacyLeftConfig;
-  const resolvedRight = rightBar ?? RightBar ?? legacyRightBar ?? legacyRightConfig;
-  const resolvedFooter = footer ?? FooterProp ?? footerConfig;
+  const resolvedTopBar = topBar ?? TopBar ?? topBarConfig;
+  const resolvedLeftBar = leftBar ?? LeftBar ?? leftBarConfig ?? leftSidebarConfig;
+  const resolvedRightBar = rightBar ?? RightBar ?? rightBarConfig ?? rightSidebarConfig;
+  const resolvedFooter = footer ?? Footer ?? footerConfig;
+  const resolvedStickyOptions = stickyOptions ?? stickyOptionsConfig;
   const hasTopBar = Boolean(resolvedTopBar);
-  const hasLeftBar = Boolean(resolvedLeft);
-  const hasRightBar = Boolean(resolvedRight);
+  const hasLeftBar = Boolean(resolvedLeftBar);
+  const hasRightBar = Boolean(resolvedRightBar);
+  const hasStickyOptions =
+    Boolean(resolvedStickyOptions) && typeof resolvedStickyOptions === 'object';
   const leftInitialView =
-    typeof resolvedLeft === 'object' && 'initialView' in resolvedLeft
-      ? (resolvedLeft as any).initialView
+    typeof resolvedLeftBar === 'object' && 'initialView' in resolvedLeftBar
+      ? (resolvedLeftBar as any).initialView
       : undefined;
   const rightInitialView =
-    typeof resolvedRight === 'object' && 'initialView' in resolvedRight
-      ? (resolvedRight as any).initialView
+    typeof resolvedRightBar === 'object' && 'initialView' in resolvedRightBar
+      ? (resolvedRightBar as any).initialView
       : undefined;
   const childArray = React.Children.toArray(children);
   let topBarChild: React.ReactElement | null = null;
-  let leftBarChild: React.ReactElement | null = null;
+  let leftBarElement: React.ReactElement | null = null;
   let rightBarChild: React.ReactElement | null = null;
   let footerChild: React.ReactElement | null = null;
+  let stickyOptionsChild: React.ReactElement | null = null;
   type ContentElement = React.ReactElement<React.ComponentProps<typeof Content>>;
   const isContentElement = (child: React.ReactNode): child is ContentElement =>
     React.isValidElement(child) && child.type === Content;
@@ -57,20 +63,24 @@ function Layout({
       contentExtras.push(child);
       return;
     }
-    if (child.type === TopBar) {
+    if (child.type === TopBarComponent) {
       topBarChild = child;
       return;
     }
-    if (child.type === LeftSidebar) {
-      leftBarChild = child;
+    if (child.type === LeftBarComponent) {
+      leftBarElement = child;
       return;
     }
-    if (child.type === RightSidebar) {
+    if (child.type === RightBarComponent) {
       rightBarChild = child;
       return;
     }
-    if (child.type === Footer) {
+    if (child.type === FooterComponent) {
       footerChild = child;
+      return;
+    }
+    if (child.type === StickyOptionsTop) {
+      stickyOptionsChild = child;
       return;
     }
     if (isContentElement(child)) {
@@ -104,7 +114,7 @@ function Layout({
           sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}
         >
           {topBarChild ?? (hasTopBar && (
-            <TopBar
+            <TopBarComponent
               {...(typeof resolvedTopBar === 'object'
                 ? (() => {
                     const { showMenuButton, brandLogo, ...rest } = resolvedTopBar as any;
@@ -115,25 +125,42 @@ function Layout({
                     };
                   })()
                 : {})}
+              />
+          ))}
+          {stickyOptionsChild ?? (hasStickyOptions && (
+            <StickyOptionsTop
+              {...(() => {
+                const { enabled, visibility, ...rest } = resolvedStickyOptions as any;
+                return {
+                  ...rest,
+                  visibility:
+                    typeof enabled === 'boolean'
+                      ? {
+                          ...(visibility ?? {}),
+                          enabled,
+                        }
+                      : visibility,
+                };
+              })()}
             />
           ))}
           <Box sx={{ display: 'flex', flex: 1 }}>
-            {leftBarChild ?? (hasLeftBar && (
-              <LeftSidebar
+            {leftBarElement ?? (hasLeftBar && (
+              <LeftBarComponent
                 elements={[]}
-                {...(typeof resolvedLeft === 'object' ? (resolvedLeft as any) : {})}
+                {...(typeof resolvedLeftBar === 'object' ? (resolvedLeftBar as any) : {})}
               />
             ))}
             {resolvedContent}
             {rightBarChild ?? (hasRightBar && (
-              <RightSidebar
+              <RightBarComponent
                 elements={[]}
-                {...(typeof resolvedRight === 'object' ? (resolvedRight as any) : {})}
+                {...(typeof resolvedRightBar === 'object' ? (resolvedRightBar as any) : {})}
               />
             ))}
           </Box>
           {footerChild ?? (resolvedFooter && (
-            <Footer
+            <FooterComponent
               {...(typeof resolvedFooter === 'object'
                 ? (() => {
                     const {

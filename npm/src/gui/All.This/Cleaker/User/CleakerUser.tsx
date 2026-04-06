@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Avatar, Box, Chip, Link, Typography } from "@/gui/Atoms";
-import { useGuiTheme } from "@/gui/Hooks";
+import { useGuiTheme } from "@/gui-internals/Hooks";
 import { normalizeEndpoint } from "../cleakerBridge";
 import {
   buildSemanticTarget,

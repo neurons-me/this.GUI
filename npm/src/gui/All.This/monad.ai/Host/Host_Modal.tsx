@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGuiTheme } from '@/gui/Hooks';
+import { useGuiTheme } from '@/gui-internals/Hooks';
 import Box from '@/gui/Atoms/Box/Box';
 import Modal from '@/gui/Molecules/Modal/Modal';
 

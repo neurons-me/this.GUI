@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
 import type { BadgeProps } from './Badge';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 import Badge from './Badge';
 
 export type BadgeSpec = {

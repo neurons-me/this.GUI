@@ -25,6 +25,18 @@ export type StartAppOptions = {
   gui?: any;
 };
 
+const APP_BOOT_STATUS_KEY = '__THIS_GUI_APP_BOOT_STATUS__';
+
+function setAppBootStatus(step: string, detail?: string) {
+  try {
+    (globalThis as any)[APP_BOOT_STATUS_KEY] = {
+      step,
+      detail: detail || '',
+      at: Date.now(),
+    };
+  } catch {}
+}
+
 function isNativePromise<T = unknown>(value: unknown): value is Promise<T> {
   return value instanceof Promise || Object.prototype.toString.call(value) === '[object Promise]';
 }
@@ -111,18 +123,21 @@ export async function startApp(options: StartAppOptions = {}) {
   if (!target) {
     throw new Error('[this.gui] startApp could not resolve a mount target.');
   }
+  setAppBootStatus('start-app:target-ready');
 
   const gui = resolveGuiSurface(options.gui);
   const routerFactory = gui?.router || createRouter;
   if (typeof routerFactory !== 'function') {
     throw new Error('[this.gui] startApp requires a router factory.');
   }
+  setAppBootStatus('start-app:gui-ready');
 
   const basePath = normalizeBasePath(options.basePath);
   const currentUrl =
     options.inputUrl ||
     (typeof window !== 'undefined' ? window.location.href : '/');
   const routeState = deriveRouteState(currentUrl, basePath, options.legacyRouteQueryKey ?? 'route');
+  setAppBootStatus('start-app:route-derived', routeState.path);
 
   const installers = Array.isArray(options.install)
     ? options.install
@@ -131,6 +146,7 @@ export async function startApp(options: StartAppOptions = {}) {
       : [];
 
   for (const install of installers) {
+    setAppBootStatus('start-app:install');
     await install(gui);
   }
 
@@ -138,8 +154,10 @@ export async function startApp(options: StartAppOptions = {}) {
   if (!runtime) {
     let me = options.me;
     if (me == null && typeof options.createMe === 'function') {
+      setAppBootStatus('start-app:create-me:start');
       const created = options.createMe();
       me = isNativePromise(created) ? await created : created;
+      setAppBootStatus('start-app:create-me:done');
     }
 
     if (me == null && typeof window !== 'undefined') {
@@ -150,29 +168,37 @@ export async function startApp(options: StartAppOptions = {}) {
     }
 
     if (me != null) {
+      setAppBootStatus('start-app:runtime:create');
       const runtimeFactory =
         gui && typeof gui.render === 'function'
           ? gui.render
           : render;
       runtime = runtimeFactory(me);
+      setAppBootStatus('start-app:runtime:ready');
     }
   }
 
+  setAppBootStatus('start-app:router:create');
   const appRouter = routerFactory(target, {
     runtime,
     useHistory: options.useHistory ?? true,
     basePath,
   });
+  setAppBootStatus('start-app:router:ready');
 
   if (typeof window !== 'undefined') {
     (window as any).__GUI_APP_ROUTER__ = appRouter;
   }
 
   if (typeof options.registerRoutes === 'function') {
+    setAppBootStatus('start-app:register-routes:start');
     await options.registerRoutes(appRouter);
+    setAppBootStatus('start-app:register-routes:done');
   }
 
+  setAppBootStatus('start-app:router:start', routeState.path);
   await appRouter.start(routeState.path, options.ctx ?? {});
+  setAppBootStatus('start-app:router:start:done', routeState.path);
 
   if (
     routeState.usedLegacyQuery &&

@@ -1,5 +1,5 @@
 import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 import Grid from './Grid';
 import type { GridResolverSpec } from './Grid.types';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Avatar, Box, Typography } from '@/gui/Atoms';
-import { useGuiTheme } from '@/gui/Hooks';
+import { useGuiTheme } from '@/gui-internals/Hooks';
 import QR from '../QR';
 
 export type QRmeProps = {

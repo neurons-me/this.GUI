@@ -1,4 +1,8 @@
 // src/GUI.tsx
+/**
+ * @deprecated Compatibility surface for the legacy app/router bootstrap path.
+ * New development should mount specs through `runtime/mount.ts`.
+ */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Theme from '@/gui/Theme/Theme';
@@ -7,9 +11,10 @@ import { RouterProvider } from '@/Router/Router';
 import { GuiRegistry as CORE_REGISTRY, extendRegistry } from '@/Registry';
 import type { GuiRegistry as GuiRegistryType } from '@/Registry/types';
 import type { GuiNode, GuiSpecNode } from '@/types/gui.types';
+import { GUISettings } from '@/gui/Layout/Sidebars/Collections';
+import { createHttpNamespaceProvider } from '@/runtime/provider';
 import { deriveRouteState, normalizeRoutePath, startApp } from '@/runtime/start-app';
 export type { GuiNode, GuiSpecNode } from '@/types/gui.types';
-
 export type GUIProps = {
   title?: string;
   children?: React.ReactNode;
@@ -22,6 +27,7 @@ export type GUIProps = {
 };
 
 let __GUI_REGISTRY__: GuiRegistryType = CORE_REGISTRY as unknown as GuiRegistryType;
+/** @deprecated Prefer the runtime registry + `mount()` for new work. */
 export function installResolvers(entries: any[]) {
   if (!Array.isArray(entries) || !entries.length) return;
   __GUI_REGISTRY__ = extendRegistry(__GUI_REGISTRY__, entries);
@@ -68,12 +74,9 @@ function renderSpec(registry: GuiRegistryType, spec: any, ctx?: any): any {
   }
 
   if (isPrimitive(spec)) return spec;
-
   // Allow passing React nodes directly
   if (React.isValidElement(spec)) return spec;
-
   if (!isGuiSpec(spec)) return null;
-
   const type = (spec as any).type;
   const entry = type ? registry[type] : undefined;
   if (!entry) {
@@ -90,6 +93,7 @@ function renderSpec(registry: GuiRegistryType, spec: any, ctx?: any): any {
   return normalizeResolved(resolved);
 }
 
+/** @deprecated Prefer `mount(spec, target, options)` from `runtime/mount.ts`. */
 export function mountSpec(target: Element | string, spec: any, ctx?: any) {
   const el = typeof target === 'string' ? document.querySelector(target) : target;
   if (!el) return;
@@ -114,6 +118,7 @@ export function mountSpec(target: Element | string, spec: any, ctx?: any) {
   };
 }
 
+/** @deprecated Legacy facade kept for UMD/backward compatibility. */
 export const GUI = ({ title = 'this.GUI', children, spec, resolvers, ctx }: GUIProps) => {
   if (resolvers && resolvers.length) installResolvers(resolvers);
   const fallbackSpec = { type: 'Home', props: {} };
@@ -158,7 +163,7 @@ if (typeof window !== 'undefined') {
   (window as any).GUI.startApp = startApp;
   (window as any).GUI.deriveRouteState = deriveRouteState;
   (window as any).GUI.normalizeRoutePath = normalizeRoutePath;
-
+  (window as any).GUI.createHttpNamespaceProvider = createHttpNamespaceProvider;
   // Expose version on the global (UMD) surface
   const injectedVersion =
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -168,6 +173,11 @@ if (typeof window !== 'undefined') {
   (window as any).GUI.version = v;
   (window as any).GUI.VERSION = v;
   (window as any).GUI.ThemeModeToggle = ThemeModeToggle;
+  (window as any).GUI.GUISettings = GUISettings;
+  (window as any).GUI.SideBarsCollections = {
+    ...((window as any).GUI.SideBarsCollections || {}),
+    GUISettings,
+  };
 
   window.addEventListener('DOMContentLoaded', () => {
     if ((window as any).__THIS_GUI_DISABLE_AUTOBOOT__) return;

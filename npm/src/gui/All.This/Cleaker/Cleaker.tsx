@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useGuiTheme } from '@/gui/Hooks';
+import { useGuiTheme } from '@/gui-internals/Hooks';
 import Box from '@/gui/Atoms/Box/Box';
 import TextField from "@/gui/Atoms/TextField/TextField";
 import Icon from "@/gui/Atoms/Icon/Icon";
@@ -9,7 +9,7 @@ import Modal from "@/gui/Molecules/Modal/Modal";
 import {
   type ConnectionStatus,
   useSovereignPresence,
-} from "./Blockchain/scripts/connection";
+} from "./Namespace/scripts/connection";
 import { selectionStore } from '@/runtime/selectionStore';
 import {
   deriveChildIdentityHash,

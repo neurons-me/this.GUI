@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { useGuiTheme } from '@/gui/Hooks';
+import { useGuiTheme } from '@/gui-internals/Hooks';
 import Box from '@/gui/Atoms/Box/Box';
 import Button from '@/gui/Atoms/Button/Button';
 import HostModal from './Host_Modal';

@@ -4,7 +4,7 @@ import Collapse from './Collapse';
 import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
 import type { TransitionProps } from '@mui/material/transitions';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 
 /**
  * Declarative resolver for Collapse

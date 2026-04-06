@@ -2,7 +2,7 @@ import * as React from 'react';
 import Checkbox from './Checkbox';
 import { FormControlLabel } from '@mui/material';
 import { SxProps, Theme } from '@mui/material/styles';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 import type { RegistryEntry } from '@/Registry/types';
 
 export type CheckboxResolverProps = React.ComponentProps<typeof Checkbox> & {

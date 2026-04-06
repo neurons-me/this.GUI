@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url';
 const pkg = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
+const cleakerSourceEntry = resolve(dirname, '../../../core/cleaker/npm/src/index.ts');
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 const isDemo = process.env.DEMO === 'true';
 const lifecycle = process.env.npm_lifecycle_event || '';
@@ -48,16 +49,17 @@ export default defineConfig({
       { find: /^@\/gui\/Compounds\//, replacement: `${resolve(dirname, 'src/gui/Compounds')}/` },
       { find: /^@\/gui\/compounds$/, replacement: resolve(dirname, 'src/gui/Compounds/compounds.ts') },
       { find: /^@\/gui\/compounds\//, replacement: `${resolve(dirname, 'src/gui/Compounds')}/` },
-      { find: /^@\/gui\/Hooks$/, replacement: resolve(dirname, 'src/gui/Hooks/index.ts') },
-      { find: /^@\/gui\/Hooks\//, replacement: `${resolve(dirname, 'src/gui/Hooks')}/` },
-      { find: /^@\/gui\/hooks$/, replacement: resolve(dirname, 'src/gui/Hooks/index.ts') },
-      { find: /^@\/gui\/hooks\//, replacement: `${resolve(dirname, 'src/gui/Hooks')}/` },
-      { find: /^@\/gui\/Contexts$/, replacement: resolve(dirname, 'src/gui/Contexts/index.ts') },
-      { find: /^@\/gui\/Contexts\//, replacement: `${resolve(dirname, 'src/gui/Contexts')}/` },
-      { find: /^@\/gui\/contexts$/, replacement: resolve(dirname, 'src/gui/Contexts/index.ts') },
-      { find: /^@\/gui\/contexts\//, replacement: `${resolve(dirname, 'src/gui/Contexts')}/` },
+      { find: /^@\/gui\/Hooks$/, replacement: resolve(dirname, 'src/gui-internals/Hooks/index.ts') },
+      { find: /^@\/gui\/Hooks\//, replacement: `${resolve(dirname, 'src/gui-internals/Hooks')}/` },
+      { find: /^@\/gui\/hooks$/, replacement: resolve(dirname, 'src/gui-internals/Hooks/index.ts') },
+      { find: /^@\/gui\/hooks\//, replacement: `${resolve(dirname, 'src/gui-internals/Hooks')}/` },
+      { find: /^@\/gui\/Contexts$/, replacement: resolve(dirname, 'src/gui-internals/Contexts/index.ts') },
+      { find: /^@\/gui\/Contexts\//, replacement: `${resolve(dirname, 'src/gui-internals/Contexts')}/` },
+      { find: /^@\/gui\/contexts$/, replacement: resolve(dirname, 'src/gui-internals/Contexts/index.ts') },
+      { find: /^@\/gui\/contexts\//, replacement: `${resolve(dirname, 'src/gui-internals/Contexts')}/` },
       { find: /^@\/gui\/components$/, replacement: resolve(dirname, 'src/gui/Compounds/compounds.ts') },
       { find: /^@\/gui\/components\//, replacement: `${resolve(dirname, 'src/gui/Compounds')}/` },
+      { find: /^cleaker$/, replacement: cleakerSourceEntry },
       { find: '@', replacement: resolve(dirname, 'src') },
     ],
     dedupe: ['react', 'react-dom', 'react-router', 'react-router-dom']

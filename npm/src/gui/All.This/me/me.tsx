@@ -3,7 +3,7 @@ import ME from 'this.me';
 import Box from '@/gui/Atoms/Box/Box';
 import TextField from '@/gui/Atoms/TextField/TextField';
 import Typography from '@/gui/Atoms/Typography/Typography';
-import { useGuiTheme } from '@/gui/Hooks';
+import { useGuiTheme } from '@/gui-internals/Hooks';
 
 const MONO_FONT =
   'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace';
@@ -325,19 +325,7 @@ function formatLogLine(responseLine: string, identityValue: string): string {
 
 async function runDirectRuntimeCommand(me: any, command: string): Promise<string> {
   const trimmed = String(command || '').trim();
-  try {
-    let result: any;
-    try {
-      result = Function('me', `"use strict"; return (${trimmed});`)(me);
-    } catch (_) {
-      result = Function('me', `"use strict"; ${trimmed}`)(me);
-    }
-    const resolved = await Promise.resolve(result);
-    if (typeof resolved === 'undefined') return `ok → ${trimmed}`;
-    return `${trimmed} → ${formatValue(resolved)}`;
-  } catch (error) {
-    return `error → ${error instanceof Error ? error.message : String(error)}`;
-  }
+  return `error → direct runtime JS execution is disabled by CSP. Use structured .me commands instead: ${trimmed}`;
 }
 
 export default function Me({

@@ -11,9 +11,10 @@
 // where GuiNode can also be a string/number/boolean/null.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { defaultAdapter, isPromiseLike, type RuntimeAdapter } from './adapter';
-import type { GuiNode, GuiPrimitive, GuiSpecNode } from '@/types/gui.types';
+import { buildGuiPartRecords } from './parts';
+import type { GuiNode, GuiNodeProvenance, GuiPrimitive, GuiSpecNode } from '@/types/gui.types';
 
-export type { GuiNode, GuiPrimitive, GuiSpecNode } from '@/types/gui.types';
+export type { GuiNode, GuiNodeProvenance, GuiPrimitive, GuiSpecNode } from '@/types/gui.types';
 export type GuiRegistryLike = Record<string, any>;
 export type ResolveResult = {
   Component: any | null;
@@ -26,6 +27,9 @@ export type ResolvedNodeRecord = {
   spec: GuiSpecNode;
   resolvedProps?: Record<string, any>;
   path: string;
+  part?: string;
+  parentId?: string;
+  provenance?: GuiNodeProvenance;
 };
 
 export type RendererOptions = {
@@ -170,6 +174,16 @@ export function resolveType(type: string, opt?: RendererOptions): ResolveResult 
 function normalizeChildren(children: any): any[] {
   if (children == null) return [];
   return Array.isArray(children) ? children : [children];
+}
+
+function scheduleResolvedRecord(
+  callback: NonNullable<RendererOptions['onNodeResolved']>,
+  record: ResolvedNodeRecord
+) {
+  const schedule =
+    (typeof queueMicrotask === 'function' && queueMicrotask) ||
+    ((cb: () => void) => Promise.resolve().then(cb));
+  schedule(() => callback(record));
 }
 
 function withAutoKey(child: any, key: string): any {
@@ -479,11 +493,30 @@ export function renderNode(node: GuiNode, opt?: RendererOptions, path = 'r'): an
         spec: next,
         resolvedProps,
         path,
+        provenance: next.provenance,
       };
-      const schedule =
-        (typeof queueMicrotask === 'function' && queueMicrotask) ||
-        ((cb: () => void) => Promise.resolve().then(cb));
-      schedule(() => nextOpt.onNodeResolved?.(record));
+      scheduleResolvedRecord(nextOpt.onNodeResolved, record);
+
+      if (Array.isArray(next.parts) && next.parts.length > 0) {
+        const partRecords = buildGuiPartRecords(
+          {
+            root: {
+              id: nodeId,
+              type: typeof type === 'string' ? type : 'GuiNode',
+              props: resolvedProps,
+              provenance: next.provenance,
+            },
+            parts: next.parts,
+          },
+          {
+            includeRoot: false,
+            pathBase: `${path}.parts`,
+          }
+        );
+        partRecords.forEach((partRecord) =>
+          scheduleResolvedRecord(nextOpt.onNodeResolved as NonNullable<RendererOptions['onNodeResolved']>, partRecord)
+        );
+      }
     }
 
     // children (auto-key spec siblings)

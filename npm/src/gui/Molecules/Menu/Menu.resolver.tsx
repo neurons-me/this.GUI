@@ -4,7 +4,7 @@ import Menu from './Menu';
 import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
 import type { PopoverOrigin } from '@mui/material/Popover';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 
 /**
  * Declarative spec for Menu

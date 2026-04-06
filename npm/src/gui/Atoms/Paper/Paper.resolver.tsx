@@ -3,7 +3,7 @@ import * as React from 'react';
 import Paper from './Paper';
 import Link from '@/gui/Atoms/Link/Link';
 import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 
 /**
  * Declarative spec for Paper (polymorphic container)

@@ -1,7 +1,7 @@
 import {
   normalizeBlockchain,
   toBlockchainBaseUrl,
-} from "./Blockchain/scripts/connection";
+} from "./Namespace/scripts/connection";
 
 export const DEFAULT_CLEAKER_NAMESPACE_ORIGIN = "https://cleaker.me";
 export const DEFAULT_CLEAKER_NAMESPACE_EXPRESSION = "cleaker.me";

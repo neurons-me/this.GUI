@@ -36,10 +36,13 @@ import InspectorToggleResolver from "@/gui/Molecules/InspectorToggle/InspectorTo
 
 // Layout
 import LayoutResolver from "@/gui/Layout/Layout.resolver";
-import FooterResolver from "@/gui/Layout/Footer/Footer.resolver";
-import LeftSidebarResolver from "@/gui/Layout/Sidebars/LeftSidebar/LeftSidebar.resolver";
-import RightSidebarResolver from "@/gui/Layout/Sidebars/RightSidebar/RightSidebar.resolver";
-import NavBarResolver from "@/gui/Layout/TopBar/TopBar.resolver";
+import StickyOptionsTopResolver, {
+  StickyOptionsResolver,
+} from "@/gui/Layout/StickyOptions/StickyOptionsTop.resolver";
+import FooterResolver from "@/gui/Layout/Sidebars/Footer/Footer.resolver";
+import LeftBarResolver from "@/gui/Layout/Sidebars/LeftBar/LeftBar.resolver";
+import RightBarResolver from "@/gui/Layout/Sidebars/RightBar/RightBar.resolver";
+import TopBarResolver from "@/gui/Layout/Sidebars/TopBar/TopBar.resolver";
 
 // All.This
 import CleakerResolver from "@/gui/All.This/Cleaker/Cleaker.resolver";
@@ -47,6 +50,7 @@ import CleakerComposerResolver from "@/gui/All.This/Cleaker/CleakerComposer.reso
 import CleakerQRResolver from "@/gui/All.This/Cleaker/QR/CleakerQR.resolver";
 import CleakerGroupResolver from "@/gui/All.This/Cleaker/Group/CleakerGroup.resolver";
 import CleakerUserResolver from "@/gui/All.This/Cleaker/User/CleakerUser.resolver";
+import NamespaceResolver from "@/gui/All.This/Cleaker/Namespace/Namespace.resolver";
 import QRmeResolver from "@/gui/All.This/me/QR.me/QR.me.resolver";
 import SessionQRResolver from "@/gui/All.This/me/QR.resolver";
 import MeResolver from "@/gui/All.This/me/me.resolver";
@@ -86,9 +90,11 @@ export const GuiRegistry = createRegistry([
   InspectorToggleResolver,
   // Layout
   LayoutResolver,
-  NavBarResolver,
-  LeftSidebarResolver,
-  RightSidebarResolver,
+  StickyOptionsTopResolver,
+  StickyOptionsResolver,
+  TopBarResolver,
+  LeftBarResolver,
+  RightBarResolver,
   FooterResolver,
   // All.This
   MeResolver,
@@ -97,6 +103,7 @@ export const GuiRegistry = createRegistry([
   CleakerQRResolver,
   CleakerComposerResolver,
   CleakerResolver,
+  NamespaceResolver,
   CleakerGroupResolver,
   CleakerUserResolver,
 ]);

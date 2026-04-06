@@ -37,6 +37,18 @@ type RouterMountOptions = Omit<MountOptions, "runtime" | "ctx">;
 
 const defaultNotFound: NotFoundHandler = () => ({ type: "Page", children: ["404 Not Found"] });
 
+const ROUTER_STATUS_KEY = '__THIS_GUI_ROUTER_STATUS__';
+
+function setRouterStatus(step: string, detail?: string) {
+  try {
+    (globalThis as any)[ROUTER_STATUS_KEY] = {
+      step,
+      detail: detail || '',
+      at: Date.now(),
+    };
+  } catch {}
+}
+
 type CompiledRoute = {
   path: string;
   handler: RouteHandler;
@@ -112,11 +124,13 @@ export class Router {
 
   private renderMounted(spec: RouteSpec, ctx: Record<string, any>): void {
     if (!this.mountTarget) return;
+    setRouterStatus('router:mount:start', this.currentPath || '/');
     mountGUI(spec, this.mountTarget, {
       ...this.mountOptions,
       runtime: this.runtime ?? undefined,
       ctx,
     });
+    setRouterStatus('router:mount:done', this.currentPath || '/');
   }
 
   private normalize(path: string): string {
@@ -246,6 +260,7 @@ export class Router {
 
   async resolve(path: string, ctx: Record<string, any> = {}): Promise<RouteSpec> {
     const normalized = this.stripBasePath(path);
+    setRouterStatus('router:resolve:start', normalized);
     const found = this.findRoute(normalized);
     const handler = found?.route?.handler ?? this.notFound;
     const params = found?.params ?? {};
@@ -260,26 +275,34 @@ export class Router {
       if (typeof handler === "string") {
         // Semantic pointer mode (optional)
         if (handler.startsWith("me/") && this.runtime?.resolve) {
-          return await this.runtime.resolve(handler, context);
+          const out = await this.runtime.resolve(handler, context);
+          setRouterStatus('router:resolve:done', normalized);
+          return out;
         }
+        setRouterStatus('router:resolve:done', normalized);
         return { type: "Text", children: [handler] };
       }
 
       if (typeof handler === "function") {
-        return await handler(context);
+        const out = await handler(context);
+        setRouterStatus('router:resolve:done', normalized);
+        return out;
       }
 
+      setRouterStatus('router:resolve:done', normalized);
       return handler;
     } catch (error) {
       // Keep the SPA alive on route failures.
       // eslint-disable-next-line no-console
       console.error(`[Router] Error resolving ${normalized}:`, error);
+      setRouterStatus('router:resolve:error', normalized);
       return this.notFound(context, error);
     }
   }
 
   async navigate(path: string, { push = true, ctx = {} }: RouterNavigateOptions = {}): Promise<RouteSpec> {
     const normalized = this.stripBasePath(path);
+    setRouterStatus('router:navigate:start', normalized);
     this.currentPath = normalized;
     const spec = await this.resolve(normalized, ctx);
 
@@ -299,6 +322,7 @@ export class Router {
     };
     for (const listener of this.listeners) listener(spec, { path: normalized, ctx: enrichedCtx });
     this.renderMounted(spec, enrichedCtx);
+    setRouterStatus('router:navigate:done', normalized);
     return spec;
   }
 

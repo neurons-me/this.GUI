@@ -1,4 +1,4 @@
-import { useGuiMediaQuery, useGuiTheme } from '@/gui/Hooks';
+import { useGuiMediaQuery, useGuiTheme } from '@/gui-internals/Hooks';
 
 export function useLayoutBreakpoints() {
   const theme = useGuiTheme();

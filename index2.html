@@ -433,10 +433,12 @@
 
 const LOCAL_CSS_DEFAULT = '../../this/GUI/npm/dist/styles.css';
 const LOCAL_JS_DEFAULT = '../../this/GUI/npm/dist/this.gui.umd.js';
+const LOCAL_ME_JS_DEFAULT = '../../this/.me/npm/dist/me.umd.js';
 const LATEST_META_URL = 'https://registry.npmjs.org/this.gui/latest';
 const LATEST_FALLBACK_VERSION = '1.4.89';
 const LATEST_CSS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/styles.css';
 const LATEST_JS = 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.umd.js';
+const LATEST_ME_JS = 'https://cdn.jsdelivr.net/npm/this.me@latest/dist/me.umd.js';
 const REMOTE_ASSET_TIMEOUT_MS = 30000;
     const REACT_CDN = 'https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js';
     const REACTDOM_CDN = 'https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js';
@@ -644,6 +646,30 @@ const REMOTE_ASSET_TIMEOUT_MS = 30000;
       s.onerror = () => finishReject(new Error('script load failed: ' + src));
       document.head.appendChild(s);
     });
+
+    let meLoadPromise = null;
+
+    async function ensureMeRuntime() {
+      if (typeof window.Me === 'function') return window.Me;
+      if (!meLoadPromise) {
+        meLoadPromise = (async () => {
+          try {
+            await loadScript(LOCAL_ME_JS_DEFAULT);
+          } catch (localError) {
+            console.warn('[GUI] Local .me runtime failed, falling back to CDN.', localError);
+            await loadScript(LATEST_ME_JS);
+          }
+          if (typeof window.Me !== 'function') {
+            throw new Error('.me runtime loaded but window.Me is missing');
+          }
+          return window.Me;
+        })().catch((error) => {
+          meLoadPromise = null;
+          throw error;
+        });
+      }
+      return meLoadPromise;
+    }
 
     function readSources() {
       try {
@@ -953,6 +979,17 @@ const REMOTE_ASSET_TIMEOUT_MS = 30000;
       throw new Error('GUI runtime missing: window.GUI.mount not found');
     }
     const GUI = window.GUI;
+    let meKernel = null;
+    let runtime = null;
+    try {
+      const MeCtor = await ensureMeRuntime();
+      meKernel = new MeCtor();
+      if (typeof GUI.render === 'function') {
+        runtime = GUI.render(meKernel);
+      }
+    } catch (error) {
+      console.warn('[GUI] .me runtime unavailable; Explain will remain disabled.', error);
+    }
     // --- Version (direct) ------------------------------------------------------
     const VERSION_LABEL = GUI?.version || 'unknown';
     const runtimeInfo = window.GUI_RUNTIME_INFO || {};
@@ -1716,7 +1753,12 @@ const REMOTE_ASSET_TIMEOUT_MS = 30000;
       inspectorEnabled = getInspectorEnabled();
       adminViewEnabled = getAdminViewEnabled();
       const spec = buildSpec();
-      GUI.mount(spec, '#root', { inspectorEnabled, adminViewEnabled });
+      GUI.mount(spec, '#root', {
+        inspectorEnabled,
+        adminViewEnabled,
+        me: meKernel || undefined,
+        runtime: runtime || undefined,
+      });
       installLeftbarViewObserver();
       console.log('[GUI] ✅ Runtime mounted via GUI.mount');
     }

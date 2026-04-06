@@ -4,7 +4,7 @@ import Typography from './Typography';
 import Link from '@/gui/Atoms/Link/Link';
 import type { RegistryEntry } from '@/Registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 
 /**
  * Declarative spec for Typography

@@ -1,8 +1,8 @@
 // Page.tsx
 import { useMemo } from 'react';
 import { Box } from '@/gui/Atoms';
-import { useInsetsContext } from '@/gui/Contexts/InsetsContext';
-import { useGuiTheme } from '@/gui/Hooks';
+import { useInsetsContext } from '@/gui-internals/Contexts/InsetsContext';
+import { useGuiTheme } from '@/gui-internals/Hooks';
 import type { PageProps } from './Page.types';
 import PageHead from './PageHead';
 /**

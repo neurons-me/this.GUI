@@ -9,7 +9,7 @@ import ListItemText from '../ListItemText/ListItemText';
 import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
 import Box from '@/gui/Atoms/Box/Box';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 
 /**
  * Declarative spec for ListItemButton

@@ -1,66 +1,47 @@
 // @/gui/layouts/ResponsiveUI/Layout/Layout.types.ts
-import type { FooterElement } from '@/gui/Layout/Footer/Footer.types';
+import type { FooterProps } from '@/gui/Layout/Sidebars/Footer/Footer.types';
+import type { LeftBarProps } from '@/gui/Layout/Sidebars/LeftBar/LeftBar.types';
+import type { RightBarProps } from '@/gui/Layout/Sidebars/RightBar/RightBar.types';
+import type { TopBarProps } from '@/gui/Layout/Sidebars/TopBar/TopBar.types';
+import type { StickyItem, StickyOptionsTopProps } from '@/gui/Layout/StickyOptions/StickyOptionsTop';
 import type { ReactNode } from 'react';
-
-export interface TopBarConfig {
+export interface TopBarConfig extends Partial<TopBarProps> {
   showMenuButton?: boolean;
-  [key: string]: any;
 }
 
-export interface LeftSidebarConfig {
-  [key: string]: any;
-}
-
-export interface RightSidebarConfig {
-  [key: string]: any;
-}
-
-export interface FooterConfig {
+export interface LeftBarConfig extends Partial<LeftBarProps> {}
+export interface RightBarConfig extends Partial<RightBarProps> {}
+export interface FooterConfig extends Partial<FooterProps> {
   title?: string;
-  brandLabel?: string;
-  brandLogo?: string;
-  brandHref?: string;
-  brandAvatarFallback?: string;
-  leftElements?: FooterElement[];
-  centerElements?: FooterElement[];
-  rightElements?: FooterElement[];
-  position?: 'static' | 'fixed' | 'sticky';
-  elevation?: number;
-  className?: string;
-  id?: string;
-  'data-testid'?: string;
-  sx?: any;
-  appBarSx?: any;
-  sectionSx?: any;
+}
+export type StickyOptionsLayoutItem = Omit<StickyItem, 'icon'> & {
+  // Layout config follows the same declarative icon token pattern as the rest of GUI.
+  // Use <StickyOptionsTop /> directly if you need to pass a composed <Icon /> element.
+  icon: string;
+};
+
+export interface StickyOptionsConfig extends Omit<Partial<StickyOptionsTopProps>, 'items'> {
+  enabled?: boolean;
+  items?: StickyOptionsLayoutItem[];
 }
 
 export interface LayoutProps {
-  // Legacy names (supported)
-  /** @deprecated use topBar */
-  topBarConfig?: TopBarConfig | boolean;
-  /** @deprecated use leftBar */
-  leftSidebarConfig?: LeftSidebarConfig | boolean;
-  /** @deprecated use rightBar */
-  rightSidebarConfig?: RightSidebarConfig | boolean;
-  /** @deprecated use footer */
-  footerConfig?: FooterConfig | boolean;
-
-  // New semantic names (preferred for declarative specs)
-  topBar?: TopBarConfig | boolean;
-  leftBar?: LeftSidebarConfig | boolean;
-  rightBar?: RightSidebarConfig | boolean;
-  footer?: FooterConfig | boolean;
-
-  // PascalCase aliases (supported)
   TopBar?: TopBarConfig | boolean;
-  LeftBar?: LeftSidebarConfig | boolean;
-  RightBar?: RightSidebarConfig | boolean;
+  LeftBar?: LeftBarConfig | boolean;
+  RightBar?: RightBarConfig | boolean;
   Footer?: FooterConfig | boolean;
-
-  // Deprecated aliases (kept for back-compat)
-  LeftSideBar?: LeftSidebarConfig | boolean;
-  RightSideBar?: RightSidebarConfig | boolean;
-
+  topBar?: TopBarConfig | boolean;
+  leftBar?: LeftBarConfig | boolean;
+  rightBar?: RightBarConfig | boolean;
+  footer?: FooterConfig | boolean;
+  topBarConfig?: TopBarConfig | boolean;
+  leftBarConfig?: LeftBarConfig | boolean;
+  leftSidebarConfig?: LeftBarConfig | boolean;
+  rightBarConfig?: RightBarConfig | boolean;
+  rightSidebarConfig?: RightBarConfig | boolean;
+  footerConfig?: FooterConfig | boolean;
+  stickyOptions?: StickyOptionsConfig | boolean;
+  stickyOptionsConfig?: StickyOptionsConfig | boolean;
   children?: ReactNode;
 }
 

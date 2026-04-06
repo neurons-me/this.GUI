@@ -1,5 +1,5 @@
 import { Hero } from '@/gui/Molecules/Hero/Hero';
-import { InsetsProvider } from '@/gui/Contexts/InsetsContext';
+import { InsetsProvider } from '@/gui-internals/Contexts/InsetsContext';
 import Layout from '@/gui/Layout/Layout';
 import type { Meta, StoryObj } from '@storybook/react';
 import Page from './Page';
@@ -139,8 +139,8 @@ export const LayoutWithPageAndHero: Story = {
     <InsetsProvider>
       <Layout
         topBarConfig={{ title: 'Neuroverse Layout' }}
-        leftSidebarConfig={{ initialView: 'menu' }}
-        rightSidebarConfig={{ initialView: 'chat' }}
+        leftSidebarConfig={{ initialView: 'expanded' }}
+        rightSidebarConfig={{ initialView: 'expanded' }}
       >
         <Page background="linear-gradient(135deg, #0a192f, #172a45)" padding={4}>
           <Hero

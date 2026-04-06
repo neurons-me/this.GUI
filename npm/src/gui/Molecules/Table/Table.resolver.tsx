@@ -1,7 +1,7 @@
 // src/gui/components/atoms/Table/Table.resolver.tsx
 import * as React from 'react';
 import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 import type { SxProps, Theme } from '@mui/material/styles';
 import Table from './Table';
 

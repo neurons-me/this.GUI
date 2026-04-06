@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Tooltip from './Tooltip';
 import type { SxProps, Theme } from '@mui/material/styles';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
 
 /**

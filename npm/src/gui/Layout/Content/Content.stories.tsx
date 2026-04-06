@@ -6,7 +6,45 @@ import Typography from '@/gui/Atoms/Typography/Typography';
 const meta: Meta<typeof Layout> = {
   title: 'GUI/Layout/Content',
   component: Layout,
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        component:
+`The **Content** area is the main space of the layout.
+
+## What it does
+- Shows the main page content.
+- Adds padding automatically when bars are present.
+- Works with \`TopBar\`, \`LeftBar\`, \`RightBar\`, and \`Footer\`.
+
+## What to pass
+- Put your page UI inside \`<Layout>...</Layout>\`.
+- Turn bars on by passing \`TopBar\`, \`LeftBar\`, \`RightBar\`, and \`Footer\` props.
+- If you pass no bars, Content fills the page by itself.
+
+## Basic shape
+~~~tsx
+<Layout>
+  <YourPage />
+</Layout>
+~~~
+
+## With bars
+~~~tsx
+<Layout
+  TopBar={{ title: 'App' }}
+  LeftBar={{ initialView: 'rail' }}
+  RightBar={{ initialView: 'expanded' }}
+  Footer={{ brandLabel: 'neurons.me' }}
+>
+  <YourPage />
+</Layout>
+~~~
+`,
+      },
+    },
+  },
 };
 export default meta;
 interface DemoContentProps {
@@ -35,47 +73,48 @@ const Template = (args: React.ComponentProps<typeof Layout>): React.JSX.Element 
 );
 
 type Story = StoryObj<typeof Layout>;
-export const OnlyContent: Story = {
+
+export const NoBars: Story = {
   render: Template,
-  args: {
-    topBarConfig: false,
-    leftSidebarConfig: false,
-    rightSidebarConfig: false,
-    footerConfig: false,
-  },
+  args: {},
 };
 
-export const WithTopBar: Story = {
+export const FullShell: Story = {
   render: Template,
   args: {
-    topBarConfig: { title: 'Top Bar Example' },
-  },
-};
-
-export const WithSidebars: Story = {
-  render: Template,
-  args: {
-    leftSidebarConfig: { initialView: 'expanded' },
-    rightSidebarConfig: { initialView: 'expanded' },
-  },
-};
-
-export const WithTopBarAndSidebars: Story = {
-  render: Template,
-  args: {
-    topBarConfig: { title: 'Top Bar Example' },
-    leftSidebarConfig: { initialView: 'rail' },
-    rightSidebarConfig: { initialView: 'expanded' },
-  },
-};
-
-export const FullLayout: Story = {
-  render: Template,
-  args: {
-    topBarConfig: { title: 'Full Layout' },
-    leftSidebarConfig: { initialView: 'rail' },
-    rightSidebarConfig: { initialView: 'rail' },
-    footerConfig: {
+    TopBar: {
+      title: 'Full Layout',
+    },
+    LeftBar: {
+      initialView: 'rail',
+      elements: [
+        { type: 'link', props: { label: 'Dashboard', icon: 'dashboard' } },
+        { type: 'link', props: { label: 'Analytics', icon: 'bar_chart' } },
+      ],
+      footerElements: [
+        { type: 'link', props: { label: 'Settings', icon: 'settings' } },
+      ],
+    },
+    RightBar: {
+      initialView: 'expanded',
+      elements: [
+        { type: 'link', props: { label: 'Activity', icon: 'history' } },
+        {
+          type: 'menu',
+          props: {
+            label: 'Views',
+            icon: 'view_cozy',
+            items: [
+              { label: 'Timeline', icon: 'timeline' },
+            ],
+          },
+        },
+      ],
+      footerElements: [
+        { type: 'action', props: { label: 'Help', icon: 'help' } },
+      ],
+    },
+    Footer: {
       brandLabel: 'neurons.me',
       position: 'static',
       leftElements: [{ type: 'link', props: { label: 'Docs', href: '/docs' } }],

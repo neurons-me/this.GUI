@@ -6,6 +6,7 @@ import { renderWithGUI } from './renderer';
 import { SelectionProvider, useSelection } from './selection';
 import { RuntimeInspector } from './inspector';
 import { RuntimeAdminView } from './adminView';
+import { RuntimeEnvironmentProvider } from './runtimeContext';
 import {
   ensureRuntimeControlSurface,
   readAdminViewPreference,
@@ -81,6 +82,22 @@ function getReactGlobals(opt?: any) {
   };
 }
 
+function resolveMountedKernel(options: MountOptions | any): any {
+  const explicit = options?.me;
+  if (explicit) return explicit;
+
+  const runtime = options?.runtime as any;
+  if (runtime?.__me) return runtime.__me;
+  if (runtime?.me) return runtime.me;
+
+  const ctx = options?.ctx as any;
+  if (ctx?.me) return ctx.me;
+  if (ctx?.runtime?.__me) return ctx.runtime.__me;
+  if (ctx?.runtime?.me) return ctx.runtime.me;
+
+  return undefined;
+}
+
 function RuntimeRoot({
   spec,
   gui,
@@ -93,7 +110,10 @@ function RuntimeRoot({
   ReactNS: any;
 }) {
   const selection = useSelection();
+  const registerNode = selection.registerNode;
+  const unregisterNode = selection.unregisterNode;
   const pendingResolved = React.useRef<ResolvedNodeRecord[]>([]);
+  const lastResolvedIds = React.useRef<Set<string>>(new Set());
   const collectResolved = React.useCallback((record: ResolvedNodeRecord) => {
     pendingResolved.current.push(record);
   }, []);
@@ -102,8 +122,26 @@ function RuntimeRoot({
     if (!pendingResolved.current.length) return;
     const batch = pendingResolved.current.slice();
     pendingResolved.current = [];
-    batch.forEach((record) => selection.registerNode(record));
-  });
+    const deduped = new Map<string, ResolvedNodeRecord>();
+    batch.forEach((record) => deduped.set(record.id, record));
+    const nextIds = new Set(deduped.keys());
+
+    lastResolvedIds.current.forEach((id) => {
+      if (!nextIds.has(id)) {
+        unregisterNode(id);
+      }
+    });
+
+    deduped.forEach((record) => registerNode(record));
+    lastResolvedIds.current = nextIds;
+  }, [registerNode, unregisterNode]);
+
+  React.useEffect(() => {
+    return () => {
+      lastResolvedIds.current.forEach((id) => unregisterNode(id));
+      lastResolvedIds.current = new Set();
+    };
+  }, [unregisterNode]);
   const renderOptions = React.useMemo(
     () => ({
       ...options,
@@ -177,7 +215,8 @@ export function mount(
       adminViewEnabled: readAdminViewPreference(),
     };
   }
-  if (!finalOptions.runtime && (finalOptions as any).me) {
+  const resolvedMe = resolveMountedKernel(finalOptions);
+  if (!finalOptions.runtime && resolvedMe) {
     const runtimeFactory =
       typeof gui?.render === 'function'
         ? gui.render
@@ -185,7 +224,7 @@ export function mount(
           ? gui.RunMe
           : null;
     if (runtimeFactory) {
-      finalOptions = { ...finalOptions, runtime: runtimeFactory((finalOptions as any).me) };
+      finalOptions = { ...finalOptions, runtime: runtimeFactory(resolvedMe) };
     }
   }
 
@@ -203,14 +242,25 @@ export function mount(
   }
 
   let el = React.createElement(
-    SelectionProvider,
-    { initialInspectorEnabled: Boolean(finalOptions.inspectorEnabled) },
-    React.createElement(RuntimeRoot, {
-      spec: finalSpec,
-      gui,
-      options: finalOptions,
-      ReactNS: React,
-    })
+    RuntimeEnvironmentProvider,
+    {
+      value: {
+        gui,
+        runtime: finalOptions.runtime,
+        ctx: finalOptions.ctx,
+        me: resolvedMe,
+      },
+    },
+    React.createElement(
+      SelectionProvider,
+      { initialInspectorEnabled: Boolean(finalOptions.inspectorEnabled) },
+      React.createElement(RuntimeRoot, {
+        spec: finalSpec,
+        gui,
+        options: finalOptions,
+        ReactNS: React,
+      })
+    )
   );
 
   // Some components rely on `useInsetsContext`, which requires an `InsetsProvider` above.

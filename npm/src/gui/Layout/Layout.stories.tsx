@@ -18,6 +18,7 @@ It coordinates the TopBar left/right sidebars, and Footer so their insets remain
 
 - Inset-aware shell — provides the layout context and automatically keeps TopBar/Footer/content aligned as sidebars open/close.
 - **Composable regions** – optional \`TopBar\`, \`LeftBar\`, \`RightBar\`, and \`Footer\` let you enable only what you need.
+- **Sticky actions** – \`stickyOptions\` uses the same GUI icon registry pattern as the rest of the shell, so config-driven quick actions stay consistent with sidebars and nav links.
 
 ## Declarative usage
 ~~~json
@@ -64,6 +65,13 @@ It coordinates the TopBar left/right sidebars, and Footer so their insets remain
       ]
     },
     "RightBar": { "elements": [] },
+    "stickyOptions": {
+      "items": [
+        { "icon": "insights", "label": "Insights", "href": "/insights" },
+        { "icon": "menu_book", "label": "Docs", "href": "/docs" },
+        { "icon": "help", "label": "Support", "href": "/support" }
+      ]
+    },
     "Footer": {
       "brandLabel": "neurons.me",
       "centerElements": [
@@ -123,6 +131,13 @@ function DashboardPage() {
           { type: "link", props: { label: "Alerts", icon: "notifications" } },
         ],
       }}
+      stickyOptions={{
+        items: [
+          { icon: "insights", label: "Insights", href: "/insights" },
+          { icon: "menu_book", label: "Docs", href: "/docs" },
+          { icon: "help", label: "Support", href: "/support" },
+        ],
+      }}
     >
       <Outlet />
     </Layout>
@@ -133,6 +148,7 @@ function DashboardPage() {
 ---
 ## Notes
 - Props objects mirror the props of the individual components (TopBar, LeftBar, RightBar, Footer). (Legacy \`*Config\` props are still supported.)
+- \`stickyOptions.items\` should use GUI icon token strings, matching the registry pattern used by \`TopBar\`, \`LeftBar\`, \`RightBar\`, and \`Footer\`.
 - Set a config to \`false\` (or omit it) to exclude that region entirely.
 - Children render in document order beneath any enabled sidebars/top bar – for sticky layouts remember to add padding or section containers as shown below.
 `,
@@ -215,7 +231,7 @@ const Template: StoryFn<React.ComponentProps<typeof Layout>> = (args) => (
 
 type Story = StoryObj<typeof Layout>;
 
-export const TopOnly: Story = {
+export const TopBar: Story = {
   render: Template,
   args: {
     TopBar: {
@@ -231,14 +247,15 @@ export const TopOnly: Story = {
     },
     LeftBar: false,
     RightBar: false,
-    Footer: false,
+    Footer: false
   },
 };
 
-export const TopWithLeftBar: Story = {
+
+export const TopAndLeftBar: Story = {
   render: Template,
   args: {
-    ...TopOnly.args,
+    ...TopBar.args,
     LeftBar: {
       elements: [
         { type: "link", props: { label: "Overview", icon: "dashboard" } },
@@ -261,10 +278,10 @@ export const TopWithLeftBar: Story = {
   },
 };
 
-export const TopWithLeftAndRight: Story = {
+export const TopLeftAndRightBar: Story = {
   render: Template,
   args: {
-    ...TopWithLeftBar.args,
+    ...TopAndLeftBar.args,
     RightBar: {
       elements: [
         { type: "link", props: { label: "Activity", icon: "history" } },
@@ -274,10 +291,10 @@ export const TopWithLeftAndRight: Story = {
   },
 };
 
-export const FullShellWithFooter: Story = {
+export const FullShell: Story = {
   render: Template,
   args: {
-    ...TopWithLeftAndRight.args,
+    ...TopLeftAndRightBar.args,
     Footer: {
       brandLabel: "neurons.me",
       brandLogo: "https://neurons.me/neurons.me.png",
@@ -290,6 +307,30 @@ export const FullShellWithFooter: Story = {
         { type: "link", props: { label: "GitHub", href: "https://github.com", icon: "code", iconColor: "var(--gui-warning)", external: true } },
       ],
       position: "fixed",
+    },
+  },
+};
+
+export const WithStickyOptions: Story = {
+  render: Template,
+  args: {
+    ...TopLeftAndRightBar.args,
+    stickyOptions: {
+      items: [
+        { icon: 'insights', label: 'Insights', href: '/insights', iconColor: 'primary' },
+        { icon: 'menu_book', label: 'Docs', href: '/docs', iconColor: 'info' },
+        { icon: 'help', label: 'Support', href: '/support', iconColor: 'success' },
+      ],
+      positioning: { mode: 'sticky', topOffset: '0.55rem' },
+      behavior: { iconOnlyOnMobile: false },
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Shell-level sticky actions using **GUI registry tokens** only. This is the recommended `Layout` configuration path for sticky quick actions.',
+      },
     },
   },
 };
@@ -320,6 +361,14 @@ export const LayoutWithPage: Story = {
           { type: 'link', props: { label: 'Chat', icon: 'chat' } },
         ],
       }}
+      stickyOptions={{
+        items: [
+          { icon: 'insights', label: 'Insights', href: '/insights', iconColor: 'primary' },
+          { icon: 'menu_book', label: 'Docs', href: '/docs', iconColor: 'info' },
+          { icon: 'help', label: 'Support', href: '/support', iconColor: 'success' },
+        ],
+        positioning: { mode: 'sticky', topOffset: '0.55rem' },
+      }}
       Footer={{
         brandLabel: 'neurons.me',
         centerElements: [
@@ -333,9 +382,17 @@ export const LayoutWithPage: Story = {
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 720 }}>
           This example shows how a Page component can be used inside the responsive Layout,
-          automatically adapting to inset updates from the TopBar, sidebars, and Footer.
+          automatically adapting to inset updates from the TopBar, sidebars, Footer, and the sticky quick-actions bar.
         </Typography>
       </Page>
     </Layout>
   ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Preferred full-page example: `Layout` + `Page` + `stickyOptions`, all configured with the same declarative GUI icon tokens used across the rest of the shell.',
+      },
+    },
+  },
 };

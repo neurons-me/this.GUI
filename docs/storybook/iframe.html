@@ -612,8 +612,6 @@
   }
   .sbdocs p,
   .sbdocs li,
-  .sbdocs div,
-  .sbdocs span,
   .sbdocs a,
   .sbdocs td,
   .sbdocs th,
@@ -631,11 +629,28 @@
   .sbdocs hr {
     border-color: var(--docs-border) !important;
   }
-  .sbdocs code {
+  .sbdocs :not(pre) > code,
+  .sbdocs p code,
+  .sbdocs li code,
+  .sbdocs td code,
+  .sbdocs th code,
+  .sbdocs h1 code,
+  .sbdocs h2 code,
+  .sbdocs h3 code,
+  .sbdocs h4 code,
+  .sbdocs h5 code,
+  .sbdocs h6 code {
     color: var(--mui-palette-text-primary, #e6e6e6) !important;
     background: rgba(255,255,255,0.08) !important;
     border-radius: 6px !important;
     padding: 2px 6px !important;
+  }
+  .sbdocs pre > code,
+  .sbdocs .docblock-source pre > code,
+  .sbdocs .sb-unstyled pre > code {
+    background: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
   }
   .sbdocs pre,
   .sbdocs .docblock-source,
@@ -645,8 +660,7 @@
     border-color: var(--docs-border) !important;
   }
   .sbdocs .sb-unstyled,
-  .sbdocs .sb-unstyled div,
-  .sbdocs .sb-unstyled span {
+  .sbdocs .sb-unstyled div {
     color: inherit !important;
   }
   .sbdocs .docs-story,
@@ -783,7 +797,7 @@
   }
 </style>
 
-    <script type="module" crossorigin src="./assets/iframe-AZWHUjJ8.js"></script>
+    <script type="module" crossorigin src="./assets/iframe-COO5skUf.js"></script>
     <link rel="modulepreload" crossorigin href="./assets/preload-helper-Dp1pzeXC.js">
     <link rel="stylesheet" crossorigin href="./assets/iframe-Bmvztcvx.css">
   </head>

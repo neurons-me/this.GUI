@@ -15,13 +15,13 @@ import Checkbox from '@/gui/Atoms/Checkbox/Checkbox';
 import Tooltip from '@/gui/Molecules/Tooltip/Tooltip';
 import Switch from '@/gui/Atoms/Switch/Switch';
 import Icon from '@/gui/Atoms/Icon/Icon';
-import { useThemeContext } from '@/gui/Contexts/ThemeContext';
+import { useThemeContext } from '@/gui-internals/Contexts/ThemeContext';
 import {
   alphabetical,
   applyCollectionRules,
   recentFirst,
   selectedFirst,
-} from '@/gui/Collections/rules';
+} from '@/gui-internals/Collections/rules';
 import { renderWithGUI } from '@/runtime/renderer';
 function getPreviewSwatches(item: ThemeManifest) {
   const swatches = [];

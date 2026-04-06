@@ -3,38 +3,39 @@ import type { ReactNode } from 'react';
 export type ModuleSource = 'local' | 'cdn';
 export type RuntimeModuleState = 'pending' | 'on' | 'off';
 
-export type ModuleSurfaceProps = {
-  'data-gui-node-id'?: string;
-  'data-gui-component'?: string;
-  title: ReactNode;
-  subtitle?: ReactNode;
-  meta?: ReactNode;
-  actions?: ReactNode;
-  children?: ReactNode;
-};
-
-export type ModuleCardProps = ModuleSurfaceProps;
-export type ModuleRowProps = ModuleSurfaceProps;
-
-export type RuntimeModuleProps = {
+export interface RuntimeModuleProps {
   'data-gui-node-id'?: string;
   'data-gui-component'?: string;
   source: ModuleSource;
   state: RuntimeModuleState;
-  assetUrl?: ReactNode;
-  version?: ReactNode;
+  assetUrl?: string;
+  version?: string;
   onSourceChange?: (nextSource: ModuleSource) => void;
-};
+}
 
-export type ModulesGridProps = {
+export interface ModuleFrameProps {
   'data-gui-node-id'?: string;
   'data-gui-component'?: string;
+  title?: ReactNode;
+  subtitle?: ReactNode;
+  meta?: ReactNode;
+  actions?: ReactNode;
   children?: ReactNode;
-  minColumnWidth?: number | string;
-};
+  sx?: Record<string, any>;
+}
 
-export type ModulesListProps = {
-  'data-gui-node-id'?: string;
-  'data-gui-component'?: string;
+export interface ModuleCollectionProps {
   children?: ReactNode;
-};
+  gap?: number;
+  sx?: Record<string, any>;
+}
+
+export interface AllThisProps {
+  title?: ReactNode;
+  subtitle?: ReactNode;
+  children?: ReactNode;
+  modules?: ReactNode[];
+  layout?: 'grid' | 'list';
+  gap?: number;
+  sx?: Record<string, any>;
+}

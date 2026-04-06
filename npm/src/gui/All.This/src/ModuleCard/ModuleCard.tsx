@@ -1,7 +1,7 @@
 import React from 'react';
-import { Paper, Typography } from '@/gui/Atoms';
+import { Box, Paper, Typography } from '@/gui/Atoms';
 import { Stack } from '@/gui/Molecules';
-import type { ModuleCardProps } from '../../All.This.types';
+import type { ModuleFrameProps } from '../../All.This.types';
 
 export default function ModuleCard({
   'data-gui-node-id': rootNodeId,
@@ -11,32 +11,52 @@ export default function ModuleCard({
   meta,
   actions,
   children,
-}: ModuleCardProps) {
+  sx = {},
+}: ModuleFrameProps) {
   return (
     <Paper
       data-gui-node-id={rootNodeId}
       data-gui-component={rootNodeType}
-      variant="outlined"
-      sx={{ p: 2 }}
+      sx={{
+        p: 2,
+        borderRadius: 3,
+        border: '1px solid',
+        borderColor: 'divider',
+        backgroundColor: 'background.paper',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        ...sx,
+      }}
     >
-      <Stack spacing={2}>
-        <Stack spacing={0.5}>
-          {subtitle ? (
-            <Typography variant="overline" color="text.secondary">
-              {subtitle}
-            </Typography>
-          ) : null}
-          <Typography variant="h6">{title}</Typography>
-          {meta ? (
-            <Typography variant="body2" color="text.secondary">
-              {meta}
-            </Typography>
-          ) : null}
+      <Stack spacing={1.5}>
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          spacing={1.5}
+          alignItems={{ xs: 'stretch', md: 'flex-start' }}
+          justifyContent="space-between"
+        >
+          <Stack spacing={0.5} sx={{ minWidth: 0, flex: 1 }}>
+            {title ? <Typography variant="h6">{title}</Typography> : null}
+            {subtitle ? (
+              <Typography variant="body2" color="text.secondary">
+                {subtitle}
+              </Typography>
+            ) : null}
+            {meta ? (
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ fontFamily: 'monospace', wordBreak: 'break-all' }}
+              >
+                {meta}
+              </Typography>
+            ) : null}
+          </Stack>
+          {actions ? <Box sx={{ flexShrink: 0 }}>{actions}</Box> : null}
         </Stack>
-
-        {children ? <Stack spacing={1}>{children}</Stack> : null}
-        {actions ? <Stack direction="row" spacing={1}>{actions}</Stack> : null}
       </Stack>
+      {children}
     </Paper>
   );
 }

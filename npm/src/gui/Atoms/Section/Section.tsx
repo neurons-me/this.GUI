@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@/gui/Atoms';
-import { useInsets, useGuiTheme } from '@/gui/Hooks';
+import { useInsets, useGuiTheme } from '@/gui-internals/Hooks';
 import type { SectionProps } from './Section.types';
 
 const DEFAULT_PADDING = {

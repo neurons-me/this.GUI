@@ -51,6 +51,8 @@ export { default as Text } from '@/gui/Atoms/Typography/Typography';
 export { default as Input } from '@/gui/Atoms/TextField/TextField';
 export { default as Theme } from '@/gui/Theme/Theme';
 export { default as Layout } from '@/gui/Layout/Layout';
+export { default as StickyOptionsTop } from '@/gui/Layout/StickyOptions/StickyOptionsTop';
+export { default as StickyOptions } from '@/gui/Layout/StickyOptions/StickyOptionsTop';
 export { default as Icon } from '@/gui/Atoms/Icon/Icon';
 export { default as DomIcon } from '@/gui/Atoms/Icon/DomIcon';
 export { default as ThemeModeToggle } from '@/gui/Theme/ToggleMode/ToggleMode';
@@ -64,13 +66,20 @@ export { default as ModulesList } from '@/gui/All.This/src/ModulesList/ModulesLi
 export { default as Cleaker } from '@/gui/All.This/Cleaker/Cleaker';
 export { default as CleakerComposer } from '@/gui/All.This/Cleaker/CleakerComposer';
 export { default as CleakerQR } from '@/gui/All.This/Cleaker/QR/CleakerQR';
-export { default as Blockchain } from '@/gui/All.This/Cleaker/Blockchain/blockchain';
+export { default as Namespace } from '@/gui/All.This/Cleaker/Namespace/namespace';
 export { default as FaceRecognition } from '@/gui/widgets/FaceRecognition/FaceRecognition';
 export { default as Monad } from '@/gui/All.This/monad.ai/monad.ai';
 export type { MonadProps } from '@/gui/All.This/monad.ai/monad.ai';
 export { default as HighLighter } from '@/gui/widgets/HighLighter/HighLighter';
 export { default as CodeBlock } from '@/gui/Molecules/CodeBlock/CodeBlock';
 export { default as Modal } from '@/gui/Molecules/Modal/Modal';
+export { GUISettings } from '@/gui/Layout/Sidebars/Collections';
+export type {
+  GUISettingsCollectionOptions,
+  SideBarsCollection,
+  SideBarsCollectionInput,
+  SideBarsCollectionSlot,
+} from '@/gui/Layout/Sidebars/Collections';
 export { ThemesCatalog, Catalog } from '@/gui/Theme';
 export {
   default as GUITools,
@@ -90,11 +99,13 @@ import ThemeComponent from '@/gui/Theme/Theme';
 import { GuiRegistry as RegistryEntries } from '@/Registry';
 import { atoms as AtomsBundle } from '@/gui/Atoms';
 import Layout from '@/gui/Layout/Layout';
+import StickyOptionsTop from '@/gui/Layout/StickyOptions/StickyOptionsTop';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import DomIcon from '@/gui/Atoms/Icon/DomIcon';
 import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 import AdminViewToggle from '@/gui/Molecules/AdminViewToggle/AdminViewToggle';
 import InspectorToggle from '@/gui/Molecules/InspectorToggle/InspectorToggle';
+import { GUISettings } from '@/gui/Layout/Sidebars/Collections';
 import FaceRecognition from '@/gui/widgets/FaceRecognition/FaceRecognition';
 import Monad from '@/gui/All.This/monad.ai/monad.ai';
 import HighLighter from '@/gui/widgets/HighLighter/HighLighter';
@@ -126,6 +137,8 @@ export const Components = Compounds;
 export const ThemeRuntime = {
   Theme: ThemeComponent,
   Layout,
+  StickyOptionsTop,
+  StickyOptions: StickyOptionsTop,
   Icon,
   DomIcon,
   ThemeModeToggle,
@@ -150,10 +163,37 @@ export const menus = {
     leftSidebarConfig: guiToolsLeftSidebarConfig,
   },
 } as const;
+export const SideBarsCollections = {
+  GUISettings,
+} as const;
+export const sideBarsCollections = SideBarsCollections;
 // Mount API (React runtime)
 // GUINode → renderer → ReactDOM, expects React/ReactDOM globals in UMD usage.
 export { mount } from '@/runtime/mount';
 export type { MountTarget } from '@/runtime/mount';
+export {
+  buildGuiPartRecords,
+  createGuiPartAttrs,
+  createGuiPartHelpers,
+  createGuiPartId,
+  createGuiPartPath,
+  registerGuiParts,
+  useGuiParts,
+} from '@/runtime/parts';
+export type {
+  GuiNode,
+  GuiNodeProvenance,
+  GuiPartSpec,
+  GuiPartsSpec,
+  GuiSpecNode,
+} from '@/types/gui.types';
+export {
+  createHttpNamespaceProvider,
+  isNamespaceProvider,
+  type NamespaceProvider,
+  type NamespaceProviderBoot,
+  type NamespaceProviderEndpoints,
+} from '@/runtime/provider';
 export {
   ensureRuntimeControlSurface,
   getAdminViewEnabled,

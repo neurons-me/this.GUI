@@ -1,18 +1,14 @@
 import React from 'react';
 import { Stack } from '@/gui/Molecules';
-import type { ModulesListProps } from '../../All.This.types';
+import type { ModuleCollectionProps } from '../../All.This.types';
 
 export default function ModulesList({
-  'data-gui-node-id': rootNodeId,
-  'data-gui-component': rootNodeType = 'ModulesList',
   children,
-}: ModulesListProps) {
+  gap = 2,
+  sx = {},
+}: ModuleCollectionProps) {
   return (
-    <Stack
-      data-gui-node-id={rootNodeId}
-      data-gui-component={rootNodeType}
-      spacing={2}
-    >
+    <Stack spacing={gap} sx={sx}>
       {children}
     </Stack>
   );

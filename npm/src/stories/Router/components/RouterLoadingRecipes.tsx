@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Router } from '@/Router/Router';
+import { Router, type RouterResolveContext } from '@/Router/Router';
 import Theme from '@/gui/Theme/Theme';
 import { Box, Button, Paper, Typography } from '@/gui/Atoms';
 import { Stack } from '@/gui/Molecules';
@@ -111,8 +111,8 @@ function RouterLoadingRecipe({ mode, title, subtitle }: { mode: RecipeMode; titl
 
   useEffect(() => {
     router.set('/dashboard', () => dashboardSpec());
-    router.set('/shops/:id', async ({ ctx }) => shopSpec(ctx.params.id));
-    router.set('/docs/*', async ({ ctx }) => docsSpec(ctx.wildcard || 'index'));
+    router.set('/shops/:id', async ({ ctx }: RouterResolveContext) => shopSpec(ctx.params.id));
+    router.set('/docs/*', async ({ ctx }: RouterResolveContext) => docsSpec(ctx.wildcard || 'index'));
     const unlisten = router.onChange((spec, meta) => {
       setCurrentSpec(spec);
       setCurrentPath(meta.path);

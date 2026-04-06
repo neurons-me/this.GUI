@@ -1,7 +1,7 @@
 import React from 'react';
 import type { SxProps, Theme } from '@mui/system';
 import { Box } from '@/gui/Atoms';
-import { useInsets } from '@/gui/Hooks';
+import { useInsets } from '@/gui-internals/Hooks';
 
 export type ContentProps = {
   children?: React.ReactNode;
@@ -21,6 +21,7 @@ const Content: React.FC<ContentProps> = ({ children, sx, disableInsetPadding = f
   const bottomInset = Math.max(0, Number(insets?.bottom ?? 0));
   const leftInset = disableInsetPadding ? 0 : Math.max(0, Number(insets?.left ?? 0));
   const rightInset = disableInsetPadding ? 0 : Math.max(0, Number(insets?.right ?? 0));
+  const contentGutter = 1.618;
   return (
     <Box
       id="content"
@@ -33,10 +34,10 @@ const Content: React.FC<ContentProps> = ({ children, sx, disableInsetPadding = f
         minHeight: 0,
         width: '100%',
         overflow: 'hidden',
-        paddingTop: `${topInset}px`,
-        paddingBottom: `${bottomInset}px`,
-        paddingLeft: `${leftInset}px`,
-        paddingRight: `${rightInset}px`,
+        paddingTop: `${topInset + contentGutter}px`,
+        paddingBottom: `${bottomInset + contentGutter}px`,
+        paddingLeft: `${leftInset + contentGutter}px`,
+        paddingRight: `${rightInset + contentGutter}px`,
         boxSizing: 'border-box',
         backgroundColor: 'background.default',
         transition: 'padding 0.3s ease',

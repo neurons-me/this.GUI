@@ -4,7 +4,7 @@ import ListItemIcon from './ListItemIcon';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 
 /**
  * Declarative spec for ListItemIcon

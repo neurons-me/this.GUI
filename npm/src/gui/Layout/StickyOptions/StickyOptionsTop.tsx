@@ -1,12 +1,15 @@
-import type * as React from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useGuiTheme } from '@/gui/Hooks';
-import type { Theme } from '@mui/material/styles'; 
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useGuiTheme } from '@/gui-internals/Hooks';
+import type { Theme } from '@mui/material/styles';
 import Icon from '@/gui/Atoms/Icon/Icon';
+import type { IconProps } from '@/gui/Atoms/Icon/Icon';
 export type StickyItem = {
+  // Prefer GUI icon tokens ("settings", "mui:Help", "lucide:bolt")
+  // or an explicit <Icon /> element from this.GUI.
   icon: React.ReactNode | string;
   label?: string;
   href?: string;
+  to?: string;
   variant?: 'primary' | 'neutral';
   trackId?: string;
   ariaLabel?: string;
@@ -61,7 +64,7 @@ export type StickyOptionsTopProps = {
  * A reusable sticky CTA menu that hangs below the navbar.
  *
  * Props shape (all optional unless noted):
- *  - items: Array<{ icon: ReactNode|string, label?: string, href?: string, variant?: 'primary'|'neutral', trackId?: string, ariaLabel?: string }>
+ *  - items: Array<{ icon: GUI icon token | <Icon />, label?: string, href?: string, variant?: 'primary'|'neutral', trackId?: string, ariaLabel?: string }>
  *  - positioning: { topOffset?: number|string, maxWidth?: number|string, mode?: 'sticky'|'fixed', reserveSpace?: boolean }
  *  - behavior: { hideOnScrollDown?: boolean, collapseToFabOnMobile?: boolean, iconOnlyOnMobile?: boolean, mobileBreakpoint?: number, hideThreshold?: number, showThreshold?: number, topGuard?: number }
  *  - theme: { elevation?: number, blur?: number, contrastMode?: 'auto'|'light'|'dark' }
@@ -122,7 +125,10 @@ const StickyOptionsTop = ({
   const translate: (s: string) => string =
     useI18n && typeof tFn === 'function' ? tFn : (s: string) => s;
 
-  // Render icon helper: supports ReactNode or declarative string ("mui:Something" / "lucide:something")
+  const isGuiIconElement = (icon: React.ReactNode): icon is React.ReactElement<IconProps> =>
+    React.isValidElement(icon) && icon.type === Icon;
+
+  // Render icon helper: prefer GUI icon tokens or explicit this.GUI <Icon /> elements.
   const resolveIconColor = (iconColor?: string): { css?: string } => {
     if (!iconColor) return {};
     const token = iconColor.trim();
@@ -156,24 +162,19 @@ const StickyOptionsTop = ({
 
   const renderIconNode = (icon: React.ReactNode | string, iconColor?: string): React.ReactNode => {
     if (!icon) return null;
-    // Direct React element: pass through (do not override color)
-    if (typeof icon !== 'string') return icon;
-
     const colorInfo = resolveIconColor(iconColor);
-    const isMui = icon.toLowerCase().startsWith('mui:');
-    const isLucide = icon.toLowerCase().startsWith('lucide:');
+    if (typeof icon !== 'string') {
+      if (isGuiIconElement(icon)) {
+        return React.cloneElement(icon, {
+          fontSize: icon.props.fontSize ?? 16,
+          iconColor: icon.props.iconColor ?? colorInfo.css,
+        });
+      }
+      // Legacy pass-through for arbitrary nodes, but layout config should prefer GUI icons.
+      return icon;
+    }
 
-    // If a color was declared, map to the right prop for provider;
-    // otherwise, let Icon use theme-aware defaults.
-    const colorProps = colorInfo.css
-      ? (isMui ? { htmlColor: colorInfo.css } : { color: colorInfo.css })
-      : {};
-
-    // Refactor: use fontSize and iconColor props per new IconProps interface
-    const newColorProps = colorInfo.css
-      ? { iconColor: colorInfo.css }
-      : {};
-    return <Icon name={icon} fontSize={16} {...newColorProps} />;
+    return <Icon name={icon} fontSize={16} iconColor={colorInfo.css} />;
   };
 
   // ---- Spacer measurement (optional content push)
@@ -309,7 +310,8 @@ const StickyOptionsTop = ({
 
   // ---- Render item (anchor or span)
   const renderItem = (item: StickyItem, i: number): React.ReactNode => {
-    const { icon, label, href, variant = 'neutral', trackId, ariaLabel } = item || {};
+    const { icon, label, href, to, variant = 'neutral', trackId, ariaLabel } = item || {};
+    const targetHref = href ?? to;
     const hasText = !!label;
     const isPrimary = variant === 'primary';
     const commonStyle: React.CSSProperties = {
@@ -340,12 +342,12 @@ const StickyOptionsTop = ({
       </>
     );
 
-    if (href) {
-      const external = /^https?:\/\//i.test(href);
+    if (targetHref) {
+      const external = /^https?:\/\//i.test(targetHref);
       return (
         <a
           key={i}
-          href={href}
+          href={targetHref}
           target={external ? '_blank' : undefined}
           rel={external ? 'noopener noreferrer' : undefined}
           aria-label={ariaLabel || label}
@@ -454,10 +456,11 @@ const StickyOptionsTop = ({
                   color: isPrimary ? colors.linkMain : colors.text
                 } as React.CSSProperties;
                 const aria = item?.ariaLabel || item?.label;
-                if (item?.href) {
-                  const external = /^https?:\/\//i.test(item.href);
+                const targetHref = item?.href ?? item?.to;
+                if (targetHref) {
+                  const external = /^https?:\/\//i.test(targetHref);
                   return (
-                    <a key={i} href={item.href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} aria-label={aria} onClick={() => trackClick(item?.trackId, item?.label)} style={style}>
+                    <a key={i} href={targetHref} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} aria-label={aria} onClick={() => trackClick(item?.trackId, item?.label)} style={style}>
                       {renderIconNode(item?.icon, item?.iconColor)}
                     </a>
                   );

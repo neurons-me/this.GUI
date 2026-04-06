@@ -30,20 +30,26 @@ const LayoutResolver: RegistryEntry = {
       LeftSideBar,
       RightSideBar,
       Footer,
+      StickyOptions,
+      stickyOptions,
       topBarConfig,
+      leftBarConfig,
       leftSidebarConfig,
+      rightBarConfig,
       rightSidebarConfig,
       footerConfig,
+      stickyOptionsConfig,
       ...rest
     } = props as any;
 
     const resolvedChildren = props.children;
     const normalizedProps = {
       ...rest,
-      topBarConfig: topBar ?? TopBar ?? topBarConfig,
-      leftSidebarConfig: leftBar ?? LeftBar ?? LeftSideBar ?? leftSidebarConfig,
-      rightSidebarConfig: rightBar ?? RightBar ?? RightSideBar ?? rightSidebarConfig,
-      footerConfig: footer ?? Footer ?? footerConfig,
+      TopBar: topBar ?? TopBar ?? topBarConfig,
+      LeftBar: leftBar ?? LeftBar ?? LeftSideBar ?? leftBarConfig ?? leftSidebarConfig,
+      RightBar: rightBar ?? RightBar ?? RightSideBar ?? rightBarConfig ?? rightSidebarConfig,
+      Footer: footer ?? Footer ?? footerConfig,
+      stickyOptions: stickyOptions ?? StickyOptions ?? stickyOptionsConfig,
     };
     return (
       <Layout {...normalizedProps}>

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Avatar, Box, Button, Chip, Link, TextField, Typography } from "@/gui/Atoms";
 import { Tooltip } from "@/gui/Molecules";
 import Icon from "@/gui/Atoms/Icon/Icon";
-import { useGuiTheme } from "@/gui/Hooks";
+import { useGuiTheme } from "@/gui-internals/Hooks";
 import { buildCleakerNamespaceUrl, parseCleakerNamespaceExpression } from "../namespaceExpression";
 import { readCleakerBootstrap, type CleakerBootstrapInfo } from "../runtimeUsername";
 import { resolveSemanticRootName } from "../surfaceModel";

@@ -5,7 +5,7 @@ import Icon from '@/gui/Atoms/Icon/Icon';
 import Link from '../Link/Link';
 import type { RegistryEntry } from '@/Registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 /**
  * Declarative spec for Button.
  * This is the JSON-friendly shape your renderer/LLM can emit.

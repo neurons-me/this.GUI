@@ -3,7 +3,7 @@ import * as React from 'react';
 import type { RegistryEntry } from '@/Registry/types';
 import Link, { LinkProps as GuiLinkProps } from './Link';
 import type { SxProps, Theme } from '@mui/material/styles';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 
 /** Declarative spec for Link (JSON-friendly) */
 type LinkSpec = {

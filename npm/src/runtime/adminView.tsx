@@ -2,8 +2,8 @@
 import * as React from 'react';
 import { alpha, darken, lighten } from '@mui/material/styles';
 import { selectionStore } from './selectionStore';
-import { useUpdateInsets } from '@/gui/Hooks';
-import { useGuiTheme } from '@/gui/Hooks/useGuiTheme';
+import { useUpdateInsets } from '@/gui-internals/Hooks';
+import { useGuiTheme } from '@/gui-internals/Hooks/useGuiTheme';
 import { Box, Button, Typography } from '@/gui/Atoms';
 import { Drawer } from '@/gui/Molecules';
 import CodeBlock from '@/gui/Molecules/CodeBlock/CodeBlock';

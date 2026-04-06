@@ -2,7 +2,7 @@ import * as React from 'react';
 // (types not needed in resolver)
 import AppBar from './AppBar';
 import type { RegistryEntry } from '@/Registry/types';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 import type { AppBarResolverSpec as AppBarSpec } from './AppBar.types';
 
 // =========================================

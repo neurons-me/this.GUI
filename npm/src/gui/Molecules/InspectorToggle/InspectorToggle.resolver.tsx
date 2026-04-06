@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type { RegistryEntry } from '@/Registry/types';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 import InspectorToggle from './InspectorToggle';
 import type { InspectorToggleResolverSpec } from './InspectorToggle.types';
 

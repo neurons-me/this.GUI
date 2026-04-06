@@ -5,7 +5,7 @@ import Modal from "@/gui/Molecules/Modal/Modal";
 import Icon from "@/gui/Atoms/Icon/Icon";
 import { ThemesCatalog } from "@/gui/Theme";
 import Cleaker from "./Cleaker";
-import Blockchain from "./Blockchain/blockchain";
+import Namespace from "./Namespace/namespace";
 import CleakerGroup from "./Group/CleakerGroup";
 import CleakerUser from "./User/CleakerUser";
 import {
@@ -465,7 +465,7 @@ export default function CleakerComposer({
   const leftBar = useMemo(() => {
     const navEntries = toSortedEntries(guiState.left?.nav);
     return {
-      initialView: guiState.left?.collapsed ? "rail" : "expanded",
+      initialView: guiState.left?.collapsed ? ("rail" as const) : ("expanded" as const),
       elements: navEntries.map(([key, item]) => {
         const targetRoute = String(item.route || "").trim() || "/";
         const active =
@@ -499,7 +499,7 @@ export default function CleakerComposer({
       availableSectionKeys.includes(key),
     );
     return {
-      initialView: guiState.right?.collapsed ? "rail" : "expanded",
+      initialView: guiState.right?.collapsed ? ("rail" as const) : ("expanded" as const),
       elements: contextEntries.map(([key, item]) => ({
         type: "action" as const,
         props: {
@@ -601,9 +601,10 @@ export default function CleakerComposer({
     };
 
     switch (guiState.page?.component) {
+      case "Namespace":
       case "Blockchain":
         return (
-          <Blockchain
+          <Namespace
             {...commonNamespaceProps}
             defaultTab="details"
           />

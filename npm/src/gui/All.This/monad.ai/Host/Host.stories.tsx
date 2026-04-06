@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import Box from '@/gui/Atoms/Box/Box';
 import Host from './Host';
 const meta: Meta<typeof Host> = {
-  title: 'Session/Host',
+  title: 'All.This/monad.ai/Host',
   component: Host,
   parameters: {
     layout: 'centered',

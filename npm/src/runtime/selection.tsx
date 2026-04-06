@@ -11,6 +11,7 @@ type SelectionState = {
   selectNode: (id: string | null) => void;
   clearSelection: () => void;
   registerNode: (record: ResolvedNodeRecord) => void;
+  unregisterNode: (id: string | null | undefined) => void;
   getNode: (id: string | null | undefined) => ResolvedNodeRecord | null;
   getNodeByPath: (path: string | null | undefined) => ResolvedNodeRecord | null;
   selectedMeta: SelectionMeta | null;
@@ -42,6 +43,7 @@ export function SelectionProvider({
   }, [initialInspectorEnabled]);
 
   const registerNode = selectionStore.actions.registerNode;
+  const unregisterNode = selectionStore.actions.unregisterNode;
   const selectNode = selectionStore.actions.selectNode;
   const clearSelection = selectionStore.actions.clearSelection;
   const getNode = selectionStore.actions.getNode;
@@ -59,6 +61,7 @@ export function SelectionProvider({
       selectNode,
       clearSelection,
       registerNode,
+      unregisterNode,
       getNode,
       getNodeByPath,
       selectedMeta: state.selectedMeta,
@@ -71,6 +74,7 @@ export function SelectionProvider({
       selectNode,
       clearSelection,
       registerNode,
+      unregisterNode,
       getNode,
       getNodeByPath,
       state.selectedMeta,

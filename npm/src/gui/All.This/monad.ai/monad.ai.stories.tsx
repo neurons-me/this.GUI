@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import Monad from './monad.ai';
 const meta: Meta<typeof Monad> = {
-  title: 'All.This/Monads/monad.ai',
+  title: 'All.This/monad.ai/monad.ai',
   component: Monad,
   parameters: {
     layout: 'fullscreen',

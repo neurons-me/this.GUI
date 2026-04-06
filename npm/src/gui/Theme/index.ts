@@ -4,7 +4,7 @@ export type { Theme as MuiTheme } from '@mui/material/styles';
 // Theme persistence utilities
 export { getInitialThemeId, usePersistentThemeId } from './utils/persistence';
 // Theme context and Theme component
-export { ThemeContext, useThemeContext } from '@/gui/Contexts/ThemeContext';
+export { ThemeContext, useThemeContext } from '@/gui-internals/Contexts/ThemeContext';
 export { default as Theme } from './Theme';
 export { default as DomIcon } from '@/gui/Atoms/Icon/DomIcon';
 // Theme catalog UI (components)

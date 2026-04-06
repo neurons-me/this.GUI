@@ -9,7 +9,7 @@ import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
 import type { SxProps, Theme } from '@mui/material/styles';
 import type { ListItemIconProps as MuiListItemIconProps } from '@mui/material/ListItemIcon';
 import type { ListItemTextProps as MuiListItemTextProps } from '@mui/material/ListItemText';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 // Merge sx parts into a single SxProps (filters out undefined)
 const sxJoin = (...parts: Array<SxProps<Theme> | undefined>): SxProps<Theme> =>
   (parts.filter(Boolean) as unknown) as SxProps<Theme>;

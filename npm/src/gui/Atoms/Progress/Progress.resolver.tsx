@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type { RegistryEntry, ResolveCtx } from '@/Registry/types';
-import { ensureNodeId } from '@/gui/utils/nodeID';
+import { ensureNodeId } from '@/gui-internals/utils/nodeID';
 import Progress, { type ProgressProps } from './Progress';
 
 export type ProgressSpec = {

@@ -24,7 +24,10 @@ function normalizePath(value: string, prefix: string): string {
 export function render(me: any, opts: RenderMeOptions = {}): RuntimeAdapter {
   const prefix = opts.pathPrefix ?? 'me/';
 
-  return {
+  const adapter: RuntimeAdapter & { __me?: any; me?: any } = {
+    // Keep an enumerable `me` reference so wrapped runtimes that use object spread
+    // still carry the kernel into RuntimeEnvironmentProvider / Inspector.
+    me,
     action: (expression: string) => (...args: any[]) => {
       if (typeof me?.run === 'function') {
         return me.run(expression, { args });
@@ -48,6 +51,15 @@ export function render(me: any, opts: RenderMeOptions = {}): RuntimeAdapter {
       return value;
     },
   };
+
+  Object.defineProperty(adapter, '__me', {
+    configurable: false,
+    enumerable: false,
+    value: me,
+    writable: false,
+  });
+
+  return adapter;
 }
 
 export const RunMe = render;

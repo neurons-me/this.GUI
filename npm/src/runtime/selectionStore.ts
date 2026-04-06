@@ -35,6 +35,66 @@ export type SelectionStore = {
 
 const STORE_KEY = 'GUI-NODES-STORE';
 
+function scheduleMicrotask(callback: () => void) {
+  const schedule =
+    (typeof queueMicrotask === 'function' && queueMicrotask) ||
+    ((cb: () => void) => Promise.resolve().then(cb));
+  schedule(callback);
+}
+
+function hasMeaningfulValue(value: any): boolean {
+  return !!value && typeof value === 'object' && Object.keys(value).length > 0;
+}
+
+function mergeRecord(
+  current: ResolvedNodeRecord,
+  incoming: ResolvedNodeRecord
+): ResolvedNodeRecord {
+  const currentProvenance = hasMeaningfulValue(current.provenance)
+    ? current.provenance
+    : current.spec?.provenance;
+  const incomingProvenance = hasMeaningfulValue(incoming.provenance)
+    ? incoming.provenance
+    : incoming.spec?.provenance;
+  const mergedProvenance = incomingProvenance ?? currentProvenance;
+
+  return {
+    ...current,
+    ...incoming,
+    type: incoming.type ?? current.type,
+    path: incoming.path || current.path,
+    part: incoming.part ?? current.part,
+    parentId: incoming.parentId ?? current.parentId,
+    provenance: mergedProvenance,
+    spec: {
+      ...(current.spec ?? {}),
+      ...(incoming.spec ?? {}),
+      type: incoming.spec?.type ?? current.spec?.type,
+      props: incoming.spec?.props ?? current.spec?.props,
+      provenance: incoming.spec?.provenance ?? current.spec?.provenance ?? mergedProvenance,
+    },
+    resolvedProps: incoming.resolvedProps ?? current.resolvedProps,
+  };
+}
+
+function isSameRecord(
+  current: ResolvedNodeRecord,
+  next: ResolvedNodeRecord
+): boolean {
+  return (
+    current.id === next.id &&
+    current.path === next.path &&
+    current.type === next.type &&
+    current.resolvedProps === next.resolvedProps &&
+    current.part === next.part &&
+    current.parentId === next.parentId &&
+    current.provenance === next.provenance &&
+    current.spec?.type === next.spec?.type &&
+    current.spec?.props === next.spec?.props &&
+    current.spec?.provenance === next.spec?.provenance
+  );
+}
+
 function createSelectionStore(): SelectionStore {
   let state: SelectionStateCore = {
     inspectorEnabled: false,
@@ -44,6 +104,8 @@ function createSelectionStore(): SelectionStore {
     selectedMeta: null,
   };
   const listeners = new Set<Listener>();
+  const pendingUnregisterIds = new Set<string>();
+  let pruneScheduled = false;
 
   const notify = () => {
     listeners.forEach((fn) => fn());
@@ -52,6 +114,50 @@ function createSelectionStore(): SelectionStore {
   const setState = (next: Partial<SelectionStateCore>) => {
     state = { ...state, ...next };
     notify();
+  };
+
+  const prunePendingUnregisters = () => {
+    pruneScheduled = false;
+    if (!pendingUnregisterIds.size) return;
+
+    let nextState = state;
+    let changed = false;
+    const ids = Array.from(pendingUnregisterIds);
+    pendingUnregisterIds.clear();
+
+    for (const id of ids) {
+      const current = nextState.records[id];
+      if (!current) continue;
+
+      const nextRecords = { ...nextState.records };
+      delete nextRecords[id];
+
+      const nextRecordsByPath = { ...nextState.recordsByPath };
+      if (nextRecordsByPath[current.path]?.id === id) {
+        delete nextRecordsByPath[current.path];
+      }
+
+      const selectedGone = nextState.selectedNodeId === id;
+      nextState = {
+        ...nextState,
+        records: nextRecords,
+        recordsByPath: nextRecordsByPath,
+        selectedNodeId: selectedGone ? null : nextState.selectedNodeId,
+        selectedMeta: selectedGone ? null : nextState.selectedMeta,
+      };
+      changed = true;
+    }
+
+    if (changed) {
+      state = nextState;
+      notify();
+    }
+  };
+
+  const schedulePrune = () => {
+    if (pruneScheduled) return;
+    pruneScheduled = true;
+    scheduleMicrotask(prunePendingUnregisters);
   };
 
   const store: SelectionStore = {
@@ -76,20 +182,23 @@ function createSelectionStore(): SelectionStore {
         setState({ selectedNodeId: null, selectedMeta: null });
       },
       registerNode: (record: ResolvedNodeRecord) => {
+        pendingUnregisterIds.delete(record.id);
         const curr = state.records[record.id];
-        if (
-          curr &&
-          curr.path === record.path &&
-          curr.type === record.type &&
-          curr.spec === record.spec &&
-          curr.resolvedProps === record.resolvedProps
-        ) {
+        const nextRecord = curr ? mergeRecord(curr, record) : record;
+        if (curr && isSameRecord(curr, nextRecord)) {
           return;
         }
+
+        const nextRecordsByPath = { ...state.recordsByPath };
+        if (curr && curr.path !== nextRecord.path && nextRecordsByPath[curr.path]?.id === curr.id) {
+          delete nextRecordsByPath[curr.path];
+        }
+        nextRecordsByPath[nextRecord.path] = nextRecord;
+
         state = {
           ...state,
-          records: { ...state.records, [record.id]: record },
-          recordsByPath: { ...state.recordsByPath, [record.path]: record },
+          records: { ...state.records, [nextRecord.id]: nextRecord },
+          recordsByPath: nextRecordsByPath,
         };
         notify();
       },
@@ -97,21 +206,8 @@ function createSelectionStore(): SelectionStore {
         if (!id) return;
         const curr = state.records[id];
         if (!curr) return;
-
-        const nextRecords = { ...state.records };
-        delete nextRecords[id];
-
-        const nextRecordsByPath = { ...state.recordsByPath };
-        delete nextRecordsByPath[curr.path];
-
-        state = {
-          ...state,
-          records: nextRecords,
-          recordsByPath: nextRecordsByPath,
-          selectedNodeId: state.selectedNodeId === id ? null : state.selectedNodeId,
-          selectedMeta: state.selectedNodeId === id ? null : state.selectedMeta,
-        };
-        notify();
+        pendingUnregisterIds.add(id);
+        schedulePrune();
       },
       getNode: (id: string | null | undefined) => {
         if (!id) return null;
