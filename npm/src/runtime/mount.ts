@@ -4,8 +4,6 @@ import * as React from 'react';
 import type { GuiNode, RendererOptions, ResolvedNodeRecord } from './renderer';
 import { renderWithGUI } from './renderer';
 import { SelectionProvider, useSelection } from './selection';
-import { RuntimeInspector } from './inspector';
-import { RuntimeAdminView } from './adminView';
 import { RuntimeEnvironmentProvider } from './runtimeContext';
 import {
   ensureRuntimeControlSurface,
@@ -14,15 +12,56 @@ import {
 } from './controlSurface';
 
 export type MountTarget = string | Element;
+export type MountDevtoolsOptions = {
+  /**
+   * Enable the runtime devtools surface.
+   * When true, initial inspector/admin states are read from persisted preferences.
+   */
+  enabled?: boolean;
+  /**
+   * Mount the inspector panel runtime.
+   * Even when false initially, the inspector can still be mounted if `enabled` is true
+   * so it can react to later control-surface toggles.
+   */
+  inspector?: boolean;
+  /**
+   * Mount the admin view runtime.
+   * Even when false initially, the admin view can still be mounted if `enabled` is true
+   * so it can react to later control-surface toggles.
+   */
+  adminView?: boolean;
+  /**
+   * Show the floating inspector toggle chip.
+   */
+  inspectorToggleVisible?: boolean;
+};
+
 export type MountOptions = Omit<RendererOptions, 'gui' | 'React'> & {
   gui?: any;
   React?: any;
   ReactDOM?: any;
   /** Optional .me instance; if provided, mount() will derive runtime via GUI.render(me). */
   me?: any;
+  /**
+   * Explicit devtools configuration.
+   * When omitted, mount() renders only the runtime core.
+   */
+  devtools?: boolean | MountDevtoolsOptions;
+  /** @deprecated Use `devtools.inspector`. */
   inspectorEnabled?: boolean;
+  /** @deprecated Use `devtools.adminView`. */
   adminViewEnabled?: boolean;
+  /** @deprecated Use `devtools.inspectorToggleVisible`. */
   inspectorToggleVisible?: boolean;
+};
+
+type NormalizedMountDevtools = {
+  requested: boolean;
+  inspectorRequested: boolean;
+  adminViewRequested: boolean;
+  inspectorEnabled: boolean;
+  adminViewEnabled: boolean;
+  inspectorToggleVisible: boolean;
 };
 
 // Cache React roots by host element so repeated `mount()` calls update instead of re-creating roots.
@@ -98,16 +137,144 @@ function resolveMountedKernel(options: MountOptions | any): any {
   return undefined;
 }
 
-function RuntimeRoot({
+const LazyRuntimeInspector = React.lazy(async () => {
+  const mod = await import('./inspector');
+  return { default: mod.RuntimeInspector };
+});
+
+const LazyRuntimeAdminView = React.lazy(async () => {
+  const mod = await import('./adminView');
+  return { default: mod.RuntimeAdminView };
+});
+
+function normalizeMountDevtools(options: MountOptions): NormalizedMountDevtools {
+  const legacyInspectorSet = typeof options.inspectorEnabled === 'boolean';
+  const legacyAdminViewSet = typeof options.adminViewEnabled === 'boolean';
+  const legacyToggleSet = typeof options.inspectorToggleVisible === 'boolean';
+
+  const rawDevtools: MountDevtoolsOptions =
+    typeof options.devtools === 'object' && options.devtools
+      ? options.devtools
+      : {};
+  const devtoolsEnabled = options.devtools === true || rawDevtools.enabled === true;
+
+  const inspectorRequested =
+    devtoolsEnabled ||
+    legacyInspectorSet ||
+    typeof rawDevtools.inspector === 'boolean' ||
+    legacyToggleSet ||
+    typeof rawDevtools.inspectorToggleVisible === 'boolean';
+
+  const adminViewRequested =
+    devtoolsEnabled ||
+    legacyAdminViewSet ||
+    typeof rawDevtools.adminView === 'boolean';
+
+  const requested = inspectorRequested || adminViewRequested;
+  if (!requested) {
+    return {
+      requested: false,
+      inspectorRequested: false,
+      adminViewRequested: false,
+      inspectorEnabled: false,
+      adminViewEnabled: false,
+      inspectorToggleVisible: false,
+    };
+  }
+
+  ensureRuntimeControlSurface();
+
+  return {
+    requested,
+    inspectorRequested,
+    adminViewRequested,
+    inspectorEnabled: legacyInspectorSet
+      ? Boolean(options.inspectorEnabled)
+      : typeof rawDevtools.inspector === 'boolean'
+        ? Boolean(rawDevtools.inspector)
+        : devtoolsEnabled
+          ? readInspectorPreference()
+          : false,
+    adminViewEnabled: legacyAdminViewSet
+      ? Boolean(options.adminViewEnabled)
+      : typeof rawDevtools.adminView === 'boolean'
+        ? Boolean(rawDevtools.adminView)
+        : devtoolsEnabled
+          ? readAdminViewPreference()
+          : false,
+    inspectorToggleVisible: legacyToggleSet
+      ? Boolean(options.inspectorToggleVisible)
+      : Boolean(rawDevtools.inspectorToggleVisible),
+  };
+}
+
+function RuntimeCoreRoot({
   spec,
   gui,
   options,
   ReactNS,
+  onNodeResolved,
 }: {
   spec: GuiNode;
   gui: any;
   options: MountOptions;
   ReactNS: any;
+  onNodeResolved?: (record: ResolvedNodeRecord) => void;
+}) {
+  const renderOptions = React.useMemo(
+    () => ({
+      ...options,
+      React: ReactNS,
+      onNodeResolved,
+    }),
+    [options, ReactNS, onNodeResolved]
+  );
+  const rendered = React.useMemo(
+    () => renderWithGUI(spec, gui, renderOptions),
+    [spec, gui, renderOptions]
+  );
+
+  return React.createElement(React.Fragment, null, rendered);
+}
+
+function RuntimeDevtoolsLayer({
+  devtools,
+}: {
+  devtools: NormalizedMountDevtools;
+}) {
+  if (!devtools.requested) return null;
+
+  return React.createElement(
+    React.Suspense,
+    { fallback: null },
+    devtools.inspectorRequested
+      ? React.createElement(LazyRuntimeInspector, {
+          toggleVisible: Boolean(devtools.inspectorToggleVisible),
+        })
+      : null,
+    devtools.adminViewRequested
+      ? React.createElement(LazyRuntimeAdminView, {
+          enabled:
+            typeof devtools.adminViewEnabled === 'boolean'
+              ? Boolean(devtools.adminViewEnabled)
+              : undefined,
+        })
+      : null
+  );
+}
+
+function RuntimeSelectionRoot({
+  spec,
+  gui,
+  options,
+  ReactNS,
+  devtools,
+}: {
+  spec: GuiNode;
+  gui: any;
+  options: MountOptions;
+  ReactNS: any;
+  devtools: NormalizedMountDevtools;
 }) {
   const selection = useSelection();
   const registerNode = selection.registerNode;
@@ -142,30 +309,19 @@ function RuntimeRoot({
       lastResolvedIds.current = new Set();
     };
   }, [unregisterNode]);
-  const renderOptions = React.useMemo(
-    () => ({
-      ...options,
-      React: ReactNS,
-      onNodeResolved: collectResolved,
-    }),
-    [options, ReactNS, collectResolved]
-  );
-  const rendered = React.useMemo(
-    () => renderWithGUI(spec, gui, renderOptions),
-    [spec, gui, renderOptions]
-  );
+
   return React.createElement(
     React.Fragment,
     null,
-    rendered,
-    React.createElement(RuntimeInspector, {
-      toggleVisible: Boolean(options.inspectorToggleVisible),
+    React.createElement(RuntimeCoreRoot, {
+      spec,
+      gui,
+      options,
+      ReactNS,
+      onNodeResolved: collectResolved,
     }),
-    React.createElement(RuntimeAdminView, {
-      enabled:
-        typeof options.adminViewEnabled === 'boolean'
-          ? Boolean(options.adminViewEnabled)
-          : undefined,
+    React.createElement(RuntimeDevtoolsLayer, {
+      devtools,
     })
   );
 }
@@ -202,19 +358,7 @@ export function mount(
   }
 
   const { gui, React, ReactDOM } = getReactGlobals(finalOptions);
-  ensureRuntimeControlSurface();
-  if (typeof finalOptions.inspectorEnabled !== 'boolean') {
-    finalOptions = {
-      ...finalOptions,
-      inspectorEnabled: readInspectorPreference(),
-    };
-  }
-  if (typeof finalOptions.adminViewEnabled !== 'boolean') {
-    finalOptions = {
-      ...finalOptions,
-      adminViewEnabled: readAdminViewPreference(),
-    };
-  }
+  const devtools = normalizeMountDevtools(finalOptions);
   const resolvedMe = resolveMountedKernel(finalOptions);
   if (!finalOptions.runtime && resolvedMe) {
     const runtimeFactory =
@@ -251,16 +395,24 @@ export function mount(
         me: resolvedMe,
       },
     },
-    React.createElement(
-      SelectionProvider,
-      { initialInspectorEnabled: Boolean(finalOptions.inspectorEnabled) },
-      React.createElement(RuntimeRoot, {
-        spec: finalSpec,
-        gui,
-        options: finalOptions,
-        ReactNS: React,
-      })
-    )
+    devtools.requested
+      ? React.createElement(
+          SelectionProvider,
+          { initialInspectorEnabled: Boolean(devtools.inspectorEnabled) },
+          React.createElement(RuntimeSelectionRoot, {
+            spec: finalSpec,
+            gui,
+            options: finalOptions,
+            ReactNS: React,
+            devtools,
+          })
+        )
+      : React.createElement(RuntimeCoreRoot, {
+          spec: finalSpec,
+          gui,
+          options: finalOptions,
+          ReactNS: React,
+        })
   );
 
   // Some components rely on `useInsetsContext`, which requires an `InsetsProvider` above.

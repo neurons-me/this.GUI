@@ -96,6 +96,9 @@ export default defineConfig({
           entry: {
             index: resolve(dirname, 'index.ts'),
             legacy: resolve(dirname, 'src/legacy/index.tsx'),
+            runtime: resolve(dirname, 'src/runtime-entry.ts'),
+            react: resolve(dirname, 'src/react-entry.ts'),
+            devtools: resolve(dirname, 'src/devtools-entry.ts'),
             atoms: resolve(dirname, 'src/gui/Atoms/atoms.ts'),
             molecules: resolve(dirname, 'src/gui/Molecules/molecules.ts'),
             compounds: resolve(dirname, 'src/gui/Compounds/compounds.ts'),
@@ -121,6 +124,21 @@ export default defineConfig({
               if (format === 'es') return 'legacy/index.js';
               if (format === 'cjs') return 'legacy/index.cjs';
               return `legacy/index.${format}.js`;
+            }
+            if (entryName === 'runtime') {
+              if (format === 'es') return 'runtime/index.js';
+              if (format === 'cjs') return 'runtime/index.cjs';
+              return `runtime/index.${format}.js`;
+            }
+            if (entryName === 'react') {
+              if (format === 'es') return 'react/index.js';
+              if (format === 'cjs') return 'react/index.cjs';
+              return `react/index.${format}.js`;
+            }
+            if (entryName === 'devtools') {
+              if (format === 'es') return 'devtools/index.js';
+              if (format === 'cjs') return 'devtools/index.cjs';
+              return `devtools/index.${format}.js`;
             }
             if (entryName === 'molecules') {
               if (format === 'es') return 'molecules/index.js';

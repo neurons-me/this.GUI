@@ -34,6 +34,12 @@ const darkTokens = {
       "all":     { "$type": "color", "$value": "rgba(10, 26, 28, 1)" } // full oceanic darkness
     }
   },
+  "semantic": {
+    "success": { "$type": "color", "$value": "#63c7b2" },
+    "error": { "$type": "color", "$value": "#e07a7a" },
+    "warning": { "$type": "color", "$value": "#d8b56a" },
+    "info": { "$type": "color", "$value": "#7ccfdd" }
+  },
   "effects": {
     "shadow": {
       "$type": "shadow",

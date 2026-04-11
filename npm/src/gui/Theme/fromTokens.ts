@@ -29,6 +29,48 @@ declare module '@mui/material/styles' {
       all?: string;
     };
   }
+  interface Theme {
+    visuals: {
+      accents: {
+        aurora: {
+          soft: string;
+          strong: string;
+          chip: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'default';
+        };
+        ember: {
+          soft: string;
+          strong: string;
+          chip: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'default';
+        };
+        monolith: {
+          soft: string;
+          strong: string;
+          chip: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'default';
+        };
+      };
+    };
+  }
+  interface ThemeOptions {
+    visuals?: {
+      accents?: {
+        aurora?: {
+          soft?: string;
+          strong?: string;
+          chip?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'default';
+        };
+        ember?: {
+          soft?: string;
+          strong?: string;
+          chip?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'default';
+        };
+        monolith?: {
+          soft?: string;
+          strong?: string;
+          chip?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'default';
+        };
+      };
+    };
+  }
 }
 
 export const pxToRem = (n: number): string => `${n / 16}rem`;
@@ -50,6 +92,35 @@ const readNumber = (v: unknown, fb: number): number => {
   const n = typeof v === 'string' ? parseFloat(v) : (v as number);
   return Number.isFinite(n) ? (n as number) : fb;
 };
+
+function hexToRgbChannels(input: string): string {
+  const value = String(input || '').trim();
+  const normalized = value.startsWith('#') ? value.slice(1) : value;
+
+  if (normalized.length === 3) {
+    const expanded = normalized
+      .split('')
+      .map((part) => part + part)
+      .join('');
+    const r = parseInt(expanded.slice(0, 2), 16);
+    const g = parseInt(expanded.slice(2, 4), 16);
+    const b = parseInt(expanded.slice(4, 6), 16);
+    return `${r},${g},${b}`;
+  }
+
+  if (normalized.length === 6) {
+    const r = parseInt(normalized.slice(0, 2), 16);
+    const g = parseInt(normalized.slice(2, 4), 16);
+    const b = parseInt(normalized.slice(4, 6), 16);
+    return `${r},${g},${b}`;
+  }
+
+  return '0,0,0';
+}
+
+function rgbaFromHex(input: string, alpha: number): string {
+  return `rgba(${hexToRgbChannels(input)}, ${alpha})`;
+}
 
 // Main compiler ------------------------------------------------------
 export function makeMuiTheme(themeTokens: any, modeTokens: any, mode: 'light' | 'dark' = 'light'): Theme {
@@ -83,6 +154,32 @@ export function makeMuiTheme(themeTokens: any, modeTokens: any, mode: 'light' | 
   const semantic = modeTokens?.extendedColors || modeTokens?.semantic || {};
   const gradients = semantic?.gradients || {};
   const overlays = semantic?.overlays || {};
+  const primaryMain = pick(c, ['primary'], '#1976d2');
+  const secondaryMain = pick(c, ['secondary'], '#9c27b0');
+  const errorMain = pick(semantic, ['error'], mode === 'dark' ? '#ef5350' : '#d32f2f');
+  const warningMain = pick(semantic, ['warning'], '#ed6c02');
+  const infoMain = pick(semantic, ['info'], '#0288d1');
+  const backgroundDefault = pick(c, ['background', 'default'], mode === 'dark' ? '#121214' : '#f8f9fa');
+  const backgroundPaper = pick(c, ['background', 'paper'], mode === 'dark' ? '#181a1c' : '#fff');
+  const visuals = {
+    accents: {
+      aurora: {
+        soft: `linear-gradient(135deg, ${rgbaFromHex(primaryMain, 0.16)}, ${rgbaFromHex(secondaryMain, 0.12)})`,
+        strong: `linear-gradient(135deg, ${primaryMain} 0%, ${secondaryMain} 100%)`,
+        chip: 'primary' as const,
+      },
+      ember: {
+        soft: `linear-gradient(135deg, ${rgbaFromHex(errorMain, 0.14)}, ${rgbaFromHex(warningMain, 0.12)})`,
+        strong: `linear-gradient(135deg, ${errorMain} 0%, ${warningMain} 100%)`,
+        chip: 'warning' as const,
+      },
+      monolith: {
+        soft: `linear-gradient(135deg, ${rgbaFromHex(infoMain, 0.16)}, ${rgbaFromHex(backgroundPaper, 0.18)})`,
+        strong: `linear-gradient(135deg, ${infoMain} 0%, ${backgroundDefault} 100%)`,
+        chip: 'secondary' as const,
+      },
+    },
+  };
   const zIndexTokens = g.zIndex || {};
   const breakpointsTokens = g.breakpoints || {};
   const motion = g.motion || {};
@@ -97,14 +194,14 @@ export function makeMuiTheme(themeTokens: any, modeTokens: any, mode: 'light' | 
     palette: {
       mode,
       primary: {
-        main: pick(c, ['primary'], '#1976d2'),
+        main: primaryMain,
         contrastText: onPrimary,
       },
-      secondary: { main: pick(c, ['secondary'], '#9c27b0') },
+      secondary: { main: secondaryMain },
       icon: { main: pick(c, ['icon'], '#5e5e5e') },
       background: {
-        default: pick(c, ['background','default'], mode === 'dark' ? '#121214' : '#f8f9fa'),
-        paper: pick(c, ['background','paper'], mode === 'dark' ? '#181a1c' : '#fff'),
+        default: backgroundDefault,
+        paper: backgroundPaper,
         nav: pick(c, ['background','nav'], mode === 'dark' ? '#16181a' : '#fdfdfd'),
       },
       text: {
@@ -119,9 +216,9 @@ export function makeMuiTheme(themeTokens: any, modeTokens: any, mode: 'light' | 
         main: pick(c, ['link'], mode === 'dark' ? '#00aa96' : '#008c7d'),
         visited: pick(c, ['linkVisited'], mode === 'dark' ? '#008278' : '#006e64'),
       },
-      error:   { main: pick(semantic, ['error'],   mode === 'dark' ? '#ef5350' : '#d32f2f') },
-      warning: { main: pick(semantic, ['warning'], '#ed6c02') },
-      info:    { main: pick(semantic, ['info'],    '#0288d1') },
+      error:   { main: errorMain },
+      warning: { main: warningMain },
+      info:    { main: infoMain },
       success: { main: pick(semantic, ['success'], '#2e7d32') },
       divider: pick(c, ['border'], borderDefault),
       action: {
@@ -227,6 +324,7 @@ export function makeMuiTheme(themeTokens: any, modeTokens: any, mode: 'light' | 
         bottom: readNumber(pick(g, ['layout', 'insets', 'bottom'], 0), 0),
       },
     },
+    visuals,
     components: {
       MuiButton: {
         defaultProps: { disableElevation: true },

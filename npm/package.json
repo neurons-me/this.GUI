@@ -2,7 +2,7 @@
   "name": "this.gui",
   "description": "Generative User Interface",
   "private": false,
-  "version": "2.1.4",
+  "version": "2.1.5",
   "type": "module",
   "main": "./dist/this.gui.cjs",
   "module": "./dist/this.gui.es.js",
@@ -30,6 +30,21 @@
       "types": "./dist/src/legacy/index.d.ts",
       "import": "./dist/legacy/index.js",
       "require": "./dist/legacy/index.cjs"
+    },
+    "./runtime": {
+      "types": "./dist/src/runtime-entry.d.ts",
+      "import": "./dist/runtime/index.js",
+      "require": "./dist/runtime/index.cjs"
+    },
+    "./react": {
+      "types": "./dist/src/react-entry.d.ts",
+      "import": "./dist/react/index.js",
+      "require": "./dist/react/index.cjs"
+    },
+    "./devtools": {
+      "types": "./dist/src/devtools-entry.d.ts",
+      "import": "./dist/devtools/index.js",
+      "require": "./dist/devtools/index.cjs"
     },
     "./style.css": "./dist/styles.css",
     "./style": "./dist/styles.css",

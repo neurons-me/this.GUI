@@ -28,6 +28,12 @@ const darkTokens = {
       "all": { "$type": "color", "$value": "rgba(17, 14, 11, 1)" }
     }
   },
+  "semantic": {
+    "success": { "$type": "color", "$value": "#9bbf9a" },
+    "error": { "$type": "color", "$value": "#d08f86" },
+    "warning": { "$type": "color", "$value": "#d8b26e" },
+    "info": { "$type": "color", "$value": "#a8b9d6" }
+  },
   "effects": {
     "shadow": {
       "$type": "shadow",

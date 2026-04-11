@@ -20,27 +20,11 @@ import {
 } from '@/gui/Atoms';
 import { Stack } from '@/gui/Molecules';
 
+import { useTheme } from '@mui/material/styles';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const accents = {
-  aurora: {
-    soft: 'linear-gradient(135deg, rgba(31,81,255,0.16), rgba(43,208,169,0.12))',
-    strong: 'linear-gradient(135deg, #1f51ff 0%, #2bd0a9 100%)',
-    chip: 'primary',
-  },
-  ember: {
-    soft: 'linear-gradient(135deg, rgba(255,111,60,0.14), rgba(255,184,77,0.12))',
-    strong: 'linear-gradient(135deg, #ff6f3c 0%, #ffb84d 100%)',
-    chip: 'warning',
-  },
-  monolith: {
-    soft: 'linear-gradient(135deg, rgba(115,103,240,0.16), rgba(17,24,39,0.18))',
-    strong: 'linear-gradient(135deg, #7367f0 0%, #111827 100%)',
-    chip: 'secondary',
-  },
-} as const;
 
-type AccentKey = keyof typeof accents;
+type AccentKey = 'aurora' | 'ember' | 'monolith';
 type Status = 'online' | 'offline' | 'reviewing';
 
 const Demo = () => {
@@ -52,7 +36,14 @@ const Demo = () => {
   const [accent, setAccent] = useState<AccentKey>('aurora');
   const [showTelemetry, setShowTelemetry] = useState(true);
 
-  const accentTheme = accents[accent];
+  const theme = useTheme() as any;
+  const themeAccents = theme.visuals?.accents;
+
+  const accentTheme = themeAccents?.[accent] ?? themeAccents?.aurora ?? {
+    soft: 'linear-gradient(135deg, rgba(31,81,255,0.16), rgba(43,208,169,0.12))',
+    strong: 'linear-gradient(135deg, #1f51ff 0%, #2bd0a9 100%)',
+    chip: 'primary',
+  };
   const profileStrength = useMemo(() => {
     const raw = 36 + Math.min(name.trim().length * 2, 18) + Math.min(headline.trim().length / 3, 24) + count * 4;
     return Math.max(28, Math.min(100, Math.round(raw)));

@@ -32,6 +32,12 @@ const lightTokens = {
       "all": { "$type": "color", "$value": "rgba(175, 173, 190, 1)" } // gothic silver finish
     }
   },
+  "semantic": {
+    "success": { "$type": "color", "$value": "#5fa38f" },
+    "error": { "$type": "color", "$value": "#b85c6e" },
+    "warning": { "$type": "color", "$value": "#c79a4a" },
+    "info": { "$type": "color", "$value": "#6f86c9" }
+  },
   "effects": {
     "shadow": {
       "$type": "shadow",

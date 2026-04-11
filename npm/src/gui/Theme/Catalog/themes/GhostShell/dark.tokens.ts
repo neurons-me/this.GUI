@@ -32,6 +32,12 @@ const darkTokens = {
       "pulse": { "$type": "color", "$value": "#00c3ff" }
     }
   },
+  "semantic": {
+    "success": { "$type": "color", "$value": "#00ff9f" },
+    "error": { "$type": "color", "$value": "#ff4d6d" },
+    "warning": { "$type": "color", "$value": "#ffd166" },
+    "info": { "$type": "color", "$value": "#00e0ff" }
+  },
   "font": {
     "family": {
       "$type": "fontFamily",

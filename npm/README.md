@@ -1,113 +1,187 @@
-
-
 <img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/w_320/v1761281165/geometry_shapes-removebg-preview_anrdke.png" alt="Geometry shapes" width="244" />
 
 ---
 
-# **Quick Start .GUI**
+# this.gui
 
-**.GUI** lets you build user interfaces by **describing what you want to see**, instead of writing imperative code.
+`this.gui` is a React-first runtime for semantic interfaces.
 
-You define your **screen as data (a spec)**, connect it to dynamic data with [.me](https://www.npmjs.com/package/this.me), and let the runtime handle the rest.
+It gives you three clean layers:
+
+- `this.gui` for UI primitives and the high-level package surface
+- `this.gui/react` for the `.me` React bridge
+- `this.gui/runtime` for spec mounting and runtime adapters
+
+Legacy browser/global usage still exists in `this.gui/legacy`, but the modern path is React + Vite.
 
 ## Install
 
 ```bash
-npm install this.gui
+npm install this.gui this.me
 ```
 
-### Try it in 30 seconds
+## React-First Quick Start
 
 ```tsx
-import { mount } from 'this.gui';
-
-const spec = {
-  type: 'Page',
-  props: { title: 'My First Screen' },
-  children: [
-    {
-      type: 'Typography',
-      props: { variant: 'h4', children: 'Hello .GUI' }
-    },
-    {
-      type: 'Button',
-      props: { label: 'Click me', variant: 'contained' }
-    }
-  ]
-};
-
-mount(spec, '#root');
-```
-
-You now have a clean page with a title and a working button.
-
-### Make it dynamic with .me
-
-Connect live data and actions using [.me](https://www.npmjs.com/package/this.me) as your single source of truth:
-
-```tsx
-import { mount } from 'this.gui';
+import * as React from 'react';
 import ME from 'this.me';
 
-const me = new ME();
+import { Theme, Box, Button, Typography } from 'this.gui';
+import { MeRuntimeProvider, useMeAction, useMeValue } from 'this.gui/react';
 
-me.profile.name("Ana");
-me.profile.status("online");
+const me = new ME();
+me.profile.name('Ana');
+me.profile.status('online');
+
+function ProfileCard() {
+  const name = useMeValue<string>('profile.name');
+  const status = useMeValue<string>('profile.status');
+  const setStatus = useMeAction('profile.status');
+
+  return (
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4">{name}</Typography>
+      <Typography variant="body1" sx={{ mb: 2 }}>
+        Status: {status}
+      </Typography>
+      <Button variant="contained" onClick={() => setStatus('offline')}>
+        Set Offline
+      </Button>
+    </Box>
+  );
+}
+
+export default function App() {
+  return (
+    <Theme>
+      <MeRuntimeProvider me={me}>
+        <ProfileCard />
+      </MeRuntimeProvider>
+    </Theme>
+  );
+}
+```
+
+## Mount a Spec with `.me`
+
+If you want to render declarative specs instead of hand-writing JSX, use `mount()` from `this.gui/runtime`.
+In modern ESM apps, pass the package surface and React namespaces explicitly.
+
+```tsx
+import * as React from 'react';
+import * as ReactDOM from 'react-dom/client';
+import * as GUI from 'this.gui';
+import ME from 'this.me';
+import { createMeRuntime, mount } from 'this.gui/runtime';
+
+const me = new ME();
+me.profile.name('Ana');
+me.profile.status('online');
+const runtime = createMeRuntime(me);
 
 const spec = {
   type: 'Page',
-  props: { title: 'Profile' },
+  props: {
+    title: 'Profile',
+    subtitle: 'Spec mounted with the runtime bridge',
+  },
   children: [
     {
       type: 'Typography',
-      props: { 
-        variant: 'h5', 
-        children: { read: 'me.profile.name' }        // live data
-      }
+      props: {
+        variant: 'h5',
+        children: { read: 'me/profile/name' },
+      },
     },
     {
       type: 'Typography',
-      props: { 
-        variant: 'body1', 
-        children: { read: 'me.profile.status' }
-      }
+      props: {
+        variant: 'body1',
+        children: { read: 'me/profile/status' },
+      },
     },
     {
       type: 'Button',
-      props: { 
-        label: 'Set Offline',
-        onClick: { write: "me.profile.status = 'offline'" }   // live action
-      }
-    }
-  ]
+      props: {
+        label: 'Set Reviewing',
+        variant: 'contained',
+        onClick: { write: "me/profile/status = 'reviewing'" },
+      },
+    },
+  ],
 };
 
-mount(spec, '#root', { runtime: me });
+mount(spec, '#root', {
+  gui: GUI,
+  React,
+  ReactDOM,
+  me,
+  runtime,
+  devtools: {
+    inspector: false,
+    inspectorToggleVisible: true,
+    adminView: false,
+  },
+});
 ```
 
-- The UI now updates automatically when you change values in [.me.](https://www.npmjs.com/package/this.me)
+## Package Surface
 
-  ### Why .GUI + .me feels different
+### `this.gui`
 
-  - You describe **what** to render **(UI spec)**
-  - **[.me](https://www.npmjs.com/package/this.me)** is the single source of truth for data and logic
-  - read pulls live values, write triggers changes — no manual state management needed
-  - Everything stays reactive and consistent
+Use the root entry for the UI surface:
 
-  ### Next steps
+- `Theme`
+- `Box`, `Button`, `Typography`, `TextField`
+- `Layout`
+- `Router`, `RouterProvider`
+- `mount`
 
-  Once your static **UI** works, you can:
+### `this.gui/react`
 
-  - Replace static values with read tokens
-  - Add actions with write tokens
-  - Use powerful selectors and derivations from [.me](https://www.npmjs.com/package/this.me)
-  - Switch from local state to full data-driven mode without rewriting components
+Use this entry when `.me` is your state layer:
 
-  **.GUI** handles the **UI layer** -  [**.me**](https://www.npmjs.com/package/this.me) handles the data and business logic.
+- `MeRuntimeProvider`
+- `useMe`
+- `useMeValue`
+- `useMeAction`
 
-  Clean separation. Real power.
+### `this.gui/runtime`
 
+Use this entry when you want the lower-level runtime APIs:
 
+- `mount`
+- `createMeRuntime`
+- `readMeValue`
+- `writeMeValue`
+- `createHttpNamespaceProvider`
+- `startApp`
+
+### `this.gui/devtools`
+
+Use this entry only when you explicitly want runtime tooling:
+
+- `RuntimeInspector`
+- `RuntimeAdminView`
+- `toggleInspector`
+- `toggleAdminView`
+
+### `this.gui/legacy`
+
+Use this only for explicit compatibility with the browser/global facade.
+
+## Recommended Direction
+
+- Build apps in React/Vite
+- Use `.me` as the semantic source of truth
+- Use `this.gui/react` for bindings
+- Use `this.gui/runtime` when you want to mount specs
+- Opt into `this.gui/devtools` only when you need runtime inspection
+
+## Docs
+
+- Storybook runtime examples live under `Getting Started` and `Runtime`
+- The runtime contract lives in [`Runtime-Contract.md`](/Users/suign/Desktop/Neuroverse/neurons.me/this/GUI/npm/Runtime-Contract.md)
 
 <img src="https://suign.github.io/assets/imgs/neurons_me_logo.png" alt="neurons.me logo" width="89">
 

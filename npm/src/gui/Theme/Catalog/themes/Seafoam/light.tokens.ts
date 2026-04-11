@@ -32,6 +32,12 @@ const lightTokens = {
       "all": { "$type": "color", "$value": "rgba(145, 215, 230, 1)" } // Caribbean blue glow
     }
   },
+  "semantic": {
+    "success": { "$type": "color", "$value": "#4fb39e" },
+    "error": { "$type": "color", "$value": "#cf6f6f" },
+    "warning": { "$type": "color", "$value": "#cfa45b" },
+    "info": { "$type": "color", "$value": "#69bfd0" }
+  },
   "effects": {
     "shadow": {
       "$type": "shadow",

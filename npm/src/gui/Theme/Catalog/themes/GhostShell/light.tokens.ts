@@ -30,6 +30,12 @@ const lightTokens = {
       "pulse": { "$type": "color", "$value": "#00d0ff" }
     }
   },
+  "semantic": {
+    "success": { "$type": "color", "$value": "#00c77f" },
+    "error": { "$type": "color", "$value": "#ff5a7a" },
+    "warning": { "$type": "color", "$value": "#ffcf5a" },
+    "info": { "$type": "color", "$value": "#00b8ff" }
+  },
   "font": {
     "body": { "$type": "font", "$value": "'Share Tech Mono', 'Nunito Sans', monospace" },
     "heading": { "$type": "font", "$value": "'Poppins', sans-serif" }

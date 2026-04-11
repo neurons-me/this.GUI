@@ -168,7 +168,11 @@ export const sideBarsCollections = SideBarsCollections;
 // Mount API (React runtime)
 // GUINode → renderer → ReactDOM, expects React/ReactDOM globals in UMD usage.
 export { mount } from '@/runtime/mount';
-export type { MountTarget } from '@/runtime/mount';
+export type {
+  MountDevtoolsOptions,
+  MountOptions,
+  MountTarget,
+} from '@/runtime/mount';
 export {
   buildGuiPartRecords,
   createGuiPartAttrs,

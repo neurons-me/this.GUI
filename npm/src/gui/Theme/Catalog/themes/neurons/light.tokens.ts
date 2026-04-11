@@ -77,6 +77,12 @@ const lightTokens = {
       "heavy": { "$type": "color", "$value": "rgba(21, 27, 25, 0.89);" },
       "all": { "$type": "color", "$value": "rgba(31, 38, 36, 0.98);" }
     }
+  },
+  "semantic": {
+    "success": { "$type": "color", "$value": "#4db6ac" },
+    "error": { "$type": "color", "$value": "#d6455d" },
+    "warning": { "$type": "color", "$value": "#d4a93a" },
+    "info": { "$type": "color", "$value": "#5aa9e6" }
   }
 };
 

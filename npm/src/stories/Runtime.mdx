@@ -4,8 +4,14 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Runtime
 
-`this.GUI` renders a spec, but **runtime** decides how data and actions resolve.
-You can pass a fully constructed `runtime`, or pass a `.me` instance and let GUI build it for you.
+`this.gui` renders a spec, but **runtime** decides how data and actions resolve.
+
+Modern usage is split across two explicit surfaces:
+
+- `this.gui/react` for the `.me` React bridge
+- `this.gui/runtime` for `mount()`, adapters, and lower-level runtime APIs
+
+If you call `mount()` directly inside a React/Vite app, pass `gui`, `React`, and `ReactDOM` explicitly.
 
 ---
 
@@ -14,6 +20,11 @@ You can pass a fully constructed `runtime`, or pass a `.me` instance and let GUI
 Use this when you only need static UI.
 
 ```ts
+import * as React from 'react';
+import * as ReactDOM from 'react-dom/client';
+import * as GUI from 'this.gui';
+import { mount } from 'this.gui/runtime';
+
 const spec = {
   type: 'Page',
   props: { title: 'Hello GUI' },
@@ -22,31 +33,55 @@ const spec = {
   ],
 };
 
-GUI.mount(spec, '#root');
+mount(spec, '#root', { gui: GUI, React, ReactDOM });
 ```
 
 ---
 
 ## Pass a runtime adapter
 
-Use this when you already have a runtime (custom adapter, router, etc.).
+Use this when you already have a runtime (custom adapter, router, shared app state).
 
 ```ts
+import * as React from 'react';
+import * as ReactDOM from 'react-dom/client';
+import * as GUI from 'this.gui';
+import { mount } from 'this.gui/runtime';
+
 const runtime = buildRuntime(/* ... */);
 
-GUI.mount(spec, '#root', { runtime });
+mount(spec, '#root', { gui: GUI, React, ReactDOM, runtime });
 ```
 
 ---
 
 ## Pass a `.me` instance
 
-If `.me` is your runtime, just pass `{ me }` and GUI will derive the runtime.
+If `.me` is your runtime, you can pass `{ me }` and GUI will derive the runtime.
+For mixed React + mounted-spec screens, sharing an explicit runtime is cleaner.
 
 ```ts
-const me = new ME();
+import * as React from 'react';
+import * as ReactDOM from 'react-dom/client';
+import * as GUI from 'this.gui';
+import ME from 'this.me';
+import { createMeRuntime, mount } from 'this.gui/runtime';
 
-GUI.mount(spec, '#root', { me });
+const me = new ME();
+const runtime = createMeRuntime(me);
+
+mount(spec, '#root', {
+  gui: GUI,
+  React,
+  ReactDOM,
+  me,
+  runtime,
+  devtools: {
+    inspector: false,
+    inspectorToggleVisible: true,
+    adminView: false,
+  },
+});
 ```
 
 ---
@@ -57,3 +92,15 @@ GUI.mount(spec, '#root', { me });
 - **runtime**: you already have a runtime adapter (router, app state).
 - **me**: your app is driven by `.me` and you want the cleanest API.
 
+---
+
+## Canonical Story
+
+See `Runtime/React + .me Basic` for the canonical smoke test:
+
+- `MeRuntimeProvider`
+- `useMeValue`
+- `useMeAction`
+- official `<Me />`
+- `mount()` with shared `.me` runtime
+- opt-in `devtools`
