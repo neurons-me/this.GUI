@@ -10,6 +10,7 @@
 // }
 // where GuiNode can also be a string/number/boolean/null.
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import * as ReactRuntime from 'react';
 import { defaultAdapter, isPromiseLike, type RuntimeAdapter } from './adapter';
 import { buildGuiPartRecords } from './parts';
 import type { GuiNode, GuiNodeProvenance, GuiPrimitive, GuiSpecNode } from '@/types/gui.types';
@@ -52,7 +53,7 @@ export type RendererOptions = {
   runtime?: RuntimeAdapter;
   /** Optional node tap for inspector/runtime tooling. */
   onNodeResolved?: (record: ResolvedNodeRecord) => void;
-  /** Optional allowlist for semantic expressions. Default: ['me/views/', 'me/public/'] */
+  /** Optional allowlist for semantic expressions. */
   allowedExprRoots?: string[];
   /** If true, disable expression allowlist checks (use with care). */
   unsafeAllowAllExpressions?: boolean;
@@ -193,6 +194,104 @@ function withAutoKey(child: any, key: string): any {
   return { ...child, props: { ...props, key } };
 }
 
+function isPlainObject(value: any): value is Record<string, any> {
+  return !!value && typeof value === 'object' && Object.getPrototypeOf(value) === Object.prototype;
+}
+
+function getStringToken(
+  value: Record<string, any>,
+  legacyKey: '$expr' | '$action',
+  aliasKey: 'read' | 'write',
+  opt: RendererOptions
+): { expression: string; source: '$expr' | '$action' | 'read' | 'write' } | null {
+  const legacy = typeof value[legacyKey] === 'string' ? value[legacyKey] : null;
+  const alias = typeof value[aliasKey] === 'string' ? value[aliasKey] : null;
+
+  if (legacy && alias && legacy !== alias && opt.showUnknown) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[this.GUI runtime] Conflicting token values for "${legacyKey}" and "${aliasKey}" at runtime; preferring "${legacyKey}".`
+    );
+  }
+
+  if (legacy) return { expression: legacy, source: legacyKey };
+  if (alias) return { expression: alias, source: aliasKey };
+  return null;
+}
+
+function resolvePathValue(source: any, dottedPath: string): any {
+  const parts = dottedPath.split('.').filter(Boolean);
+  let cursor = source;
+  for (const p of parts) {
+    cursor = cursor?.[p];
+    if (cursor === undefined) return undefined;
+  }
+  return cursor;
+}
+
+function interpolateRuntimeValue(input: string, opt: RendererOptions): string {
+  return input.replace(/\{\{(.+?)\}\}/g, (match, rawPath) => {
+    const trimmed = String(rawPath ?? '').trim();
+    if (!trimmed) return match;
+    const cleanPath = trimmed.replace(/^ctx\./, '');
+    const value = resolvePathValue(opt.ctx, cleanPath);
+    if (value === undefined) {
+      if (opt.showUnknown) {
+        // eslint-disable-next-line no-console
+        console.warn(`[this.GUI runtime] Missing context for interpolation: {{${cleanPath}}}`);
+      }
+      return match;
+    }
+    return String(value);
+  });
+}
+
+function getAllowedExpressionRoots(opt: RendererOptions): string[] {
+  if (opt.allowedExprRoots && opt.allowedExprRoots.length > 0) return opt.allowedExprRoots;
+  return ['me/views/', 'me/public/', 'me/', 'me://', 'self:', 'kernel:'];
+}
+
+function isAllowedExpression(expr: string, opt: RendererOptions): boolean {
+  if (opt.unsafeAllowAllExpressions) return true;
+  return getAllowedExpressionRoots(opt).some((root) => expr.startsWith(root));
+}
+
+function getMetaBase(node: GuiSpecNode) {
+  return { type: typeof node.type === 'string' ? node.type : undefined, node };
+}
+
+function collectReadExpressions(value: any, opt: RendererOptions, out = new Set<string>()): string[] {
+  if (Array.isArray(value)) {
+    value.forEach((item) => collectReadExpressions(item, opt, out));
+    return Array.from(out);
+  }
+  if (!isPlainObject(value)) return Array.from(out);
+
+  const readToken = getStringToken(value, '$expr', 'read', opt);
+  if (readToken) {
+    out.add(interpolateRuntimeValue(readToken.expression, opt));
+    return Array.from(out);
+  }
+
+  for (const child of Object.values(value)) {
+    collectReadExpressions(child, opt, out);
+  }
+  return Array.from(out);
+}
+
+function hasRuntimeTokens(value: any, opt: RendererOptions): boolean {
+  if (Array.isArray(value)) return value.some((item) => hasRuntimeTokens(item, opt));
+  if (!isPlainObject(value)) return false;
+  if (getStringToken(value, '$expr', 'read', opt) || getStringToken(value, '$action', 'write', opt)) {
+    return true;
+  }
+  return Object.values(value).some((child) => hasRuntimeTokens(child, opt));
+}
+
+function runtimeSupportsAsync(runtime: RuntimeAdapter | undefined): boolean {
+  return Boolean(runtime?.resolveAsync || runtime?.batchResolveAsync);
+}
+
 function resolveProps(
   props: Record<string, any> | undefined,
   opt: RendererOptions,
@@ -200,16 +299,12 @@ function resolveProps(
 ): Record<string, any> | undefined {
   if (!props || typeof props !== 'object') return props;
   const runtime = opt.runtime ?? defaultAdapter;
-  const metaBase = { type: typeof node.type === 'string' ? node.type : undefined, node };
+  const metaBase = getMetaBase(node);
 
   if (runtime.batchResolve) {
     try {
       const batch = runtime.batchResolve(props, opt.ctx, metaBase);
       if (!isPromiseLike(batch)) return batch;
-      if (opt.showUnknown) {
-        // eslint-disable-next-line no-console
-        console.warn('[this.GUI runtime] runtime.batchResolve returned a Promise; async batch is ignored in sync renderer.');
-      }
     } catch (err) {
       if (opt.showUnknown) {
         // eslint-disable-next-line no-console
@@ -218,73 +313,13 @@ function resolveProps(
     }
   }
 
-  function isPlainObject(value: any): value is Record<string, any> {
-    return !!value && typeof value === 'object' && Object.getPrototypeOf(value) === Object.prototype;
-  }
-
-  function getStringToken(
-    value: Record<string, any>,
-    legacyKey: '$expr' | '$action',
-    aliasKey: 'read' | 'write'
-  ): { expression: string; source: '$expr' | '$action' | 'read' | 'write' } | null {
-    const legacy = typeof value[legacyKey] === 'string' ? value[legacyKey] : null;
-    const alias = typeof value[aliasKey] === 'string' ? value[aliasKey] : null;
-
-    if (legacy && alias && legacy !== alias && opt.showUnknown) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[this.GUI runtime] Conflicting token values for "${legacyKey}" and "${aliasKey}" at runtime; preferring "${legacyKey}".`
-      );
-    }
-
-    if (legacy) return { expression: legacy, source: legacyKey };
-    if (alias) return { expression: alias, source: aliasKey };
-    return null;
-  }
-
-  function resolvePathValue(source: any, dottedPath: string): any {
-    const parts = dottedPath.split('.').filter(Boolean);
-    let cursor = source;
-    for (const p of parts) {
-      cursor = cursor?.[p];
-      if (cursor === undefined) return undefined;
-    }
-    return cursor;
-  }
-
-  function interpolate(input: string): string {
-    return input.replace(/\{\{(.+?)\}\}/g, (match, rawPath) => {
-      const trimmed = String(rawPath ?? '').trim();
-      if (!trimmed) return match;
-      // support both {{ctx.params.id}} and {{params.id}}
-      const cleanPath = trimmed.replace(/^ctx\./, '');
-      const value = resolvePathValue(opt.ctx, cleanPath);
-      if (value === undefined) {
-        if (opt.showUnknown) {
-          // eslint-disable-next-line no-console
-          console.warn(`[this.GUI runtime] Missing context for interpolation: {{${cleanPath}}}`);
-        }
-        return match;
-      }
-      return String(value);
-    });
-  }
-
-  function isAllowedExpression(expr: string): boolean {
-    if (opt.unsafeAllowAllExpressions) return true;
-    const roots = (opt.allowedExprRoots && opt.allowedExprRoots.length > 0)
-      ? opt.allowedExprRoots
-      : ['me/views/', 'me/public/'];
-    return roots.some((root) => expr.startsWith(root));
-  }
-
   function resolveLeaf(value: any, propKey: string): any {
-    const readToken = isPlainObject(value) ? getStringToken(value, '$expr', 'read') : null;
+    const readToken = isPlainObject(value) ? getStringToken(value, '$expr', 'read', opt) : null;
 
     // Token mode: { $expr: "..." } or { read: "..." }
     if (readToken) {
-      const expr = interpolate(readToken.expression);
-      if (!isAllowedExpression(expr)) {
+      const expr = interpolateRuntimeValue(readToken.expression, opt);
+      if (!isAllowedExpression(expr, opt)) {
         // eslint-disable-next-line no-console
         console.error(`[Security] Blocked access to non-public expression: ${expr}`);
         return readToken.expression;
@@ -320,12 +355,12 @@ function resolveProps(
       }
     }
 
-    const writeToken = isPlainObject(value) ? getStringToken(value, '$action', 'write') : null;
+    const writeToken = isPlainObject(value) ? getStringToken(value, '$action', 'write', opt) : null;
 
     // Token mode: { $action: "..." } or { write: "..." }
     if (writeToken) {
-      const actionExpr = interpolate(writeToken.expression);
-      if (!isAllowedExpression(actionExpr)) {
+      const actionExpr = interpolateRuntimeValue(writeToken.expression, opt);
+      if (!isAllowedExpression(actionExpr, opt)) {
         // eslint-disable-next-line no-console
         console.error(`[Security] Blocked action for non-public expression: ${actionExpr}`);
         return () => {};
@@ -355,8 +390,8 @@ function resolveProps(
 
     // Back-compat mode: on* with declarative string action
     if (propKey.startsWith('on') && typeof value === 'string') {
-      const actionExpr = interpolate(value);
-      if (!isAllowedExpression(actionExpr)) {
+      const actionExpr = interpolateRuntimeValue(value, opt);
+      if (!isAllowedExpression(actionExpr, opt)) {
         // eslint-disable-next-line no-console
         console.error(`[Security] Blocked event action for non-public expression: ${actionExpr}`);
         return undefined;
@@ -431,6 +466,102 @@ function resolveProps(
   return out;
 }
 
+async function resolvePropsAsync(
+  props: Record<string, any> | undefined,
+  opt: RendererOptions,
+  node: GuiSpecNode
+): Promise<Record<string, any> | undefined> {
+  if (!props || typeof props !== 'object') return props;
+  const runtime = opt.runtime ?? defaultAdapter;
+  const metaBase = getMetaBase(node);
+
+  if (runtime.batchResolveAsync) {
+    return runtime.batchResolveAsync(props, opt.ctx, metaBase);
+  }
+  if (runtime.batchResolve) {
+    const batch = runtime.batchResolve(props, opt.ctx, metaBase);
+    if (isPromiseLike<Record<string, any>>(batch)) return await batch;
+    if (batch) return batch;
+  }
+
+  async function resolveLeafAsync(value: any, propKey: string): Promise<any> {
+    const readToken = isPlainObject(value) ? getStringToken(value, '$expr', 'read', opt) : null;
+    if (readToken) {
+      const expr = interpolateRuntimeValue(readToken.expression, opt);
+      if (!isAllowedExpression(expr, opt)) return readToken.expression;
+      try {
+        if (runtime.resolveAsync) return await runtime.resolveAsync(expr, opt.ctx, { ...metaBase, propKey });
+        if (runtime.resolve) {
+          const resolved = runtime.resolve(expr, opt.ctx, { ...metaBase, propKey });
+          return isPromiseLike(resolved) ? await resolved : resolved;
+        }
+      } catch {
+        return expr;
+      }
+      return expr;
+    }
+
+    const writeToken = isPlainObject(value) ? getStringToken(value, '$action', 'write', opt) : null;
+    if (writeToken) {
+      const actionExpr = interpolateRuntimeValue(writeToken.expression, opt);
+      if (!isAllowedExpression(actionExpr, opt)) return () => {};
+      try {
+        return runtime.action ? runtime.action(actionExpr, opt.ctx, { ...metaBase, propKey }) : () => {};
+      } catch {
+        return () => {};
+      }
+    }
+
+    if (propKey.startsWith('on') && typeof value === 'string') {
+      const actionExpr = interpolateRuntimeValue(value, opt);
+      if (!isAllowedExpression(actionExpr, opt)) return undefined;
+      try {
+        return runtime.action ? runtime.action(actionExpr, opt.ctx, { ...metaBase, propKey }) : undefined;
+      } catch {
+        return undefined;
+      }
+    }
+
+    try {
+      if (runtime.resolveAsync) return await runtime.resolveAsync(value, opt.ctx, { ...metaBase, propKey });
+      if (runtime.resolve) {
+        const resolved = runtime.resolve(value, opt.ctx, { ...metaBase, propKey });
+        return isPromiseLike(resolved) ? await resolved : resolved;
+      }
+    } catch {
+      return value;
+    }
+
+    return value;
+  }
+
+  async function resolveDynamicValueAsync(value: any, propKey: string): Promise<any> {
+    if (Array.isArray(value)) {
+      return Promise.all(value.map((item, index) => resolveDynamicValueAsync(item, `${propKey}[${index}]`)));
+    }
+    if (isPlainObject(value)) {
+      if (
+        typeof value.$expr === 'string' ||
+        typeof value.read === 'string' ||
+        typeof value.$action === 'string' ||
+        typeof value.write === 'string'
+      ) {
+        return resolveLeafAsync(value, propKey);
+      }
+      const entries = await Promise.all(
+        Object.entries(value).map(async ([key, child]) => [key, await resolveDynamicValueAsync(child, `${propKey}.${key}`)] as const)
+      );
+      return Object.fromEntries(entries);
+    }
+    return resolveLeafAsync(value, propKey);
+  }
+
+  const entries = await Promise.all(
+    Object.entries(props).map(async ([key, value]) => [key, await resolveDynamicValueAsync(value, key)] as const)
+  );
+  return Object.fromEntries(entries);
+}
+
 function makeNodeId(node: GuiSpecNode, path: string, idPrefix?: string): string {
   const props = (node.props || {}) as Record<string, any>;
   const explicit =
@@ -445,6 +576,208 @@ function makeNodeId(node: GuiSpecNode, path: string, idPrefix?: string): string 
     return `${idPrefix}:${base}`;
   }
   return base;
+}
+
+function renderResolvedSpecNode(
+  next: GuiSpecNode,
+  nextOpt: RendererOptions,
+  path: string,
+  resolvedPropsOverride?: Record<string, any> | undefined
+): any {
+  const React = getReact(nextOpt);
+  if (!React) throw new Error('[this.GUI runtime] Missing React. Pass { React: window.React } in the renderer options.');
+
+  const { type } = next;
+  const resolvedProps = resolvedPropsOverride ?? resolveProps(next.props, nextOpt, next);
+  const nodeId = makeNodeId(next, path, nextOpt.idPrefix);
+  const props = {
+    ...(resolvedProps ?? {}),
+    ...(resolvedProps?.['data-gui-node-id'] == null ? { 'data-gui-node-id': nodeId } : {}),
+    ...(resolvedProps?.['data-gui-component'] == null && typeof type === 'string' ? { 'data-gui-component': type } : {}),
+  };
+
+  if (nextOpt.onNodeResolved) {
+    const record = {
+      id: nodeId,
+      type: typeof type === 'string' ? type : undefined,
+      spec: next,
+      resolvedProps,
+      path,
+      provenance: next.provenance,
+    };
+    scheduleResolvedRecord(nextOpt.onNodeResolved, record);
+
+    if (Array.isArray(next.parts) && next.parts.length > 0) {
+      const partRecords = buildGuiPartRecords(
+        {
+          root: {
+            id: nodeId,
+            type: typeof type === 'string' ? type : 'GuiNode',
+            props: resolvedProps,
+            provenance: next.provenance,
+          },
+          parts: next.parts,
+        },
+        {
+          includeRoot: false,
+          pathBase: `${path}.parts`,
+        }
+      );
+      partRecords.forEach((partRecord) =>
+        scheduleResolvedRecord(nextOpt.onNodeResolved as NonNullable<RendererOptions['onNodeResolved']>, partRecord)
+      );
+    }
+  }
+
+  const rawKids = normalizeChildren(next.children);
+  const kids = rawKids.map((c, i) =>
+    React.createElement(
+      React.Fragment,
+      { key: `${typeof type === 'string' ? type : 'node'}-${i}` },
+      renderNode(
+        withAutoKey(c, `${typeof type === 'string' ? type : 'node'}-${i}`),
+        nextOpt,
+        `${path}.${i}`
+      )
+    )
+  );
+
+  if (React.isValidElement?.(type)) {
+    return React.cloneElement(type, props ?? null, ...kids);
+  }
+
+  if (typeof type === 'function' || (typeof type === 'object' && type != null)) {
+    return React.createElement(type, props ?? null, ...kids);
+  }
+
+  if (typeof type === 'string') {
+    const { Component } = resolveType(type, nextOpt);
+    if (!Component) {
+      if (nextOpt.showUnknown) {
+        return React.createElement(
+          'div',
+          {
+            style: {
+              padding: 10,
+              border: '1px dashed rgba(255,255,255,0.25)',
+              borderRadius: 10,
+              opacity: 0.9,
+              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+              fontSize: 12,
+            },
+          },
+          `Unknown type: ${type}`
+        );
+      }
+      return null;
+    }
+    if (Component && typeof Component === 'object' && typeof Component.resolve === 'function') {
+      const resolverSpec = {
+        ...next,
+        props: {
+          ...(props ?? {}),
+          ...(kids.length > 0 ? { children: kids.length === 1 ? kids[0] : kids } : {}),
+        },
+      };
+      const resolved = Component.resolve(resolverSpec, nextOpt.ctx);
+      if (React.isValidElement?.(resolved)) return resolved;
+      if (isGuiNode(resolved)) {
+        return renderNode(resolved, nextOpt, `${path}.resolved`);
+      }
+      return resolved ?? null;
+    }
+    return React.createElement(Component, props ?? null, ...kids);
+  }
+
+  return null;
+}
+
+function RuntimeResolvedNode({
+  node,
+  opt,
+  path,
+}: {
+  node: GuiSpecNode;
+  opt: RendererOptions;
+  path: string;
+}) {
+  const runtime = opt.runtime ?? defaultAdapter;
+  const metaBase = getMetaBase(node);
+  const expressions = ReactRuntime.useMemo(
+    () => collectReadExpressions(node.props, opt),
+    [node.props, opt.ctx, opt.allowedExprRoots, opt.unsafeAllowAllExpressions, opt.showUnknown]
+  );
+
+  const subscribe = ReactRuntime.useCallback(
+    (callback: () => void) => {
+      if (!runtime.subscribe) return () => {};
+      const targets = expressions.length > 0 ? expressions : ['*'];
+      const unsubs = targets
+        .map((expr) => runtime.subscribe?.(expr, callback, opt.ctx, metaBase))
+        .filter((unsub): unsub is (() => void) => typeof unsub === 'function');
+      if (unsubs.length === 0) return () => {};
+      return () => {
+        unsubs.forEach((unsub) => unsub());
+      };
+    },
+    [runtime, expressions, opt.ctx, metaBase]
+  );
+
+  const getVersionSnapshot = ReactRuntime.useCallback(
+    () => runtime.getSnapshot?.(expressions[0] ?? '*', opt.ctx, metaBase) ?? expressions.join('|'),
+    [runtime, expressions, opt.ctx, metaBase]
+  );
+
+  const version = ReactRuntime.useSyncExternalStore(subscribe, getVersionSnapshot, getVersionSnapshot);
+
+  const syncResolvedProps = ReactRuntime.useMemo(
+    () => resolveProps(node.props, opt, node),
+    [
+      node.props,
+      node,
+      opt.ctx,
+      opt.runtime,
+      opt.showUnknown,
+      opt.allowedExprRoots,
+      opt.unsafeAllowAllExpressions,
+      version,
+    ]
+  );
+
+  const [asyncResolvedProps, setAsyncResolvedProps] = ReactRuntime.useState<Record<string, any> | undefined>(undefined);
+
+  ReactRuntime.useEffect(() => {
+    let cancelled = false;
+    if (!runtimeSupportsAsync(runtime)) {
+      setAsyncResolvedProps(undefined);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    void resolvePropsAsync(node.props, opt, node)
+      .then((resolved) => {
+        if (!cancelled) setAsyncResolvedProps(resolved);
+      })
+      .catch(() => {
+        if (!cancelled) setAsyncResolvedProps(undefined);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    node.props,
+    node,
+    opt.ctx,
+    opt.runtime,
+    opt.showUnknown,
+    opt.allowedExprRoots,
+    opt.unsafeAllowAllExpressions,
+    version,
+  ]);
+
+  return renderResolvedSpecNode(node, opt, path, asyncResolvedProps ?? syncResolvedProps);
 }
 
 /**
@@ -478,110 +811,14 @@ export function renderNode(node: GuiNode, opt?: RendererOptions, path = 'r'): an
   // spec
   if (isSpecNode(node)) {
     const next = nextOpt.transformNode ? nextOpt.transformNode(node) : node;
-    const { type } = next;
-    const resolvedProps = resolveProps(next.props, nextOpt, next);
-    const nodeId = makeNodeId(next, path, nextOpt.idPrefix);
-    const props = {
-      ...(resolvedProps ?? {}),
-      ...(resolvedProps?.['data-gui-node-id'] == null ? { 'data-gui-node-id': nodeId } : {}),
-      ...(resolvedProps?.['data-gui-component'] == null && typeof type === 'string' ? { 'data-gui-component': type } : {}),
-    };
-    if (nextOpt.onNodeResolved) {
-      const record = {
-        id: nodeId,
-        type: typeof type === 'string' ? type : undefined,
-        spec: next,
-        resolvedProps,
+    if (nextOpt.runtime && (hasRuntimeTokens(next.props, nextOpt) || runtimeSupportsAsync(nextOpt.runtime))) {
+      return React.createElement(RuntimeResolvedNode, {
+        node: next,
+        opt: nextOpt,
         path,
-        provenance: next.provenance,
-      };
-      scheduleResolvedRecord(nextOpt.onNodeResolved, record);
-
-      if (Array.isArray(next.parts) && next.parts.length > 0) {
-        const partRecords = buildGuiPartRecords(
-          {
-            root: {
-              id: nodeId,
-              type: typeof type === 'string' ? type : 'GuiNode',
-              props: resolvedProps,
-              provenance: next.provenance,
-            },
-            parts: next.parts,
-          },
-          {
-            includeRoot: false,
-            pathBase: `${path}.parts`,
-          }
-        );
-        partRecords.forEach((partRecord) =>
-          scheduleResolvedRecord(nextOpt.onNodeResolved as NonNullable<RendererOptions['onNodeResolved']>, partRecord)
-        );
-      }
+      });
     }
-
-    // children (auto-key spec siblings)
-    const rawKids = normalizeChildren(next.children);
-    const kids = rawKids.map((c, i) =>
-      React.createElement(
-        React.Fragment,
-        { key: `${typeof type === 'string' ? type : 'node'}-${i}` },
-        renderNode(
-          withAutoKey(c, `${typeof type === 'string' ? type : 'node'}-${i}`),
-          nextOpt,
-          `${path}.${i}`
-        )
-      )
-    );
-
-    // If `type` is already a React element, clone it (so spec can override props/children)
-    if (React.isValidElement?.(type)) {
-      return React.cloneElement(type, props ?? null, ...kids);
-    }
-
-    // ComponentType directly provided
-    if (typeof type === 'function' || (typeof type === 'object' && type != null)) {
-      return React.createElement(type, props ?? null, ...kids);
-    }
-
-    // string lookup
-    if (typeof type === 'string') {
-      const { Component } = resolveType(type, nextOpt);
-      if (!Component) {
-        if (nextOpt.showUnknown) {
-          return React.createElement(
-            'div',
-            {
-              style: {
-                padding: 10,
-                border: '1px dashed rgba(255,255,255,0.25)',
-                borderRadius: 10,
-                opacity: 0.9,
-                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-                fontSize: 12,
-              },
-            },
-            `Unknown type: ${type}`
-          );
-        }
-        return null;
-      }
-      if (Component && typeof Component === 'object' && typeof Component.resolve === 'function') {
-        const resolverSpec = {
-          ...next,
-          props: {
-            ...(props ?? {}),
-            ...(kids.length > 0 ? { children: kids.length === 1 ? kids[0] : kids } : {}),
-          },
-        };
-        const resolved = Component.resolve(resolverSpec, nextOpt.ctx);
-        if (React.isValidElement?.(resolved)) return resolved;
-        if (isGuiNode(resolved)) {
-          return renderNode(resolved, nextOpt, `${path}.resolved`);
-        }
-        return resolved ?? null;
-      }
-      return React.createElement(Component, props ?? null, ...kids);
-    }
+    return renderResolvedSpecNode(next, nextOpt, path);
   }
 
   // unsupported

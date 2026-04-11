@@ -3,305 +3,101 @@ import GUIHero from './Sections/GUIHero';
 import FirstGuiPreview from './Sections/FirstGuiPreview';
 import Theme from '@/gui/Theme/Theme';
 import { Box } from '@/gui/Atoms';
-import { QueryExpressionsDemo } from './Router/components/RouterSemanticsDemos';
 
 <Meta title="Getting Started/Quick Start" />
 
 <Theme>
-  <Box
-    component="section"
-    sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '44vh',
-      py: 4,
-      textAlign: 'center',
-    }}
-  >
+  <Box sx={{ textAlign: 'center', py: 6 }}>
     <GUIHero />
-    <Box
-      sx={{
-        width: 'min(100%, 720px)',
-        mt: 4,
-        borderBottom: '1px solid',
-        borderColor: 'divider',
-        opacity: 0.45,
-      }}
-    />
   </Box>
 </Theme>
 
-<Box
-  sx={{
-    maxWidth: '960px',
-    mx: 'auto',
-    px: { xs: 2, md: 3 },
-    pt: 3,
-  }}
->
+# Quick Start — .GUI Storybook
 
-# Start Here: 
-Welcome to .GUI's storybook! 
-Explore the components and tools that make up the .GUI ecosystem, and see how they can help you build powerful generative user interfaces with ease.
-`this.GUI` is a UI framework built around three core concepts:
+This Storybook is your playground to explore and build with **.GUI**.
 
-1. **UI spec (`this.GUI`)**: you describe the screen as data: pages, cards, text, buttons, sidebars, and children.
-2. **Dynamic read/write tokens (`read` / `write`)**: instead of hardcoding everything, you can say "read this value" or "run this mutation" in a serializable way.  
-   `this.GUI` also accepts the legacy aliases `$expr` / `$action`.
-3. **Runtime (`runtime`, optional `.me`)**: the host decides how those reads and writes actually work, for example by resolving profile data, route params, or backend mutations.
+`.GUI` is a **declarative UI framework**. Instead of writing React code directly, you describe your UI as structured data (a spec), and `.GUI` renders it for you.
 
-In plain terms:
+## 1. The Basics: UI as Data
 
-- `this.GUI` defines **what to render**
-- `read` and `write` define **what should be dynamic**
-- `runtime` defines **where the data comes from and what actions do**
-
-## Mental Model
-You can run `this.GUI` in two modes:
-- **JS-Only mode**: plain functions and local state.
-- **Data-Driven mode**: dynamic tokens resolved by runtime (`read`, `write`).
-The same spec can evolve from local UI to data-driven app without rewriting components.
-
----
-
-## First GUI
-Start with a tiny spec and mount it.
-`Page` here is a built-in `this.GUI` node, so you can use it directly without registering it yourself.
+Every screen is defined as a `spec` — a simple JavaScript object:
 
 ```ts
 const spec = {
   type: 'Page',
   props: {
-    title: 'Hello GUI',
-    subtitle: 'Your first rendered screen',
+    title: 'My Dashboard'
   },
   children: [
+    // your components go here
+  ]
+};
+```
+
+type tells `.GUI` which component to use.
+
+props configures it.
+
+children lets you nest other components.
+
+## 2. Your First Screen
+
+Try this simple example:
+
+```ts
+const spec = {
+  type: 'Page',
+  props: { title: 'Welcome' },
+  children: [
+    {
+      type: 'Typography',
+      props: { variant: 'h4', children: 'Hello from .GUI' }
+    },
     {
       type: 'Button',
       props: {
-        variant: 'contained',
         label: 'Click me',
-      },
-    },
-  ],
+        variant: 'contained',
+        color: 'primary'
+      }
+    }
+  ]
 };
 
 GUI.mount(spec, '#root');
 ```
 
-That already gives you:
+## 3. Available Building Blocks
 
-- a page shell
-- a heading
-- a working button
+.GUI comes with a set of ready-to-use components:
 
-<FirstGuiPreview />
+- Layout: Page, Box, Paper, Stack, Grid
+- Content: Typography, Card, Divider
+- Interactive: Button, TextField, Switch, Checkbox
+- Feedback: Alert, Spinner, Progress
 
----
+## 4. Make it Dynamic (with .me)
 
-## Compose With Children
-
-Everything is just nested nodes.
-
-```json
-{
-  "type": "Paper",
-  "props": { "sx": { "p": 2, "borderRadius": 2 } },
-  "children": [
-    {
-      "type": "Typography",
-      "props": { "variant": "h5", "children": "Profile" }
-    },
-    {
-      "type": "Typography",
-      "props": { "variant": "body2", "children": "Status: active" }
-    },
-    {
-      "type": "Button",
-      "props": { "label": "Edit", "variant": "outlined" }
-    }
-  ]
-}
-```
-
-Think in blocks:
-
-- layout containers
-- content nodes
-- actions
-
----
-
-For those blocks to come alive, they need a contract with the runtime.
-
----
-
-## Runtime Contract (Minimal)
+You can connect any prop to live data using the read token:
 
 ```ts
-const runtime = {
-  resolve(value, ctx) {
-    // read expression -> value
-    return value;
-  },
-  action(expression, ctx) {
-    // expression -> executable callback
-    return () => {};
-  },
-};
-```
-
-Use with mount:
-
-```ts
-GUI.mount(spec, '#root', { runtime, ctx });
-```
-
----
-
-## Make It Dynamic
-
-Once you want live data, switch props from literals to tokens.
-
-```json
 {
-  "type": "Typography",
-  "props": {
-    "variant": "body1",
-    "children": { "read": "me/public/profile/name" }
-  }
-}
-```
-
-And for mutations:
-
-```json
-{
-  "type": "Button",
-  "props": {
-    "label": "Set active",
-    "onClick": { "write": "me/public/profile/status = 'active'" }
-  }
-}
-```
-
-This is the core idea:
-
-- static prop -> fixed UI
-- `read` -> read data
-- `write` -> mutate data
-
----
-
-## Dynamic Props with Read/Write Tokens
-
-```json
-{
-  "type": "Button",
-  "props": {
-    "label": { "read": "me/public/profile/name" },
-    "onClick": { "write": "me/public/profile/status = 'active'" }
-  }
-}
-```
-
-What happens:
-
-- `read` is resolved before render.
-- `write` is hydrated into a callback.
-- `$expr` / `$action` are still accepted as aliases.
-- If runtime is missing, GUI falls back safely (no crash).
-
----
-
-## Routes And Params
-
-When you add routes like `/shops/:id`, the router places route params into `ctx.params`.
-
-```ts
-router.set('/shops/:id', ({ ctx }) => ({
-  type: 'Page',
+  type: 'Typography',
   props: {
-    // Inside read, {{...}} injects route/context values into the expression string.
-    title: { read: 'me/views/shops[{{params.id}}].name' },
-  },
-}));
+    variant: 'h5',
+    children: { read: 'me.profile.name' }
+  }
+}
 ```
 
-That lets one screen template render many records.
-
-<QueryExpressionsDemo />
-
----
-
-<Box
-  sx={{
-    p: 2,
-    my: 3,
-    bgcolor: 'action.hover',
-    borderRadius: 1.5,
-    borderLeft: '4px solid',
-    borderColor: 'primary.main',
-  }}
->
-  <strong>Pro Tip: URL Expression Semantics</strong><br />
-  When passing expressions via query strings such as `?expr=...`, encode special
-  characters so separators like `&` and `=` do not break runtime parsing.
-</Box>
-
----
-
-## Typical Build Order
-
-If you are building a screen from scratch, this order works well:
-
-1. **Start with layout**: `Page`, `Box`, `Paper`, `Stack`
-2. **Add content**: `Typography`, headings, labels
-3. **Insert interactive nodes**: `Button`, `TextField`, tables, cards
-4. **Replace literals** with `$expr`
-5. **Hydrate callbacks** with `$action`
-6. **Connect routes** once the static UI already works
-
----
-
-## Security by Default
-
-Expression resolution is allowlisted by default:
-
-- `me/views/`
-- `me/public/`
-
-You can extend:
+For actions:
 
 ```ts
-GUI.mount(spec, '#root', {
-  runtime,
-  allowedExprRoots: ['me/views/', 'me/public/', 'me/app/'],
-});
+{
+  type: 'Button',
+  props: {
+    label: 'Save',
+    onClick: { write: 'me.profile.save()' }
+  }
+}
 ```
-
----
-
-## Inspectors, Not Starters
-
-These stories are useful when debugging theme/runtime internals, not when learning how to assemble a screen:
-
-- current theme state
-- palette inspector
-- typography inspector
-
-Use them only if you need to verify resolved values while developing the system.
-
----
-
-## Practical Note
-
-If you want the ultra-minimal plain-HTML bootstrap, use:
-
-- `/html/bootstrap.local.html`
-
-That file demonstrates `.me + this.GUI` end-to-end with runtime tokens.
-
-</Box>

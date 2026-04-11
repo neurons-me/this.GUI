@@ -1,679 +1,498 @@
-import React, { useEffect, useRef, useState } from 'react';
+import * as React from 'react';
 import ME from 'this.me';
+
+import { MeRuntimeProvider, useOptionalMeRuntimeContext } from '@/react/MeRuntimeProvider';
+import { useMeAction } from '@/react/useMeAction';
+import { useMeValue } from '@/react/useMeValue';
+import type { MeLike } from '@/react/types';
+import { useRuntimeEnvironment } from '@/runtime/runtimeContext';
+import { writeMeValue } from '@/runtime/run-me';
 import Box from '@/gui/Atoms/Box/Box';
+import Button from '@/gui/Atoms/Button/Button';
+import Card from '@/gui/Atoms/Card/Card';
+import CardContent from '@/gui/Atoms/Card/CardContent/CardContent';
+import CardHeader from '@/gui/Atoms/Card/CardHeader/CardHeader';
+import Chip from '@/gui/Atoms/Chip/Chip';
 import TextField from '@/gui/Atoms/TextField/TextField';
 import Typography from '@/gui/Atoms/Typography/Typography';
-import { useGuiTheme } from '@/gui-internals/Hooks';
+import { Stack } from '@/gui/Molecules';
 
-const MONO_FONT =
-  'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace';
-
-type CommandAction =
-  | { kind: 'empty' }
-  | { kind: 'error'; message: string }
-  | { kind: 'write'; path: string; value: string; push?: boolean }
-  | { kind: 'read'; path: string }
-  | { kind: 'me_target'; namespace: string; selector: string; path: string; value?: string };
+type MeFieldType = 'text' | 'number' | 'textarea';
+type MeMode = 'display' | 'commit' | 'live';
+type MeCoerceMode = 'auto' | 'string' | 'number' | 'boolean' | 'json';
 
 export type MeProps = {
-  me?: any;
-  value?: string;
-  defaultValue?: string;
+  me?: MeLike;
+  path?: string;
+  label?: React.ReactNode;
+  description?: React.ReactNode;
   placeholder?: string;
-  prompt?: string;
-  title?: string;
-  motto?: string;
-  greeting?: string;
-  animatePlaceholder?: boolean;
-  autoFocus?: boolean;
+  buttonLabel?: string;
   disabled?: boolean;
-  showOutput?: boolean;
-  showLog?: boolean;
-  maxLogLines?: number;
-  onChange?: (value: string) => void;
-  onSubmit?: (value: string) => void;
-  onExecute?: (value: string, output: string, me: any) => void;
+  showValue?: boolean;
+  showPath?: boolean;
+  readOnly?: boolean;
+  type?: MeFieldType;
+  mode?: MeMode;
+  coerce?: MeCoerceMode;
+  rows?: number;
+  initialValue?: any;
+  formatValue?: (value: any) => React.ReactNode;
+  parseValue?: (raw: string) => any;
   'data-gui-node-id'?: string;
   'data-gui-component'?: string;
 };
 
-function isValidUsername(value: string): boolean {
-  if (!value) return false;
-  if (value.length < 3 || value.length > 63) return false;
-  if (value.startsWith('.') || value.endsWith('.') || value.includes('..')) return false;
-  const labelRe = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
-  const labels = value.toLowerCase().split('.');
-  for (let i = 0; i < labels.length; i += 1) {
-    if (!labelRe.test(labels[i])) return false;
+function normalizeMePath(path?: string): string {
+  const raw = String(path || 'profile.name').trim();
+  if (!raw) return 'profile.name';
+
+  const explicitPrefixes = [
+    'me://self:read/',
+    'me://self:write/',
+    'self:read/',
+    'self:write/',
+    'me/',
+    'me.',
+  ];
+
+  let next = raw;
+  for (let i = 0; i < explicitPrefixes.length; i += 1) {
+    const prefix = explicitPrefixes[i];
+    if (next.startsWith(prefix)) {
+      next = next.slice(prefix.length);
+      break;
+    }
   }
-  return true;
+
+  return next
+    .replace(/^\/+|\/+$/g, '')
+    .replace(/\//g, '.')
+    .replace(/^\.+|\.+$/g, '') || 'profile.name';
 }
 
-function formatValue(value: any): string {
-  if (Array.isArray(value)) {
-    if (!value.length) return '- (empty)';
-    return (
-      '- ' +
-      value
-        .map((item) => {
-          if (typeof item === 'string') return item;
-          if (typeof item === 'undefined') return 'undefined';
-          try {
-            return JSON.stringify(item);
-          } catch (_) {
-            return String(item);
-          }
-        })
-        .join(', ')
-    );
-  }
-  if (typeof value === 'undefined') return 'undefined';
+function stringifyValue(value: any): string {
+  if (typeof value === 'undefined') return '';
+  if (value === null) return 'null';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
   try {
-    const serialized = JSON.stringify(value);
-    return typeof serialized === 'string' ? serialized : String(value);
-  } catch (_) {
+    return JSON.stringify(value, null, 2);
+  } catch {
     return String(value);
   }
 }
 
-function normalizeListPath(path: string): string {
-  return path.endsWith('[]') ? path.slice(0, -2) : path;
+function parseInputValue(raw: string, type: MeFieldType, customParser?: (value: string) => any): any {
+  if (customParser) return customParser(raw);
+  if (type === 'number') {
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) ? parsed : raw;
+  }
+  return raw;
 }
 
-function readKernelIdentity(me: any): string {
-  try {
-    return String(me?.inspect?.().index?.['']?.__id || '').trim();
-  } catch (_) {
-    return '';
+function coerceInputValue(
+  raw: string,
+  type: MeFieldType,
+  coerce: MeCoerceMode,
+  liveValue: any,
+  customParser?: (value: string) => any
+): any {
+  if (customParser) return customParser(raw);
+
+  if (coerce === 'string') return raw;
+  if (coerce === 'number') {
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) ? parsed : raw;
   }
-}
-
-function readKernelIndex(me: any): Record<string, any> {
-  try {
-    const index = me?.inspect?.().index;
-    return index && typeof index === 'object' ? index : {};
-  } catch (_) {
-    return {};
+  if (coerce === 'boolean') {
+    const normalized = raw.trim().toLowerCase();
+    if (normalized === 'true') return true;
+    if (normalized === 'false') return false;
+    return raw;
   }
-}
-
-function getNumericChildren(me: any, path: string): any[] {
-  const index = readKernelIndex(me);
-  const prefix = path ? `${path}.` : '';
-  const seen: Record<string, true> = {};
-  const keys = Object.keys(index);
-
-  for (let i = 0; i < keys.length; i += 1) {
-    const key = keys[i];
-    if (key.indexOf(prefix) !== 0) continue;
-    const rest = key.slice(prefix.length);
-    const segment = rest.split('.')[0];
-    if (/^\d+$/.test(segment)) seen[segment] = true;
-  }
-
-  const numbers = Object.keys(seen)
-    .map((entry) => Number(entry))
-    .sort((a, b) => a - b);
-
-  return numbers.map((entry) => readByPath(me, `${path}.${entry}`));
-}
-
-function getNextNumericIndex(me: any, path: string): number {
-  const list = getNumericChildren(me, path);
-  return list.length + 1;
-}
-
-function toTargetPath(path: string): string {
-  return String(path || '').trim().replace(/^\/+/, '');
-}
-
-function executeTarget(me: any, target: string, body?: any): any {
-  if (!me || typeof me.execute !== 'function') {
-    throw new Error('.me kernel does not expose execute(...).');
-  }
-  return typeof body === 'undefined' ? me.execute(target) : me.execute(target, body);
-}
-
-function readByPath(me: any, path: string): any {
-  return executeTarget(me, `me://self:read/${toTargetPath(path)}`);
-}
-
-function writeByPath(me: any, path: string, value: any): any {
-  return executeTarget(me, `me://self:write/${toTargetPath(path)}`, value);
-}
-
-function parseCommand(text: string): CommandAction {
-  let cmd = String(text || '').trim();
-  if (!cmd) return { kind: 'empty' };
-
-  const protocolIndex = cmd.indexOf('://');
-  if (protocolIndex > -1) {
-    cmd = cmd.slice(protocolIndex + 3).trim();
-  }
-  if (cmd.toLowerCase().startsWith('nrp ')) cmd = cmd.slice(4).trim();
-
-  const lower = cmd.toLowerCase();
-  const eqIndex = cmd.indexOf('=');
-  const leftSide = eqIndex > -1 ? cmd.slice(0, eqIndex).trim() : cmd;
-  const rightSide = eqIndex > -1 ? cmd.slice(eqIndex + 1).trim() : '';
-
-  if (leftSide.startsWith('#')) {
-    const hashSpec = leftSide.slice(1).trim();
-    if (!hashSpec) return { kind: 'error', message: 'No path provided.' };
-    const hashParts = hashSpec.split(/\s+/);
-    const path = hashParts.shift() || '';
-    let value = hashParts.join(' ');
-    if (rightSide && !value) value = rightSide;
-    if (!path) return { kind: 'error', message: 'No path provided.' };
-    if (!value) return { kind: 'error', message: 'No value provided for write.' };
-    return { kind: 'write', path, value, push: true };
-  }
-
-  if (leftSide.startsWith('?')) {
-    const path = leftSide.slice(1).trim();
-    if (!path) return { kind: 'error', message: 'No path provided.' };
-    return { kind: 'read', path };
-  }
-
-  if (leftSide.startsWith('$')) {
-    const writeSpec = leftSide.slice(1).trim();
-    if (!writeSpec) return { kind: 'error', message: 'No path provided.' };
-    const parts = writeSpec.split(/\s+/);
-    const path = parts.shift() || '';
-    let value = parts.join(' ');
-    if (rightSide && !value) value = rightSide;
-    if (!value) return { kind: 'error', message: 'No value provided for write.' };
-    return { kind: 'write', path, value };
-  }
-
-  if (leftSide.startsWith(':/')) {
-    return {
-      kind: 'me_target',
-      namespace: 'local',
-      selector: rightSide ? 'write' : 'read',
-      path: leftSide.slice(2),
-      value: rightSide || undefined,
-    };
-  }
-
-  const schemeMatch = leftSide.match(/^([a-z]+):(.+)$/i);
-  if (schemeMatch) {
-    const scheme = schemeMatch[1].toLowerCase();
-    let rest = String(schemeMatch[2] || '');
-    if (['http', 'https', 'ftp', 'ssh'].indexOf(scheme) > -1) {
-      if (rest.startsWith('//')) rest = rest.slice(2);
-      const slashIndex = rest.indexOf('/');
-      if (slashIndex > -1) {
-        return {
-          kind: 'me_target',
-          namespace: rest.slice(0, slashIndex) || scheme,
-          selector: rightSide ? 'write' : 'read',
-          path: rest.slice(slashIndex + 1),
-          value: rightSide || undefined,
-        };
-      }
+  if (coerce === 'json') {
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return raw;
     }
   }
 
-  const targetRe = /^([a-z0-9_-]+(?:\.[a-z0-9_-]+)*):([a-z0-9_-]+)\/(.+)$/i;
-  const shortTargetRe = /^([a-z0-9_-]+(?:\.[a-z0-9_-]+)*)\/(.+)$/i;
-  const targetMatch = leftSide.match(targetRe);
-  if (targetMatch) {
-    return {
-      kind: 'me_target',
-      namespace: targetMatch[1],
-      selector: String(targetMatch[2] || '').toLowerCase(),
-      path: targetMatch[3],
-      value: rightSide || undefined,
-    };
+  if (type === 'number' || typeof liveValue === 'number') {
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) ? parsed : raw;
   }
 
-  const shortMatch = leftSide.match(shortTargetRe);
-  if (shortMatch) {
-    return {
-      kind: 'me_target',
-      namespace: shortMatch[1],
-      selector: rightSide ? 'write' : 'read',
-      path: shortMatch[2],
-      value: rightSide || undefined,
-    };
+  if (typeof liveValue === 'boolean') {
+    const normalized = raw.trim().toLowerCase();
+    if (normalized === 'true') return true;
+    if (normalized === 'false') return false;
   }
 
-  if (lower.startsWith('me(')) {
-    const inner = cmd.slice(3, -1).trim().replace(/^['"]|['"]$/g, '');
-    if (!inner) return { kind: 'error', message: 'No read path provided.' };
-    return { kind: 'read', path: inner };
+  if (Array.isArray(liveValue) || (liveValue && typeof liveValue === 'object')) {
+    try {
+      return JSON.parse(raw);
+    } catch {}
   }
 
-  if (lower.startsWith('me.')) {
-    const open = cmd.indexOf('(');
-    const close = cmd.lastIndexOf(')');
-    if (open > 0 && close > open) {
-      const path = cmd.slice(3, open).trim();
-      const rawValue = cmd
-        .slice(open + 1, close)
-        .trim()
-        .replace(/^['"]|['"]$/g, '');
-      if (!rawValue) return { kind: 'read', path };
-      return { kind: 'write', path, value: rawValue };
+  return parseInputValue(raw, type);
+}
+
+function DefaultValue({ value }: { value: any }) {
+  if (typeof value === 'undefined') {
+    return (
+      <Typography variant="body1" sx={{ opacity: 0.56 }}>
+        -
+      </Typography>
+    );
+  }
+
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    return (
+      <Typography variant="h5" sx={{ fontWeight: 700, letterSpacing: '-0.02em' }}>
+        {String(value)}
+      </Typography>
+    );
+  }
+
+  return (
+    <Typography
+      component="pre"
+      variant="body2"
+      sx={{
+        m: 0,
+        whiteSpace: 'pre-wrap',
+        wordBreak: 'break-word',
+        fontFamily:
+          'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+      }}
+    >
+      {stringifyValue(value)}
+    </Typography>
+  );
+}
+
+function MeField({
+  normalizedPath,
+  label,
+  description,
+  placeholder,
+  buttonLabel,
+  disabled,
+  showValue,
+  showPath,
+  readOnly,
+  type,
+  mode,
+  coerce,
+  rows,
+  formatValue,
+  parseValue,
+  nodeId,
+  componentName,
+}: {
+  normalizedPath: string;
+  label?: React.ReactNode;
+  description?: React.ReactNode;
+  placeholder?: string;
+  buttonLabel: string;
+  disabled: boolean;
+  showValue: boolean;
+  showPath: boolean;
+  readOnly: boolean;
+  type: MeFieldType;
+  mode: MeMode;
+  coerce: MeCoerceMode;
+  rows: number;
+  formatValue?: (value: any) => React.ReactNode;
+  parseValue?: (raw: string) => any;
+  nodeId: string;
+  componentName: string;
+}) {
+  const liveValue = useMeValue<any>(normalizedPath);
+  const updateValue = useMeAction(normalizedPath);
+  const liveSerialized = React.useMemo(() => stringifyValue(liveValue), [liveValue]);
+  const [draft, setDraft] = React.useState(() => liveSerialized);
+  const lastPathRef = React.useRef(normalizedPath);
+  const isDirty = mode !== 'display' && draft !== liveSerialized;
+
+  React.useEffect(() => {
+    if (lastPathRef.current !== normalizedPath) {
+      lastPathRef.current = normalizedPath;
+      setDraft(liveSerialized);
+      return;
     }
+    if (!isDirty) {
+      setDraft(liveSerialized);
+    }
+  }, [normalizedPath, liveSerialized, isDirty]);
 
-    const parts = cmd.slice(3).trim().split(/\s+/);
-    const path = parts.shift() || '';
-    const value = parts.join(' ');
-    if (!value) return { kind: 'read', path };
-    return { kind: 'write', path, value };
-  }
+  const writeNextValue = React.useCallback((raw: string) => {
+    const nextValue = coerceInputValue(raw, type, coerce, liveValue, parseValue);
+    return updateValue(nextValue);
+  }, [coerce, liveValue, parseValue, type, updateValue]);
 
-  if (lower.startsWith('me ')) {
-    const rest = cmd.slice(3).trim();
-    if (!rest) return { kind: 'error', message: 'No path provided.' };
-    const parts = rest.split(/\s+/);
-    const path = parts.shift() || '';
-    const value = parts.join(' ');
-    if (!value) return { kind: 'read', path };
-    return { kind: 'write', path, value };
-  }
+  const commitCurrentDraft = React.useCallback(async () => {
+    if (mode !== 'commit' || readOnly || disabled || !isDirty) return;
+    try {
+      await Promise.resolve(writeNextValue(draft));
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('[.GUI/Me] Failed to write value', {
+        path: normalizedPath,
+        value: draft,
+        error,
+      });
+    }
+  }, [disabled, draft, isDirty, mode, normalizedPath, readOnly, writeNextValue]);
 
-  if (lower.startsWith('what')) {
-    const question = cmd
-      .replace(/^what(?:'s| is)?(?: the)?/i, '')
-      .replace(/\?+$/, '')
-      .replace(/\s+of\s*$/i, '')
-      .trim();
-    const path = question.replace(/\s+/g, '.');
-    if (!path) return { kind: 'error', message: 'No query path.' };
-    return { kind: 'read', path };
-  }
-
-  const parts = cmd.split(/\s+/);
-  let path = parts.shift() || '';
-  if (path.startsWith('/')) path = path.slice(1);
-  if (path) return { kind: 'read', path };
-
-  return {
-    kind: 'error',
-    message: 'Unknown command. Try: me.name("jose"), me("name"), or me://local:read/name',
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    void commitCurrentDraft();
   };
-}
 
-function looksLikeDirectRuntimeCommand(value: string, me: any): boolean {
-  const trimmed = String(value || '').trim();
-  if (/^me\s*\[/.test(trimmed)) return true;
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const nextDraft = event.target.value;
+    setDraft(nextDraft);
 
-  const methodMatch = trimmed.match(/^me\.([A-Za-z_$][\w$]*)\s*\(/);
-  if (!methodMatch) return false;
-  const methodName = methodMatch[1];
-  return typeof me?.[methodName] === 'function';
-}
+    if (mode !== 'live' || readOnly || disabled) return;
 
-function shouldAutoSetIdentity(value: string, identitySet: boolean): boolean {
-  if (identitySet) return false;
-  const trimmed = String(value || '').trim();
-  if (!trimmed) return false;
-  if (!/^[a-z0-9-]+$/i.test(trimmed)) return false;
-  return isValidUsername(trimmed);
-}
+    try {
+      void writeNextValue(nextDraft);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('[.GUI/Me] Failed to live-update value', {
+        path: normalizedPath,
+        value: nextDraft,
+        error,
+      });
+    }
+  };
 
-function formatLogLine(responseLine: string, identityValue: string): string {
-  let line = String(responseLine || '').trim();
-  if (!line) return '';
-  if (line.indexOf('ok -> ') === 0) line = line.slice(6);
-  if (line.indexOf('ok → ') === 0) line = line.slice(5);
-  return identityValue ? `${identityValue}.${line}` : line;
-}
+  const pathTail = normalizedPath.split('.').filter(Boolean).pop() || normalizedPath;
+  const renderedValue = formatValue ? formatValue(liveValue) : <DefaultValue value={liveValue} />;
+  const baseDescription =
+    description ||
+    (mode === 'display'
+      ? 'Display mode: read-only semantic projection.'
+      : mode === 'live'
+        ? 'Live mode: every keystroke writes back into .me.'
+        : 'Commit mode: draft locally, then push into .me.');
 
-async function runDirectRuntimeCommand(me: any, command: string): Promise<string> {
-  const trimmed = String(command || '').trim();
-  return `error → direct runtime JS execution is disabled by CSP. Use structured .me commands instead: ${trimmed}`;
+  if (mode === 'display') {
+    return (
+      <Card
+        variant="outlined"
+        data-gui-node-id={nodeId}
+        data-gui-component={componentName}
+        sx={{ width: '100%' }}
+      >
+        <CardHeader title={label || '.me'} subheader={baseDescription} />
+        <CardContent>
+          <Stack spacing={2}>
+            {showPath ? (
+              <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                <Chip label={`path: ${normalizedPath}`} size="small" variant="outlined" />
+                <Chip label="display" size="small" />
+              </Stack>
+            ) : null}
+
+            <Box
+              sx={{
+                px: 1.5,
+                py: 1.25,
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                bgcolor: 'action.hover',
+              }}
+            >
+              <Typography variant="overline" color="text.secondary">
+                Current Value
+              </Typography>
+              <Box sx={{ mt: 0.5 }}>{renderedValue}</Box>
+            </Box>
+          </Stack>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card
+      variant="outlined"
+      data-gui-node-id={nodeId}
+      data-gui-component={componentName}
+      sx={{
+        width: '100%',
+        borderColor: isDirty ? 'warning.main' : undefined,
+        boxShadow: isDirty ? '0 0 0 1px rgba(237, 108, 2, 0.18)' : undefined,
+      }}
+    >
+      <CardHeader
+        title={label || '.me'}
+        subheader={baseDescription}
+      />
+      <CardContent>
+        <Stack spacing={2.5}>
+          {showPath ? (
+            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+              <Chip label={`path: ${normalizedPath}`} size="small" variant="outlined" />
+              <Chip label={mode} size="small" />
+              <Chip label={`coerce: ${coerce}`} size="small" variant="outlined" />
+              {readOnly ? <Chip label="read-only" size="small" /> : null}
+              {mode === 'commit' ? (
+                <Chip
+                  label={isDirty ? 'pending changes' : 'synced'}
+                  size="small"
+                  color={isDirty ? 'warning' : 'success'}
+                  variant={isDirty ? 'filled' : 'outlined'}
+                />
+              ) : null}
+            </Stack>
+          ) : null}
+
+          {showValue ? (
+            <Box
+              sx={{
+                px: 1.5,
+                py: 1.25,
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                bgcolor: 'action.hover',
+              }}
+            >
+              <Typography variant="overline" color="text.secondary">
+                Current Value
+              </Typography>
+              <Box sx={{ mt: 0.5 }}>{renderedValue}</Box>
+            </Box>
+          ) : null}
+
+          <Box component="form" onSubmit={handleSubmit}>
+            <Stack spacing={1.5}>
+              <TextField
+                label={label ? undefined : pathTail}
+                placeholder={placeholder || `Update ${pathTail}`}
+                value={draft}
+                onChange={handleChange}
+                disabled={disabled || readOnly}
+                type={type === 'textarea' ? 'text' : type}
+                multiline={type === 'textarea' || (mode === 'commit' && rows > 1)}
+                minRows={type === 'textarea' || mode === 'commit' ? rows : undefined}
+                fullWidth
+              />
+
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.25} alignItems={{ sm: 'center' }}>
+                {mode === 'commit' ? (
+                  <Button
+                    type="button"
+                    variant="contained"
+                    disabled={disabled || readOnly || !isDirty}
+                    onClick={() => {
+                      void commitCurrentDraft();
+                    }}
+                  >
+                    {buttonLabel}
+                  </Button>
+                ) : null}
+                <Button
+                  type="button"
+                  variant="outlined"
+                  disabled={disabled}
+                  onClick={() => setDraft(liveSerialized)}
+                >
+                  Reset
+                </Button>
+                {mode === 'live' ? (
+                  <Typography variant="caption" sx={{ opacity: 0.72 }}>
+                    Changes publish immediately to <code>{normalizedPath}</code>.
+                  </Typography>
+                ) : null}
+              </Stack>
+            </Stack>
+          </Box>
+        </Stack>
+      </CardContent>
+    </Card>
+  );
 }
 
 export default function Me({
   me: providedMe,
-  value,
-  defaultValue = '',
-  placeholder = '.|...',
-  prompt,
-  title = '.me',
-  motto = 'Minimal and Expressive.',
-  greeting = 'Hello, I am',
-  animatePlaceholder = true,
-  autoFocus = false,
+  path = 'profile.name',
+  label,
+  description,
+  placeholder,
+  buttonLabel = 'Update',
   disabled = false,
-  showOutput = true,
-  showLog = true,
-  maxLogLines = 200,
-  onChange,
-  onSubmit,
-  onExecute,
+  showValue = true,
+  showPath = true,
+  readOnly = false,
+  type = 'text',
+  mode = 'commit',
+  coerce = 'auto',
+  rows = 4,
+  initialValue,
+  formatValue,
+  parseValue,
   'data-gui-node-id': nodeId = 'Me',
   'data-gui-component': componentName = 'Me',
 }: MeProps) {
-  const theme = useGuiTheme();
-  const localKernelRef = useRef<any>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const isControlled = value != null;
-  const [draft, setDraft] = useState(String(value ?? defaultValue));
-  const [animatedPlaceholder, setAnimatedPlaceholder] = useState(String(placeholder || ''));
-  const [identityValue, setIdentityValue] = useState('');
-  const [output, setOutput] = useState('');
-  const [logHistory, setLogHistory] = useState<string[]>([]);
-  const [isRunning, setIsRunning] = useState(false);
+  const normalizedPath = React.useMemo(() => normalizeMePath(path), [path]);
+  const localContext = useOptionalMeRuntimeContext();
+  const env = useRuntimeEnvironment();
+  const inheritedMe = (localContext?.me ?? env.me ?? (env.runtime as any)?.__me ?? (env.runtime as any)?.me) as MeLike | undefined;
+  const localKernelRef = React.useRef<MeLike | null>(null);
 
   if (!localKernelRef.current) {
-    localKernelRef.current = new ME();
+    const kernel = new ME() as unknown as MeLike;
+    if (typeof initialValue !== 'undefined') {
+      try {
+        writeMeValue(kernel, normalizedPath, initialValue);
+      } catch {}
+    }
+    localKernelRef.current = kernel;
   }
 
-  const kernel = providedMe ?? localKernelRef.current;
-  const identitySet = identityValue.length > 0;
-  const currentValue = isControlled ? String(value ?? '') : draft;
-  const placeholderText = identitySet ? '' : String(placeholder || '');
+  const kernel = (providedMe ?? inheritedMe ?? localKernelRef.current) as MeLike;
+  const inheritedRuntime = localContext?.runtime ?? null;
+  const hasReactiveRuntime =
+    typeof inheritedRuntime?.action === 'function' &&
+    typeof inheritedRuntime?.subscribe === 'function' &&
+    typeof inheritedRuntime?.notify === 'function';
+  const shouldWrap = !localContext?.me || localContext.me !== kernel || !hasReactiveRuntime;
 
-  useEffect(() => {
-    if (!isControlled) return;
-    setDraft(String(value ?? ''));
-  }, [isControlled, value]);
+  const content = (
+    <MeField
+      normalizedPath={normalizedPath}
+      label={label}
+      description={description}
+      placeholder={placeholder}
+      buttonLabel={buttonLabel}
+      disabled={disabled}
+      showValue={showValue}
+      showPath={showPath}
+      readOnly={readOnly}
+      type={type}
+      mode={mode}
+      coerce={coerce}
+      rows={rows}
+      formatValue={formatValue}
+      parseValue={parseValue}
+      nodeId={nodeId}
+      componentName={componentName}
+    />
+  );
 
-  useEffect(() => {
-    const existingIdentity = readKernelIdentity(kernel);
-    if (!existingIdentity) return;
-    setIdentityValue(existingIdentity);
-    setOutput((prev) => prev || `@ identity set → ${existingIdentity}`);
-  }, [kernel]);
-
-  useEffect(() => {
-    const input = inputRef.current;
-    if (!input) return;
-    input.setAttribute('aria-label', 'Enter .me commands');
-    if (!autoFocus) return;
-    const frame = window.requestAnimationFrame(() => {
-      input.focus();
-    });
-    return () => window.cancelAnimationFrame(frame);
-  }, [autoFocus]);
-
-  useEffect(() => {
-    if (!animatePlaceholder || !placeholderText || currentValue || disabled) {
-      setAnimatedPlaceholder(placeholderText);
-      return;
-    }
-
-    let index = 0;
-    let blinkOn = true;
-    setAnimatedPlaceholder(placeholderText);
-
-    const interval = window.setInterval(() => {
-      const nextChar = placeholderText[index % placeholderText.length];
-      if (nextChar === '|') {
-        setAnimatedPlaceholder(
-          placeholderText.slice(0, index % placeholderText.length) +
-            (blinkOn ? '|' : ' ') +
-            placeholderText.slice((index % placeholderText.length) + 1),
-        );
-        blinkOn = !blinkOn;
-        return;
-      }
-      setAnimatedPlaceholder(placeholderText);
-      index += 1;
-    }, 260);
-
-    return () => window.clearInterval(interval);
-  }, [animatePlaceholder, currentValue, disabled, placeholderText]);
-
-  const setInputValue = (nextValue: string) => {
-    if (!isControlled) setDraft(nextValue);
-    onChange?.(nextValue);
-  };
-
-  const focusInput = () => {
-    window.requestAnimationFrame(() => {
-      inputRef.current?.focus();
-    });
-  };
-
-  const pushLogLine = (responseLine: string, useIdentityPrefix = true) => {
-    const line = formatLogLine(responseLine, useIdentityPrefix ? identityValue : '');
-    if (!line) return;
-    setLogHistory((prev) => [line, ...prev].slice(0, maxLogLines));
-  };
-
-  const handleCommand = async (submittedValue: string) => {
-    const trimmed = String(submittedValue || '').trim();
-    if (!trimmed || isRunning) return;
-
-    onSubmit?.(trimmed);
-    setIsRunning(true);
-
-    let responseLine = '';
-
-    try {
-      if (shouldAutoSetIdentity(trimmed, identitySet)) {
-        await Promise.resolve(writeByPath(kernel, 'name', trimmed));
-        if (typeof kernel?.['@'] === 'function') {
-          await Promise.resolve(kernel['@'](trimmed));
-        }
-        setIdentityValue(trimmed);
-        responseLine = `@ identity set → ${trimmed}`;
-        setOutput(responseLine);
-        pushLogLine(responseLine, false);
-      } else if (looksLikeDirectRuntimeCommand(trimmed, kernel)) {
-        responseLine = await runDirectRuntimeCommand(kernel, trimmed);
-        setOutput(responseLine);
-        pushLogLine(responseLine);
-      } else {
-        const action = parseCommand(trimmed);
-        if (action.kind === 'empty') {
-          responseLine = '';
-        } else if (action.kind === 'error') {
-          responseLine = `error → ${action.message}`;
-        } else if (action.kind === 'me_target') {
-          const namespace = String(action.namespace || '').toLowerCase();
-          const selector = String(action.selector || '').toLowerCase();
-          const targetNamespace = namespace === 'local' ? 'self' : namespace;
-
-          if (targetNamespace !== 'self' && targetNamespace !== 'kernel') {
-            responseLine = `error → remote namespace not supported here: ${action.namespace}`;
-          } else {
-            const target = `me://${targetNamespace}:${selector}/${toTargetPath(action.path)}`;
-            if (selector === 'write' || selector === 'set' || selector === 'import' || selector === 'rehydrate' || selector === 'replay') {
-              if (!action.value) {
-                responseLine = 'error → write requires value (use = value)';
-              } else {
-                const nextValue = await Promise.resolve(executeTarget(kernel, target, action.value));
-                responseLine = `${target} → ${formatValue(nextValue)}`;
-              }
-            } else {
-              const nextValue = await Promise.resolve(executeTarget(kernel, target));
-              responseLine = `${target} → ${formatValue(nextValue)}`;
-            }
-          }
-        } else if (action.kind === 'write') {
-          const targetPath = action.push
-            ? `${action.path}.${String(getNextNumericIndex(kernel, action.path))}`
-            : action.path;
-          await Promise.resolve(writeByPath(kernel, targetPath, action.value));
-          responseLine = `ok → ${targetPath} = ${action.value}`;
-        } else if (action.kind === 'read') {
-          const wantsList = action.path.endsWith('[]');
-          const basePath = normalizeListPath(action.path);
-          const result = wantsList
-            ? getNumericChildren(kernel, basePath)
-            : await Promise.resolve(readByPath(kernel, basePath));
-          responseLine = `${action.path} → ${formatValue(result)}`;
-        }
-
-        if (responseLine) {
-          setOutput(responseLine);
-          pushLogLine(responseLine);
-        }
-      }
-    } catch (error) {
-      responseLine = `error → ${error instanceof Error ? error.message : String(error)}`;
-      setOutput(responseLine);
-      pushLogLine(responseLine);
-    } finally {
-      setInputValue('');
-      focusInput();
-      setIsRunning(false);
-    }
-
-    if (responseLine) {
-      onExecute?.(trimmed, responseLine, kernel);
-    }
-  };
+  if (!shouldWrap) return content;
 
   return (
-    <Box
-      component="form"
-      data-gui-node-id={nodeId}
-      data-gui-component={componentName}
-      onSubmit={(event: React.FormEvent) => {
-        event.preventDefault();
-        void handleCommand(currentValue);
-      }}
-      sx={{
-        width: '100%',
-        display: 'grid',
-        gap: 0.4,
-      }}
-    >
-      {!identitySet ? (
-        <Typography
-          variant="h3"
-          sx={{
-            color: theme.palette.primary.main,
-            fontWeight: 700,
-            letterSpacing: '-0.03em',
-            lineHeight: 1,
-          }}
-        >
-          {title}
-        </Typography>
-      ) : null}
-
-      {!identitySet ? (
-        <Typography
-          variant="subtitle1"
-          sx={{
-            color: theme.palette.text.secondary,
-            lineHeight: 1.35,
-          }}
-        >
-          {motto}
-        </Typography>
-      ) : null}
-
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-          flexWrap: 'wrap',
-          minWidth: 0,
-        }}
-      >
-        <Typography
-          variant="h6"
-          sx={{
-            color: theme.palette.text.primary,
-            lineHeight: 1.15,
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {identitySet ? `${identityValue}.` : greeting}
-        </Typography>
-
-        {prompt ? (
-          <Typography
-            variant="body1"
-            sx={{
-              color: theme.palette.primary.main,
-              fontFamily: MONO_FONT,
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {prompt}
-          </Typography>
-        ) : null}
-
-        <TextField
-          id="me-typewriter"
-          variant="standard"
-          type="text"
-          value={currentValue}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => setInputValue(event.target.value)}
-          placeholder={animatedPlaceholder}
-          disabled={disabled || isRunning}
-          autoFocus={autoFocus}
-          inputRef={inputRef}
-          InputProps={{ disableUnderline: true }}
-          inputProps={{
-            id: 'me-typewriter-input',
-            spellCheck: false,
-            autoCapitalize: 'none',
-            autoCorrect: 'off',
-            'aria-label': 'Enter .me commands',
-          }}
-          sx={{
-            ml: prompt ? 0 : 1,
-            minWidth: 120,
-            maxWidth: 320,
-            flex: '1 1 180px',
-            '& .MuiInputBase-root': {
-              display: 'flex',
-              alignItems: 'center',
-            },
-            '& .MuiInputBase-input': {
-              padding: 0,
-              fontFamily: MONO_FONT,
-              fontSize: '1rem',
-              lineHeight: 1.5,
-              color: theme.palette.text.primary,
-              caretColor: theme.palette.primary.main,
-              '&::placeholder': {
-                color: theme.palette.text.secondary,
-                opacity: 0.86,
-              },
-              '&:disabled': {
-                cursor: 'not-allowed',
-                opacity: 0.6,
-              },
-            },
-          }}
-        />
-      </Box>
-
-      {showOutput ? (
-        <Typography
-          id="me-output"
-          variant="caption"
-          sx={{
-            minHeight: '1.2em',
-            color: theme.palette.text.secondary,
-            opacity: 0.82,
-            whiteSpace: 'pre-wrap',
-          }}
-        >
-          {output}
-        </Typography>
-      ) : null}
-
-      {showLog ? (
-        <Typography
-          id="me-log"
-          variant="body2"
-          sx={{
-            mt: 1,
-            minHeight: logHistory.length ? undefined : '1.4em',
-            color: theme.palette.text.secondary,
-            opacity: 0.88,
-            whiteSpace: 'pre-wrap',
-            fontFamily: MONO_FONT,
-          }}
-        >
-          {logHistory.join('\n')}
-        </Typography>
-      ) : null}
-    </Box>
+    <MeRuntimeProvider me={kernel} subscribe={localContext?.subscribe ?? null}>
+      {content}
+    </MeRuntimeProvider>
   );
 }

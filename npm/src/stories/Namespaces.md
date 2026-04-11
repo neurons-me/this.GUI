@@ -1,8 +1,4 @@
-import { Meta } from '@storybook/addon-docs/blocks';
-
-<Meta title="Getting Started/Namespaces" />
-
-## The Core Philosophy: A Spatial Runtime for Information
+## A Spatial Runtime for Information
 
 The system is built on a simple but powerful premise: aligning three things that are usually disconnected.
 
@@ -29,7 +25,7 @@ Where each layer has a distinct responsibility:
 *   **Namespace**: Defines *what exists* (the context, identity, resources, and language).
 *   **Theme**: Defines *how it looks* (the visual interpretation).
 *   **Router**: Defines *what is active* (the focus and navigation state).
-*   **Layout**: Defines *how it is arranged* (the spatial organization).
+*   **Matrix**: Defines *how it is arranged* (the spatial organization).
 
 ---
 

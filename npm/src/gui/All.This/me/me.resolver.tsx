@@ -7,15 +7,19 @@ type MeSpec = {
 };
 
 export const meta = {
-  id: 'components.identity-noise.me-command',
+  id: 'components.identity-noise.me-field',
   type: 'Me',
   label: '.me',
   group: 'Components',
   path: ['Identity Noise', '.me'],
-  tags: ['me', 'terminal', 'command', 'identity'],
+  tags: ['me', 'binding', 'field', 'identity', 'react'],
   demoSpec: {
     type: 'Me',
-    props: {},
+    props: {
+      path: 'profile.name',
+      label: '.me Profile Name',
+      mode: 'commit',
+    },
   },
 } as const;
 

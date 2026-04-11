@@ -109,7 +109,7 @@ export const decorators = [
 
 export const parameters = {
   controls: { matchers: { color: /(background|color)$/i, date: /Date$/i } },
-  backgrounds: { disable: true },
+  backgrounds: { disabled: true },
   docs: {
     page: null,
     theme: docsTheme,

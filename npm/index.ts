@@ -1,8 +1,9 @@
 // =========================================
 // this.gui public entry (root)
 // Goal:
-// - Provide *tree-shakeable* named exports for app bundlers.
-// - Provide a *small* runtime aggregate for UMD/introspection (no default export).
+// - Provide *tree-shakeable* named exports for React/Vite app bundlers.
+// - Keep the root entry side-effect free.
+// - Expose legacy/browser globals only from `this.gui/legacy`.
 //
 // Rule 0 (API stability):
 // - ❌ Do NOT use `export *` in the root entrypoint.
@@ -15,11 +16,12 @@
 //  3) runtime aggregates (UMD/global convenience)
 //
 // Usage examples:
-//   // ✅ Recommended (tree-shakeable)
+//   // ✅ Recommended (React-first / tree-shakeable)
 //   import { Theme, ThemeModeToggle, Icon } from 'this.gui';
 //
-//   // ✅ UMD/global usage (browser)
-//   // window.GUI.Button, window.GUI.mount, etc.
+//   // ✅ Legacy browser/global usage
+//   // import GUI from 'this.gui/legacy'
+//   // or load the compatibility bundle explicitly
 //
 //   // ✅ Subpath imports (more explicit boundaries)
 //   // import { Button } from 'this.gui/atoms';
@@ -88,12 +90,8 @@ export {
 } from '@/gui/Molecules/menus/GUI-Tools/GUI-Tools';
 export { default as CleakerGroup } from '@/gui/All.This/Cleaker/Group/CleakerGroup';
 export { default as CleakerUser } from '@/gui/All.This/Cleaker/User/CleakerUser';
-// 3) runtime aggregates (UMD/global convenience)
-// These are *named exports* so in UMD builds you can do:
-//   window.GUI.mount(...)
-//   window.GUI.Button
-//   window.GUI.Atoms.Button
-// without any `window.GUI.default` wrapper.
+// 3) runtime aggregates (compatibility / inspection convenience)
+// These stay as named exports for modern consumers and explicit compat layers.
 // NOTE: We still import concrete modules (not barrels) to preserve tree-shaking.
 import ThemeComponent from '@/gui/Theme/Theme';
 import { GuiRegistry as RegistryEntries } from '@/Registry';
@@ -204,6 +202,17 @@ export {
   toggleInspector,
 } from '@/runtime/controlSurface';
 export { Router, RouterProvider, router } from '@/Router/Router';
-export { render, RunMe } from '@/runtime/run-me';
+export {
+  createMeRuntime,
+  readMeValue,
+  render,
+  RunMe,
+  writeMeValue,
+} from '@/runtime/run-me';
 export { deriveRouteState, normalizeRoutePath, startApp } from '@/runtime/start-app';
 export type { GuiRouteState, StartAppOptions } from '@/runtime/start-app';
+export { MeRuntimeProvider, useMeRuntime, useOptionalMeRuntimeContext } from '@/react/MeRuntimeProvider';
+export { useMe } from '@/react/useMe';
+export { useMeValue } from '@/react/useMeValue';
+export { useMeAction } from '@/react/useMeAction';
+export type { MeLike, MeSubscribeBridge, MeTargetLike } from '@/react/types';

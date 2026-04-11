@@ -3,7 +3,7 @@
 </p>
 <h1 align="center">.GUI</h1>
 
-A collection of components and building blocks enabling **AI GUI Generation.**
+A collection of components and building blocks enabling **Generative User Interfaces.**
 
 Available for **[node.js](https://www.npmjs.com/package/this.gui)** only. 
 **Python coming soon.**

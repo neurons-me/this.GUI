@@ -3,9 +3,10 @@
 </p>
 <h1 align="center">.GUI</h1>
 <p align="center">
-  A collection of components and building blocks for <strong>GUI </strong> generation powered by <strong>AI</strong>.</br> </br>  
+  A collection of components and building blocks for <strong>Generative User Iinterfaces.</br> </br>  
 <strong>Composable, Declarative & Imperative.</strong>
 </p>
+
 
 ---
 

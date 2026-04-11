@@ -6,14 +6,13 @@
 <h1 align="center">.GUI</h1>
 
 <p align="center">
-  A collection of components and building blocks enabling <strong>AI GUI Generation</strong>.
+  A collection of components and building blocks enabling <strong>Generative User Interfaces</strong>.
 </p>
 <p align="center">
   Available for <a href="https://www.npmjs.com/package/this.gui"><strong>Javascript</strong></a> only. </br>
 <strong>Crate coming soon.</strong></br>
 Collaborate.
 </p>
-
 
 ---
 
@@ -22,4 +21,3 @@ Collaborate.
   &nbsp;&nbsp;•&nbsp;&nbsp;
   <a href="https://neurons-me.github.io/GUI/docs/storybook" style="text-decoration:none" target="_blank">Storybook</a>
 </p>
-

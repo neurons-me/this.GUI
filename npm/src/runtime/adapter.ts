@@ -14,6 +14,7 @@ export interface RuntimeAdapter {
    * Can be identity, expression resolution, binding resolution, etc.
    */
   resolve?: (value: any, ctx: any, meta?: NodeMeta) => any;
+  resolveAsync?: (value: any, ctx: any, meta?: NodeMeta) => Promise<any>;
 
   /**
    * Transform a declarative action expression into an executable function.
@@ -35,6 +36,10 @@ export interface RuntimeAdapter {
     ctx: any,
     meta?: NodeMeta
   ) => UnsubscribeFn;
+  getSnapshot?: (path: string, ctx: any, meta?: NodeMeta) => any;
+  notify?: (path?: string) => void;
+  inspectPath?: (path?: string) => any;
+  explainPath?: (path: string) => any;
 
   /**
    * Optional batch resolver for perf. May return sync or async payloads.
@@ -45,6 +50,11 @@ export interface RuntimeAdapter {
     ctx: any,
     meta?: NodeMeta
   ) => Record<string, any> | Promise<Record<string, any>>;
+  batchResolveAsync?: (
+    props: Record<string, any>,
+    ctx: any,
+    meta?: NodeMeta
+  ) => Promise<Record<string, any>>;
 }
 
 export const defaultAdapter: RuntimeAdapter = {

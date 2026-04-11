@@ -12,6 +12,7 @@ const pkg = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 const cleakerSourceEntry = resolve(dirname, '../../../core/cleaker/npm/src/index.ts');
+const meSourceEntry = resolve(dirname, '../../.me/npm/dist/me.es.js');
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 const isDemo = process.env.DEMO === 'true';
 const lifecycle = process.env.npm_lifecycle_event || '';
@@ -60,6 +61,7 @@ export default defineConfig({
       { find: /^@\/gui\/components$/, replacement: resolve(dirname, 'src/gui/Compounds/compounds.ts') },
       { find: /^@\/gui\/components\//, replacement: `${resolve(dirname, 'src/gui/Compounds')}/` },
       { find: /^cleaker$/, replacement: cleakerSourceEntry },
+      { find: /^this\.me$/, replacement: meSourceEntry },
       { find: '@', replacement: resolve(dirname, 'src') },
     ],
     dedupe: ['react', 'react-dom', 'react-router', 'react-router-dom']
@@ -93,6 +95,7 @@ export default defineConfig({
       : {
           entry: {
             index: resolve(dirname, 'index.ts'),
+            legacy: resolve(dirname, 'src/legacy/index.tsx'),
             atoms: resolve(dirname, 'src/gui/Atoms/atoms.ts'),
             molecules: resolve(dirname, 'src/gui/Molecules/molecules.ts'),
             compounds: resolve(dirname, 'src/gui/Compounds/compounds.ts'),
@@ -113,6 +116,11 @@ export default defineConfig({
               if (format === 'es') return 'atoms/index.js';
               if (format === 'cjs') return 'atoms/index.cjs';
               return `atoms/index.${format}.js`;
+            }
+            if (entryName === 'legacy') {
+              if (format === 'es') return 'legacy/index.js';
+              if (format === 'cjs') return 'legacy/index.cjs';
+              return `legacy/index.${format}.js`;
             }
             if (entryName === 'molecules') {
               if (format === 'es') return 'molecules/index.js';
