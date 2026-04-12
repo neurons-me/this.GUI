@@ -9,7 +9,7 @@ export type QRmeProps = {
   avatarSrc?: string;
   avatarAlt?: string;
   avatarFallback?: string;
-  variant?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'topbar';
   diameter?: number;
   size?: number;
   bg?: string;
@@ -30,6 +30,7 @@ const DIAMETER_BY_VARIANT = {
   md: 112,
   lg: 148,
   xl: 184,
+  topbar: 40,
 } as const;
 
 function fallbackInitial(username: string, avatarFallback: string): string {
@@ -69,6 +70,8 @@ export default function QRme({
         ? Number(size)
         : DIAMETER_BY_VARIANT[variant]
   );
+  const isTopbar = variant === 'topbar';
+  const effectiveDiameter = isTopbar ? Math.min(resolvedDiameter, 40) : resolvedDiameter;
   const [hovered, setHovered] = React.useState(false);
   const [pinned, setPinned] = React.useState(defaultFace === 'avatar');
 
@@ -76,8 +79,10 @@ export default function QRme({
   const faceRotation = showingAvatar ? 180 : 0;
   const rootNodeId = String(dataGuiNodeId || 'QR.me');
   const rootNodeType = String(dataGuiComponent || 'QR.me');
-  const qrInset = Math.max(6, Math.round(resolvedDiameter * 0.06));
-  const qrSize = resolvedDiameter - qrInset * 2;
+  const qrInset = isTopbar
+    ? Math.max(3, Math.round(effectiveDiameter * 0.08))
+    : Math.max(6, Math.round(effectiveDiameter * 0.06));
+  const qrSize = effectiveDiameter - qrInset * 2;
   const qrBg = bg ?? theme.palette.background.paper;
   const qrFg = fg ?? theme.palette.primary.main;
   const avatarBg = avatarSrc ? 'transparent' : theme.palette.primary.main;
@@ -93,7 +98,7 @@ export default function QRme({
     theme.palette.mode === 'dark'
       ? `radial-gradient(circle at 28% 24%, ${theme.palette.primary.main}22, ${theme.palette.section.subtle} 58%, ${theme.palette.background.paper})`
       : `radial-gradient(circle at 28% 24%, ${theme.palette.primary.main}18, ${theme.palette.section.default} 58%, ${theme.palette.background.paper})`;
-  const showAvatarLabelOverlay = showAvatarLabel && !avatarSrc;
+  const showAvatarLabelOverlay = !isTopbar && showAvatarLabel && !avatarSrc;
 
   const handlePointerEnter = () => {
     if (hoverFlip) setHovered(true);
@@ -129,10 +134,10 @@ export default function QRme({
         }
       }}
       sx={{
-        width: resolvedDiameter,
-        height: resolvedDiameter,
+        width: effectiveDiameter,
+        height: effectiveDiameter,
         display: 'inline-flex',
-        perspective: `${resolvedDiameter * 6}px`,
+        perspective: `${effectiveDiameter * 6}px`,
         cursor: clickFlip ? 'pointer' : 'default',
         userSelect: 'none',
       }}
@@ -145,7 +150,9 @@ export default function QRme({
           height: '100%',
           transformStyle: 'preserve-3d',
           transform: `rotateY(${faceRotation}deg)`,
-          transition: 'transform 680ms cubic-bezier(0.22, 1, 0.36, 1)',
+          transition: isTopbar
+            ? 'transform 380ms cubic-bezier(0.22, 1, 0.36, 1)'
+            : 'transform 680ms cubic-bezier(0.22, 1, 0.36, 1)',
         }}
       >
         <Box
@@ -161,9 +168,11 @@ export default function QRme({
             background: rimBackground,
             border: '1px solid',
             borderColor,
-            boxShadow: showingAvatar
-              ? `0 0 0 1px ${theme.palette.primary.main}22, 0 12px 22px rgba(0,0,0,0.18)`
-              : `0 0 0 1px ${theme.palette.primary.main}33, 0 8px 18px rgba(0,0,0,0.14)`,
+            boxShadow: isTopbar
+              ? `0 0 0 1px ${theme.palette.primary.main}22, 0 3px 8px rgba(0,0,0,0.14)`
+              : showingAvatar
+                ? `0 0 0 1px ${theme.palette.primary.main}22, 0 12px 22px rgba(0,0,0,0.18)`
+                : `0 0 0 1px ${theme.palette.primary.main}33, 0 8px 18px rgba(0,0,0,0.14)`,
             overflow: 'hidden',
           }}
         >
@@ -196,14 +205,16 @@ export default function QRme({
                 left: '50%',
                 top: '50%',
                 transform: 'translate(-50%, -50%)',
-                px: 0.95,
-                py: 0.35,
+                px: isTopbar ? 0.55 : 0.95,
+                py: isTopbar ? 0.12 : 0.35,
                 borderRadius: 999,
                 bgcolor: `${theme.palette.background.paper}EE`,
                 border: '1px solid',
                 borderColor: `${theme.palette.primary.main}44`,
-                backdropFilter: 'blur(8px)',
-                boxShadow: `0 2px 8px ${theme.palette.primary.main}22`,
+                backdropFilter: isTopbar ? 'blur(4px)' : 'blur(8px)',
+                boxShadow: isTopbar
+                  ? `0 1px 4px ${theme.palette.primary.main}18`
+                  : `0 2px 8px ${theme.palette.primary.main}22`,
               }}
             >
               <Typography
@@ -211,7 +222,7 @@ export default function QRme({
                 sx={{
                   color: 'primary.main',
                   fontWeight: 800,
-                  fontSize: resolvedDiameter <= 80 ? '0.62rem' : '0.68rem',
+                  fontSize: isTopbar ? '0.48rem' : resolvedDiameter <= 80 ? '0.62rem' : '0.68rem',
                   letterSpacing: '0.08em',
                 }}
               >
@@ -235,7 +246,9 @@ export default function QRme({
             background: avatarRing,
             border: '1px solid',
             borderColor,
-            boxShadow: `0 0 0 1px ${theme.palette.primary.main}33, 0 10px 24px rgba(0,0,0,0.16)`,
+            boxShadow: isTopbar
+              ? `0 0 0 1px ${theme.palette.primary.main}22, 0 3px 8px rgba(0,0,0,0.14)`
+              : `0 0 0 1px ${theme.palette.primary.main}33, 0 10px 24px rgba(0,0,0,0.16)`,
             overflow: 'hidden',
           }}
         >
@@ -243,14 +256,16 @@ export default function QRme({
             src={avatarSrc || undefined}
             alt={String(avatarAlt || username || '.me avatar')}
             sx={{
-              width: resolvedDiameter - 10,
-              height: resolvedDiameter - 10,
+              width: effectiveDiameter - (isTopbar ? 6 : 10),
+              height: effectiveDiameter - (isTopbar ? 6 : 10),
               bgcolor: avatarBg,
               color: avatarTextColor,
-              fontSize: Math.max(18, Math.round(resolvedDiameter * 0.22)),
+              fontSize: isTopbar
+                ? Math.max(11, Math.round(effectiveDiameter * 0.24))
+                : Math.max(18, Math.round(effectiveDiameter * 0.22)),
               fontWeight: 800,
               letterSpacing: '-0.03em',
-              border: '2px solid',
+              border: isTopbar ? '1.5px solid' : '2px solid',
               borderColor: theme.palette.background.paper,
               '& .MuiAvatar-img': {
                 objectFit: 'cover',
@@ -265,7 +280,7 @@ export default function QRme({
             <Box
               sx={{
                 position: 'absolute',
-                bottom: Math.max(6, Math.round(resolvedDiameter * 0.04)),
+                bottom: Math.max(6, Math.round(effectiveDiameter * 0.04)),
                 left: '50%',
                 transform: 'translateX(-50%)',
                 px: 0.9,
@@ -275,7 +290,7 @@ export default function QRme({
                 backdropFilter: 'blur(10px)',
                 border: '1px solid',
                 borderColor: `${theme.palette.primary.main}30`,
-                minWidth: Math.max(44, Math.round(resolvedDiameter * 0.42)),
+                minWidth: Math.max(44, Math.round(effectiveDiameter * 0.42)),
               }}
             >
               <Typography

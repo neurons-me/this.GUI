@@ -31,7 +31,7 @@ function ReactBridgePanel({
   const name = useMeValue<string>('profile.name');
   const status = useMeValue<string>('profile.status');
   const count = useMeValue<number>('metrics.count');
-  const setStatus = useMeAction('profile.status');
+  const setStatus = useMeAction('profile.status', { allowCanonicalWrite: true });
   const setCount = useMeAction('metrics.count');
 
   return (

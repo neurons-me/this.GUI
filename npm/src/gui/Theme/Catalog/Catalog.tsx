@@ -1,4 +1,4 @@
-// ThemesCatalog.tsx
+// neurons.me/this/GUI/npm/src/gui/Theme/Catalog/Catalog.tsx
 import React, { useEffect, useMemo, useState, useId } from 'react';
 import type { ThemesCatalogProps } from './Catalog.types';
 import { getGuiThemes } from '@/gui/Theme/utils/catalog';
@@ -174,7 +174,7 @@ export default function ThemesCatalog({
             type: Box,
             props: {
               'data-gui-component': 'Box',
-              sx: { display: 'flex', flexDirection: 'column', gap: 0.25, minWidth: 0 },
+              sx: { display: 'flex', flexDirection: 'column', gap: 0.25, minWidth: 0, overflow: 'hidden' },
             },
             children: [
               {
@@ -186,6 +186,8 @@ export default function ThemesCatalog({
                     fontSize: isCompact ? 12 : (isMinimal ? 14 : undefined),
                     lineHeight: isCompact ? 1.05 : (isMinimal ? 1.15 : undefined),
                     fontWeight: 700,
+                    whiteSpace: 'normal',
+                    overflowWrap: 'anywhere',
                   },
                 },
                 children: [theme.themeName ?? 'Theme'],
@@ -201,6 +203,8 @@ export default function ThemesCatalog({
                         fontSize: isCompact ? 9 : (isMinimal ? 11 : undefined),
                         lineHeight: isCompact ? 1.05 : (isMinimal ? 1.1 : undefined),
                         color: 'text.secondary',
+                        whiteSpace: 'normal',
+                        overflowWrap: 'anywhere',
                       },
                     },
                     children: [theme.author ?? ''],
@@ -386,47 +390,77 @@ export default function ThemesCatalog({
 
   const declarativeListSpec = {
     type: Box,
-    props: { sx: { display: 'flex', flexDirection: 'column', gap: isCompact ? 1 : 2, ...sx } },
+    props: {
+      sx: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: isCompact ? 1 : 2,
+        containerType: 'inline-size',
+        minWidth: 0,
+        ...sx,
+      },
+    },
     children: orderedThemes.map((theme: ThemeManifest, idx: number) => buildThemeCardSpec(theme, idx)),
   };
 
-  const declarativeGridSpec = {
-    type: Grid,
-    props: { container: true, spacing: isCompact ? 1 : (isMinimal ? 1.5 : 2), sx },
-    children: orderedThemes.map((theme: ThemeManifest, idx: number) => ({
-      type: Grid,
-      props: {
-        'data-gui-component': 'GridItem',
-        item: true,
-        xs: isCompact ? 4 : 6,
-        sm: isCompact ? 3 : 6,
-        md: isCompact ? 2 : 4,
-        lg: isCompact ? 2 : 3,
-        xl: isCompact ? 2 : 3,
-        sx: {
-          ...(isCompact
-            ? {
-                '@media (max-width: 420px)': {
-                  flexBasis: '50%',
-                  maxWidth: '50%',
-                },
-                '@media (max-width: 360px)': {
-                  flexBasis: '100%',
-                  maxWidth: '100%',
-                },
-              }
-            : {
-                '@media (max-width: 360px)': {
-                  flexBasis: '100%',
-                  maxWidth: '100%',
-                },
-              }),
+  const declarativeGridSpec = isCompact
+    ? {
+        type: Box,
+        props: {
+          sx: {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(132px, 1fr))',
+            gap: 1,
+            alignItems: 'stretch',
+            containerType: 'inline-size',
+            minWidth: 0,
+            ...sx,
+          },
         },
-        key: theme.themeId || `theme-${idx}`,
-      },
-      children: [buildThemeCardSpec(theme, idx)],
-    })),
-  };
+        children: orderedThemes.map((theme: ThemeManifest, idx: number) => ({
+          type: Box,
+          props: {
+            'data-gui-component': 'GridItem',
+            key: theme.themeId || `theme-${idx}`,
+            sx: {
+              minWidth: 0,
+            },
+          },
+          children: [buildThemeCardSpec(theme, idx)],
+        })),
+      }
+    : {
+        type: Grid,
+        props: {
+          container: true,
+          spacing: isMinimal ? 1.5 : 2,
+          sx: {
+            containerType: 'inline-size',
+            minWidth: 0,
+            ...sx,
+          },
+        },
+        children: orderedThemes.map((theme: ThemeManifest, idx: number) => ({
+          type: Grid,
+          props: {
+            'data-gui-component': 'GridItem',
+            item: true,
+            xs: 6,
+            md: 4,
+            lg: 3,
+            xl: 3,
+            sx: {
+              minWidth: 0,
+              '@media (max-width: 360px)': {
+                flexBasis: '100%',
+                maxWidth: '100%',
+              },
+            },
+            key: theme.themeId || `theme-${idx}`,
+          },
+          children: [buildThemeCardSpec(theme, idx)],
+        })),
+      };
 
   const declarativeSpec =
     effectiveVariant === 'list' ? declarativeListSpec : declarativeGridSpec;
@@ -517,6 +551,7 @@ export default function ThemesCatalog({
                 ? { display: 'flex', justifyContent: 'center' }
                 : null),
               '& .MuiCardHeader-content': {
+                minWidth: 0,
                 overflow: 'hidden',
                 ...(effectiveHideTitle ? { display: 'none' } : null),
               },
@@ -526,10 +561,14 @@ export default function ThemesCatalog({
               '& .MuiCardHeader-title': {
                 fontSize: isCompact ? 12 : (isMinimal ? 14 : undefined),
                 lineHeight: isCompact ? 1.05 : (isMinimal ? 1.15 : undefined),
+                whiteSpace: 'normal',
+                overflowWrap: 'anywhere',
               },
               '& .MuiCardHeader-subheader': {
                 fontSize: isCompact ? 9 : (isMinimal ? 11 : undefined),
                 lineHeight: isCompact ? 1.05 : (isMinimal ? 1.1 : undefined),
+                whiteSpace: 'normal',
+                overflowWrap: 'anywhere',
               },
             }}
             avatar={
@@ -632,7 +671,7 @@ export default function ThemesCatalog({
 
   if (effectiveVariant === 'list') {
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: isCompact ? 1 : 2, ...sx }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: isCompact ? 1 : 2, containerType: 'inline-size', minWidth: 0, ...sx }}>
         {orderedThemes.map((theme: ThemeManifest) => (
           <Box key={theme.themeId}>
             <ThemeCard theme={theme} />
@@ -642,36 +681,44 @@ export default function ThemesCatalog({
     );
   }
 
+  if (isCompact) {
+    return (
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(132px, 1fr))',
+          gap: 1,
+          alignItems: 'stretch',
+          containerType: 'inline-size',
+          minWidth: 0,
+          ...sx,
+        }}
+      >
+        {orderedThemes.map((theme: ThemeManifest) => (
+          <Box key={theme.themeId} sx={{ minWidth: 0 }}>
+            <ThemeCard theme={theme} />
+          </Box>
+        ))}
+      </Box>
+    );
+  }
+
   return (
-    <Grid container spacing={isCompact ? 1 : (isMinimal ? 1.5 : 2)} sx={sx}>
+    <Grid container spacing={isMinimal ? 1.5 : 2} sx={{ containerType: 'inline-size', minWidth: 0, ...sx }}>
       {orderedThemes.map((theme: ThemeManifest) => (
         <Grid
           item
           key={theme.themeId}
-          xs={isCompact ? 4 : 6}
-          sm={isCompact ? 3 : 6}
-          md={isCompact ? 2 : 4}
-          lg={isCompact ? 2 : 3}
-          xl={isCompact ? 2 : 3}
+          xs={6}
+          md={4}
+          lg={3}
+          xl={3}
           sx={{
-            // Keep 2 columns as early as possible, but avoid overlap on ultra-narrow screens.
-            ...(isCompact
-              ? {
-                  '@media (max-width: 420px)': {
-                    flexBasis: '50%',
-                    maxWidth: '50%',
-                  },
-                  '@media (max-width: 360px)': {
-                    flexBasis: '100%',
-                    maxWidth: '100%',
-                  },
-                }
-              : {
-                  '@media (max-width: 360px)': {
-                    flexBasis: '100%',
-                    maxWidth: '100%',
-                  },
-                }),
+            minWidth: 0,
+            '@media (max-width: 360px)': {
+              flexBasis: '100%',
+              maxWidth: '100%',
+            },
           }}
         >
           <ThemeCard theme={theme} />

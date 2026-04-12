@@ -212,7 +212,7 @@ function MeField({
   componentName: string;
 }) {
   const liveValue = useMeValue<any>(normalizedPath);
-  const updateValue = useMeAction(normalizedPath);
+  const updateValue = useMeAction(normalizedPath, { allowCanonicalWrite: true });
   const liveSerialized = React.useMemo(() => stringifyValue(liveValue), [liveValue]);
   const [draft, setDraft] = React.useState(() => liveSerialized);
   const lastPathRef = React.useRef(normalizedPath);

@@ -14,7 +14,13 @@ export function useMeValue<T = any>(path: string): T {
   );
 
   const getSnapshot = React.useCallback(
-    () => readMeValue(me, path, { allowBarePath: true }) as T,
+    () => {
+      try {
+        return readMeValue(me, path, { allowBarePath: true }) as T;
+      } catch {
+        return undefined as T;
+      }
+    },
     [me, path]
   );
 

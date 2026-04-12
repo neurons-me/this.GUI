@@ -69,6 +69,48 @@ export { default as Cleaker } from '@/gui/All.This/Cleaker/Cleaker';
 export { default as CleakerComposer } from '@/gui/All.This/Cleaker/CleakerComposer';
 export { default as CleakerQR } from '@/gui/All.This/Cleaker/QR/CleakerQR';
 export { default as Namespace } from '@/gui/All.This/Cleaker/Namespace/namespace';
+export {
+  createProfileCardSpec,
+  createTopbarSpec,
+} from '@/gui/All.This/Cleaker/specs';
+export type {
+  ProfileCardSpecOptions,
+  TopbarSpecOptions,
+} from '@/gui/All.This/Cleaker/specs';
+export {
+  AccessConfirmationModal,
+  AccessRequestHandler,
+  claimCleakerNamespace,
+  logoutCleakerSession,
+  openCleakerSession,
+  PinVerificationModal,
+  requestAccess,
+  resolveSession as resolveCleakerSession,
+} from '@/gui/All.This/Cleaker/access';
+export type {
+  AccessConfirmationInput,
+  AccessErrorCode,
+  AccessKernelContext,
+  AccessRequest,
+  AccessResponse,
+  AccessScope,
+  CanonicalProfileSnapshot,
+  ClaimHandlerInput,
+  ClaimHandlerResult,
+  IssuedAccessToken,
+  LogoutSessionInput,
+  LogoutSessionResult,
+  NormalizedAccessRequest,
+  OpenSessionInput,
+  OpenSessionResult,
+  PinVerificationInput,
+  RequestAccessInput,
+  ResolveSessionInput,
+  ResolvedCleakerSession,
+  ScopeValidationInput,
+  ScopeValidationResult,
+  TokenIssueInput,
+} from '@/gui/All.This/Cleaker/access';
 export { default as FaceRecognition } from '@/gui/widgets/FaceRecognition/FaceRecognition';
 export { default as Monad } from '@/gui/All.This/monad.ai/monad.ai';
 export type { MonadProps } from '@/gui/All.This/monad.ai/monad.ai';
