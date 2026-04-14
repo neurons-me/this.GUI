@@ -1,6 +1,5 @@
 import * as React from 'react';
 import ME from 'this.me';
-
 import { MeRuntimeProvider, useOptionalMeRuntimeContext } from '@/react/MeRuntimeProvider';
 import { useMeAction } from '@/react/useMeAction';
 import { useMeValue } from '@/react/useMeValue';
@@ -16,7 +15,6 @@ import Chip from '@/gui/Atoms/Chip/Chip';
 import TextField from '@/gui/Atoms/TextField/TextField';
 import Typography from '@/gui/Atoms/Typography/Typography';
 import { Stack } from '@/gui/Molecules';
-
 type MeFieldType = 'text' | 'number' | 'textarea';
 type MeMode = 'display' | 'commit' | 'live';
 type MeCoerceMode = 'auto' | 'string' | 'number' | 'boolean' | 'json';
