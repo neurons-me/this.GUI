@@ -5,6 +5,11 @@
  */
 import AllThis from '@/gui/All.This/All.This';
 import Cleaker from '@/gui/All.This/Cleaker/Cleaker';
+import Charts, {
+  BarChart,
+  LineChart,
+  Slider as ChartsSlider,
+} from '@/gui/Compounds/Charts';
 // IMPORTANT:
 // - Keep this registry explicit.
 // - Do not `export *` from here.
@@ -12,7 +17,8 @@ import Cleaker from '@/gui/All.This/Cleaker/Cleaker';
 const Compounds = {
   AllThis,
   Cleaker,
+  Charts,
 } as const;
-export { AllThis, Cleaker };
+export { AllThis, Cleaker, Charts, LineChart, BarChart, ChartsSlider };
 export { Compounds };
 export default Compounds;

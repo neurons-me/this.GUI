@@ -33,6 +33,9 @@ import DrawerResolver from "@/gui/Molecules/Drawer/Drawer.resolver";
 import TooltipResolver from "@/gui/Molecules/Tooltip/Tooltip.resolver";
 import AdminViewToggleResolver from "@/gui/Molecules/AdminViewToggle/AdminViewToggle.resolver";
 import InspectorToggleResolver from "@/gui/Molecules/InspectorToggle/InspectorToggle.resolver";
+import LineChartResolver from "@/gui/Compounds/Charts/LineChart/LineChart.resolver";
+import BarChartResolver from "@/gui/Compounds/Charts/BarChart/BarChart.resolver";
+import ChartSliderResolver from "@/gui/Compounds/Charts/Slider/Slider.resolver";
 
 // Layout
 import LayoutResolver from "@/gui/Layout/Layout.resolver";
@@ -88,6 +91,10 @@ export const GuiRegistry = createRegistry([
   TooltipResolver,
   AdminViewToggleResolver,
   InspectorToggleResolver,
+  // Charts
+  LineChartResolver,
+  BarChartResolver,
+  ChartSliderResolver,
   // Layout
   LayoutResolver,
   StickyOptionsTopResolver,
