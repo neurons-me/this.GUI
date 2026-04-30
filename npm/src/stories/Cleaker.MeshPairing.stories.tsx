@@ -79,7 +79,8 @@ function MeshPairingStory() {
     writeMeValue(me, 'identity.session.username', 'jabellae');
     writeMeValue(me, 'identity.session.namespace', 'jabellae.cleaker.me');
     writeMeValue(me, 'identity.session.authenticated', true);
-    writeMeValue(me, 'runtime.cleaker.authenticated', true);
+    writeMeValue(me, 'identity.session.identityHash', 'test-hash-123');
+    writeMeValue(me, 'identity.session.openedAt', Date.now() - 60000);
     writeMeValue(me, 'runtime.cleaker.namespace.activeUrl', 'http://jabellae.localhost:8161');
     writeMeValue(me, 'runtime.cleaker.namespace.expression', 'cleaker.me');
     writeMeValue(me, 'runtime.cleaker.namespace.previewQrValue', 'http://jabellae.localhost:8161');

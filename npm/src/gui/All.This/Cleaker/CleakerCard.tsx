@@ -49,7 +49,6 @@ export type CleakerCardProps = {
   username: string;
   setUsername: (value: string) => void;
   usernameError: string | null;
-  commitRuntimeCredentials: (username: string, secret: string) => void;
   secret: string;
   namespaceSeedHandle: string;
   liveUsernameState: 'idle' | 'invalid' | 'valid' | string;
@@ -109,7 +108,6 @@ export default function CleakerCard(props: CleakerCardProps) {
     username,
     setUsername,
     usernameError,
-    commitRuntimeCredentials,
     secret,
     namespaceSeedHandle,
     liveUsernameState,
@@ -255,7 +253,6 @@ export default function CleakerCard(props: CleakerCardProps) {
                   autoComplete="off"
                   value={username}
                   onChange={(event) => setUsername(event.target.value)}
-                  onBlur={() => commitRuntimeCredentials(usernameError ? '' : username, secret)}
                   error={Boolean(usernameError)}
                   fullWidth
                   slotProps={{
@@ -519,7 +516,6 @@ export default function CleakerCard(props: CleakerCardProps) {
               autoComplete="current-password"
               value={secret}
               onChange={(event) => setSecret(event.target.value)}
-              onBlur={() => commitRuntimeCredentials(usernameError ? '' : username, secret)}
               fullWidth
               slotProps={{
                 htmlInput: { autoCapitalize: 'none', autoCorrect: 'off', spellCheck: false },

@@ -23,8 +23,8 @@ The namespace owns meaning.
 | --- | --- | --- | --- | --- |
 | `profile.*` | Canonical identity | Public, persistent user identity | Yes | `profile.username`, `profile.avatar`, `profile.bio`, `profile.email` |
 | `auth.*` | Canonical auth facts | Claim and key facts that can be resolved by a namespace | Yes | `auth.claimed_at`, `auth.keys` |
-| `identity.session.*` | Active session binding | Who is currently operating and under which personal namespace | No | `identity.session.username`, `identity.session.namespace`, `identity.session.authenticated` |
-| `runtime.cleaker.*` | Operational runtime | Host, resolver, origin, network state, active transport | No | `runtime.cleaker.namespace.activeUrl`, `runtime.cleaker.namespace.previewQrValue`, `runtime.cleaker.authenticated` |
+| `identity.session.*` | Active session binding | Who is currently operating and under which personal namespace | No | `identity.session.username`, `identity.session.namespace`, `identity.session.authenticated`, `identity.session.identityHash`, `identity.session.openedAt` |
+| `runtime.cleaker.*` | Operational runtime | Host, resolver, origin, network state, active transport | No | `runtime.cleaker.namespace.activeUrl`, `runtime.cleaker.namespace.previewQrValue`, `runtime.cleaker.auth.status` |
 | `ui.cleaker.*` | Shared UI state | Visual or temporary state that may be shared across components | No | `ui.cleaker.modalOpen`, `ui.cleaker.viewMode`, `ui.cleaker.loading`, `ui.cleaker.error` |
 
 ## Naming Rules

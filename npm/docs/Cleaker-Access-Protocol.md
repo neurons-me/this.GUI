@@ -172,7 +172,9 @@ interface ClaimResponse {
 
 - `identity.session.username`
 - `identity.session.namespace`
-- `runtime.cleaker.authenticated`
+- `identity.session.authenticated`
+- `identity.session.identityHash`
+- `identity.session.openedAt`
 
 ### `open`
 
@@ -207,7 +209,8 @@ Session/runtime paths become active:
 - `identity.session.username`
 - `identity.session.namespace`
 - `identity.session.authenticated`
-- `runtime.cleaker.authenticated`
+- `identity.session.identityHash`
+- `identity.session.openedAt`
 
 ### `logout`
 

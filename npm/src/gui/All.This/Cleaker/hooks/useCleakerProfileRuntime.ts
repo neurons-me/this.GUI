@@ -68,7 +68,7 @@ export function useCleakerProfileRuntime({
   });
 
   const [sessionAuthenticated, setSessionAuthenticated] = useState(() =>
-    Boolean(readMeValue(me, 'runtime.cleaker.authenticated')),
+    Boolean(readMeValue(me, 'identity.session.authenticated')),
   );
 
   const updateProfileFromAuth = useCallback((profile: ActiveProfile) => {

@@ -132,6 +132,52 @@ export {
 } from '@/gui/Molecules/menus/GUI-Tools/GUI-Tools';
 export { default as CleakerGroup } from '@/gui/All.This/Cleaker/Group/CleakerGroup';
 export { default as CleakerUser } from '@/gui/All.This/Cleaker/User/CleakerUser';
+export {
+  createMonadClient,
+  claimNamespace,
+  openNamespace,
+  writeNamespace,
+  readNamespacePath,
+  MonadClientError,
+  DEFAULT_MONAD_TRANSPORT_ORIGIN,
+  normalizeMonadReadPath,
+  normalizeMonadSemanticNamespace,
+  normalizeMonadTransportOrigin,
+} from '@/core/session/monadClient';
+export type {
+  MonadClaimErrorCode,
+  MonadClaimInput,
+  MonadClaimResult,
+  MonadClient,
+  MonadClientOptions,
+  MonadErrorCode,
+  MonadOpenErrorCode,
+  MonadOpenInput,
+  MonadOpenResult,
+  MonadOperation,
+  MonadReadErrorCode,
+  MonadReadInput,
+  MonadReadResult,
+  MonadReplayMemory,
+  MonadRequestOptions,
+  MonadTarget,
+  MonadTargetNamespace,
+  MonadTransportErrorCode,
+  MonadValidationErrorCode,
+  MonadWriteErrorCode,
+  MonadWriteInput,
+  MonadWriteResult,
+} from '@/core/session/monadClient';
+export {
+  createSeedSession,
+  SeedSessionError,
+} from '@/core/session/createSeedSession';
+export type {
+  SeedSession,
+  SeedSessionErrorCode,
+  SeedSessionOptions,
+  SeedSessionWriteOptions,
+} from '@/core/session/createSeedSession';
 // 3) runtime aggregates (compatibility / inspection convenience)
 // These stay as named exports for modern consumers and explicit compat layers.
 // NOTE: We still import concrete modules (not barrels) to preserve tree-shaking.
@@ -258,7 +304,23 @@ export {
 export { deriveRouteState, normalizeRoutePath, startApp } from '@/runtime/start-app';
 export type { GuiRouteState, StartAppOptions } from '@/runtime/start-app';
 export { MeRuntimeProvider, useMeRuntime, useOptionalMeRuntimeContext } from '@/react/MeRuntimeProvider';
+export {
+  SeedSessionProvider,
+  SeedSessionContextError,
+  useOptionalSeedSessionContext,
+} from '@/react/session/SeedSessionProvider';
 export { useMe } from '@/react/useMe';
 export { useMeValue } from '@/react/useMeValue';
 export { useMeAction } from '@/react/useMeAction';
+export { useSeedSession, useOptionalSeedSession } from '@/react/session/useSeedSession';
 export type { MeLike, MeSubscribeBridge, MeTargetLike } from '@/react/types';
+export type {
+  ResolveSeedFromCredentials,
+  SeedCredentialResolution,
+  SeedCredentialsLoginInput,
+  SeedSessionContextErrorCode,
+  SeedSessionContextValue,
+  SeedSessionLoginInput,
+  SeedSessionProviderProps,
+  SeedSessionStatus,
+} from '@/react/session/SeedSessionProvider';

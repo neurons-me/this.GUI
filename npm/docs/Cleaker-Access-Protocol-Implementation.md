@@ -166,7 +166,8 @@ These paths belong to active operation:
 - `identity.session.username`
 - `identity.session.namespace`
 - `identity.session.authenticated`
-- `runtime.cleaker.authenticated`
+- `identity.session.identityHash`
+- `identity.session.openedAt`
 - `runtime.cleaker.auth.*`
 - `runtime.cleaker.namespace.*`
 
@@ -207,7 +208,7 @@ Goal:
 - `auth.claimed_at`
 - `identity.session.namespace`
 - `identity.session.authenticated`
-- `runtime.cleaker.authenticated`
+- `identity.session.identityHash`
 - `auth.keys.*` only internally, never directly exposed as a raw tree
 
 ### Runtime/UI write paths
@@ -251,7 +252,8 @@ Goal:
 - `identity.session.username`
 - `identity.session.namespace`
 - `identity.session.authenticated`
-- `runtime.cleaker.authenticated`
+- `identity.session.identityHash`
+- `identity.session.openedAt`
 - `ui.cleaker.viewMode = 'profile'`
 
 ### Important rule
@@ -276,7 +278,8 @@ Goal:
 - `identity.session.username`
 - `identity.session.namespace`
 - `identity.session.authenticated`
-- `runtime.cleaker.authenticated`
+- `identity.session.identityHash`
+- `identity.session.openedAt`
 - `ui.cleaker.viewMode = 'profile'`
 
 ### Canonical behavior

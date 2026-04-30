@@ -1,5 +1,5 @@
 import ME from "this.me";
-import cleaker, { SemanticResolver } from "cleaker";
+import cleaker from "cleaker";
 import render from "@/runtime/run-me";
 import { normalizeEndpoint, readSessionUsername } from "./cleakerBridge";
 import { SESSION_SECRET_STORAGE_KEY } from "./runtimeUsername";
@@ -45,27 +45,6 @@ function createBrowserSemanticFetcher(): typeof fetch {
   };
 }
 
-function parseEndpointDefaults(endpoint: string): {
-  protocol: string;
-  host: string;
-  port: number | null;
-} {
-  try {
-    const url = new URL(endpoint);
-    return {
-      protocol: url.protocol.replace(/:$/, "") || "http",
-      host: url.hostname || "localhost",
-      port: url.port ? Number(url.port) : null,
-    };
-  } catch {
-    return {
-      protocol: "http",
-      host: "localhost",
-      port: null,
-    };
-  }
-}
-
 function isPendingToken(value: unknown): value is { promise: Promise<unknown> } {
   if (!value || typeof value !== "object") return false;
   const maybePromise = (value as { promise?: unknown }).promise;
@@ -79,9 +58,8 @@ export function buildSemanticTarget(namespace: string, path: string): string {
     .replace(/^\/+|\/+$/g, "")
     .replace(/\./g, "/");
 
-  if (!safeNamespace) return safePath;
-  if (!safePath) return safeNamespace;
-  return `${safeNamespace}/${safePath}`;
+  if (!safeNamespace) return safePath ? `me://self:read/${safePath}` : "me://self:read/_";
+  return `me://${safeNamespace}:read/${safePath || "_"}`;
 }
 
 export async function createCleakerKernelContext({
@@ -90,7 +68,6 @@ export async function createCleakerKernelContext({
 }: CreateCleakerKernelOptions): Promise<CleakerKernelContext> {
   const safeEndpoint = normalizeEndpoint(endpoint);
   const safeRootNamespace = String(rootNamespace || "").trim().toLowerCase();
-  const { protocol, host, port } = parseEndpointDefaults(safeEndpoint);
   const sessionUsername = readSessionUsername();
   const sessionSecret = readStorageValue(SESSION_SECRET_STORAGE_KEY);
   const sessionNamespace =
@@ -98,44 +75,18 @@ export async function createCleakerKernelContext({
 
   const me = new ME() as any;
   const fetcher = createBrowserSemanticFetcher();
-  const semanticResolver = new SemanticResolver([], {
-    namespaceRoot: safeRootNamespace || undefined,
-    protocol,
-    host,
-    port: port ?? undefined,
-  });
 
   const node = cleaker(me, {
     origin: safeEndpoint,
     fetcher,
     namespace: sessionNamespace || undefined,
     secret: sessionNamespace && sessionSecret ? sessionSecret : undefined,
-    semanticResolver,
-    semanticDefaults: {
-      namespaceRoot: safeRootNamespace || undefined,
-      protocol,
-      host,
-      port: port ?? undefined,
-    },
-    semanticNamespaceRoot: safeRootNamespace || undefined,
-    semanticTransportAllowlist: [protocol],
   }) as any;
 
   try {
     await node?.ready;
   } catch {
     // Public runtime should still work even if auto-open fails.
-  }
-
-  if (typeof node?.bindKernelResolver === "function") {
-    node.bindKernelResolver({
-      resolveOptions: {
-        fetcher,
-        headers: {
-          accept: "application/json",
-        },
-      },
-    });
   }
 
   return {

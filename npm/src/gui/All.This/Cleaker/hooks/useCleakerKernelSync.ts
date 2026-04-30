@@ -29,7 +29,7 @@ export type UseCleakerKernelSyncOptions = {
   blocks: KernelSyncBlock[];
   /**
    * Optional flat entries appended after blocks.
-   * Useful for one-off paths like "runtime.cleaker.authenticated".
+   * Useful for one-off paths like "identity.session.authenticated".
    */
   entries?: KernelSyncEntry[];
 };
@@ -145,7 +145,7 @@ function safeWriteKernelPath(
  *       { path: 'ui.cleaker.register', value: registerSemanticState },
  *     ],
  *     entries: [
- *       { path: 'runtime.cleaker.authenticated', value: runtimeAuthenticated },
+ *       { path: 'identity.session.authenticated', value: runtimeAuthenticated },
  *     ],
  *   });
  */

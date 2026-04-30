@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+
 export type ClaimResolution = 'idle' | 'checking' | 'openable' | 'locked' | 'unclaimed' | 'error';
 export type AuthStatus = 'idle' | 'checking' | 'ok' | 'error';
 
@@ -11,27 +12,21 @@ export type CleakerProfileSnapshot = {
   claimedAt: number | null;
 };
 
+export type CleakerSignUpSubmitInput = {
+  fullName: string;
+  username: string;
+  email: string;
+  phone: string;
+  password: string;
+};
+
 export type UseCleakerSignUpOptions = {
   username: string;
   secret: string;
-  actionBaseUrl: string;
-  namespaceSeedHandle: string;
   validateUsername: (raw: string) => { value: string; error: string | null };
-  applyAuthenticatedProfile: (
-    payload: any,
-    fallbackUsername: string,
-    nextSecret: string,
-    action: 'claim' | 'open'
-  ) => CleakerProfileSnapshot;
-  humanizeCleakerError: (
-    raw: unknown,
-    options?: { namespaceSeedHandle?: string; exampleHandle?: string }
-  ) => string;
-  readErrorMessage: (payload: unknown, status: number, fallback: string) => string;
-  setAuthStatus: React.Dispatch<React.SetStateAction<AuthStatus>>;
-  setAuthAction: React.Dispatch<React.SetStateAction<'claim' | 'open'>>;
-  setAuthError: React.Dispatch<React.SetStateAction<string | null>>;
-  setClaimResolution: React.Dispatch<React.SetStateAction<ClaimResolution>>;
+  onSubmit: (input: CleakerSignUpSubmitInput) => Promise<boolean> | boolean;
+  onOpen?: () => void;
+  onClose?: () => void;
 };
 
 export type UseCleakerSignUpResult = {
@@ -87,16 +82,10 @@ export default function useCleakerSignUp(
   const {
     username,
     secret,
-    actionBaseUrl,
-    namespaceSeedHandle,
     validateUsername,
-    applyAuthenticatedProfile,
-    humanizeCleakerError,
-    readErrorMessage,
-    setAuthStatus,
-    setAuthAction,
-    setAuthError,
-    setClaimResolution,
+    onSubmit,
+    onOpen,
+    onClose,
   } = options;
 
   const [registerOpen, setRegisterOpen] = useState(false);
@@ -140,8 +129,6 @@ export default function useCleakerSignUp(
 
   const openRegisterModal = useCallback(() => {
     const validated = validateUsername(username);
-    setAuthStatus('idle');
-    setAuthError(null);
     setRegisterFullNameState('');
     setRegisterUsernameState(validated.error ? '' : validated.value);
     setRegisterEmailState('');
@@ -150,7 +137,8 @@ export default function useCleakerSignUp(
     setRegisterConfirmPasswordState(secret);
     setRegisterError(null);
     setRegisterOpen(true);
-  }, [secret, setAuthError, setAuthStatus, username, validateUsername]);
+    onOpen?.();
+  }, [onOpen, secret, username, validateUsername]);
 
   const closeRegisterModal = useCallback(() => {
     setRegisterOpen(false);
@@ -160,9 +148,9 @@ export default function useCleakerSignUp(
     setRegisterPhoneState('');
     setRegisterPasswordState('');
     setRegisterConfirmPasswordState('');
-    setAuthError(null);
     setRegisterError(null);
-  }, [setAuthError]);
+    onClose?.();
+  }, [onClose]);
 
   const handleRegisterSubmit = useCallback(async () => {
     const fullNameError = validateFullName(registerFullName);
@@ -196,77 +184,36 @@ export default function useCleakerSignUp(
       setRegisterError('Passwords do not match');
       return false;
     }
-    if (!actionBaseUrl) {
-      setRegisterError('No Monad host available');
-      return false;
-    }
 
-    setAuthStatus('checking');
-    setAuthAction('claim');
-    setAuthError(null);
     setRegisterError(null);
 
     try {
-      const response = await fetch(`${actionBaseUrl}/claims`, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          namespace: `${validated.value}.${namespaceSeedHandle}`,
-          secret: normalizedPassword,
-          username: validated.value,
-          name: cleanString(registerFullName).replace(/\s+/g, ' '),
-          email: cleanString(registerEmail),
-          phone: cleanString(registerPhone),
-        }),
+      const success = await onSubmit({
+        fullName: cleanString(registerFullName).replace(/\s+/g, ' '),
+        username: validated.value,
+        email: cleanString(registerEmail),
+        phone: cleanString(registerPhone),
+        password: normalizedPassword,
       });
 
-      const payload = await response.json().catch(() => null);
-      if (!response.ok) {
-        if (response.status === 409) {
-          setClaimResolution('openable');
-          throw new Error('Namespace already claimed. Use .me.');
-        }
-        throw new Error(
-          humanizeCleakerError(
-            readErrorMessage(payload, response.status, 'Failed to claim namespace'),
-            {
-              namespaceSeedHandle,
-              exampleHandle: validated.value,
-            }
-          )
-        );
-      }
-
-      applyAuthenticatedProfile(payload, validated.value, normalizedPassword, 'claim');
+      if (success === false) return false;
       closeRegisterModal();
       return true;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       setRegisterError(message);
-      setAuthStatus('error');
-      setAuthError(message);
       return false;
     }
   }, [
-    actionBaseUrl,
-    applyAuthenticatedProfile,
-    closeRegisterModal,
-    humanizeCleakerError,
-    namespaceSeedHandle,
-    readErrorMessage,
+    onSubmit,
     registerConfirmPassword,
     registerEmail,
     registerFullName,
     registerPassword,
     registerPhone,
     registerUsername,
-    setAuthAction,
-    setAuthError,
-    setAuthStatus,
-    setClaimResolution,
     validateUsername,
+    closeRegisterModal,
   ]);
 
   return {

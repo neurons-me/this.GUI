@@ -6,7 +6,7 @@ export function resolveSession(input: ResolveSessionInput): ResolvedCleakerSessi
   const sessionUsername = readKernelString(input, 'identity.session.username');
   const namespace = readKernelString(input, 'identity.session.namespace');
   const claimedAt = readKernelNumber(input, 'auth.claimed_at');
-  const authenticated = readKernelBoolean(input, 'runtime.cleaker.authenticated');
+  const authenticated = readKernelBoolean(input, 'identity.session.authenticated');
   const viewMode = readKernelString(input, 'ui.cleaker.viewMode') || 'login';
   const username = sessionUsername || profileUsername;
   const hasSession = Boolean(namespace && authenticated);
@@ -17,6 +17,8 @@ export function resolveSession(input: ResolveSessionInput): ResolvedCleakerSessi
     profileUsername,
     namespace,
     claimedAt,
+    identityHash: readKernelString(input, 'identity.session.identityHash'),
+    openedAt: readKernelNumber(input, 'identity.session.openedAt'),
     authenticated,
     hasSession,
     isClaimed,

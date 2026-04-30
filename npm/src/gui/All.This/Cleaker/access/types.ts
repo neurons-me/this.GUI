@@ -58,6 +58,8 @@ export type ResolvedCleakerSession = {
   profileUsername: string;
   namespace: string;
   claimedAt: number | null;
+  identityHash: string;
+  openedAt: number | null;
   authenticated: boolean;
   hasSession: boolean;
   isClaimed: boolean;
@@ -112,6 +114,8 @@ export type ClaimHandlerInput = AccessKernelContext & {
   namespace: string;
   profile?: CanonicalProfileSnapshot;
   claimedAt?: number;
+  identityHash?: string | null;
+  openedAt?: number | null;
   authenticated?: boolean;
 };
 
@@ -127,6 +131,8 @@ export type ClaimHandlerResult = {
 export type OpenSessionInput = AccessKernelContext & {
   namespace: string;
   username?: string;
+  identityHash?: string | null;
+  openedAt?: number | null;
   authenticated?: boolean;
   viewMode?: 'login' | 'profile' | 'settings' | 'claim-surface';
 };

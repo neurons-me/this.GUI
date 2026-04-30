@@ -36,7 +36,7 @@ const TopbarIdentity = () => {
   const profileUsername = useMeValue<string>('profile.username') || '';
   const profileAvatar = useMeValue<string>('profile.avatar') || '';
   const claimedAt = useMeValue<number | null>('auth.claimed_at');
-  const authenticated = Boolean(useMeValue<boolean>('runtime.cleaker.authenticated'));
+  const authenticated = Boolean(useMeValue<boolean>('identity.session.authenticated'));
   const activeIdentityNamespace = useMeValue<string>('identity.session.namespace') || '';
   const namespaceUrl = useMeValue<string>('runtime.cleaker.namespace.activeUrl') || '';
   const previewQrValue = useMeValue<string>('runtime.cleaker.namespace.previewQrValue') || '';
@@ -64,8 +64,10 @@ const TopbarIdentity = () => {
     clearKernel('identity.session.username', '');
     clearKernel('identity.session.draftUsername', '');
     clearKernel('identity.session.authenticated', false);
+    clearKernel('identity.session.identityHash', '');
     clearKernel('identity.session.hasSecret', false);
     clearKernel('identity.session.namespace', '');
+    clearKernel('identity.session.openedAt', null);
     clearKernel('identity.session.note', '');
     clearKernel('runtime.cleaker.auth.status', 'idle');
     clearKernel('runtime.cleaker.auth.error', null);
@@ -73,7 +75,6 @@ const TopbarIdentity = () => {
     clearKernel('runtime.cleaker.auth.progressMessage', null);
     clearKernel('runtime.cleaker.auth.claimed', false);
     clearKernel('runtime.cleaker.auth.claimResolution', 'idle');
-    clearKernel('runtime.cleaker.authenticated', false);
     clearKernel('ui.cleaker.settingsOpen', false);
     clearKernel('ui.cleaker.registerOpen', false);
     clearKernel('ui.cleaker.avatarExpanded', false);
@@ -366,7 +367,8 @@ const Demo = () => {
     writeMeValue(kernel, 'identity.session.draftUsername', '');
     writeMeValue(kernel, 'identity.session.namespace', '');
     writeMeValue(kernel, 'identity.session.authenticated', false);
-    writeMeValue(kernel, 'runtime.cleaker.authenticated', false);
+    writeMeValue(kernel, 'identity.session.identityHash', '');
+    writeMeValue(kernel, 'identity.session.openedAt', null);
     return kernel;
   }, []);
 

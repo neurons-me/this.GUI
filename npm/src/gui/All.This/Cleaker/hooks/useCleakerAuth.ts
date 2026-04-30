@@ -1,16 +1,15 @@
-//this/GUI/npm/src/gui/All.This/Cleaker/hooks/useCleakerAuth.ts
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { usernameRegexPasses } from 'cleaker';
+import { MonadClientError } from '@/core/session/monadClient';
+import type { SeedSession } from '@/core/session/createSeedSession';
+import { useSeedSession } from '@/react/session/useSeedSession';
 import {
   type CleakerBootstrapInfo,
-  readUsernameFromStorage,
   readCleakerBootstrap,
   sanitizeCleakerUsername,
-  SESSION_CREDENTIALS_EVENT,
-  SESSION_SECRET_STORAGE_KEY,
-  SESSION_USERNAME_STORAGE_KEY,
 } from '../runtimeUsername';
-import useCleakerSignUp from './useCleakerSignUp';
+import useCleakerSignUp, {
+  type CleakerSignUpSubmitInput,
+} from './useCleakerSignUp';
 
 export type AuthStatus = 'idle' | 'checking' | 'ok' | 'error';
 export type AuthAction = 'claim' | 'open';
@@ -73,90 +72,45 @@ export type UseCleakerAuthResult = {
   handleCleak: (requestedAction: AuthAction) => Promise<boolean>;
   handleRegisterSubmit: () => Promise<boolean>;
   handleLogout: () => void;
-  commitRuntimeCredentials: (nextUsername: string, nextSecret: string) => void;
   authSuccessMessage: string;
   authProgressMessage: string;
 };
 
-type CleakerProfilePayload = {
-  username?: unknown;
-  name?: unknown;
-  email?: unknown;
-  phone?: unknown;
+type HumanizeOptions = {
+  namespaceSeedHandle?: string;
+  exampleHandle?: string;
 };
-
-type CleakerMemoryEntry = {
-  path?: string;
-  data?: unknown;
-};
-
-type CleakerClaimPayload = {
-  error?: string;
-  message?: string;
-  createdAt?: unknown;
-  profile?: CleakerProfilePayload;
-  memories?: CleakerMemoryEntry[];
-  persistentClaim?: {
-    claim?: {
-      issuedAt?: unknown;
-    };
-  };
-};
-
-function readStoredValue(key: string): string {
-  if (typeof window === 'undefined') return '';
-  try {
-    return String(localStorage.getItem(key) || '').trim();
-  } catch {
-    return '';
-  }
-}
 
 function cleanString(value: unknown): string {
   return String(value || '').trim();
 }
 
+function normalizeUsernameInput(value: string): string {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/^me:\/\//, '')
+    .replace(/\/+$/, '')
+    .replace(/:\d+$/, '');
+}
+
+function usernameRegexPasses(value: string, allowEmpty = false): boolean {
+  const normalized = normalizeUsernameInput(value);
+  if (!normalized) return allowEmpty;
+  if (normalized.length < 5 || normalized.length > 32) return false;
+  if (!/^[a-z0-9._-]+$/.test(normalized)) return false;
+  if (normalized.startsWith('.') || normalized.endsWith('.') || normalized.includes('..')) return false;
+  return true;
+}
 
 function toTimestamp(value: unknown): number | null {
   const next = Number(value);
   return Number.isFinite(next) && next > 0 ? next : null;
 }
 
-function readPayloadMemoryValue(payload: CleakerClaimPayload | null | undefined, path: string): unknown {
-  const memories = Array.isArray(payload?.memories)
-    ? payload.memories
-    : [];
-  const match = memories.find((entry) => String(entry?.path || '').trim() === path);
-  return match?.data;
-}
-
-function resolveClaimedAt(payload: CleakerClaimPayload | null | undefined, fallback: number | null = null): number | null {
-  return (
-    toTimestamp(readPayloadMemoryValue(payload, 'auth.claimed_at')) ||
-    toTimestamp(payload?.createdAt) ||
-    toTimestamp(payload?.persistentClaim?.claim?.issuedAt) ||
-    fallback
-  );
-}
-
-function resolveProfileField(
-  payload: CleakerClaimPayload | null | undefined,
-  field: 'username' | 'name' | 'email' | 'phone',
-  fallback = '',
-): string {
-  const fromMemory = readPayloadMemoryValue(payload, `profile.${field}`);
-  if (fromMemory != null) return cleanString(fromMemory);
-  return cleanString(payload?.profile?.[field] ?? fallback);
-}
-
-function readErrorMessage(payload: unknown, status: number, fallback: string): string {
-  const body = payload as { error?: string; message?: string } | null;
-  return String(body?.error || body?.message || fallback || `HTTP ${status}`);
-}
-
 function humanizeCleakerError(
   raw: unknown,
-  options: { namespaceSeedHandle?: string; exampleHandle?: string } = {},
+  options: HumanizeOptions = {},
 ): string {
   const code = String(raw || '').trim();
   if (!code) return 'Unknown error';
@@ -182,29 +136,54 @@ function humanizeCleakerError(
     case 'CLAIM_NOT_FOUND':
       return 'This username is not claimed yet. Use Sign Up.';
     case 'CLAIM_VERIFICATION_FAILED':
+    case 'NOISE_DECRYPT_FAILED':
+    case 'IDENTITY_MISMATCH':
       return 'Wrong password for this claimed username.';
     case 'NAMESPACE_TAKEN':
       return 'This username is already claimed. Use .me to log in.';
+    case 'NAMESPACE_WRITE_FORBIDDEN':
+      return 'This namespace refused the write request for the current identity.';
+    case 'SEED_REQUIRED':
+      return 'Password is required';
     default:
       return code;
   }
 }
 
+function getMonadErrorCode(error: unknown): string {
+  if (error instanceof MonadClientError) return String(error.code || '').trim();
+  if (error instanceof Error) return String(error.message || '').trim();
+  return String(error || '').trim();
+}
+
 function buildAuthenticatedProfile(args: {
-  payload: CleakerClaimPayload | null | undefined;
+  session: SeedSession;
   fallbackUsername: string;
   activeProfile: CleakerProfileSnapshot;
-  identityNamespace: string;
+  fallbackNamespace: string;
+  claimedAt?: number | null;
 }): CleakerProfileSnapshot {
-  const { payload, fallbackUsername, activeProfile, identityNamespace } = args;
+  const {
+    session,
+    fallbackUsername,
+    activeProfile,
+    fallbackNamespace,
+    claimedAt,
+  } = args;
 
   return {
-    username: sanitizeCleakerUsername(resolveProfileField(payload, 'username', fallbackUsername)) || fallbackUsername,
-    name: resolveProfileField(payload, 'name', activeProfile.name),
-    email: resolveProfileField(payload, 'email', activeProfile.email),
-    phone: resolveProfileField(payload, 'phone', activeProfile.phone),
-    namespace: identityNamespace,
-    claimedAt: resolveClaimedAt(payload, activeProfile.claimedAt ?? Date.now()),
+    username:
+      sanitizeCleakerUsername(cleanString(session.read('profile.username'))) ||
+      fallbackUsername,
+    name: cleanString(session.read('profile.name')) || activeProfile.name,
+    email: cleanString(session.read('profile.email')) || activeProfile.email,
+    phone: cleanString(session.read('profile.phone')) || activeProfile.phone,
+    namespace: cleanString(session.semanticNamespace) || fallbackNamespace,
+    claimedAt:
+      toTimestamp(session.read('auth.claimed_at')) ||
+      toTimestamp(claimedAt) ||
+      activeProfile.claimedAt ||
+      Date.now(),
   };
 }
 
@@ -220,6 +199,14 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
     onAuthenticated,
     onViewModeChange,
   } = options;
+
+  const {
+    session,
+    authenticated,
+    loginWithSeed,
+    activateSession,
+    logout,
+  } = useSeedSession();
 
   const validateUsername = useCallback((raw: string) => {
     const rawValue = String(raw || '').trim().toLowerCase();
@@ -239,25 +226,21 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
     }
     if (value.length < 5) return { value, error: 'Username too short' };
     if (value.length > 32) return { value, error: 'Username too long' };
-    if (!usernameRegexPasses(value, { allowEmpty: false })) {
+    if (!usernameRegexPasses(value, false)) {
       return { value, error: 'Only a-z 0-9 . _ -' };
     }
     return { value, error: null as string | null };
   }, [namespaceSeedFallback]);
 
-  const [username, setUsernameState] = useState(() => {
-    const explicit = sanitizeCleakerUsername(String(externalUsername || '').trim());
-    if (explicit) return explicit;
-    return readUsernameFromStorage();
-  });
-  const [secret, setSecretState] = useState(() => readStoredValue(SESSION_SECRET_STORAGE_KEY));
-  // Register state now managed by useCleakerSignUp
+  const [username, setUsernameState] = useState(() =>
+    sanitizeCleakerUsername(String(externalUsername || '').trim()),
+  );
+  const [secret, setSecretState] = useState('');
   const [showSecret, setShowSecret] = useState(false);
   const [authStatus, setAuthStatus] = useState<AuthStatus>('idle');
   const [authAction, setAuthAction] = useState<AuthAction>('claim');
   const [authError, setAuthError] = useState<string | null>(null);
   const [claimResolution, setClaimResolution] = useState<ClaimResolution>('idle');
-  const [sessionAuthenticated, setSessionAuthenticated] = useState(false);
   const [bootstrapInfo, setBootstrapInfo] = useState<CleakerBootstrapInfo | null>(null);
 
   const usernameValidation = useMemo(() => validateUsername(username), [username, validateUsername]);
@@ -271,36 +254,14 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
     setUsernameState(next);
     setAuthStatus('idle');
     setAuthError(null);
+    setClaimResolution('idle');
   }, []);
 
   const setSecret = useCallback((next: React.SetStateAction<string>) => {
     setSecretState(next);
     setAuthStatus('idle');
     setAuthError(null);
-  }, []);
-
-  // Register callbacks now managed by useCleakerSignUp
-
-  const commitRuntimeCredentials = useCallback((nextUsername: string, nextSecret: string) => {
-    const normalizedUser = sanitizeCleakerUsername(nextUsername);
-    const normalizedSecret = String(nextSecret || '').trim();
-
-    try {
-      if (normalizedUser) localStorage.setItem(SESSION_USERNAME_STORAGE_KEY, normalizedUser);
-      else localStorage.removeItem(SESSION_USERNAME_STORAGE_KEY);
-
-      if (normalizedSecret) localStorage.setItem(SESSION_SECRET_STORAGE_KEY, normalizedSecret);
-      else localStorage.removeItem(SESSION_SECRET_STORAGE_KEY);
-
-      window.dispatchEvent(new CustomEvent(SESSION_CREDENTIALS_EVENT, {
-        detail: {
-          username: normalizedUser,
-          secret: normalizedSecret,
-        },
-      }));
-    } catch {
-      // Ignore storage and event failures in restricted runtimes.
-    }
+    setClaimResolution('idle');
   }, []);
 
   useEffect(() => {
@@ -308,31 +269,6 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
     if (!explicit) return;
     setUsernameState(explicit);
   }, [externalUsername]);
-
-  useEffect(() => {
-    const syncCredentials = () => {
-      const storedUsername = readUsernameFromStorage();
-      const storedSecret = readStoredValue(SESSION_SECRET_STORAGE_KEY);
-      setUsernameState(storedUsername || '');
-      setSecretState(storedSecret || '');
-
-      if (!storedUsername && !storedSecret) {
-        setClaimResolution('idle');
-        setAuthStatus('idle');
-        setAuthError(null);
-        setSessionAuthenticated(false);
-      }
-    };
-
-    syncCredentials();
-    window.addEventListener(SESSION_CREDENTIALS_EVENT, syncCredentials as EventListener);
-    window.addEventListener('storage', syncCredentials as EventListener);
-
-    return () => {
-      window.removeEventListener(SESSION_CREDENTIALS_EVENT, syncCredentials as EventListener);
-      window.removeEventListener('storage', syncCredentials as EventListener);
-    };
-  }, []);
 
   useEffect(() => {
     if (!/^https?:\/\//i.test(String(namespaceOrigin || '').trim())) {
@@ -355,43 +291,60 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
     };
   }, [namespaceOrigin]);
 
-  const applyAuthenticatedProfile = useCallback((payload: CleakerClaimPayload | null | undefined, fallbackUsername: string, nextSecret: string, action: AuthAction) => {
+  const applyAuthenticatedProfile = useCallback((args: {
+    session: SeedSession;
+    fallbackUsername: string;
+    action: AuthAction;
+    claimedAt?: number | null;
+    nextSecret?: string;
+  }) => {
     const nextProfile = buildAuthenticatedProfile({
-      payload,
-      fallbackUsername,
+      session: args.session,
+      fallbackUsername: args.fallbackUsername,
       activeProfile,
-      identityNamespace,
+      fallbackNamespace: identityNamespace,
+      claimedAt: args.claimedAt,
     });
 
     setUsernameState(nextProfile.username);
-    setSecretState(nextSecret);
+    if (typeof args.nextSecret === 'string') {
+      setSecretState(args.nextSecret);
+    }
     setClaimResolution('openable');
-    setSessionAuthenticated(true);
     setAuthStatus('ok');
-    setAuthAction(action);
+    setAuthAction(args.action);
     setAuthError(null);
-    commitRuntimeCredentials(nextProfile.username, nextSecret);
-    onAuthenticated?.(nextProfile, action);
+    onAuthenticated?.(nextProfile, args.action);
     onViewModeChange?.('profile');
     window.setTimeout(() => setAuthStatus('idle'), 1200);
     return nextProfile;
-  }, [activeProfile, commitRuntimeCredentials, identityNamespace, onAuthenticated, onViewModeChange]);
+  }, [activeProfile, identityNamespace, onAuthenticated, onViewModeChange]);
 
-  const postNamespaceOperation = useCallback(async (path: '/claims' | '/claims/open', targetSecret: string) => {
-    const response = await fetch(`${actionBaseUrl}${path}`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        namespace: identityNamespace,
-        secret: targetSecret,
-      }),
+  const handleMonadFailure = useCallback((error: unknown, fallbackHandle: string) => {
+    const code = getMonadErrorCode(error);
+    const message = humanizeCleakerError(code, {
+      namespaceSeedHandle,
+      exampleHandle: fallbackHandle,
     });
 
-    const payload = await response.json().catch(() => null) as CleakerClaimPayload | null;
-    return { response, payload };
-  }, [actionBaseUrl, identityNamespace]);
+    if (code === 'CLAIM_NOT_FOUND') {
+      setClaimResolution('unclaimed');
+    } else if (
+      code === 'CLAIM_VERIFICATION_FAILED' ||
+      code === 'NOISE_DECRYPT_FAILED' ||
+      code === 'IDENTITY_MISMATCH'
+    ) {
+      setClaimResolution('locked');
+    } else if (code === 'NAMESPACE_TAKEN') {
+      setClaimResolution('openable');
+    } else {
+      setClaimResolution('error');
+    }
+
+    setAuthStatus('error');
+    setAuthError(message);
+    return false;
+  }, [namespaceSeedHandle]);
 
   const handleCleak = useCallback(async (requestedAction: AuthAction) => {
     const { value, error } = validateUsername(username);
@@ -417,76 +370,111 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
     setAuthStatus('checking');
     setAuthAction(requestedAction);
     setAuthError(null);
-    commitRuntimeCredentials(value, secret);
+    setClaimResolution('checking');
 
     try {
-      if (requestedAction === 'open') {
-        const { response, payload } = await postNamespaceOperation('/claims/open', secret);
-        if (!response.ok) {
-          if (response.status === 403) {
-            setClaimResolution('locked');
-            throw new Error('Wrong password for this claimed username.');
-          }
-          if (response.status === 404) {
-            setClaimResolution('unclaimed');
-            throw new Error('This username is not claimed yet. Use Sign Up.');
-          }
-          throw new Error(
-            humanizeCleakerError(
-              readErrorMessage(payload, response.status, 'Wrong Credentials'),
-              {
-                namespaceSeedHandle,
-                exampleHandle: value,
-              }
-            )
-          );
-        }
+      const nextSession = await loginWithSeed({
+        seed: secret,
+        namespace: `${value}.${namespaceSeedHandle}`,
+        transportOrigin: actionBaseUrl,
+        autoOpen: true,
+      });
 
-        applyAuthenticatedProfile(payload, value, secret, 'open');
-        return true;
-      }
-
-      const claimed = await postNamespaceOperation('/claims', secret);
-      if (claimed.response.ok) {
-        applyAuthenticatedProfile(claimed.payload, value, secret, 'claim');
-        return true;
-      }
-      if (claimed.response.status === 409) {
-        throw new Error('Namespace already claimed. Use Login.');
-      }
-      throw new Error(
-        humanizeCleakerError(
-          readErrorMessage(claimed.payload, claimed.response.status, 'Failed to claim namespace'),
-          {
-            namespaceSeedHandle,
-            exampleHandle: value,
-          }
-        )
-      );
+      applyAuthenticatedProfile({
+        session: nextSession,
+        fallbackUsername: value,
+        action: requestedAction,
+        nextSecret: secret,
+      });
+      return true;
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      return handleMonadFailure(error, value);
+    }
+  }, [
+    actionBaseUrl,
+    applyAuthenticatedProfile,
+    handleMonadFailure,
+    loginWithSeed,
+    namespaceSeedHandle,
+    secret,
+    username,
+    validateUsername,
+  ]);
+
+  const handleSignUpSubmit = useCallback(async (input: CleakerSignUpSubmitInput) => {
+    const validated = validateUsername(input.username);
+
+    if (!validated.value || validated.error) {
       setAuthStatus('error');
-      setAuthError(message);
+      setAuthError(validated.error || 'Invalid username');
       return false;
     }
-  }, [actionBaseUrl, applyAuthenticatedProfile, commitRuntimeCredentials, namespaceSeedHandle, postNamespaceOperation, secret, username, validateUsername]);
 
-  // Sign-up modal, close, and submit now handled by useCleakerSignUp
+    if (!actionBaseUrl) {
+      setAuthStatus('error');
+      setAuthError('No Monad host available');
+      return false;
+    }
 
-  // --- Signup hook integration ---
+    setAuthStatus('checking');
+    setAuthAction('claim');
+    setAuthError(null);
+    setClaimResolution('checking');
+
+    const nextNamespace = `${validated.value}.${namespaceSeedHandle}`;
+    const previousSession = session;
+    let nextSession: SeedSession | null = null;
+
+    try {
+      nextSession = await loginWithSeed({
+        seed: input.password,
+        namespace: nextNamespace,
+        transportOrigin: actionBaseUrl,
+        autoOpen: false,
+      });
+
+      const claimResult = await nextSession.claim(nextNamespace);
+      await nextSession.write('profile.username', validated.value);
+      await nextSession.write('profile.name', input.fullName);
+      await nextSession.write('profile.email', input.email);
+      await nextSession.write('profile.phone', input.phone);
+      await nextSession.write('auth.claimed_at', claimResult.createdAt);
+      await nextSession.open(nextNamespace);
+      activateSession(nextSession);
+
+      applyAuthenticatedProfile({
+        session: nextSession,
+        fallbackUsername: validated.value,
+        action: 'claim',
+        claimedAt: claimResult.createdAt,
+        nextSecret: input.password,
+      });
+      return true;
+    } catch (error) {
+      try {
+        nextSession?.logout();
+      } catch {
+        // Best-effort cleanup for failed signup attempts.
+      }
+      activateSession(previousSession || null);
+      return handleMonadFailure(error, validated.value);
+    }
+  }, [
+    actionBaseUrl,
+    activateSession,
+    applyAuthenticatedProfile,
+    handleMonadFailure,
+    loginWithSeed,
+    namespaceSeedHandle,
+    session,
+    validateUsername,
+  ]);
+
   const signUp = useCleakerSignUp({
     username,
     secret,
-    actionBaseUrl,
-    namespaceSeedHandle,
     validateUsername,
-    applyAuthenticatedProfile,
-    humanizeCleakerError,
-    readErrorMessage,
-    setAuthStatus,
-    setAuthAction,
-    setAuthError,
-    setClaimResolution,
+    onSubmit: handleSignUpSubmit,
   });
 
   const {
@@ -510,6 +498,7 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
   } = signUp;
 
   const handleLogout = useCallback(() => {
+    logout();
     setUsernameState('');
     setSecretState('');
     closeRegisterModal();
@@ -518,10 +507,8 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
     setAuthStatus('idle');
     setAuthError(null);
     setClaimResolution('idle');
-    setSessionAuthenticated(false);
-    commitRuntimeCredentials('', '');
     onViewModeChange?.('login');
-  }, [closeRegisterModal, commitRuntimeCredentials, onViewModeChange]);
+  }, [closeRegisterModal, logout, onViewModeChange]);
 
   const claimResolutionNote = useMemo(() => {
     if (claimResolution === 'locked') {
@@ -572,12 +559,11 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
     authError,
     claimResolution,
     claimResolutionNote,
-    sessionAuthenticated,
+    sessionAuthenticated: authenticated,
     bootstrapInfo,
     handleCleak,
     handleRegisterSubmit,
     handleLogout,
-    commitRuntimeCredentials,
     authSuccessMessage,
     authProgressMessage,
   };

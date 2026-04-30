@@ -19,7 +19,7 @@ function KernelDebugger() {
   const avatar = useMeValue<string>('profile.avatar');
   const claimedAt = useMeValue<number | null>('auth.claimed_at');
   const activeNamespace = useMeValue<string>('identity.session.namespace');
-  const runtimeAuthenticated = useMeValue<boolean>('runtime.cleaker.authenticated');
+  const runtimeAuthenticated = useMeValue<boolean>('identity.session.authenticated');
   const viewMode = useMeValue<string>('ui.cleaker.viewMode');
 
   const isClaimed = Boolean(username && claimedAt && activeNamespace);
@@ -86,7 +86,8 @@ function LifecycleHarness() {
     setKernel('identity.session.username', 'jabellae');
     setKernel('identity.session.namespace', 'jabellae.cleaker.me');
     setKernel('identity.session.authenticated', true);
-    setKernel('runtime.cleaker.authenticated', true);
+    setKernel('identity.session.identityHash', 'test-hash-123');
+    setKernel('identity.session.openedAt', Date.now());
     setKernel('ui.cleaker.viewMode', 'profile');
   }, [setKernel]);
 
@@ -102,8 +103,10 @@ function LifecycleHarness() {
     setKernel('identity.session.username', '');
     setKernel('identity.session.draftUsername', '');
     setKernel('identity.session.authenticated', false);
+    setKernel('identity.session.identityHash', '');
     setKernel('identity.session.hasSecret', false);
     setKernel('identity.session.namespace', '');
+    setKernel('identity.session.openedAt', null);
     setKernel('identity.session.note', '');
     setKernel('runtime.cleaker.auth.status', 'idle');
     setKernel('runtime.cleaker.auth.error', null);
@@ -111,7 +114,6 @@ function LifecycleHarness() {
     setKernel('runtime.cleaker.auth.progressMessage', null);
     setKernel('runtime.cleaker.auth.claimed', false);
     setKernel('runtime.cleaker.auth.claimResolution', 'idle');
-    setKernel('runtime.cleaker.authenticated', false);
     setKernel('ui.cleaker.settingsOpen', false);
     setKernel('ui.cleaker.registerOpen', false);
     setKernel('ui.cleaker.avatarExpanded', false);
@@ -188,7 +190,8 @@ function FullLifecycleStory() {
     writeMeValue(me, 'identity.session.username', '');
     writeMeValue(me, 'identity.session.namespace', '');
     writeMeValue(me, 'identity.session.authenticated', false);
-    writeMeValue(me, 'runtime.cleaker.authenticated', false);
+    writeMeValue(me, 'identity.session.identityHash', '');
+    writeMeValue(me, 'identity.session.openedAt', null);
     writeMeValue(me, 'ui.cleaker.viewMode', 'login');
     return me;
   }, []);

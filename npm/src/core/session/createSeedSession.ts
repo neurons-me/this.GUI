@@ -1,0 +1,270 @@
+import ME from 'this.me';
+import type { RuntimeAdapter } from '@/runtime/adapter';
+import { createMeRuntime, readMeValue, writeMeValue } from '@/runtime/run-me';
+import type { MeLike } from '@/react/types';
+import {
+  claimNamespace,
+  createMonadClient,
+  DEFAULT_MONAD_TRANSPORT_ORIGIN,
+  type MonadClaimResult,
+  type MonadClient,
+  type MonadClientOptions,
+  type MonadOpenResult,
+  type MonadReplayMemory,
+  type MonadWriteInput,
+  type MonadWriteResult,
+  normalizeMonadSemanticNamespace,
+  normalizeMonadTransportOrigin,
+} from './monadClient';
+
+const THIS_ME_SEED_STORAGE_KEY = 'this.me.seed:v1';
+
+export type SeedSessionErrorCode =
+  | 'SEED_REQUIRED'
+  | 'IDENTITY_HASH_UNAVAILABLE'
+  | 'REPLAY_UNAVAILABLE'
+  | 'NAMESPACE_REQUIRED';
+
+export class SeedSessionError<Code extends SeedSessionErrorCode = SeedSessionErrorCode> extends Error {
+  readonly code: Code;
+
+  constructor(code: Code, message?: string) {
+    super(message || code);
+    this.name = 'SeedSessionError';
+    this.code = code;
+  }
+}
+
+export type SeedSessionOptions = MonadClientOptions & {
+  seed: string;
+  me?: MeLike;
+  runtime?: RuntimeAdapter | null;
+  semanticNamespace?: string | null;
+};
+
+export type SeedSessionWriteOptions<TValue = unknown> = Omit<
+  MonadWriteInput<TValue>,
+  'semanticNamespace' | 'identityHash' | 'transportOrigin' | 'fetchImpl' | 'headers' | 'expression' | 'value'
+>;
+
+export interface SeedSession {
+  readonly me: MeLike;
+  readonly runtime: RuntimeAdapter;
+  readonly monad: MonadClient;
+  readonly identityHash: string;
+  readonly transportOrigin: string;
+  readonly semanticNamespace: string | null;
+  claim(namespace: string): Promise<MonadClaimResult>;
+  claimAndOpen(namespace: string): Promise<MonadOpenResult>;
+  open(namespace?: string | null): Promise<MonadOpenResult>;
+  sync(): Promise<MonadOpenResult>;
+  read<TValue = unknown>(path: string): TValue;
+  write<TValue = unknown>(
+    expression: string,
+    value: TValue,
+    options?: SeedSessionWriteOptions<TValue>,
+  ): Promise<MonadWriteResult>;
+  clear(): void;
+  logout(): void;
+}
+
+function scrubSeedStorage() {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.removeItem(THIS_ME_SEED_STORAGE_KEY);
+  } catch {
+    // Storage cleanup is best-effort until .me exposes seedPersistence controls.
+  }
+}
+
+function resolveRuntimeSurface(me: MeLike): any {
+  return (me as any)?.['!'] || null;
+}
+
+function resolveIdentityHash(me: MeLike): string {
+  const runtimeSurface = resolveRuntimeSurface(me);
+  const identity = typeof runtimeSurface?.identity === 'function'
+    ? runtimeSurface.identity()
+    : null;
+  const hash = String(identity?.hash || '').trim();
+
+  if (!hash) {
+    throw new SeedSessionError(
+      'IDENTITY_HASH_UNAVAILABLE',
+      '.me did not expose an identity hash for this seed session.',
+    );
+  }
+
+  return hash;
+}
+
+function replayKernelMemories(me: MeLike, memories: MonadReplayMemory[]) {
+  if (typeof (me as any)?.replayMemories === 'function') {
+    (me as any).replayMemories(memories);
+    return;
+  }
+
+  const runtimeSurface = resolveRuntimeSurface(me);
+  if (typeof runtimeSurface?.memories?.replay === 'function') {
+    runtimeSurface.memories.replay(memories);
+    return;
+  }
+
+  throw new SeedSessionError(
+    'REPLAY_UNAVAILABLE',
+    '.me does not expose replayMemories() on this runtime.',
+  );
+}
+
+function writeLocalSessionState(
+  me: MeLike,
+  runtime: RuntimeAdapter,
+  namespace: string | null,
+  authenticated: boolean,
+  identityHash: string | null,
+  openedAt: number | null,
+) {
+  const safeNamespace = String(namespace || '').trim();
+
+  writeMeValue(me, 'identity.session.namespace', safeNamespace, { allowBarePath: true });
+  writeMeValue(me, 'identity.session.authenticated', authenticated, { allowBarePath: true });
+  writeMeValue(
+    me,
+    'identity.session.identityHash',
+    authenticated ? String(identityHash || '').trim() : '',
+    { allowBarePath: true },
+  );
+  writeMeValue(
+    me,
+    'identity.session.openedAt',
+    authenticated && Number.isFinite(openedAt) ? Number(openedAt) : null,
+    { allowBarePath: true },
+  );
+  runtime.notify?.('identity.session');
+}
+
+function normalizeRequiredNamespace(namespace: string | null | undefined): string {
+  return normalizeMonadSemanticNamespace(String(namespace || '').trim());
+}
+
+export function createSeedSession(options: SeedSessionOptions): SeedSession {
+  const seed = String(options.seed || '').trim();
+  if (!seed) {
+    throw new SeedSessionError('SEED_REQUIRED', 'Seed is required to create a seed session.');
+  }
+
+  const me = (options.me || (new ME(seed) as unknown as MeLike));
+  scrubSeedStorage();
+
+  const runtime = options.runtime || createMeRuntime(me);
+  const monad = createMonadClient(options);
+  const identityHash = resolveIdentityHash(me);
+  const transportOrigin = normalizeMonadTransportOrigin(
+    options.transportOrigin || DEFAULT_MONAD_TRANSPORT_ORIGIN,
+  );
+  let activeNamespace = normalizeRequiredNamespace(options.semanticNamespace) || null;
+
+  const claim = async (namespace: string) => {
+    const semanticNamespace = normalizeRequiredNamespace(namespace);
+    if (!semanticNamespace) {
+      throw new SeedSessionError('NAMESPACE_REQUIRED', 'Namespace is required for claim.');
+    }
+
+    const result = await claimNamespace({
+      semanticNamespace,
+      seed,
+      identityHash,
+      transportOrigin,
+      fetchImpl: options.fetchImpl,
+      headers: options.headers,
+    });
+
+    activeNamespace = result.namespace;
+    writeLocalSessionState(me, runtime, activeNamespace, true, identityHash, null);
+    return result;
+  };
+
+  const open = async (namespace?: string | null) => {
+    const semanticNamespace = normalizeRequiredNamespace(namespace || activeNamespace);
+    if (!semanticNamespace) {
+      throw new SeedSessionError('NAMESPACE_REQUIRED', 'Namespace is required for open.');
+    }
+
+    const result = await monad.openNamespace({
+      semanticNamespace,
+      seed,
+      identityHash,
+    });
+
+    replayKernelMemories(me, result.memories);
+    activeNamespace = result.namespace;
+    writeLocalSessionState(
+      me,
+      runtime,
+      activeNamespace,
+      true,
+      result.identityHash || identityHash,
+      result.openedAt,
+    );
+    return result;
+  };
+
+  const clear = () => {
+    replayKernelMemories(me, []);
+    activeNamespace = null;
+    writeLocalSessionState(me, runtime, null, false, null, null);
+  };
+
+  return {
+    me,
+    runtime,
+    monad,
+    identityHash,
+    transportOrigin,
+    get semanticNamespace() {
+      return activeNamespace;
+    },
+    claim,
+    async claimAndOpen(namespace: string) {
+      await claim(namespace);
+      return open(namespace);
+    },
+    open,
+    async sync() {
+      return open(activeNamespace);
+    },
+    read(path) {
+      return readMeValue(me, path, { allowBarePath: true });
+    },
+    async write(expression, value, writeOptions = {}) {
+      const semanticNamespace = normalizeRequiredNamespace(activeNamespace);
+      if (!semanticNamespace) {
+        throw new SeedSessionError('NAMESPACE_REQUIRED', 'An active namespace is required for write.');
+      }
+
+      const result = await monad.writeNamespace({
+        semanticNamespace,
+        expression,
+        value,
+        identityHash,
+        signature: writeOptions.signature,
+        signedPayload: writeOptions.signedPayload,
+        signatureEncoding: writeOptions.signatureEncoding,
+        signatureFormat: writeOptions.signatureFormat,
+        body: writeOptions.body,
+        signal: writeOptions.signal,
+      });
+
+      writeMeValue(me, expression, value, { allowBarePath: true });
+      runtime.notify?.();
+      return result;
+    },
+    clear,
+    logout() {
+      clear();
+      scrubSeedStorage();
+    },
+  };
+}
+
+export default createSeedSession;

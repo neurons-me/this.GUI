@@ -25,6 +25,10 @@ import useCleakerSelectionRegistry from './hooks/useCleakerSelectionRegistry';
 import useCleakerView from './hooks/useCleakerView';
 import { useCleakerKernelSync } from './hooks/useCleakerKernelSync';
 import { MeRuntimeProvider, useOptionalMeRuntimeContext } from '@/react/MeRuntimeProvider';
+import {
+  SeedSessionProvider,
+  useOptionalSeedSessionContext,
+} from '@/react/session/SeedSessionProvider';
 import { useMe } from '@/react/useMe';
 import { useMeAction } from '@/react/useMeAction';
 import { useMeValue } from '@/react/useMeValue';
@@ -119,7 +123,7 @@ function CleakerInner(props: CleakerProps) {
   const profilePhone = useMeValue<string>('profile.phone') || '';
   const claimedAtPath = useMeValue<number | null>('auth.claimed_at');
   const activeSessionNamespace = useMeValue<string>('identity.session.namespace') || '';
-  const kernelRuntimeAuthenticated = Boolean(useMeValue<boolean>('runtime.cleaker.authenticated'));
+  const kernelRuntimeAuthenticated = Boolean(useMeValue<boolean>('identity.session.authenticated'));
   const kernelViewMode = useMeValue<string>('ui.cleaker.viewMode') || '';
   const setKernelViewMode = useMeAction('ui.cleaker.viewMode');
 
@@ -361,7 +365,6 @@ const {
     handleCleak,
     handleRegisterSubmit,
     handleLogout: handleAuthLogout,
-    commitRuntimeCredentials,
     authSuccessMessage,
     authProgressMessage,
 
@@ -796,9 +799,7 @@ const {
       { path: KERNEL_CLEAKER_CANONICAL_AUTH_PATH, value: canonicalAuthSemanticState },
       { path: KERNEL_CLEAKER_PROFILE_PATH,    value: profileSemanticState },
     ],
-    entries: [
-      { path: 'runtime.cleaker.authenticated', value: runtimeAuthenticated },
-    ],
+    entries: [],
   });
 
   // ---------------------------------------------------------------------------
@@ -820,37 +821,6 @@ const {
   // Mesh deep link / pairing expression handler
   // ---------------------------------------------------------------------------
 
-
-  // ---------------------------------------------------------------------------
-  // Auto-restore session on mount / credential change
-  // ---------------------------------------------------------------------------
-
-  const restoreAttemptRef = React.useRef<string>('');
-
-  useEffect(() => {
-    const restoreKey = [actionBaseUrl, identityNamespace, normalizedUsername, secret].join('|');
-
-    if (!normalizedUsername || !secret || !actionBaseUrl) {
-      restoreAttemptRef.current = '';
-      return;
-    }
-    if (hasClaimedIdentity || authStatus === 'checking' || currentViewMode === 'claim-surface') return;
-    if (claimResolution === 'locked' || claimResolution === 'unclaimed') return;
-    if (restoreAttemptRef.current === restoreKey) return;
-
-    restoreAttemptRef.current = restoreKey;
-    void handleCleak('open');
-  }, [
-    actionBaseUrl,
-    authStatus,
-    claimResolution,
-    currentViewMode,
-    handleCleak,
-    hasClaimedIdentity,
-    identityNamespace,
-    normalizedUsername,
-    secret,
-  ]);
 
   // ---------------------------------------------------------------------------
   // Selection store node registry
@@ -955,8 +925,10 @@ const {
       ['identity.session.username', ''],
       ['identity.session.draftUsername', ''],
       ['identity.session.authenticated', false],
+      ['identity.session.identityHash', ''],
       ['identity.session.hasSecret', false],
       ['identity.session.namespace', ''],
+      ['identity.session.openedAt', null],
       ['identity.session.note', ''],
       ['runtime.cleaker.auth.status', 'idle'],
       ['runtime.cleaker.auth.error', null],
@@ -964,7 +936,6 @@ const {
       ['runtime.cleaker.auth.progressMessage', null],
       ['runtime.cleaker.auth.claimed', false],
       ['runtime.cleaker.auth.claimResolution', 'idle'],
-      ['runtime.cleaker.authenticated', false],
       ['ui.cleaker.settingsOpen', false],
       ['ui.cleaker.registerOpen', false],
       ['ui.cleaker.avatarExpanded', false],
@@ -1028,7 +999,6 @@ const {
         username={username}
         setUsername={setUsername}
         usernameError={usernameError}
-        commitRuntimeCredentials={commitRuntimeCredentials}
         secret={secret}
         namespaceSeedHandle={namespaceSeedHandle}
         liveUsernameState={liveUsernameState}
@@ -1100,6 +1070,7 @@ const {
 
 export default function Cleaker(props: CleakerProps) {
   const localContext = useOptionalMeRuntimeContext();
+  const seedContext = useOptionalSeedSessionContext();
   const env = useRuntimeEnvironment();
   const localKernelRef = React.useRef<MeLike | null>(null);
 
@@ -1117,8 +1088,15 @@ export default function Cleaker(props: CleakerProps) {
 
   const kernel = inheritedMe ?? localKernelRef.current;
   const shouldWrap = !localContext?.me || localContext.me !== kernel;
-  const content = <CleakerInner {...props} me={kernel} />;
+  let content = <CleakerInner {...props} me={kernel} />;
 
-  if (!shouldWrap) return content;
-  return <MeRuntimeProvider me={kernel}>{content}</MeRuntimeProvider>;
+  if (shouldWrap) {
+    content = <MeRuntimeProvider me={kernel}>{content}</MeRuntimeProvider>;
+  }
+
+  if (!seedContext) {
+    content = <SeedSessionProvider>{content}</SeedSessionProvider>;
+  }
+
+  return content;
 }
