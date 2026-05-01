@@ -9,7 +9,7 @@
 import MuiBox from '@mui/material/Box';
 import * as React from 'react';
 // Re-export using MUI's own component type
-const Box = MuiBox;
+const Box: typeof MuiBox = MuiBox;
 export type BoxProps = React.ComponentProps<typeof Box>;
 (Box as any).displayName = 'Gui.Box';
 export default Box;

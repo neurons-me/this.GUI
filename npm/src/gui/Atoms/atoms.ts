@@ -107,7 +107,33 @@ export type GuiSx = SxProps<Theme>;
  *   import { Box } from "this.gui";   // best tree-shaking
  *   import { atoms } from "this.gui"; // grouped namespace: atoms.Box, atoms.Button, ...
  */
-export const atoms = {
+export type Atoms = {
+  Box: typeof Box;
+  Badge: typeof Badge;
+  Typography: typeof Typography;
+  TextField: typeof TextField;
+  Input: typeof Input;
+  Link: typeof Link;
+  Divider: typeof Divider;
+  Bar: typeof Bar;
+  IconButton: typeof IconButton;
+  Button: typeof Button;
+  Card: typeof Card;
+  CardActions: typeof CardActions;
+  CardContent: typeof CardContent;
+  CardHeader: typeof CardHeader;
+  Chip: typeof Chip;
+  Progress: typeof Progress;
+  Slider: typeof Slider;
+  Surface: typeof Surface;
+  Checkbox: typeof Checkbox;
+  Switch: typeof Switch;
+  Paper: typeof Paper;
+  Avatar: typeof Avatar;
+  Section: typeof Section;
+};
+
+export const atoms: Atoms = {
   Box,
   Badge,
   Typography,
@@ -131,4 +157,4 @@ export const atoms = {
   Paper,
   Avatar,
   Section,
-} as const;
+};

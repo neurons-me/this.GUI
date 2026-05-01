@@ -1,4 +1,4 @@
-import type ME from 'this.me';
+import type { MEInstance } from 'this.me';
 import type { RuntimeAdapter } from '@/runtime/adapter';
 
 export type MeTargetLike =
@@ -14,7 +14,7 @@ export type MeTargetLike =
     };
 
 export type MeLike =
-  | ME
+  | MEInstance
   | ({
       (path: string): any;
       (path: string, value: any): any;

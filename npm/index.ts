@@ -183,7 +183,7 @@ export type {
 // NOTE: We still import concrete modules (not barrels) to preserve tree-shaking.
 import ThemeComponent from '@/gui/Theme/Theme';
 import { GuiRegistry as RegistryEntries } from '@/Registry';
-import { atoms as AtomsBundle } from '@/gui/Atoms';
+import { atoms as AtomsBundle, type Atoms as AtomsRegistry } from '@/gui/Atoms';
 import Layout from '@/gui/Layout/Layout';
 import StickyOptionsTop from '@/gui/Layout/StickyOptions/StickyOptionsTop';
 import Icon from '@/gui/Atoms/Icon/Icon';
@@ -202,7 +202,7 @@ import GUITools, {
   guiToolsLeftSidebarConfig,
 } from '@/gui/Molecules/menus/GUI-Tools/GUI-Tools';
 import CompoundsBundle from '@/gui/Compounds';
-export const Atoms = AtomsBundle;
+export const Atoms: AtomsRegistry = AtomsBundle;
 export const Molecules = MoleculesBundle;
 export const Widgets = {
   FaceRecognition,
@@ -232,7 +232,7 @@ export const ThemeRuntime = {
   InspectorToggle,
 } as const;
 // Lowercase aliases for explorer/runtime conventions
-export const atoms = Atoms;
+export const atoms: AtomsRegistry = Atoms;
 export const molecules = Molecules;
 export const widgets = Widgets;
 export const compounds = Compounds;
