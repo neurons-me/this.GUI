@@ -52,7 +52,11 @@ export function mergeRightBarCollections<TElement>(
   slot: 'rightBar' | 'rightBarFooter'
 ): TElement[] {
   const legacySlot = slot === 'rightBar' ? 'rightSidebar' : 'rightSidebarFooter';
-  return [...(elements ?? []), ...resolveSlot<TElement>(collections, legacySlot, legacySlot)];
+  return [
+    ...(elements ?? []),
+    ...resolveSlot<TElement>(collections, slot, slot),
+    ...resolveSlot<TElement>(collections, legacySlot, legacySlot),
+  ];
 }
 
 export const mergeRightSidebarCollections = mergeRightBarCollections;

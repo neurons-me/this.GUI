@@ -6,7 +6,9 @@ type RightSidebarSpec = {
   type: 'RightSidebar';
   props?: {
     elements?: RightSidebarElement[];
+    collections?: any[];
     footerElements?: RightSidebarElement[];
+    footerCollections?: any[];
     initialView?: 'rail' | 'expanded' | 'mobile';
     className?: string;
     id?: string;
@@ -23,7 +25,9 @@ const RightSidebarResolver: RegistryEntry = {
     return (
       <RightSidebar
         elements={props.elements ?? []}
+        collections={Array.isArray(props.collections) ? props.collections : []}
         footerElements={props.footerElements ?? []}
+        footerCollections={Array.isArray(props.footerCollections) ? props.footerCollections : []}
         initialView={props.initialView}
         className={props.className}
         id={props.id}

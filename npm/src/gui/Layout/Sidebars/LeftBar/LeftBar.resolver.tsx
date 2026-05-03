@@ -33,7 +33,9 @@ type LeftSidebarSpec = {
     header?: LeftSidebarHeaderSpec; // optional header (title + icon)
     drawerLinks?: RouteItemSpec[]; // navigation tree
     elements?: Array<{ type: 'link' | 'menu' | 'action'; props: Record<string, any> }>;
+    collections?: any[];
     footerElements?: Array<{ type: 'link' | 'menu' | 'action'; props: Record<string, any> }>;
+    footerCollections?: any[];
     initialView?: 'rail' | 'expanded' | 'mobile';
     // Style passthrough / misc
     sx?: any;
@@ -80,7 +82,9 @@ const LeftSidebarResolver: RegistryEntry = {
     return (
       <LeftSidebar
         elements={elements}
+        collections={Array.isArray(p.collections) ? p.collections : []}
         footerElements={Array.isArray(p.footerElements) ? p.footerElements : []}
+        footerCollections={Array.isArray(p.footerCollections) ? p.footerCollections : []}
         header={p.header as any}
         initialView={p.initialView}
         className={p.className}

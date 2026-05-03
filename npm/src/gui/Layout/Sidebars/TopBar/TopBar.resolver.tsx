@@ -25,6 +25,10 @@ type TopBarSpec = {
     title?: string;
     logo?: string;
     NavBarLinks?: TopBarLinkSpec[];
+    elementsCenter?: Array<{ type: 'link' | 'menu' | 'action'; props: Record<string, any> }>;
+    elementsRight?: Array<{ type: 'link' | 'menu' | 'action'; props: Record<string, any> }>;
+    collectionsCenter?: any[];
+    collectionsRight?: any[];
     showMenuButton?: boolean;
     showThemeToggle?: boolean;
     homeTo?: string;
@@ -60,17 +64,24 @@ const TopBarResolver: RegistryEntry = {
       <TopBar
         title={p.title ?? 'neurons.me'}
         logo={p.logo ?? 'https://neurons.me/neurons.me.png'}
-        elementsCenter={(p.NavBarLinks ?? []).map(link => ({
-          type: 'link',
-          props: {
-            label: link.label ?? '',
-            href: link.href ?? '',
-            external: link.external ?? false,
-            icon: link.icon,
-            iconColor: link.iconColor,
-            children: link.children ?? [],
-          }
-        }))}
+        elementsCenter={
+          Array.isArray(p.elementsCenter) && p.elementsCenter.length
+            ? p.elementsCenter as any
+            : (p.NavBarLinks ?? []).map(link => ({
+                type: 'link',
+                props: {
+                  label: link.label ?? '',
+                  href: link.href ?? '',
+                  external: link.external ?? false,
+                  icon: link.icon,
+                  iconColor: link.iconColor,
+                  children: link.children ?? [],
+                }
+              }))
+        }
+        elementsRight={Array.isArray(p.elementsRight) ? p.elementsRight as any : []}
+        collectionsCenter={Array.isArray(p.collectionsCenter) ? p.collectionsCenter : []}
+        collectionsRight={Array.isArray(p.collectionsRight) ? p.collectionsRight : []}
         homeTo={p.homeTo ?? '/'}
         position={p.position ?? 'fixed'}
         // passthroughs

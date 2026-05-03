@@ -57,5 +57,6 @@ export interface ContentProps {
 export interface LayoutSpec {
   type: 'Layout';
   props?: LayoutProps;
+  children?: ReactNode;
   Content?: ContentProps[];
 }

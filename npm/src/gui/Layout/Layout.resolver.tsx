@@ -42,7 +42,7 @@ const LayoutResolver: RegistryEntry = {
       ...rest
     } = props as any;
 
-    const resolvedChildren = props.children;
+    const resolvedChildren = props.children ?? (spec as any).children;
     const normalizedProps = {
       ...rest,
       TopBar: topBar ?? TopBar ?? topBarConfig,
