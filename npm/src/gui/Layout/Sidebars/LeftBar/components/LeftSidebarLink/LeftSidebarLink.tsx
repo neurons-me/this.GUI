@@ -17,9 +17,11 @@ const LeftSidebarLink: React.FC<LeftSidebarItemProps> = ({
   active,
   onClick,
   children,
+  view: viewProp,
   ...rest
 }) => {
-  const { view } = useLeftSidebar();
+  const { view: contextView } = useLeftSidebar();
+  const view = viewProp ?? contextView;
   const [expanded, setExpanded] = useState(false);
   const hasChildren = Boolean(children);
 
@@ -62,15 +64,16 @@ const LeftSidebarLink: React.FC<LeftSidebarItemProps> = ({
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        alignItems: view === 'rail' ? 'center' : 'flex-start',
         p: 1.123,
         backgroundColor: 'transparent',
-        border: active ? '1px solid' : 'none',
+        border: '1px solid',
         borderColor: active ? 'primary.main' : 'transparent',
-        color: active ? 'white' : 'text.primary',
+        color: active ? 'primary.main' : 'text.primary',
         cursor: 'pointer',
         borderRadius: 1,
         textDecoration: 'none',
+        width: '100%',
         '&:hover': {
           backgroundColor: 'action.hover',
           textDecoration: 'none',

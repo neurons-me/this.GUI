@@ -83,6 +83,53 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
   );
 
   if (element) {
+    const elementContent = (
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 1.123,
+          justifyContent: view === 'rail' ? 'center' : 'flex-start',
+          alignItems: 'center',
+          width: '100%',
+          textAlign: view === 'rail' ? 'center' : 'left',
+          px: view === 'rail' ? 0 : 1.23,
+        }}
+      >
+        <Box
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flex: '0 0 auto',
+          }}
+        >
+          {element}
+        </Box>
+        {view !== 'rail' && label ? (
+          <Typography
+            variant="body2"
+            sx={{
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              color: active ? 'primary.main' : 'text.primary',
+            }}
+          >
+            {label}
+          </Typography>
+        ) : null}
+      </Box>
+    );
+
+    const wrappedContent =
+      view === 'rail' && label ? (
+        <Tooltip title={label} placement="right" arrow>
+          {elementContent}
+        </Tooltip>
+      ) : (
+        elementContent
+      );
+
     return (
       <Box
         {...rest}
@@ -97,7 +144,7 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
           textAlign: view === 'rail' ? 'center' : 'left',
         }}
       >
-        {element}
+        {wrappedContent}
       </Box>
     );
   }

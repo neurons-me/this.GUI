@@ -3,20 +3,20 @@
 // Exposes: window.bootGUI()
 
 (() => {
-  const CDN = {
-    css: 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/styles.css',
-    react: 'https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js',
-    reactDom: 'https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js',
-    gui: 'https://cdn.jsdelivr.net/npm/this.gui@latest/dist/this.gui.umd.js',
+  const LOCAL_ASSETS = {
+    css: '/gui/styles.css',
+    react: '/vendor/react/react.production.min.js',
+    reactDom: '/vendor/react-dom/react-dom.production.min.js',
+    gui: '/gui/this.gui.umd.js',
   };
   const BOOTSTRAP_ASSETS_KEY = '__THIS_GUI_BOOTSTRAP_ASSETS__';
   const AUTOBOOT_DISABLED_KEY = '__THIS_GUI_DISABLE_AUTOBOOT__';
   const LOADED_ATTR = 'data-runtime-loaded';
   const BOOTSTRAP_STATUS_KEY = '__THIS_GUI_BOOTSTRAP_STATUS__';
 
-  type BootstrapOptions = Partial<typeof CDN>;
+  type BootstrapOptions = Partial<typeof LOCAL_ASSETS>;
 
-  type ResolvedAssets = typeof CDN & {
+  type ResolvedAssets = typeof LOCAL_ASSETS & {
     localReact?: string;
     localReactDom?: string;
   };
@@ -77,7 +77,7 @@
   function resolveAssets(overrides: BootstrapOptions = {}): ResolvedAssets {
     const globalOverrides = (((window as any)[BOOTSTRAP_ASSETS_KEY]) || {}) as BootstrapOptions;
     return {
-      ...CDN,
+      ...LOCAL_ASSETS,
       ...inferSiblingAssets(),
       ...globalOverrides,
       ...overrides,

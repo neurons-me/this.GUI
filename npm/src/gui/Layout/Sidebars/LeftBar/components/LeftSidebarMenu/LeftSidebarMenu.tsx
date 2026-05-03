@@ -162,7 +162,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        alignItems: isRail ? 'center' : 'flex-start',
         p: 1.123,
         backgroundColor: 'transparent',
         cursor: 'pointer',
@@ -170,6 +170,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarMenuProps> = ({
         color: 'text.primary',
         '&:hover': { backgroundColor: 'action.hover' },
         position: 'relative',
+        width: '100%',
       }}
       onClick={() => !isRail && setOpen(!open)}
     >

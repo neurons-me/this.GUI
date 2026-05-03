@@ -22,11 +22,14 @@ if (args.includes("--help") || args.includes("-h")) {
 
 Usage:
   npx this.gui <project-name>
+  npx this.gui main-server-ui
+  npx this.gui <project-name> --main-server-ui
   npx this.gui <dir> --html
   npx this.gui --html
 
 Flags:
   --html   Generate a plain HTML runtime with a basic GUI.mount() (no Vite, no Storybook)
+  --main-server-ui   Generate the NetGet Main Server UI starter, wired to all.this
 
 What you get:
   - Vite + React app pre-wired with this.gui
@@ -45,8 +48,15 @@ Next:
 `);
   process.exit(0);
 }
-const appName = args[0] || "my-app";
+const templateFlagIndex = args.indexOf("--template");
+const appName = args.find((arg, index) => {
+  if (arg.startsWith("-")) return false;
+  if (templateFlagIndex >= 0 && index === templateFlagIndex + 1) return false;
+  return true;
+}) || "my-app";
 const wantsHtml = args.includes("--html");
+const templateName = templateFlagIndex >= 0 ? args[templateFlagIndex + 1] : "";
+const wantsMainServerUi = args.includes("--main-server-ui") || templateName === "main-server-ui" || appName === "main-server-ui";
 // If the first arg is a flag (starts with -) and --html is used, write into CWD.
 const firstArg = args[0];
 const htmlDirName = firstArg && !firstArg.startsWith("-") ? firstArg : ".";
@@ -93,8 +103,9 @@ const htmlTemplate = `<!doctype html>
   </body>
 </html>
 `;
-const distTemplateDir = path.resolve(__dirname, "../../init");
-const srcTemplateDir = path.resolve(__dirname, "../init");
+const templateFolder = wantsMainServerUi ? "init-main-server-ui" : "init";
+const distTemplateDir = path.resolve(__dirname, `../../${templateFolder}`);
+const srcTemplateDir = path.resolve(__dirname, `../${templateFolder}`);
 const templateDir = fsExtra.existsSync(distTemplateDir)
   ? distTemplateDir
   : srcTemplateDir;
@@ -104,7 +115,7 @@ console.log(`
      ▐▌   ▐▌ ▐▌  █  
      ▐▌▝▜▌▐▌ ▐▌  █  
 this.▝▚▄▞▘▝▚▄▞▘▗▄█▄▖
-🧩 Creating: ${wantsHtml ? `HTML runtime (${htmlDirName})` : appName}`);
+🧩 Creating: ${wantsHtml ? `HTML runtime (${htmlDirName})` : wantsMainServerUi ? `${appName} (main-server-ui)` : appName}`);
 try {
   if (wantsHtml) {
     fsExtra.ensureDirSync(htmlTargetDir);

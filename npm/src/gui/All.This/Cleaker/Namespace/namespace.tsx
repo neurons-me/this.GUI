@@ -68,6 +68,28 @@ function compactSurfaceLabel(raw: string): string {
     .replace(/\/+$/, '');
 }
 
+function formatMonadInstanceLabel(input: {
+  monadName?: string;
+  endpoint?: string;
+  fallbackHost?: string;
+}): string {
+  const name = String(input.monadName || 'monad').trim() || 'monad';
+  const rawEndpoint = String(input.endpoint || '').trim();
+  let hostPort = '';
+
+  if (rawEndpoint) {
+    try {
+      const url = new URL(/^https?:\/\//i.test(rawEndpoint) ? rawEndpoint : `http://${rawEndpoint}`);
+      hostPort = url.host || '';
+    } catch {
+      hostPort = compactSurfaceLabel(rawEndpoint);
+    }
+  }
+
+  const fallbackHost = compactSurfaceLabel(input.fallbackHost || '');
+  return `${name}@${hostPort || fallbackHost || 'unknown'}`;
+}
+
 function formatSurfaceNamespace(host: string, port: number | null): string {
   const normalizedHost = String(host || '').trim().toLowerCase();
   if (!normalizedHost) return '';
@@ -593,8 +615,12 @@ export default function Namespace({
   ]);
 
   const compactMonadLabel = useMemo(() => {
-    return compactSurfaceLabel(resolvedSurfaceNamespace || safeEndpoint || endpointProp || 'unknown');
-  }, [endpointProp, resolvedSurfaceNamespace, safeEndpoint]);
+    return formatMonadInstanceLabel({
+      monadName: surfaceEntry.monadName,
+      endpoint: surfaceEntry.endpoint || safeEndpoint || endpointProp,
+      fallbackHost: resolvedSurfaceNamespace,
+    });
+  }, [endpointProp, resolvedSurfaceNamespace, safeEndpoint, surfaceEntry.endpoint, surfaceEntry.monadName]);
 
   const compactRootLabel = useMemo(() => {
     return compactNamespaceName(semanticNamespaceHandle || resolvedRootHostNamespace || '—') || '—';
@@ -2440,7 +2466,7 @@ export default function Namespace({
                   title={`Expression: ${String(endpoint || namespaceExpression || '').trim() || '—'} · local=${localNamespaceUrl || '—'} · network=${networkNamespaceUrl || '—'} · node=${resolvedResolverDisplayName || '—'}`}
                   sx={{ color: 'text.secondary' }}
                 >
-                  monad.ai: <Box component="span" sx={{ color: 'text.primary', fontFamily: 'monospace', wordBreak: 'break-all' }}>{compactMonadLabel}</Box>
+                  Monad: <Box component="span" sx={{ color: 'text.primary', fontFamily: 'monospace', wordBreak: 'break-all' }}>{compactMonadLabel}</Box>
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                   Namespace: <Box component="span" sx={{ color: 'text.primary', fontFamily: 'monospace' }}>{compactRootLabel}</Box>
@@ -2543,7 +2569,7 @@ export default function Namespace({
                 ['Surface Type', surfaceEntry.type],
                 ['Availability', surfaceEntry.status.availability],
                 ['Sync State', surfaceEntry.status.syncState],
-                ['monad.ai', compactMonadLabel],
+                ['Monad', compactMonadLabel],
                 ['Namespace', namespaceDisplayTitle],
               ].map(([label, value]) => (
                 <Box key={label} sx={{ py: 0.35 }}>
@@ -2555,7 +2581,7 @@ export default function Namespace({
                     sx={{
                       mt: 0.2,
                       fontFamily:
-                        label === 'monad.ai' || label === 'Namespace' ? 'monospace' : 'inherit',
+                        label === 'Monad' || label === 'Namespace' ? 'monospace' : 'inherit',
                       wordBreak: 'break-word',
                     }}
                   >

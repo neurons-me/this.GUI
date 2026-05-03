@@ -18,6 +18,7 @@ export type CleakerSurfaceRequestEvent = {
 };
 
 export type CleakerSurfaceEntry = {
+  monadName?: string;
   hostId: string;
   type: CleakerSurfaceType;
   trust: CleakerSurfaceTrust;
@@ -152,6 +153,7 @@ export function createSurfaceEntry(input: {
   const availability: CleakerSurfaceAvailability = input.connected ? 'online' : 'offline';
 
   return {
+    monadName: '',
     hostId,
     type,
     trust,
