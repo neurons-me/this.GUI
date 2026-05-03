@@ -9,6 +9,8 @@ import { useTheme } from "@mui/material";
 export type MonadProps = {
   variant?: "bubble" | "inline";
   mode?: "float" | "contained";
+  kind?: "me" | "monad";
+  seed?: string;
   children?: ReactNode;
 };
 
@@ -23,6 +25,38 @@ const MonadContext = createContext<MonadContextValue>({
   me: null,
   meName: null,
 });
+
+type PixelCell = {
+  key: string;
+  active: boolean;
+  secondary: boolean;
+};
+
+function hashString(value: string) {
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+function buildPixelCells(seed: string): PixelCell[] {
+  const hash = hashString(seed || "monad.ai");
+  const cells: PixelCell[] = [];
+  for (let row = 0; row < 5; row += 1) {
+    for (let col = 0; col < 5; col += 1) {
+      const mirrorCol = col > 2 ? 4 - col : col;
+      const bitIndex = row * 3 + mirrorCol;
+      cells.push({
+        key: `${row}:${col}`,
+        active: ((hash >> bitIndex) & 1) === 1 || (row === 2 && col === 2),
+        secondary: ((hash >> (bitIndex + 8)) & 1) === 1,
+      });
+    }
+  }
+  return cells;
+}
 
 export function useMonadContext() {
   return useContext(MonadContext);
@@ -51,12 +85,15 @@ function resolveMeContext(): MonadContextValue {
   return { hasMe: Boolean(me), me, meName };
 }
 
-export default function Monad({ variant = "bubble", mode = "float", children }: MonadProps) {
+export default function Monad({ variant = "bubble", mode = "float", kind, seed, children }: MonadProps) {
   const [open, setOpen] = useState(false);
   const status = { active: true, error: false };
   const theme = useTheme() as any;
   const hasContent = Boolean(children);
   const [meContext, setMeContext] = useState<MonadContextValue>(() => resolveMeContext());
+  const visualKind = kind || (meContext.hasMe ? "me" : "monad");
+  const visualSeed = seed || meContext.meName || (visualKind === "me" ? "me" : "monad.ai");
+  const pixelCells = useMemo(() => buildPixelCells(visualSeed), [visualSeed]);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [containerSize, setContainerSize] = useState<{ w: number; h: number } | null>(null);
   const { top = 0, bottom = 0, left = 0, right = 0 } = theme.layout?.insets || {};
@@ -203,6 +240,27 @@ export default function Monad({ variant = "bubble", mode = "float", children }: 
             "0%,100%": { top: "15%", left: "20%", width: "65%", height: "65%", borderRadius: "60% 40% 55% 45% / 50% 60% 40% 50%", filter: "blur(14px)" },
             "33%": { top: "10%", left: "25%", width: "70%", height: "70%", borderRadius: "55% 60% 40% 45% / 45% 50% 60% 55%", filter: "blur(18px)" },
             "66%": { top: "18%", left: "15%", width: "60%", height: "60%", borderRadius: "50% 55% 45% 60% / 60% 50% 55% 40%", filter: "blur(12px)" },
+          },
+          "@keyframes rorschachLava": {
+            "0%,100%": {
+              transform: "translate3d(0, 0, 0) scale(1) rotate(0deg)",
+              borderRadius: "48% 52% 49% 51% / 56% 44% 56% 44%",
+              filter: "blur(1.2px) contrast(1.18) saturate(0.86)",
+            },
+            "38%": {
+              transform: "translate3d(1px, -1px, 0) scale(1.04) rotate(4deg)",
+              borderRadius: "58% 42% 54% 46% / 43% 59% 41% 57%",
+              filter: "blur(1.8px) contrast(1.28) saturate(0.82)",
+            },
+            "72%": {
+              transform: "translate3d(-1px, 1px, 0) scale(0.99) rotate(-3deg)",
+              borderRadius: "42% 58% 46% 54% / 61% 41% 59% 39%",
+              filter: "blur(1.4px) contrast(1.22) saturate(0.84)",
+            },
+          },
+          "@keyframes pixelBreath": {
+            "0%,100%": { transform: "translate3d(0, 0, 0) scale(1)", opacity: 0.9 },
+            "50%": { transform: "translate3d(0, -1px, 0) scale(1.025)", opacity: 1 },
           },
           "@keyframes stringWobble": {
             "0%,100%": { transform: "translateY(0px)" },
@@ -426,7 +484,84 @@ export default function Monad({ variant = "bubble", mode = "float", children }: 
             });
             }}
           >
-            ⊙
+            {visualKind === "monad" ? (
+              <>
+                <Box
+                  aria-hidden="true"
+                  sx={{
+                    position: "absolute",
+                    inset: 5,
+                    borderRadius: "inherit",
+                    overflow: "hidden",
+                    pointerEvents: "none",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      inset: -4,
+                      borderRadius: "inherit",
+                      background:
+                        theme.palette.mode === "light"
+                          ? "radial-gradient(circle at 34% 24%, rgba(255,255,255,0.72), transparent 17%), radial-gradient(circle at 66% 72%, rgba(0,64,86,0.22), transparent 34%), linear-gradient(145deg, rgba(255,255,255,0.24), transparent 38%, rgba(0,44,66,0.24) 82%)"
+                          : "radial-gradient(circle at 35% 24%, rgba(255,255,255,0.18), transparent 17%), radial-gradient(circle at 66% 73%, rgba(0,0,0,0.42), transparent 34%), linear-gradient(145deg, rgba(255,255,255,0.05), transparent 32%, rgba(0,0,0,0.42) 78%)",
+                      boxShadow: "inset 0 0 18px rgba(255,255,255,0.035), inset 0 -18px 26px rgba(0,0,0,0.42)",
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      inset: 7,
+                      borderRadius: "47% 53% 49% 51% / 56% 44% 56% 44%",
+                      background:
+                        theme.palette.mode === "light"
+                          ? "radial-gradient(ellipse at 33% 34%, rgba(44,124,150,0.34) 0 11%, transparent 24%), radial-gradient(ellipse at 67% 34%, rgba(44,124,150,0.34) 0 11%, transparent 24%), radial-gradient(ellipse at 41% 59%, rgba(22,72,92,0.28) 0 14%, transparent 28%), radial-gradient(ellipse at 59% 59%, rgba(22,72,92,0.28) 0 14%, transparent 28%), linear-gradient(90deg, transparent 0 47%, rgba(255,255,255,0.22) 49% 51%, transparent 53% 100%)"
+                          : "radial-gradient(ellipse at 33% 34%, rgba(178,201,199,0.5) 0 11%, transparent 24%), radial-gradient(ellipse at 67% 34%, rgba(178,201,199,0.5) 0 11%, transparent 24%), radial-gradient(ellipse at 41% 59%, rgba(122,143,146,0.5) 0 14%, transparent 28%), radial-gradient(ellipse at 59% 59%, rgba(122,143,146,0.5) 0 14%, transparent 28%), radial-gradient(ellipse at 50% 45%, rgba(219,229,228,0.2) 0 8%, transparent 20%), linear-gradient(90deg, transparent 0 47%, rgba(255,255,255,0.08) 49% 51%, transparent 53% 100%)",
+                      opacity: 0.78,
+                      mixBlendMode: "screen",
+                      animation: "rorschachLava 20s ease-in-out infinite",
+                    }}
+                  />
+                </Box>
+                <Box
+                  aria-hidden="true"
+                  sx={{
+                    position: "relative",
+                    zIndex: 1,
+                    width: 29,
+                    height: 29,
+                    display: "grid",
+                    gridTemplateColumns: "repeat(5, 1fr)",
+                    gridTemplateRows: "repeat(5, 1fr)",
+                    gap: "2px",
+                    imageRendering: "pixelated",
+                    animation: "pixelBreath 9s ease-in-out infinite",
+                    filter:
+                      theme.palette.mode === "light"
+                        ? "drop-shadow(0 1px 3px rgba(0,42,58,0.18))"
+                        : "drop-shadow(0 1px 4px rgba(0,0,0,0.36))",
+                  }}
+                >
+                  {pixelCells.map((cell) => (
+                    <Box
+                      key={cell.key}
+                      component="span"
+                      sx={{
+                        borderRadius: "1px",
+                        bgcolor: cell.active
+                          ? cell.secondary
+                            ? (theme.palette.mode === "light" ? "rgba(0,82,106,0.78)" : "rgba(168,214,214,0.88)")
+                            : (theme.palette.mode === "light" ? "rgba(10,120,148,0.9)" : "rgba(225,239,236,0.95)")
+                          : "transparent",
+                        opacity: cell.active ? 1 : 0,
+                      }}
+                    />
+                  ))}
+                </Box>
+              </>
+            ) : (
+              "⊙"
+            )}
             <Box
               className="monad-tooltip"
               sx={{

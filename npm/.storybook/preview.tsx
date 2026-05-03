@@ -2,7 +2,6 @@
 import React from 'react'
 import 'material-symbols/rounded.css';
 import { DocsContainer } from '@storybook/addon-docs/blocks';
-import { create } from 'storybook/theming';
 import { MemoryRouter } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
 import { Theme } from '../src/gui/Theme/Theme';
@@ -68,7 +67,7 @@ const mdxComponents = {
   },
 };
 
-const docsTheme = create({
+const docsTheme = {
   base: 'dark',
   brandTitle: '.GUI',
   brandUrl: 'https://neurons-me.github.io/GUI',
@@ -93,7 +92,7 @@ const docsTheme = create({
     'var(--mui-typography-fontFamily, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif)',
   fontCode:
     'ui-monospace, SFMono-Regular, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace',
-});
+} as const;
 
 export const decorators = [
   (Story: React.FC) => (
