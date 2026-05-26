@@ -4,7 +4,7 @@ import {
   normalizeMonadEndpointInput,
   uniqueEndpointCandidates,
 } from './monadDiscovery.normalize';
-import { probeMonadControl, probeMonadMesh, probeMonadSurface } from './monadDiscovery.fetch';
+import { probeMonadControl, probeMonadMesh, probeMonadSurface, probeNetGetApps } from './monadDiscovery.fetch';
 import { createMonadDiscoveryFingerprint } from './monadDiscovery.fingerprint';
 import {
   mergeControlEndpoints,
@@ -26,6 +26,11 @@ export const DEFAULT_MONAD_DISCOVERY_PORTS = [8161, 8162, 8163, 8164, 8165];
 export const DEFAULT_MONAD_DISCOVERY_SEEDS = [
   'http://127.0.0.1:8161',
   'http://localhost:8161',
+];
+export const DEFAULT_NETGET_REGISTRY_SEEDS = [
+  'http://local.netget',
+  'http://localhost',
+  'http://127.0.0.1',
 ];
 export const DEFAULT_MONAD_DISCOVERY_STORAGE_KEY = 'this.gui.monadDiscovery.endpoints';
 
@@ -49,12 +54,21 @@ function sourceIndex(input: {
   surfaceEndpoints: string[];
   controlEndpoints: string[];
   meshEndpoints: string[];
+  registryEndpoints: string[];
 }): MonadDiscoverySourceIndex {
   return {
     surface: Array.from(new Set(input.surfaceEndpoints)).sort(),
     monads: Array.from(new Set(input.controlEndpoints)).sort(),
     mesh: Array.from(new Set(input.meshEndpoints)).sort(),
+    registry: Array.from(new Set(input.registryEndpoints)).sort(),
   };
+}
+
+export function buildNetGetRegistryCandidates(input: { endpoints?: string[] } = {}): EndpointCandidate[] {
+  return uniqueEndpointCandidates([
+    ...DEFAULT_NETGET_REGISTRY_SEEDS.map((endpoint) => createEndpointCandidate(endpoint, ['registry'])),
+    ...(input.endpoints || []).map((endpoint) => createEndpointCandidate(endpoint, ['registry'])),
+  ]);
 }
 
 export function buildMonadDiscoveryCandidates(input: BuildMonadDiscoveryCandidatesInput = {}): EndpointCandidate[] {
@@ -77,9 +91,25 @@ export function buildMonadDiscoveryCandidates(input: BuildMonadDiscoveryCandidat
 }
 
 export async function scanMonadTopology(input: MonadDiscoveryScanInput): Promise<MonadDiscoveryScanResult> {
-  const candidates = uniqueEndpointCandidates(input.candidates);
+  const registryCandidates = uniqueEndpointCandidates(input.registryCandidates || []);
   const timeoutMs = Math.max(100, Number(input.timeoutMs || 650));
   const fetchImpl: MonadDiscoveryFetch | undefined = input.fetchImpl;
+  const registryResults = await Promise.all(
+    registryCandidates.map((candidate) =>
+      probeNetGetApps({
+        endpoint: candidate.url,
+        sources: candidate.sources,
+        timeoutMs,
+        fetchImpl,
+      }),
+    ),
+  );
+  const registryAdvertisedCandidates = registryResults.flatMap((result) =>
+    result.monads
+      .map((monad) => createEndpointCandidate(monad.endpoint, ['registry']))
+      .filter(Boolean) as EndpointCandidate[],
+  );
+  const candidates = uniqueEndpointCandidates([...input.candidates, ...registryAdvertisedCandidates]);
   const surfaceResults = await Promise.all(
     candidates.map((candidate) =>
       probeMonadSurface({
@@ -146,12 +176,14 @@ export async function scanMonadTopology(input: MonadDiscoveryScanInput): Promise
     ...secondarySurfaceResults.map((result) => result.endpoint),
   ]);
   const monads = mergeDiscoveredMonads([
+    ...registryResults.flatMap((result) => result.monads),
     ...surfaceResults.map((result) => result.monad).filter(Boolean),
     ...secondarySurfaceResults.map((result) => result.monad).filter(Boolean),
     ...controlResults.flatMap((result) => result.monads),
     ...meshResults.flatMap((result) => result.monads),
   ] as any[], endpoints);
   const errors = [
+    ...registryResults.map((result) => result.error).filter(Boolean),
     ...surfaceResults.map((result) => result.error).filter(Boolean),
     ...secondarySurfaceResults.map((result) => result.error).filter(Boolean),
     ...controlResults.map((result) => result.error).filter(Boolean),
@@ -163,6 +195,9 @@ export async function scanMonadTopology(input: MonadDiscoveryScanInput): Promise
     meshEndpoints: aliveCandidates
       .filter((_candidate, index) => meshResults[index]?.monads.length)
       .map((candidate) => candidate.url),
+    registryEndpoints: registryResults
+      .filter((result) => result.available)
+      .map((result) => result.endpoint),
   });
 
   return {

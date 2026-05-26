@@ -40,6 +40,13 @@ export type MeshProbeResult = {
   error?: MonadDiscoveryError;
 };
 
+export type NetGetAppsProbeResult = {
+  endpoint: string;
+  available: boolean;
+  monads: DiscoveredMonad[];
+  error?: MonadDiscoveryError;
+};
+
 function now() {
   return Date.now();
 }
@@ -271,6 +278,62 @@ function monadFromMeshEntry(entry: any): DiscoveredMonad | null {
   };
 }
 
+function isMonadApp(app: any): boolean {
+  const tags = readArray(app?.tags).map((tag) => tag.toLowerCase());
+  const name = readString(app?.name).toLowerCase();
+  return app?.kind === 'monad' || tags.includes('monad') || name.startsWith('monad:');
+}
+
+function appEndpoint(app: any): string {
+  const direct = normalizeMonadEndpointInput(readString(
+    app?.metadata?.controlEndpoint,
+    app?.metadata?.endpoint,
+    app?.url,
+  ));
+  if (direct) return direct;
+  const host = readString(app?.host, '127.0.0.1') || '127.0.0.1';
+  const port = Number(app?.port);
+  if (!Number.isFinite(port) || port <= 0) return '';
+  const protocol = readString(app?.protocol, 'http') || 'http';
+  return normalizeMonadEndpointInput(`${protocol}://${host}:${port}`);
+}
+
+function monadFromNetGetApp(app: any, registryEndpoint: string): DiscoveredMonad | null {
+  if (!isMonadApp(app)) return null;
+  const endpoint = appEndpoint(app);
+  const rawName = readString(app?.metadata?.monadName, app?.name).replace(/^monad:/i, '');
+  const name = readString(rawName, endpoint, app?.id);
+  const namespace = readString(app?.metadata?.namespace, app?.metadata?.identity);
+  const id = readString(app?.metadata?.monadId, namespace && name ? `monad:${namespace}:${name}` : '', name, endpoint, app?.id);
+  if (!id && !endpoint) return null;
+  const healthState = readString(app?.health?.state).toLowerCase();
+  const status = readString(app?.status, healthState, app?.portStatus, 'unknown');
+  const capabilities = readArray(app?.metadata?.capabilities);
+  const healthy = Boolean(app?.alive) ||
+    status === 'running' ||
+    status === 'online' ||
+    healthState === 'healthy' ||
+    app?.portStatus === 'active';
+
+  return {
+    id,
+    name,
+    namespace,
+    endpoint,
+    endpoints: endpoint ? [endpoint] : [],
+    controlEndpoint: endpoint,
+    sources: ['registry'],
+    healthy,
+    status,
+    capabilities,
+    metadata: {
+      netget: app,
+      registryEndpoint,
+      exposure: app?.exposure,
+    },
+  };
+}
+
 export async function probeMonadSurface(input: ProbeBase): Promise<SurfaceProbeResult> {
   const endpoint = normalizeMonadEndpointInput(input.endpoint);
   const candidate: EndpointCandidate = { url: endpoint, sources: input.sources };
@@ -377,6 +440,41 @@ export async function probeMonadMesh(input: ProbeBase): Promise<MeshProbeResult>
     return {
       monads: [],
       error: discoveryError('mesh', error, endpoint),
+    };
+  }
+}
+
+export async function probeNetGetApps(input: ProbeBase): Promise<NetGetAppsProbeResult> {
+  const endpoint = normalizeMonadEndpointInput(input.endpoint);
+  try {
+    const { response, payload } = await fetchJsonWithTimeout(
+      endpointToPath(endpoint, '/apps'),
+      input.timeoutMs,
+      input.fetchImpl,
+    );
+    if (!response.ok) {
+      return {
+        endpoint,
+        available: false,
+        monads: [],
+        error: { endpoint, stage: 'registry', message: `HTTP ${response.status}`, at: now() },
+      };
+    }
+
+    const apps = Array.isArray(payload?.apps) ? payload.apps : [];
+    return {
+      endpoint,
+      available: true,
+      monads: apps
+        .map((app: any) => monadFromNetGetApp(app, endpoint))
+        .filter(Boolean) as DiscoveredMonad[],
+    };
+  } catch (error) {
+    return {
+      endpoint,
+      available: false,
+      monads: [],
+      error: discoveryError('registry', error, endpoint),
     };
   }
 }

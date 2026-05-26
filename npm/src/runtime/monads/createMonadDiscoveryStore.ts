@@ -1,6 +1,7 @@
 import {
   DEFAULT_MONAD_DISCOVERY_PORTS,
   DEFAULT_MONAD_DISCOVERY_STORAGE_KEY,
+  buildNetGetRegistryCandidates,
   buildMonadDiscoveryCandidates,
   scanMonadTopology,
 } from './monadDiscovery.core';
@@ -46,7 +47,7 @@ function emptyState(): MonadDiscoveryState {
     lastChangeAt: null,
     activeScanId: 0,
     pendingRescan: false,
-    source: { surface: [], monads: [], mesh: [] },
+    source: { surface: [], monads: [], mesh: [], registry: [] },
     errors: [],
     fingerprint: '',
   };
@@ -195,6 +196,9 @@ export function createMonadDiscoveryStore(options: CreateMonadDiscoveryOptions =
     try {
       const result = await scanMonadTopology({
         candidates: candidatesFor(mode),
+        registryCandidates: buildNetGetRegistryCandidates({
+          endpoints: options.netgetEndpoints,
+        }),
         timeoutMs: requestTimeoutMs,
         fetchImpl: options.fetchImpl,
       });

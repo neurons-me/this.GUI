@@ -122,6 +122,49 @@ const fakeFetch: MonadDiscoveryFetch = async (input) => {
     });
   }
 
+  if (origin === 'http://local.netget' && parsed.pathname === '/apps') {
+    return json({
+      success: true,
+      apps: [
+        {
+          id: 'monad-report-1',
+          name: 'monad:files',
+          kind: 'monad',
+          port: 8170,
+          protocol: 'http',
+          host: '127.0.0.1',
+          url: 'http://127.0.0.1:8170',
+          tags: ['monad', 'surface'],
+          status: 'running',
+          health: { state: 'healthy' },
+          metadata: {
+            monadName: 'files',
+            monadId: 'monad:files',
+            namespace: 'files.local',
+            capabilities: ['gui', 'control'],
+          },
+          exposure: {
+            visibility: 'loopback',
+            publishMode: 'path',
+          },
+        },
+      ],
+    });
+  }
+
+  if (origin === 'http://127.0.0.1:8170' && parsed.pathname === '/__surface') {
+    return json({
+      ok: true,
+      monadId: 'monad:files',
+      monadName: 'files',
+      namespace: 'files.local',
+      surfaceEntry: {
+        endpoint: origin,
+        status: { availability: 'online' },
+      },
+    });
+  }
+
   return json({ ok: false }, 404);
 };
 
@@ -139,6 +182,17 @@ assert.equal(scan.endpoints.find((endpoint) => endpoint.url === 'http://127.0.0.
 assert.equal(scan.monads.find((monad) => monad.name === 'worker')?.healthy, false);
 assert.equal(scan.monads.find((monad) => monad.name === 'remote')?.healthy, true);
 assert.equal(fetchCalls.some((url) => url === 'http://127.0.0.1:8163/__surface'), true);
+
+const netgetScan = await scanMonadTopology({
+  candidates: [],
+  registryCandidates: [createEndpointCandidate('http://local.netget', ['registry'])!],
+  timeoutMs: 50,
+  fetchImpl: fakeFetch,
+});
+
+assert.equal(netgetScan.source.registry.includes('http://local.netget'), true);
+assert.equal(netgetScan.monads.find((monad) => monad.name === 'files')?.healthy, true);
+assert.equal(netgetScan.monads.find((monad) => monad.name === 'files')?.metadata?.exposure && true, true);
 
 let slowSurfaceResolver: ((response: Response) => void) | null = null;
 let fastSurface = false;

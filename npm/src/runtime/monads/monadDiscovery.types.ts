@@ -24,7 +24,7 @@ export type MonadDiscoveryRescanInput = {
 
 export type MonadDiscoveryError = {
   endpoint?: string;
-  stage: 'surface' | 'control' | 'mesh' | 'scan' | 'storage' | 'sse';
+  stage: 'surface' | 'control' | 'mesh' | 'registry' | 'scan' | 'storage' | 'sse';
   message: string;
   at: number;
 };
@@ -103,6 +103,7 @@ export type MonadDiscoverySourceIndex = {
   surface: string[];
   monads: string[];
   mesh: string[];
+  registry: string[];
 };
 
 export type MonadDiscoveryState = {
@@ -141,6 +142,7 @@ export type CreateMonadDiscoveryOptions = {
   requestTimeoutMs?: number;
   settlingWindowMs?: number;
   enableSSE?: boolean;
+  netgetEndpoints?: string[];
   fetchImpl?: MonadDiscoveryFetch;
   storage?: MonadDiscoveryStorage | null;
 };
@@ -169,6 +171,7 @@ export type EndpointCandidate = {
 
 export type MonadDiscoveryScanInput = {
   candidates: EndpointCandidate[];
+  registryCandidates?: EndpointCandidate[];
   timeoutMs: number;
   fetchImpl?: MonadDiscoveryFetch;
 };
