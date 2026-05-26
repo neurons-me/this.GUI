@@ -77,6 +77,7 @@
     "this.gui": "./dist/bin/cli.js"
   },
   "scripts": {
+    "prebuild": "npm run test:runtime",
     "build": "vite build && npm run build:types && npm run build:types:sync && npm run build:cli && npm run build:copy-init && npm run build:umd",
     "build:all": "npm run build",
     "build:types": "tsc -p tsconfig.build.json",
@@ -86,6 +87,7 @@
     "build:umd:core": "UMD=true UMD_TARGET=core vite build",
     "build:umd:bootstrap": "UMD=true UMD_TARGET=bootstrap vite build",
     "build:umd": "npm run build:umd:core && npm run build:umd:bootstrap",
+    "test:runtime": "tsx tests/markdown-document-core.test.ts && tsx tests/monad-discovery-core.test.ts",
     "pack:local": "npm run build && npm pack",
     "prepublishOnly": "npm run build",
     "dev": "vite",
