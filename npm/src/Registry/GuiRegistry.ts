@@ -29,6 +29,7 @@ import TypographyResolver from "@/gui/Atoms/Typography/Typography.resolver";
 // Molecules
 import HeroResolver from "@/gui/Molecules/Hero/Hero.resolver";
 import PageResolver from "@/gui/Molecules/Page/Page.resolver";
+import MarkdownDocumentRegistration from "@/gui/Molecules/Documents/MarkdownDocument/MarkdownDocument.registration";
 import DrawerResolver from "@/gui/Molecules/Drawer/Drawer.resolver";
 import TooltipResolver from "@/gui/Molecules/Tooltip/Tooltip.resolver";
 import AdminViewToggleResolver from "@/gui/Molecules/AdminViewToggle/AdminViewToggle.resolver";
@@ -87,6 +88,7 @@ export const GuiRegistry = createRegistry([
   // Molecules
   HeroResolver,
   PageResolver,
+  MarkdownDocumentRegistration,
   DrawerResolver,
   TooltipResolver,
   AdminViewToggleResolver,

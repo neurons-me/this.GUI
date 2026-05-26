@@ -8,6 +8,7 @@ export { useSeedSession, useOptionalSeedSession } from '@/react/session/useSeedS
 export { useMe } from '@/react/useMe';
 export { useMeValue } from '@/react/useMeValue';
 export { useMeAction } from '@/react/useMeAction';
+export { useMonadDiscovery } from '@/runtime/monads';
 export type {
   MeLike,
   MeRuntimeContextValue,

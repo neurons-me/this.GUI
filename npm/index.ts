@@ -116,6 +116,21 @@ export { default as Monad } from '@/gui/All.This/monad.ai/monad.ai';
 export type { MonadProps } from '@/gui/All.This/monad.ai/monad.ai';
 export { default as HighLighter } from '@/gui/widgets/HighLighter/HighLighter';
 export { default as CodeBlock } from '@/gui/Molecules/CodeBlock/CodeBlock';
+export { default as MarkdownDocument } from '@/gui/Molecules/Documents/MarkdownDocument/MarkdownDocument';
+export {
+  defaultMarkdownPolicy,
+  defaultMarkdownStyles,
+  markdownToGuiNodes,
+  mergeMarkdownPolicy,
+  parseMarkdown,
+  resolveMarkdownUrl,
+} from '@/gui/Molecules/Documents/MarkdownDocument';
+export type {
+  MarkdownDocumentProps,
+  MarkdownPolicy,
+  MarkdownStyleMap,
+  MarkdownToGuiNodesOptions,
+} from '@/gui/Molecules/Documents/MarkdownDocument';
 export { default as Modal } from '@/gui/Molecules/Modal/Modal';
 export { GUISettings } from '@/gui/Layout/Sidebars/Collections';
 export type {
@@ -284,6 +299,44 @@ export {
   type NamespaceProviderBoot,
   type NamespaceProviderEndpoints,
 } from '@/runtime/provider';
+export {
+  DEFAULT_MONAD_DISCOVERY_PORTS,
+  DEFAULT_MONAD_DISCOVERY_SEEDS,
+  DEFAULT_MONAD_DISCOVERY_STORAGE_KEY,
+  buildMonadDiscoveryCandidates,
+  createMonadDiscovery,
+  createMonadDiscoveryFingerprint,
+  createMonadDiscoveryStore,
+  endpointIdentity,
+  fingerprintMonadDiscoveryState,
+  mergeDiscoveredMonads,
+  mergeEndpointHealth,
+  normalizeMonadEndpointInput,
+  scanMonadTopology,
+  useMonadDiscovery,
+} from '@/runtime/monads';
+export type {
+  CreateMonadDiscoveryOptions,
+  DiscoveredMonad,
+  EndpointCandidate,
+  EndpointHealth,
+  MonadControlEndpoint,
+  MonadControlRecord,
+  MonadDiscovery,
+  MonadDiscoveryError,
+  MonadDiscoveryFetch,
+  MonadDiscoveryListener,
+  MonadDiscoveryRescanInput,
+  MonadDiscoveryScanMode,
+  MonadDiscoveryState,
+  MonadDiscoveryStatus,
+  MonadDiscoveryStorage,
+  MonadDiscoveryWaitOptions,
+  MonadEndpointStatus,
+  MonadSurfaceInfo,
+  UseMonadDiscoveryInput,
+  UseMonadDiscoveryResult,
+} from '@/runtime/monads';
 export {
   ensureRuntimeControlSurface,
   getAdminViewEnabled,

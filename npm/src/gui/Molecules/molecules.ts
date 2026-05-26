@@ -40,6 +40,21 @@ import Modal from '@/gui/Molecules/Modal/Modal';
 import type { ModalProps } from '@/gui/Molecules/Modal/Modal.types';
 import Page from '@/gui/Molecules/Page/Page';
 import CodeBlock from '@/gui/Molecules/CodeBlock/CodeBlock';
+import MarkdownDocument from '@/gui/Molecules/Documents/MarkdownDocument/MarkdownDocument';
+export type { MarkdownDocumentProps } from '@/gui/Molecules/Documents/MarkdownDocument';
+export {
+  defaultMarkdownPolicy,
+  defaultMarkdownStyles,
+  markdownToGuiNodes,
+  mergeMarkdownPolicy,
+  parseMarkdown,
+  resolveMarkdownUrl,
+} from '@/gui/Molecules/Documents/MarkdownDocument';
+export type {
+  MarkdownPolicy,
+  MarkdownStyleMap,
+  MarkdownToGuiNodesOptions,
+} from '@/gui/Molecules/Documents/MarkdownDocument';
 // Types
 import type { ComponentType } from 'react';
 import type { DialogProps } from '@/gui/Molecules/Dialog/Dialog';
@@ -97,6 +112,7 @@ type MoleculesRegistry = {
   Modal: ComponentType<ModalProps>;
   Page: typeof Page;
   CodeBlock: typeof CodeBlock;
+  MarkdownDocument: typeof MarkdownDocument;
   List: typeof List;
   ListItem: typeof ListItem;
   ListItemButton: typeof ListItemButton;
@@ -125,6 +141,7 @@ const Molecules: MoleculesRegistry = {
   Modal,
   Page,
   CodeBlock,
+  MarkdownDocument,
   List,
   ListItem,
   ListItemButton,
@@ -153,6 +170,7 @@ export {
   Modal,
   Page,
   CodeBlock,
+  MarkdownDocument,
   List,
   ListItem,
   ListItemButton,
