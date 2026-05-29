@@ -11,6 +11,10 @@ export type MonadProps = {
   mode?: "float" | "contained";
   kind?: "me" | "monad";
   seed?: string;
+  /** Label shown in the hover tooltip. Defaults to the .me name or "monad.ai". */
+  label?: string;
+  /** Drive the orb glow: true = green/online, false = red/offline, null/undefined = default blue. */
+  healthy?: boolean | null;
   children?: ReactNode;
 };
 
@@ -85,14 +89,18 @@ function resolveMeContext(): MonadContextValue {
   return { hasMe: Boolean(me), me, meName };
 }
 
-export default function Monad({ variant = "bubble", mode = "float", kind, seed, children }: MonadProps) {
+export default function Monad({ variant = "bubble", mode = "float", kind, seed, label, healthy, children }: MonadProps) {
   const [open, setOpen] = useState(false);
-  const status = { active: true, error: false };
+  const status = {
+    active: healthy !== false,
+    error: healthy === false,
+  };
   const theme = useTheme() as any;
   const hasContent = Boolean(children);
   const [meContext, setMeContext] = useState<MonadContextValue>(() => resolveMeContext());
   const visualKind = kind || (meContext.hasMe ? "me" : "monad");
-  const visualSeed = seed || meContext.meName || (visualKind === "me" ? "me" : "monad.ai");
+  const visualSeed = seed || meContext.meName || label || (visualKind === "me" ? "me" : "monad.ai");
+  const tooltipLabel = label || meContext.meName || (visualKind === "me" ? "me" : "monad.ai");
   const pixelCells = useMemo(() => buildPixelCells(visualSeed), [visualSeed]);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [containerSize, setContainerSize] = useState<{ w: number; h: number } | null>(null);
@@ -389,7 +397,7 @@ export default function Monad({ variant = "bubble", mode = "float", kind, seed, 
                     userSelect: "none",
                   }}
                 >
-                  monad.ai
+                  {tooltipLabel}
                 </Box>
                 <Box
                   onClick={() => setOpen(false)}
@@ -586,7 +594,7 @@ export default function Monad({ variant = "bubble", mode = "float", kind, seed, 
                 boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
               }}
             >
-              monad.ai
+              {tooltipLabel}
             </Box>
           </Box>
           </Box>

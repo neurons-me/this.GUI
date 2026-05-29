@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import MeKernel from 'this.me';
+import cleaker from 'cleaker';
 import { MonadClientError } from '@/core/session/monadClient';
 import type { SeedSession } from '@/core/session/createSeedSession';
 import { useSeedSession } from '@/react/session/useSeedSession';
@@ -74,6 +76,8 @@ export type UseCleakerAuthResult = {
   handleLogout: () => void;
   authSuccessMessage: string;
   authProgressMessage: string;
+  /** Fetch wrapper that signs every request with the active Cleaker session. */
+  signedFetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 };
 
 type HumanizeOptions = {
@@ -145,6 +149,11 @@ function humanizeCleakerError(
       return 'This namespace refused the write request for the current identity.';
     case 'SEED_REQUIRED':
       return 'Password is required';
+    case 'INVALID_RESPONSE':
+      return 'Could not reach the namespace server. Is a monad running?';
+    case 'CONNECTION_REFUSED':
+    case 'ECONNREFUSED':
+      return 'Namespace server is not reachable. Check that a monad is running.';
     default:
       return code;
   }
@@ -264,6 +273,64 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
     setClaimResolution('idle');
   }, []);
 
+  // ── Cleaker session ref ────────────────────────────────────────────────────
+  // Holds the active CleakerNode after login. Ephemeral — cleared on logout.
+  // The node carries the derived Ed25519 key (NOT the secret).
+  const cleakerNodeRef    = useRef<any>(null);
+  const gatewayHostnameRef = useRef<string>('');
+
+  // Canonical JSON (sorted keys) for tamper-proof request fingerprinting.
+  const canonicalJson = useCallback((obj: Record<string, unknown>): string => {
+    return JSON.stringify(
+      Object.fromEntries(Object.entries(obj).sort(([a], [b]) => a.localeCompare(b))),
+    );
+  }, []);
+
+  // Random hex nonce — client-generated, marks each request uniquely.
+  const genNonce = useCallback((): string => {
+    const arr = new Uint8Array(16);
+    crypto.getRandomValues(arr);
+    return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+  }, []);
+
+  // signedFetch — wraps fetch with X-Me-Proof on every request.
+  // Falls back to plain fetch if no Cleaker session is active.
+  const signedFetch = useCallback(async (
+    input: RequestInfo | URL,
+    init?: RequestInit,
+  ): Promise<Response> => {
+    const node     = cleakerNodeRef.current;
+    const hostname = gatewayHostnameRef.current;
+    if (!node || !hostname) return fetch(input, init);
+
+    const method    = (init?.method ?? 'GET').toUpperCase();
+    const url       = typeof input === 'string' ? input
+                    : input instanceof URL       ? input.pathname
+                    : (input as Request).url;
+    const path      = new URL(url, window.location.origin).pathname;
+    const nonce     = genNonce();
+    const timestamp = Date.now();
+
+    const challenge = canonicalJson({ method, nonce, path, timestamp });
+
+    try {
+      const proof     = await (node as any).prove({ rootNamespace: hostname, challenge });
+      const proofB64  = btoa(JSON.stringify(proof))
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+
+      return fetch(input, {
+        ...init,
+        headers: {
+          ...(init?.headers ?? {}),
+          'X-Me-Proof': proofB64,
+        },
+      });
+    } catch {
+      // prove() failed (key gone / session ended) → plain fetch, will get 401
+      return fetch(input, init);
+    }
+  }, [canonicalJson, genNonce]);
+
   useEffect(() => {
     const explicit = sanitizeCleakerUsername(String(externalUsername || '').trim());
     if (!explicit) return;
@@ -361,6 +428,133 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
       return false;
     }
 
+    // ── Gateway-first path: stateless per-request Ed25519 signature ────────────
+    //
+    // Flow (no monad server needed, no JWT):
+    //   1. GET /me/gateway  → { hostname }
+    //        nginx returns the physical hostname (e.g. "suis-macbook-air.local")
+    //        This IS the namespace — not the virtual alias "local.netget".
+    //   2. cleaker(me, hostname) — bind identity to this physical machine.
+    //        Cleaker holds the derived Ed25519 key (NOT the secret).
+    //   3. signedFetch('/check-auth') — first signed request verifies the identity.
+    //        X-Me-Proof: base64url(JSON.stringify(prove({ rootNamespace, challenge })))
+    //        where challenge = canonicalJson({ method, nonce, path, timestamp })
+    //        Lua verifies: method/path match, timestamp fresh, nonce unused, sig valid.
+    //   4. On success: store node in cleakerNodeRef for all future requests.
+    //        No cookie. No JWT. Cleaker IS the session.
+    //
+    // Secret never leaves the browser. Key is ephemeral — cleared on logout/sleep.
+    if (typeof window !== 'undefined') {
+      try {
+        // Step 1 — get physical hostname from gateway
+        const gwRes = await fetch('/me/gateway').catch(() => null);
+        if (gwRes?.ok) {
+          const gwData = await gwRes.json().catch(() => ({}));
+          const hostname = typeof gwData?.hostname === 'string' ? gwData.hostname.trim() : '';
+
+          if (hostname) {
+            setAuthStatus('checking');
+            setAuthAction(requestedAction);
+            setClaimResolution('checking');
+
+            try {
+              // Step 2 — seed me + bind to physical hostname via cleaker
+              const ME_RESEED = Symbol.for('me.internal.reseed');
+              const me = new (MeKernel as any)();
+              me[ME_RESEED](value, secret);
+              // cleaker(me, hostname) = "who am I HERE" on this physical machine
+              const node = cleaker(me as any, hostname);
+
+              // Temporarily store for signedFetch
+              cleakerNodeRef.current    = node;
+              gatewayHostnameRef.current = hostname;
+
+              // Step 3 — verify identity with a signed request
+              const checkRes = await signedFetch('/check-auth');
+
+              if (checkRes.ok) {
+                const data = await checkRes.json().catch(() => ({}));
+                if (data.authenticated) {
+                  // Notify external listeners — include full session fields so the
+                  // receiver doesn't need to make a second /me/auth call.
+                  if (data.identityHash) {
+                    window.dispatchEvent(
+                      new CustomEvent('cleaker:gateway-pre-auth', {
+                        detail: {
+                          identityHash: data.identityHash,
+                          username:     value,
+                          isOwner:      Boolean(data.isOwner),
+                          scopes:       Array.isArray(data.scopes) ? data.scopes : [],
+                          gatewayId:    typeof data.gatewayId === 'string' ? data.gatewayId : '',
+                        },
+                      }),
+                    );
+                  }
+
+                  const gatewayProfile: CleakerProfileSnapshot = {
+                    username:  value,
+                    name:      activeProfile.name,
+                    email:     activeProfile.email,
+                    phone:     activeProfile.phone,
+                    namespace: `${value}.${hostname}`,
+                    claimedAt: activeProfile.claimedAt ?? Date.now(),
+                  };
+                  setUsernameState(value);
+                  setClaimResolution('openable');
+                  setAuthStatus('ok');
+                  setAuthAction(requestedAction);
+                  setAuthError(null);
+                  onAuthenticated?.(gatewayProfile, requestedAction);
+                  onViewModeChange?.('profile');
+                  window.setTimeout(() => setAuthStatus('idle'), 1200);
+                  return true;
+                }
+              } else {
+                // Gateway returned an error — parse before deciding how to proceed
+                const errBody = await checkRes.json().catch(() => ({}));
+                const errCode = typeof errBody?.error === 'string' ? errBody.error : '';
+                cleakerNodeRef.current     = null;
+                gatewayHostnameRef.current = '';
+
+                if (checkRes.status === 503 && errCode === 'GATEWAY_NOT_CLAIMED') {
+                  setAuthStatus('error');
+                  setAuthError('Gateway not yet claimed. Run `netget claim` in the terminal first.');
+                  setClaimResolution('unclaimed');
+                  return false;
+                }
+
+                if (
+                  errCode === 'SIGNATURE_INVALID' ||
+                  errCode === 'PUBKEY_MISMATCH' ||
+                  errCode === 'IDENTITY_NOT_AUTHORISED'
+                ) {
+                  setAuthStatus('error');
+                  setAuthError('Wrong password or identity not registered on this gateway.');
+                  setClaimResolution('locked');
+                  return false;
+                }
+                // Other errors (timestamp skew, path mismatch, etc.) → fall through to monad
+              }
+
+              // Pubkey ok but not authenticated, or non-terminal error → fall through
+              cleakerNodeRef.current    = null;
+              gatewayHostnameRef.current = '';
+            } catch {
+              cleakerNodeRef.current    = null;
+              gatewayHostnameRef.current = '';
+              // prove() or network error → fall through to monad
+            }
+
+            setAuthStatus('idle');
+            setClaimResolution('idle');
+          }
+        }
+        // /me/gateway not reachable → fall through to monad
+      } catch {
+        // fetch failed → go straight to monad
+      }
+    }
+
     if (!actionBaseUrl) {
       setAuthStatus('error');
       setAuthError('No Monad host available');
@@ -392,16 +586,21 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
     }
   }, [
     actionBaseUrl,
+    activeProfile,
     applyAuthenticatedProfile,
     handleMonadFailure,
     loginWithSeed,
     namespaceSeedHandle,
+    onAuthenticated,
+    onViewModeChange,
     secret,
     username,
     validateUsername,
   ]);
 
   const handleSignUpSubmit = useCallback(async (input: CleakerSignUpSubmitInput) => {
+    // Gateway-native claim — no monad needed.
+    // Derives keypair locally, registers pubkey with the gateway via POST /me/claim.
     const validated = validateUsername(input.username);
 
     if (!validated.value || validated.error) {
@@ -410,63 +609,83 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
       return false;
     }
 
-    if (!actionBaseUrl) {
-      setAuthStatus('error');
-      setAuthError('No Monad host available');
-      return false;
-    }
-
     setAuthStatus('checking');
     setAuthAction('claim');
     setAuthError(null);
     setClaimResolution('checking');
 
-    const nextNamespace = `${validated.value}.${namespaceSeedHandle}`;
-    const previousSession = session;
-    let nextSession: SeedSession | null = null;
-
     try {
-      nextSession = await loginWithSeed({
-        seed: input.password,
-        namespace: nextNamespace,
-        transportOrigin: actionBaseUrl,
-        autoOpen: false,
+      // Step 1 — get physical hostname (namespace anchor)
+      const gwRes = await fetch('/me/gateway').catch(() => null);
+      if (!gwRes?.ok) throw new Error('Could not reach gateway. Is nginx running?');
+      const gwData = await gwRes.json().catch(() => ({}));
+      const hostname = typeof gwData?.hostname === 'string' ? gwData.hostname.trim() : '';
+      if (!hostname) throw new Error('Gateway did not return a hostname.');
+
+      // Step 2 — derive keypair from credentials
+      const ME_RESEED = Symbol.for('me.internal.reseed');
+      const me = new (MeKernel as any)();
+      me[ME_RESEED](validated.value, input.password);
+      const node = cleaker(me as any, hostname);
+
+      // Step 3 — build signed claim proof
+      const nonce     = genNonce();
+      const timestamp = Date.now();
+      const challenge = canonicalJson({ method: 'POST', nonce, path: '/me/claim', timestamp });
+      const proof     = await (node as any).prove({ rootNamespace: hostname, challenge });
+      const proofB64  = btoa(JSON.stringify(proof))
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+
+      // Step 4 — POST /me/claim
+      const claimRes = await fetch('/me/claim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ proof: proofB64, username: validated.value }),
       });
 
-      const claimResult = await nextSession.claim(nextNamespace);
-      await nextSession.write('profile.username', validated.value);
-      await nextSession.write('profile.name', input.fullName);
-      await nextSession.write('profile.email', input.email);
-      await nextSession.write('profile.phone', input.phone);
-      await nextSession.write('auth.claimed_at', claimResult.createdAt);
-      await nextSession.open(nextNamespace);
-      activateSession(nextSession);
+      const claimData = await claimRes.json().catch(() => ({}));
+      if (!claimRes.ok || !claimData.success) {
+        const code = claimData.error ?? String(claimRes.status);
+        if (code === 'GATEWAY_ALREADY_CLAIMED') {
+          throw new Error('This gateway already has an owner. Only the owner can add new identities.');
+        }
+        throw new Error(claimData.message ?? `Claim failed (${code})`);
+      }
 
-      applyAuthenticatedProfile({
-        session: nextSession,
-        fallbackUsername: validated.value,
-        action: 'claim',
-        claimedAt: claimResult.createdAt,
-        nextSecret: input.password,
-      });
+      // Step 5 — store session, signal authenticated
+      cleakerNodeRef.current     = node;
+      gatewayHostnameRef.current = hostname;
+
+      const claimedProfile: CleakerProfileSnapshot = {
+        username:  validated.value,
+        name:      input.fullName || activeProfile.name,
+        email:     input.email    || activeProfile.email,
+        phone:     input.phone    || activeProfile.phone,
+        namespace: `${validated.value}.${hostname}`,
+        claimedAt: Date.now(),
+      };
+      setUsernameState(validated.value);
+      setClaimResolution('openable');
+      setAuthStatus('ok');
+      setAuthAction('claim');
+      setAuthError(null);
+      onAuthenticated?.(claimedProfile, 'claim');
+      onViewModeChange?.('profile');
+      window.setTimeout(() => setAuthStatus('idle'), 1200);
       return true;
     } catch (error) {
-      try {
-        nextSession?.logout();
-      } catch {
-        // Best-effort cleanup for failed signup attempts.
-      }
-      activateSession(previousSession || null);
-      return handleMonadFailure(error, validated.value);
+      setAuthStatus('idle');
+      setClaimResolution('idle');
+      cleakerNodeRef.current     = null;
+      gatewayHostnameRef.current = '';
+      throw new Error(error instanceof Error ? error.message : String(error));
     }
   }, [
-    actionBaseUrl,
-    activateSession,
-    applyAuthenticatedProfile,
-    handleMonadFailure,
-    loginWithSeed,
-    namespaceSeedHandle,
-    session,
+    activeProfile,
+    canonicalJson,
+    genNonce,
+    onAuthenticated,
+    onViewModeChange,
     validateUsername,
   ]);
 
@@ -499,6 +718,10 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
 
   const handleLogout = useCallback(() => {
     logout();
+    // Discard the derived key — Cleaker session ends here.
+    // Without the key, signedFetch falls back to plain fetch → 401 on protected routes.
+    cleakerNodeRef.current    = null;
+    gatewayHostnameRef.current = '';
     setUsernameState('');
     setSecretState('');
     closeRegisterModal();
@@ -566,6 +789,7 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
     handleLogout,
     authSuccessMessage,
     authProgressMessage,
+    signedFetch,
   };
 }
 

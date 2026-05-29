@@ -78,6 +78,21 @@ export type CleakerCardProps = {
   pairingLinkError: string | null;
   registerOpen: boolean;
   openRegisterModal: () => void;
+  closeRegisterModal: () => void;
+  handleRegisterSubmit: () => void | Promise<void>;
+  registerFullName: string;
+  setRegisterFullName: React.Dispatch<React.SetStateAction<string>>;
+  registerUsername: string;
+  setRegisterUsername: React.Dispatch<React.SetStateAction<string>>;
+  registerEmail: string;
+  setRegisterEmail: React.Dispatch<React.SetStateAction<string>>;
+  registerPhone: string;
+  setRegisterPhone: React.Dispatch<React.SetStateAction<string>>;
+  registerPassword: string;
+  setRegisterPassword: React.Dispatch<React.SetStateAction<string>>;
+  registerConfirmPassword: string;
+  setRegisterConfirmPassword: React.Dispatch<React.SetStateAction<string>>;
+  registerError: string | null;
   handleLogout: () => void;
   renderProfileCard: () => React.ReactNode;
   showSecret: boolean;
@@ -135,7 +150,23 @@ export default function CleakerCard(props: CleakerCardProps) {
     pairingExpression,
     clearPairingState,
     pairingLinkError,
+    registerOpen,
     openRegisterModal,
+    closeRegisterModal,
+    handleRegisterSubmit,
+    registerFullName,
+    setRegisterFullName,
+    registerUsername,
+    setRegisterUsername,
+    registerEmail,
+    setRegisterEmail,
+    registerPhone,
+    setRegisterPhone,
+    registerPassword,
+    setRegisterPassword,
+    registerConfirmPassword,
+    setRegisterConfirmPassword,
+    registerError,
     handleLogout,
     renderProfileCard,
     showSecret,
@@ -175,6 +206,7 @@ export default function CleakerCard(props: CleakerCardProps) {
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, minWidth: 0, flex: 1 }}>
+            {/* QR avatar — click to expand/collapse */}
             <Box
               {...nodeAttrs('avatar', 'Cleaker.AvatarQR')}
               onClick={() => setAvatarExpanded((value) => !value)}
@@ -224,10 +256,8 @@ export default function CleakerCard(props: CleakerCardProps) {
               />
             </Box>
 
-            <Box
-              {...nodeAttrs('identity-shell', 'Cleaker.IdentityShell')}
-              sx={{ display: 'flex', flexDirection: 'column', gap: 0.35, minWidth: 0 }}
-            >
+            {/* Right column: ASCII art + username field */}
+            <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 0.35 }}>
               <pre
                 style={{
                   margin: 0,
@@ -241,88 +271,86 @@ export default function CleakerCard(props: CleakerCardProps) {
  ┓┏┏┣┓┏┓┏┛
 •┗┻┛┛┗┗┛•
              `}</pre>
-
-              <Box
-                {...nodeAttrs('identity', 'Cleaker.IdentityField')}
-                sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0.2, minWidth: 0 }}
-              >
-                <TextField
-                  {...nodeAttrs('identity-input', 'Cleaker.IdentityInput')}
-                  variant="standard"
-                  placeholder="username"
-                  autoComplete="off"
-                  value={username}
-                  onChange={(event) => setUsername(event.target.value)}
-                  error={Boolean(usernameError)}
-                  fullWidth
-                  slotProps={{
-                    htmlInput: {
-                      autoCapitalize: 'none',
-                      autoCorrect: 'off',
-                      spellCheck: false,
-                      inputMode: 'text',
-                    },
-                    input: {
-                      disableUnderline: true,
-                      endAdornment: (
-                        <Box
-                          sx={{
-                            pl: 0.55,
-                            fontSize: '11px',
-                            fontWeight: 700,
-                            color: theme.palette.text.primary,
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            opacity: username ? 1 : 0.7,
-                          }}
-                        >
-                          .{namespaceSeedHandle}
-                        </Box>
-                      ),
-                    },
-                  }}
-                  sx={{
-                    width: '100%',
-                    '& .MuiInputBase-root': { alignItems: 'baseline', gap: 0, px: 0, py: 0 },
-                    '& .MuiInputBase-input': {
-                      padding: 0,
-                      fontSize: '11px',
-                      fontWeight: 700,
-                      lineHeight: 1.2,
-                      color: theme.palette.text.primary,
-                      minWidth: 0,
-                    },
-                    '& .MuiInputBase-input::placeholder': {
-                      color: theme.palette.text.secondary,
-                      opacity: 0.72,
-                    },
-                    '& .MuiInputBase-root:after': {
-                      content: '""',
-                      position: 'absolute',
-                      left: 0,
-                      right: 0,
-                      bottom: -2,
-                      height: '2px',
-                      borderRadius: '999px',
-                      backgroundColor: !username
-                        ? 'transparent'
-                        : usernameError
-                          ? theme.palette.error.main
-                          : themedUi.inputUnderline,
-                      pointerEvents: 'none',
-                    },
-                  }}
-                />
-              </Box>
+              <TextField
+                {...nodeAttrs('identity-input', 'Cleaker.IdentityInput')}
+                label="Username"
+                variant="outlined"
+                size="small"
+                autoComplete="username"
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                error={Boolean(usernameError)}
+                fullWidth
+                slotProps={{
+                  htmlInput: {
+                    autoCapitalize: 'none',
+                    autoCorrect: 'off',
+                    spellCheck: false,
+                    inputMode: 'text',
+                  },
+                }}
+                sx={{
+                  '& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus, & input:-webkit-autofill:active': {
+                    WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset`,
+                    WebkitTextFillColor: theme.palette.text.primary,
+                    caretColor: theme.palette.text.primary,
+                    transition: 'background-color 9999s ease-out 0s',
+                  },
+                }}
+              />
 
               {liveUsernameState === 'invalid' && liveUsernameNote ? (
                 <Box
                   {...nodeAttrs('identity-note', 'Cleaker.IdentityNote')}
-                  sx={{ fontSize: '10px', lineHeight: 1.1, color: theme.palette.error.main, userSelect: 'none' }}
+                  sx={{ fontSize: '10px', lineHeight: 1.1, color: theme.palette.error.main, userSelect: 'none', px: 0.25 }}
                 >
                   {liveUsernameNote}
                 </Box>
+              ) : null}
+
+              {showLoginView && !registerOpen ? (
+                <TextField
+                  {...nodeAttrs('password', 'Cleaker.PasswordField')}
+                  label="Password"
+                  type={showSecret ? 'text' : 'password'}
+                  variant="outlined"
+                  size="small"
+                  autoComplete="current-password"
+                  value={secret}
+                  onChange={(event) => setSecret(event.target.value)}
+                  fullWidth
+                  slotProps={{
+                    htmlInput: { autoCapitalize: 'none', autoCorrect: 'off', spellCheck: false },
+                    input: {
+                      endAdornment: (
+                        <Button
+                          {...nodeAttrs('password-visibility-toggle', 'Cleaker.PasswordVisibilityToggle')}
+                          variant="text"
+                          size="small"
+                          onClick={() => setShowSecret((v) => !v)}
+                          sx={{
+                            minWidth: '32px',
+                            p: 0,
+                            mr: '-6px',
+                            color: secret ? theme.palette.text.secondary : theme.palette.divider,
+                            '&:hover': { backgroundColor: themedUi.ghostHover },
+                          }}
+                          aria-label={showSecret ? 'Hide secret' : 'Show secret'}
+                        >
+                          <Icon name={showSecret ? 'visibility_off' : 'visibility'} fontSize={18} fill={showSecret ? 1 : 0} />
+                        </Button>
+                      ),
+                    },
+                  }}
+                  sx={{
+                    '& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus, & input:-webkit-autofill:active': {
+                      WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset`,
+                      WebkitTextFillColor: theme.palette.text.primary,
+                      caretColor: theme.palette.text.primary,
+                      transition: 'background-color 9999s ease-out 0s',
+                    },
+                  }}
+                />
               ) : null}
             </Box>
           </Box>
@@ -507,126 +535,202 @@ export default function CleakerCard(props: CleakerCardProps) {
             }}
           />
         ) : showLoginView ? (
-          <>
-            <TextField
-              {...nodeAttrs('password', 'Cleaker.PasswordField')}
-              label="Password"
-              type={showSecret ? 'text' : 'password'}
-              variant="outlined"
-              autoComplete="current-password"
-              value={secret}
-              onChange={(event) => setSecret(event.target.value)}
-              fullWidth
-              slotProps={{
-                htmlInput: { autoCapitalize: 'none', autoCorrect: 'off', spellCheck: false },
-                input: {
-                  endAdornment: (
-                    <Button
-                      {...nodeAttrs('password-visibility-toggle', 'Cleaker.PasswordVisibilityToggle')}
-                      variant="text"
-                      size="small"
-                      onClick={() => setShowSecret((v) => !v)}
-                      sx={{
-                        minWidth: '32px',
-                        p: 0,
-                        mr: '-6px',
-                        color: secret ? theme.palette.text.secondary : theme.palette.divider,
-                        '&:hover': { backgroundColor: themedUi.ghostHover },
-                      }}
-                      aria-label={showSecret ? 'Hide secret' : 'Show secret'}
-                    >
-                      <Icon name={showSecret ? 'visibility_off' : 'visibility'} fontSize={18} fill={showSecret ? 1 : 0} />
-                    </Button>
-                  ),
-                },
-              }}
-              sx={{
-                '& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus, & input:-webkit-autofill:active': {
-                  WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset`,
-                  WebkitTextFillColor: theme.palette.text.primary,
-                  caretColor: theme.palette.text.primary,
-                  transition: 'background-color 9999s ease-out 0s',
-                },
-              }}
-            />
-
+          registerOpen ? (
+            /* ── Inline sign-up form ── */
             <Box
-              {...nodeAttrs('actions', 'Cleaker.Actions')}
-              sx={{ display: 'flex', width: '100%', gap: 0.5, alignItems: 'center', justifyContent: 'flex-end' }}
+              {...nodeAttrs('register-form', 'Cleaker.RegisterForm')}
+              sx={{ display: 'flex', flexDirection: 'column', gap: 1.2 }}
             >
-              <Button
-                {...nodeAttrs('action-register', 'Cleaker.RegisterAction')}
-                variant="text"
+              <TextField
+                {...nodeAttrs('register-full-name', 'Cleaker.RegisterFullName')}
+                label="Full Name"
+                placeholder="Sui Abella"
+                helperText="Your full name as it will appear in the profile."
+                value={registerFullName}
+                onChange={(e) => setRegisterFullName(e.target.value)}
+                autoComplete="name"
                 size="small"
-                onClick={openRegisterModal}
-                aria-label="Sign Up"
-                sx={{
-                  borderRadius: '8px',
-                  textTransform: 'none',
-                  fontWeight: 500,
-                  minWidth: 'unset',
-                  fontSize: '0.78rem',
-                  letterSpacing: 0.1,
-                  px: 0.75,
-                  py: 0.25,
-                  color: theme.palette.text.secondary,
-                  opacity: 0.8,
-                  '&:hover': { background: 'transparent', color: theme.palette.text.primary, opacity: 1 },
-                }}
-              >
-                Sign Up
-              </Button>
-
-              <Button
-                {...nodeAttrs('action-login', 'Cleaker.PrimaryAction')}
-                variant="outlined"
+                fullWidth
+              />
+              <TextField
+                {...nodeAttrs('register-username', 'Cleaker.RegisterUsername')}
+                label="Username"
+                helperText={namespaceSeedHandle
+                  ? `Handle only. Example: jabellae, not jabellae.${namespaceSeedHandle}`
+                  : 'Handle only. Example: jabellae'}
+                placeholder="jabellae"
+                value={registerUsername}
+                onChange={(e) => setRegisterUsername(e.target.value)}
+                autoComplete="username"
                 size="small"
-                onClick={handleOpenLogin}
-                aria-label="Login"
-                disabled={isActionDisabled}
-                sx={{
-                  borderRadius: '10px',
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  minWidth: '96px',
-                  fontSize: '0.9rem',
-                  letterSpacing: 0.3,
-                  padding: '6px 14px',
-                  borderWidth: 2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1,
-                  background: themedUi.subtleSurface,
-                  color: theme.palette.text.primary,
-                  borderColor: themedUi.panelBorder,
-                  '&:hover': { background: themedUi.ghostHover, borderColor: theme.palette.primary.main },
-                }}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.6 }}>
-                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                    <path d="M6 1.4L10.5 9.2H1.5L6 1.4Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
-                  </svg>
-                  <span>.me</span>
+                fullWidth
+              />
+              <TextField
+                {...nodeAttrs('register-email', 'Cleaker.RegisterEmail')}
+                label="Email"
+                value={registerEmail}
+                onChange={(e) => setRegisterEmail(e.target.value)}
+                autoComplete="email"
+                size="small"
+                fullWidth
+              />
+              <TextField
+                {...nodeAttrs('register-phone', 'Cleaker.RegisterPhone')}
+                label="Phone"
+                value={registerPhone}
+                onChange={(e) => setRegisterPhone(e.target.value)}
+                autoComplete="tel"
+                size="small"
+                fullWidth
+              />
+              <TextField
+                {...nodeAttrs('register-password', 'Cleaker.RegisterPassword')}
+                label="Password"
+                type="password"
+                value={registerPassword}
+                onChange={(e) => setRegisterPassword(e.target.value)}
+                autoComplete="new-password"
+                size="small"
+                fullWidth
+              />
+              <TextField
+                {...nodeAttrs('register-confirm-password', 'Cleaker.RegisterConfirmPassword')}
+                label="Confirm Password"
+                type="password"
+                value={registerConfirmPassword}
+                onChange={(e) => setRegisterConfirmPassword(e.target.value)}
+                autoComplete="new-password"
+                size="small"
+                fullWidth
+              />
+              {registerError ? (
+                <Box
+                  {...nodeAttrs('register-error', 'Cleaker.RegisterError')}
+                  sx={{ fontSize: '11px', lineHeight: 1.35, color: theme.palette.error.main }}
+                >
+                  {registerError}
                 </Box>
-              </Button>
+              ) : null}
+              <Box
+                {...nodeAttrs('register-actions', 'Cleaker.RegisterActions')}
+                sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.75, pt: 0.25 }}
+              >
+                <Button
+                  variant="text"
+                  size="small"
+                  onClick={closeRegisterModal}
+                  sx={{
+                    borderRadius: '8px',
+                    textTransform: 'none',
+                    fontWeight: 500,
+                    fontSize: '0.78rem',
+                    color: theme.palette.text.secondary,
+                    '&:hover': { backgroundColor: themedUi.ghostHover },
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => void handleRegisterSubmit()}
+                  disabled={authStatus === 'checking'}
+                  sx={{
+                    borderRadius: '10px',
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    fontSize: '0.85rem',
+                    borderWidth: 2,
+                    background: themedUi.subtleSurface,
+                    borderColor: themedUi.panelBorder,
+                    color: theme.palette.text.primary,
+                    '&:hover': { background: themedUi.ghostHover, borderColor: theme.palette.primary.main },
+                  }}
+                >
+                  {authStatus === 'checking' ? 'Claiming…' : 'Sign Up'}
+                </Button>
+              </Box>
             </Box>
+          ) : (
+            <>
+              <Box
+                {...nodeAttrs('actions', 'Cleaker.Actions')}
+                sx={{ display: 'flex', width: '100%', gap: 0.5, alignItems: 'center', justifyContent: 'flex-end' }}
+              >
+                <Button
+                  {...nodeAttrs('action-register', 'Cleaker.RegisterAction')}
+                  variant="text"
+                  size="small"
+                  onClick={openRegisterModal}
+                  aria-label="Sign Up"
+                  sx={{
+                    borderRadius: '8px',
+                    textTransform: 'none',
+                    fontWeight: 500,
+                    minWidth: 'unset',
+                    fontSize: '0.78rem',
+                    letterSpacing: 0.1,
+                    px: 0.75,
+                    py: 0.25,
+                    color: theme.palette.text.secondary,
+                    opacity: 0.8,
+                    '&:hover': { background: 'transparent', color: theme.palette.text.primary, opacity: 1 },
+                  }}
+                >
+                  Sign Up
+                </Button>
 
-            {authStatus === 'checking' ? (
-              <span {...nodeAttrs('feedback', 'Cleaker.Feedback')} style={{ fontSize: '11px', color: theme.palette.text.secondary, paddingLeft: 2 }}>
-                {authProgressMessage}
-              </span>
-            ) : null}
-            {authStatus === 'error' && authError ? (
-              <span {...nodeAttrs('feedback', 'Cleaker.Feedback')} style={{ fontSize: '11px', color: theme.palette.error.main, paddingLeft: 2 }}>
-                {authError}
-              </span>
-            ) : null}
-            {authStatus === 'ok' ? (
-              <span {...nodeAttrs('feedback', 'Cleaker.Feedback')} style={{ fontSize: '11px', color: theme.palette.success.main, paddingLeft: 2 }}>
-                {authSuccessMessage}
-              </span>
-            ) : null}
-          </>
+                <Button
+                  {...nodeAttrs('action-login', 'Cleaker.PrimaryAction')}
+                  variant="outlined"
+                  size="small"
+                  onClick={handleOpenLogin}
+                  aria-label="Login"
+                  disabled={isActionDisabled}
+                  sx={{
+                    borderRadius: '10px',
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    minWidth: '96px',
+                    fontSize: '0.9rem',
+                    letterSpacing: 0.3,
+                    padding: '6px 14px',
+                    borderWidth: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    background: themedUi.subtleSurface,
+                    color: theme.palette.text.primary,
+                    borderColor: themedUi.panelBorder,
+                    '&:hover': { background: themedUi.ghostHover, borderColor: theme.palette.primary.main },
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.6 }}>
+                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                      <path d="M6 1.4L10.5 9.2H1.5L6 1.4Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+                    </svg>
+                    <span>.me</span>
+                  </Box>
+                </Button>
+              </Box>
+
+              {authStatus === 'checking' ? (
+                <span {...nodeAttrs('feedback', 'Cleaker.Feedback')} style={{ fontSize: '11px', color: theme.palette.text.secondary, paddingLeft: 2 }}>
+                  {authProgressMessage}
+                </span>
+              ) : null}
+              {authStatus === 'error' && authError ? (
+                <span {...nodeAttrs('feedback', 'Cleaker.Feedback')} style={{ fontSize: '11px', color: theme.palette.error.main, paddingLeft: 2 }}>
+                  {authError}
+                </span>
+              ) : null}
+              {authStatus === 'ok' ? (
+                <span {...nodeAttrs('feedback', 'Cleaker.Feedback')} style={{ fontSize: '11px', color: theme.palette.success.main, paddingLeft: 2 }}>
+                  {authSuccessMessage}
+                </span>
+              ) : null}
+            </>
+          )
         ) : null}
       </Box>
 

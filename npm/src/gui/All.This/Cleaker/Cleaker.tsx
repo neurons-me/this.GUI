@@ -60,6 +60,8 @@ export type CleakerProps = {
   namespace?: string;
   namespaceOrigin?: string;
   me?: MeLike;
+  /** Override the card's maxWidth. Default: '320px' login, '460px' claim surface. Pass '100%' to fill the container. */
+  maxWidth?: string;
 };
 
 const KERNEL_CLEAKER_IDENTITY_PATH = 'identity.session';
@@ -987,7 +989,7 @@ const {
         nodeAttrs={nodeAttrs}
         themedUi={themedUi}
         theme={theme}
-        maxWidth={showClaimSurfaceView ? '460px' : '320px'}
+        maxWidth={props.maxWidth ?? (showClaimSurfaceView ? '460px' : '320px')}
         showProfileView={showProfileView}
         showClaimSurfaceView={showClaimSurfaceView}
         showLoginView={showLoginView}
@@ -1028,6 +1030,21 @@ const {
         pairingLinkError={pairingLinkError}
         registerOpen={registerOpen}
         openRegisterModal={openRegisterModal}
+        closeRegisterModal={closeRegisterModal}
+        handleRegisterSubmit={() => void handleRegisterSubmit()}
+        registerFullName={registerFullName}
+        setRegisterFullName={setRegisterFullName}
+        registerUsername={registerUsername}
+        setRegisterUsername={setRegisterUsername}
+        registerEmail={registerEmail}
+        setRegisterEmail={setRegisterEmail}
+        registerPhone={registerPhone}
+        setRegisterPhone={setRegisterPhone}
+        registerPassword={registerPassword}
+        setRegisterPassword={setRegisterPassword}
+        registerConfirmPassword={registerConfirmPassword}
+        setRegisterConfirmPassword={setRegisterConfirmPassword}
+        registerError={registerError}
         handleLogout={handleLogout}
         renderProfileCard={() => renderSpecNode(claimedProfileCardSpec, `${rootNodeId}.profile-card`)}
         showSecret={showSecret}
@@ -1043,27 +1060,7 @@ const {
 
       <AccessRequestHandler />
 
-      <CleakerSignUpModal
-        open={registerOpen}
-        onClose={closeRegisterModal}
-        onSubmit={() => void handleRegisterSubmit()}
-        authStatus={authStatus}
-        registerError={registerError}
-        registerFullName={registerFullName}
-        setRegisterFullName={setRegisterFullName}
-        registerUsername={registerUsername}
-        setRegisterUsername={setRegisterUsername}
-        registerEmail={registerEmail}
-        setRegisterEmail={setRegisterEmail}
-        registerPhone={registerPhone}
-        setRegisterPhone={setRegisterPhone}
-        registerPassword={registerPassword}
-        setRegisterPassword={setRegisterPassword}
-        registerConfirmPassword={registerConfirmPassword}
-        setRegisterConfirmPassword={setRegisterConfirmPassword}
-        namespaceSeedHandle={namespaceSeedHandle}
-        nodeAttrs={nodeAttrs}
-      />
+      {/* Sign-up form is now inline in CleakerCard — no modal needed */}
     </Box>
   );
 }

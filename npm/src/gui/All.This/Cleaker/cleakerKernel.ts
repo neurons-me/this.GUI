@@ -77,7 +77,7 @@ export async function createCleakerKernelContext({
   const fetcher = createBrowserSemanticFetcher();
 
   const node = cleaker(me, {
-    origin: safeEndpoint,
+    space: safeEndpoint,
     fetcher,
     namespace: sessionNamespace || undefined,
     secret: sessionNamespace && sessionSecret ? sessionSecret : undefined,
