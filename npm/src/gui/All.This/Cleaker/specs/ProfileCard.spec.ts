@@ -36,7 +36,9 @@ export function createProfileCardSpec(options: ProfileCardSpecOptions = {}): Gui
   const phonePath = normalizeMePath(options.phonePath ?? 'phone');
   const avatarPath = normalizeMePath(options.avatarPath ?? 'avatar');
   const claimPath = normalizeMePath(options.claimPath ?? 'auth.claimed_at');
-  const namespacePath = normalizeMePath(options.namespacePath ?? 'identity.session.namespace');
+  // Show the host seed (e.g. "suis-macbook-air.local") rather than the full
+  // namespace ("jabellae.suis-macbook-air.local") which redundantly repeats the username.
+  const namespacePath = normalizeMePath(options.namespacePath ?? 'identity.session.namespaceSeed');
   const viewModePath = options.viewModePath ?? 'ui.cleaker.viewMode';
   const profileAction = options.profileAction ?? stringAssignment(viewModePath, 'profile');
   const settingsAction = options.settingsAction ?? stringAssignment(viewModePath, 'settings');
