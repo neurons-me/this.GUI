@@ -15,12 +15,12 @@ export function claimCleakerNamespace(input: ClaimHandlerInput): ClaimHandlerRes
   const profile = input.profile || {};
 
   writeKernelEntries(input, [
-    { path: 'profile.username', value: profile.username ?? username },
-    { path: 'profile.name', value: profile.name ?? null },
-    { path: 'profile.avatar', value: profile.avatar ?? null },
-    { path: 'profile.bio', value: profile.bio ?? null },
-    { path: 'profile.email', value: profile.email ?? null },
-    { path: 'profile.phone', value: profile.phone ?? null },
+    { path: 'username', value: profile.username ?? username },
+    { path: 'name',     value: profile.name ?? null },
+    { path: 'avatar',   value: profile.avatar ?? null },
+    { path: 'bio',      value: profile.bio ?? null },
+    { path: 'email',    value: profile.email ?? null },
+    { path: 'phone',    value: profile.phone ?? null },
     { path: 'auth.claimed_at', value: claimedAt },
     { path: 'identity.session.username', value: username },
     { path: 'identity.session.namespace', value: namespace },

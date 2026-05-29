@@ -25,8 +25,8 @@ function stringAssignment(path: string, value: string): string {
 
 export function createTopbarSpec(options: TopbarSpecOptions = {}): GuiSpecNode {
   const rootNodeId = options.rootNodeId ?? 'Cleaker.Topbar';
-  const usernamePath = normalizeMePath(options.usernamePath ?? 'profile.username');
-  const avatarPath = normalizeMePath(options.avatarPath ?? 'profile.avatar');
+  const usernamePath = normalizeMePath(options.usernamePath ?? 'username');
+  const avatarPath = normalizeMePath(options.avatarPath ?? 'avatar');
   const namespacePath = normalizeMePath(options.namespacePath ?? 'identity.session.namespace');
   const claimPath = normalizeMePath(options.claimPath ?? 'auth.claimed_at');
   const viewModePath = options.viewModePath ?? 'ui.cleaker.viewMode';

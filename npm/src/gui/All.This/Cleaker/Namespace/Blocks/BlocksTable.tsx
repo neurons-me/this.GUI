@@ -180,13 +180,13 @@ function formatResolvedValue(row: BlocksTableEntry): ResolvedValuePresentation {
   if (typeof value === 'string') {
     const text = value.trim();
     if (!text) return { preview: '(empty)', full: '(empty)', kind: 'empty' };
-    if (path.endsWith('profile.email')) {
+    if (path === 'email' || path.endsWith('.email')) {
       return { preview: text, full: text, kind: 'email', href: `mailto:${text}` };
     }
-    if (path.endsWith('profile.phone')) {
+    if (path === 'phone' || path.endsWith('.phone')) {
       return { preview: text, full: text, kind: 'phone', href: `tel:${text.replace(/\s+/g, '')}` };
     }
-    if (path.endsWith('profile.username')) {
+    if (path === 'username' || path.endsWith('.username')) {
       const normalized = text.startsWith('@') ? text : `@${text}`;
       return { preview: normalized, full: normalized, kind: 'username' };
     }
@@ -395,9 +395,9 @@ export function BlocksTable({
       if (!key) continue;
 
       const imageCandidate =
-        row.path === 'profile.pic' ||
-        row.path === 'profile.img' ||
-        row.path === 'profile.avatar'
+        row.path === 'pic' ||
+        row.path === 'img' ||
+        row.path === 'avatar'
           ? sanitizeUrlValue(row.data)
           : null;
 

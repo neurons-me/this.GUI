@@ -30,11 +30,11 @@ function stringAssignment(path: string, value: string): string {
 
 export function createProfileCardSpec(options: ProfileCardSpecOptions = {}): GuiSpecNode {
   const rootNodeId = options.rootNodeId ?? 'Cleaker.ProfileCard';
-  const usernamePath = normalizeMePath(options.usernamePath ?? 'profile.username');
-  const namePath = normalizeMePath(options.namePath ?? 'profile.name');
-  const emailPath = normalizeMePath(options.emailPath ?? 'profile.email');
-  const phonePath = normalizeMePath(options.phonePath ?? 'profile.phone');
-  const avatarPath = normalizeMePath(options.avatarPath ?? 'profile.avatar');
+  const usernamePath = normalizeMePath(options.usernamePath ?? 'username');
+  const namePath = normalizeMePath(options.namePath ?? 'name');
+  const emailPath = normalizeMePath(options.emailPath ?? 'email');
+  const phonePath = normalizeMePath(options.phonePath ?? 'phone');
+  const avatarPath = normalizeMePath(options.avatarPath ?? 'avatar');
   const claimPath = normalizeMePath(options.claimPath ?? 'auth.claimed_at');
   const namespacePath = normalizeMePath(options.namespacePath ?? 'identity.session.namespace');
   const viewModePath = options.viewModePath ?? 'ui.cleaker.viewMode';

@@ -42,8 +42,8 @@ export type MeProps = {
 };
 
 function normalizeMePath(path?: string): string {
-  const raw = String(path || 'profile.name').trim();
-  if (!raw) return 'profile.name';
+  const raw = String(path || 'name').trim();
+  if (!raw) return 'name';
 
   const explicitPrefixes = [
     'me://self:read/',
@@ -66,7 +66,7 @@ function normalizeMePath(path?: string): string {
   return next
     .replace(/^\/+|\/+$/g, '')
     .replace(/\//g, '.')
-    .replace(/^\.+|\.+$/g, '') || 'profile.name';
+    .replace(/^\.+|\.+$/g, '') || 'name';
 }
 
 function stringifyValue(value: any): string {
@@ -421,7 +421,7 @@ function MeField({
 
 export default function Me({
   me: providedMe,
-  path = 'profile.name',
+  path = 'name',
   label,
   description,
   placeholder,

@@ -12,7 +12,7 @@ const pkg = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 const cleakerSourceEntry = resolve(dirname, '../../../modules/cleaker/npm/src/index.ts');
-const meSourceEntry = resolve(dirname, '../../../me/npm/dist/me.es.js');
+const meSourceEntry = resolve(dirname, '../../../me/Typescript/dist/me.es.js');
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 const isDemo = process.env.DEMO === 'true';
 const lifecycle = process.env.npm_lifecycle_event || '';

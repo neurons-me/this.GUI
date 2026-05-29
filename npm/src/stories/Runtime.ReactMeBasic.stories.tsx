@@ -28,10 +28,10 @@ function ReactBridgePanel({
   me: any;
   runtime: ReturnType<typeof createMeRuntime>;
 }) {
-  const name = useMeValue<string>('profile.name');
-  const status = useMeValue<string>('profile.status');
+  const name = useMeValue<string>('name');
+  const status = useMeValue<string>('status');
   const count = useMeValue<number>('metrics.count');
-  const setStatus = useMeAction('profile.status', { allowCanonicalWrite: true });
+  const setStatus = useMeAction('status', { allowCanonicalWrite: true });
   const setCount = useMeAction('metrics.count');
 
   return (
@@ -72,8 +72,8 @@ function ReactBridgePanel({
             <Button
               variant="text"
               onClick={() => {
-                writeMeValue(me, 'profile.name', 'Changed from host');
-                runtime.notify?.('profile.name');
+                writeMeValue(me, 'name', 'Changed from host');
+                runtime.notify?.('name');
               }}
             >
               Host Write + Notify
@@ -84,7 +84,7 @@ function ReactBridgePanel({
 
           <Me
             label=".me Name"
-            path="profile.name"
+            path="name"
             description="Commit mode field backed by the shared runtime."
             mode="commit"
           />
@@ -216,8 +216,8 @@ function MountedSpecPanel({
 function RuntimeReactMeBasicDemo() {
   const demo = React.useMemo(() => {
     const me = new ME();
-    writeMeValue(me, 'profile.name', 'Ana Runtime');
-    writeMeValue(me, 'profile.status', 'online');
+    writeMeValue(me, 'name', 'Ana Runtime');
+    writeMeValue(me, 'status', 'online');
     writeMeValue(me, 'metrics.count', 3);
     const runtime = createMeRuntime(me);
     return { me, runtime };

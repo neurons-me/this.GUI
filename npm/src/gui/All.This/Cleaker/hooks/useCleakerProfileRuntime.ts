@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from 'react';
 import type { MeLike } from '@/react/types';
 import { readMeValue } from '@/runtime/run-me';
 
-const KERNEL_CLEAKER_PROFILE_PATH = 'profile';
 const KERNEL_CLEAKER_IDENTITY_PATH = 'identity.session';
 const KERNEL_CLEAKER_CANONICAL_AUTH_PATH = 'auth';
 
@@ -40,22 +39,24 @@ export function useCleakerProfileRuntime({
   runtime,
   sanitizeRuntimeUsername,
 }: UseCleakerProfileRuntimeOptions): UseCleakerProfileRuntimeResult {
+  // Read new root path first; fall back to legacy profile.* for existing kernels.
+  // Writes always go to root, so after one write cycle the legacy path is abandoned.
   const [activeProfileUsername, setActiveProfileUsername] = useState(() =>
     sanitizeRuntimeUsername(
-      String(readMeValue(me, `${KERNEL_CLEAKER_PROFILE_PATH}.username`) || ''),
+      String(readMeValue(me, 'username') || readMeValue(me, 'profile.username') || ''),
     ),
   );
 
   const [activeProfileName, setActiveProfileName] = useState(() =>
-    String(readMeValue(me, `${KERNEL_CLEAKER_PROFILE_PATH}.name`) || '').trim(),
+    String(readMeValue(me, 'name') || readMeValue(me, 'profile.name') || '').trim(),
   );
 
   const [activeProfileEmail, setActiveProfileEmail] = useState(() =>
-    String(readMeValue(me, `${KERNEL_CLEAKER_PROFILE_PATH}.email`) || '').trim(),
+    String(readMeValue(me, 'email') || readMeValue(me, 'profile.email') || '').trim(),
   );
 
   const [activeProfilePhone, setActiveProfilePhone] = useState(() =>
-    String(readMeValue(me, `${KERNEL_CLEAKER_PROFILE_PATH}.phone`) || '').trim(),
+    String(readMeValue(me, 'phone') || readMeValue(me, 'profile.phone') || '').trim(),
   );
 
   const [activeIdentityNamespace, setActiveIdentityNamespace] = useState(() =>

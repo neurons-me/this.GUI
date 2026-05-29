@@ -62,17 +62,6 @@ export default function CleakerSignUpModal(props: CleakerSignUpModalProps) {
         sx={{ display: 'flex', flexDirection: 'column', gap: 1.2 }}
       >
         <TextField
-          {...nodeAttrs('register-full-name', 'Cleaker.RegisterFullName')}
-          label="Full Name"
-          placeholder="Sui Abella"
-          helperText="Your full name as it will appear in the profile."
-          value={registerFullName}
-          onChange={(e) => setRegisterFullName(e.target.value)}
-          autoComplete="name"
-          fullWidth
-        />
-
-        <TextField
           {...nodeAttrs('register-username', 'Cleaker.RegisterUsername')}
           label="Username"
           helperText={namespaceSeedHandle
@@ -82,6 +71,18 @@ export default function CleakerSignUpModal(props: CleakerSignUpModalProps) {
           value={registerUsername}
           onChange={(e) => setRegisterUsername(e.target.value)}
           autoComplete="username"
+          autoFocus
+          fullWidth
+        />
+
+        <TextField
+          {...nodeAttrs('register-full-name', 'Cleaker.RegisterFullName')}
+          label="Full Name"
+          placeholder="Sui Abella"
+          helperText="Your full name as it will appear in the profile."
+          value={registerFullName}
+          onChange={(e) => setRegisterFullName(e.target.value)}
+          autoComplete="name"
           fullWidth
         />
 

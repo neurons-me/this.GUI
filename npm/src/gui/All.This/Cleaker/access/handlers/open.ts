@@ -4,7 +4,7 @@ import { resolveSession } from './resolveSession';
 
 export function openCleakerSession(input: OpenSessionInput): OpenSessionResult {
   const namespace = String(input.namespace || '').trim();
-  const profileUsername = readKernelString(input, 'profile.username');
+  const profileUsername = readKernelString(input, 'username');
   const username = String(input.username || profileUsername).trim();
   const identityHash = String(
     input.identityHash || readKernelString(input, 'identity.session.identityHash'),

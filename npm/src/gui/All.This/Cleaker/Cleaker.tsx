@@ -69,7 +69,6 @@ const KERNEL_CLEAKER_UI_PATH = 'ui.cleaker';
 const KERNEL_CLEAKER_AUTH_PATH = 'runtime.cleaker.auth';
 const KERNEL_CLEAKER_NAMESPACE_PATH = 'runtime.cleaker.namespace';
 const KERNEL_CLEAKER_REGISTER_PATH = 'ui.cleaker.register';
-const KERNEL_CLEAKER_PROFILE_PATH = 'profile';
 const KERNEL_CLEAKER_CANONICAL_AUTH_PATH = 'auth';
 
 
@@ -119,10 +118,20 @@ function CleakerInner(props: CleakerProps) {
   const theme = useGuiTheme();
   const rootNodeId = String(props['data-gui-node-id'] || 'Cleaker');
   const rootNodeType = String(props['data-gui-component'] || 'Cleaker');
-  const profileUsername = useMeValue<string>('profile.username') || '';
-  const profileName = useMeValue<string>('profile.name') || '';
-  const profileEmail = useMeValue<string>('profile.email') || '';
-  const profilePhone = useMeValue<string>('profile.phone') || '';
+  // Root paths are canonical. Both hooks always called (Rules of Hooks);
+  // legacy profile.* value used as fallback for existing kernels.
+  const _username      = useMeValue<string>('username');
+  const _legacyUsername = useMeValue<string>('profile.username');
+  const _name          = useMeValue<string>('name');
+  const _legacyName    = useMeValue<string>('profile.name');
+  const _email         = useMeValue<string>('email');
+  const _legacyEmail   = useMeValue<string>('profile.email');
+  const _phone         = useMeValue<string>('phone');
+  const _legacyPhone   = useMeValue<string>('profile.phone');
+  const profileUsername = _username || _legacyUsername || '';
+  const profileName     = _name     || _legacyName     || '';
+  const profileEmail    = _email    || _legacyEmail    || '';
+  const profilePhone    = _phone    || _legacyPhone    || '';
   const claimedAtPath = useMeValue<number | null>('auth.claimed_at');
   const activeSessionNamespace = useMeValue<string>('identity.session.namespace') || '';
   const kernelRuntimeAuthenticated = Boolean(useMeValue<boolean>('identity.session.authenticated'));
@@ -793,15 +802,20 @@ const {
     me: runtimeMe,
     runtime,
     blocks: [
-      { path: KERNEL_CLEAKER_IDENTITY_PATH,   value: identitySemanticState },
-      { path: KERNEL_CLEAKER_NAMESPACE_PATH,  value: namespaceSemanticState },
-      { path: KERNEL_CLEAKER_UI_PATH,         value: uiSemanticState },
-      { path: KERNEL_CLEAKER_AUTH_PATH,       value: authSemanticState },
-      { path: KERNEL_CLEAKER_REGISTER_PATH,   value: registerSemanticState },
+      { path: KERNEL_CLEAKER_IDENTITY_PATH,       value: identitySemanticState },
+      { path: KERNEL_CLEAKER_NAMESPACE_PATH,      value: namespaceSemanticState },
+      { path: KERNEL_CLEAKER_UI_PATH,             value: uiSemanticState },
+      { path: KERNEL_CLEAKER_AUTH_PATH,           value: authSemanticState },
+      { path: KERNEL_CLEAKER_REGISTER_PATH,       value: registerSemanticState },
       { path: KERNEL_CLEAKER_CANONICAL_AUTH_PATH, value: canonicalAuthSemanticState },
-      { path: KERNEL_CLEAKER_PROFILE_PATH,    value: profileSemanticState },
     ],
-    entries: [],
+    // Identity fields live at the kernel root — me.username, me.name, etc.
+    entries: [
+      { path: 'username', value: profileSemanticState.username },
+      { path: 'name',     value: profileSemanticState.name },
+      { path: 'email',    value: profileSemanticState.email },
+      { path: 'phone',    value: profileSemanticState.phone },
+    ],
   });
 
   // ---------------------------------------------------------------------------
@@ -916,12 +930,12 @@ const {
 
   const handleLogout = useCallback(() => {
     const clearEntries: Array<[string, any]> = [
-      ['profile.username', null],
-      ['profile.name', null],
-      ['profile.avatar', null],
-      ['profile.bio', null],
-      ['profile.email', null],
-      ['profile.phone', null],
+      ['username', null],
+      ['name', null],
+      ['avatar', null],
+      ['bio', null],
+      ['email', null],
+      ['phone', null],
       ['auth.claimed_at', null],
       ['auth.keys', null],
       ['identity.session.username', ''],

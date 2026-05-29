@@ -12,11 +12,11 @@ import { Box, Button, Paper, Typography } from '@/gui/Atoms';
 import { Stack } from '@/gui/Molecules';
 
 function KernelDebugger() {
-  const username = useMeValue<string>('profile.username');
-  const displayName = useMeValue<string>('profile.name');
-  const email = useMeValue<string>('profile.email');
-  const phone = useMeValue<string>('profile.phone');
-  const avatar = useMeValue<string>('profile.avatar');
+  const username = useMeValue<string>('username');
+  const displayName = useMeValue<string>('name');
+  const email = useMeValue<string>('email');
+  const phone = useMeValue<string>('phone');
+  const avatar = useMeValue<string>('avatar');
   const claimedAt = useMeValue<number | null>('auth.claimed_at');
   const activeNamespace = useMeValue<string>('identity.session.namespace');
   const runtimeAuthenticated = useMeValue<boolean>('identity.session.authenticated');
@@ -50,10 +50,10 @@ function KernelDebugger() {
       >
         {`isClaimed          : ${isClaimed}
 username           : ${username || '(null)'}
-profile.name       : ${displayName || '(null)'}
-profile.email      : ${email || '(null)'}
-profile.phone      : ${phone || '(null)'}
-profile.avatar     : ${avatar || '(null)'}
+name               : ${displayName || '(null)'}
+email              : ${email || '(null)'}
+phone              : ${phone || '(null)'}
+avatar             : ${avatar || '(null)'}
 claimed_at         : ${claimedAtLabel}
 activeNamespace    : ${activeNamespace || '(null)'}
 runtimeAuth        : ${runtimeAuthenticated ? 'true' : 'false'}
@@ -77,11 +77,11 @@ function LifecycleHarness() {
   );
 
   const simulateClaim = React.useCallback(() => {
-    setKernel('profile.username', 'jabellae');
-    setKernel('profile.name', 'Sui Abella');
-    setKernel('profile.email', 'sui@neurons.me');
-    setKernel('profile.phone', '+52 228 123 4567');
-    setKernel('profile.avatar', 'https://i.pravatar.cc/150?u=jabellae');
+    setKernel('username', 'jabellae');
+    setKernel('name',     'Sui Abella');
+    setKernel('email',    'sui@neurons.me');
+    setKernel('phone',    '+52 228 123 4567');
+    setKernel('avatar',   'https://i.pravatar.cc/150?u=jabellae');
     setKernel('auth.claimed_at', Date.now());
     setKernel('identity.session.username', 'jabellae');
     setKernel('identity.session.namespace', 'jabellae.cleaker.me');
@@ -92,12 +92,12 @@ function LifecycleHarness() {
   }, [setKernel]);
 
   const simulateLogout = React.useCallback(() => {
-    setKernel('profile.username', null);
-    setKernel('profile.name', null);
-    setKernel('profile.avatar', null);
-    setKernel('profile.bio', null);
-    setKernel('profile.email', null);
-    setKernel('profile.phone', null);
+    setKernel('username', null);
+    setKernel('name',     null);
+    setKernel('avatar',   null);
+    setKernel('bio',      null);
+    setKernel('email',    null);
+    setKernel('phone',    null);
     setKernel('auth.claimed_at', null);
     setKernel('auth.keys', null);
     setKernel('identity.session.username', '');
@@ -181,11 +181,11 @@ function LifecycleHarness() {
 function FullLifecycleStory() {
   const kernel = React.useMemo(() => {
     const me = new ME() as any;
-    writeMeValue(me, 'profile.username', null);
-    writeMeValue(me, 'profile.name', null);
-    writeMeValue(me, 'profile.email', null);
-    writeMeValue(me, 'profile.phone', null);
-    writeMeValue(me, 'profile.avatar', null);
+    writeMeValue(me, 'username', null);
+    writeMeValue(me, 'name',     null);
+    writeMeValue(me, 'email',    null);
+    writeMeValue(me, 'phone',    null);
+    writeMeValue(me, 'avatar',   null);
     writeMeValue(me, 'auth.claimed_at', null);
     writeMeValue(me, 'identity.session.username', '');
     writeMeValue(me, 'identity.session.namespace', '');

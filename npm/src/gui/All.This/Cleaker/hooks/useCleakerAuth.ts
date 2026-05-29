@@ -182,11 +182,11 @@ function buildAuthenticatedProfile(args: {
 
   return {
     username:
-      sanitizeCleakerUsername(cleanString(session.read('profile.username'))) ||
+      sanitizeCleakerUsername(cleanString(session.read('username'))) ||
       fallbackUsername,
-    name: cleanString(session.read('profile.name')) || activeProfile.name,
-    email: cleanString(session.read('profile.email')) || activeProfile.email,
-    phone: cleanString(session.read('profile.phone')) || activeProfile.phone,
+    name: cleanString(session.read('name')) || activeProfile.name,
+    email: cleanString(session.read('email')) || activeProfile.email,
+    phone: cleanString(session.read('phone')) || activeProfile.phone,
     namespace: cleanString(session.semanticNamespace) || fallbackNamespace,
     claimedAt:
       toTimestamp(session.read('auth.claimed_at')) ||
@@ -647,7 +647,7 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
       if (!claimRes.ok || !claimData.success) {
         const code = claimData.error ?? String(claimRes.status);
         if (code === 'GATEWAY_ALREADY_CLAIMED') {
-          throw new Error('This gateway already has an owner. Only the owner can add new identities.');
+          throw new Error('This gateway is still using the old owner-only claim policy. Reload or update NetGet, then try again.');
         }
         throw new Error(claimData.message ?? `Claim failed (${code})`);
       }

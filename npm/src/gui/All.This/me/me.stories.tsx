@@ -7,8 +7,8 @@ export default {
 
 export const Default = () => (
   <Me
-    label=".me Profile"
-    path="profile.name"
+    label=".me Name"
+    path="name"
     initialValue="Jose Abella"
     description="Commit mode: local draft with explicit publish into .me."
   />
@@ -17,7 +17,7 @@ export const Default = () => (
 export const Display = () => (
   <Me
     label=".me Display"
-    path="profile.name"
+    path="name"
     initialValue="Jose Abella"
     mode="display"
   />
@@ -26,7 +26,7 @@ export const Display = () => (
 export const TextArea = () => (
   <Me
     label=".me Bio"
-    path="profile.bio"
+    path="bio"
     type="textarea"
     rows={5}
     initialValue="Building semantic systems with React-first tooling."

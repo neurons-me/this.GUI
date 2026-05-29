@@ -33,8 +33,8 @@ type AccentKey = 'aurora' | 'ember' | 'monolith';
 
 const TopbarIdentity = () => {
   const { me, runtime } = useMe();
-  const profileUsername = useMeValue<string>('profile.username') || '';
-  const profileAvatar = useMeValue<string>('profile.avatar') || '';
+  const profileUsername = useMeValue<string>('username') || '';
+  const profileAvatar = useMeValue<string>('avatar') || '';
   const claimedAt = useMeValue<number | null>('auth.claimed_at');
   const authenticated = Boolean(useMeValue<boolean>('identity.session.authenticated'));
   const activeIdentityNamespace = useMeValue<string>('identity.session.namespace') || '';
@@ -53,12 +53,12 @@ const TopbarIdentity = () => {
       runtime?.notify?.(path);
     };
 
-    clearKernel('profile.username', null);
-    clearKernel('profile.name', null);
-    clearKernel('profile.avatar', null);
-    clearKernel('profile.bio', null);
-    clearKernel('profile.email', null);
-    clearKernel('profile.phone', null);
+    clearKernel('username', null);
+    clearKernel('name',     null);
+    clearKernel('avatar',   null);
+    clearKernel('bio',      null);
+    clearKernel('email',    null);
+    clearKernel('phone',    null);
     clearKernel('auth.claimed_at', null);
     clearKernel('auth.keys', null);
     clearKernel('identity.session.username', '');
@@ -361,7 +361,7 @@ const Demo = () => {
   const me = useMemo(() => {
     const kernel = new ME() as any;
     writeMeValue(kernel, 'profile.status', 'online');
-    writeMeValue(kernel, 'profile.username', null);
+    writeMeValue(kernel, 'username', null);
     writeMeValue(kernel, 'auth.claimed_at', null);
     writeMeValue(kernel, 'identity.session.username', '');
     writeMeValue(kernel, 'identity.session.draftUsername', '');

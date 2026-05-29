@@ -31,7 +31,7 @@ export type NoiseProps = {
   /** ME runtime (proxy) */
   me: any;
 
-  /** Semantic path inside ME, e.g. "profile.name" or "wallet.netget.keys" */
+  /** Semantic path inside ME, e.g. "name" or "wallet.netget.keys" */
   path: string;
 
   /** Operator to call at the target path. Common: "=" for assign, "@" identity, "~" noise, "_" secret */

@@ -15,12 +15,12 @@ export const ACCESS_UI_ROOT = 'ui.cleaker.access';
 export const ACCESS_RUNTIME_ROOT = 'runtime.cleaker.access';
 
 export const CLEAKER_LOGOUT_CLEAR_FIELDS: Array<{ path: string; value: any }> = [
-  { path: 'profile.username', value: null },
-  { path: 'profile.name', value: null },
-  { path: 'profile.avatar', value: null },
-  { path: 'profile.bio', value: null },
-  { path: 'profile.email', value: null },
-  { path: 'profile.phone', value: null },
+  { path: 'username', value: null },
+  { path: 'name',     value: null },
+  { path: 'avatar',   value: null },
+  { path: 'bio',      value: null },
+  { path: 'email',    value: null },
+  { path: 'phone',    value: null },
   { path: 'auth.claimed_at', value: null },
   { path: 'auth.keys', value: null },
   { path: 'identity.session.username', value: '' },
@@ -185,12 +185,12 @@ export function readPinVerified(ctx: AccessKernelContext): boolean {
 export function normalizeRequestedScope(scope: string): string {
   const value = String(scope || '').trim();
   if (!value) return '';
-  if (value === 'username') return 'profile.username';
-  if (value === 'name') return 'profile.name';
-  if (value === 'avatar') return 'profile.avatar';
-  if (value === 'bio') return 'profile.bio';
-  if (value === 'email') return 'profile.email';
-  if (value === 'phone') return 'profile.phone';
+  if (value === 'username') return 'username';
+  if (value === 'name') return 'name';
+  if (value === 'avatar') return 'avatar';
+  if (value === 'bio') return 'bio';
+  if (value === 'email') return 'email';
+  if (value === 'phone') return 'phone';
   if (value === 'namespace') return 'identity.session.namespace';
   return value.replace(/^me\./, '');
 }
@@ -211,12 +211,12 @@ export function defaultValidateScopes(
     if (!scope) continue;
 
     if (
-      scope === 'profile.username' ||
-      scope === 'profile.name' ||
-      scope === 'profile.avatar' ||
-      scope === 'profile.bio' ||
-      scope === 'profile.email' ||
-      scope === 'profile.phone' ||
+      scope === 'username' ||
+      scope === 'name' ||
+      scope === 'avatar' ||
+      scope === 'bio' ||
+      scope === 'email' ||
+      scope === 'phone' ||
       scope === 'identity.session.namespace'
     ) {
       grantedScopes.push(scope);

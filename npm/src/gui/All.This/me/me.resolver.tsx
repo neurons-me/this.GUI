@@ -16,8 +16,8 @@ export const meta = {
   demoSpec: {
     type: 'Me',
     props: {
-      path: 'profile.name',
-      label: '.me Profile Name',
+      path: 'name',
+      label: '.me Name',
       mode: 'commit',
     },
   },

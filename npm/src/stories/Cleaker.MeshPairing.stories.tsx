@@ -71,10 +71,10 @@ function MeshRuntimePanel() {
 function MeshPairingStory() {
   const kernel = React.useMemo(() => {
     const me = new ME() as any;
-    writeMeValue(me, 'profile.username', 'jabellae');
-    writeMeValue(me, 'profile.name', 'Sui Abella');
-    writeMeValue(me, 'profile.email', 'sui@neurons.me');
-    writeMeValue(me, 'profile.phone', '+52 228 123 4567');
+    writeMeValue(me, 'username', 'jabellae');
+    writeMeValue(me, 'name',     'Sui Abella');
+    writeMeValue(me, 'email',    'sui@neurons.me');
+    writeMeValue(me, 'phone',    '+52 228 123 4567');
     writeMeValue(me, 'auth.claimed_at', Date.now() - 120000);
     writeMeValue(me, 'identity.session.username', 'jabellae');
     writeMeValue(me, 'identity.session.namespace', 'jabellae.cleaker.me');
