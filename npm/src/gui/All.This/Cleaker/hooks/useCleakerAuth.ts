@@ -484,6 +484,7 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
                           identityHash: data.identityHash,
                           username:     value,
                           isOwner:      Boolean(data.isOwner),
+                          isAdmin:      Boolean(data.isAdmin),
                           scopes:       Array.isArray(data.scopes) ? data.scopes : [],
                           gatewayId:    typeof data.gatewayId === 'string' ? data.gatewayId : '',
                         },
@@ -491,11 +492,26 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
                     );
                   }
 
+                  // Read profile fields from the monad kernel (persisted at claim time)
+                  let monadName  = activeProfile.name;
+                  let monadEmail = activeProfile.email;
+                  let monadPhone = activeProfile.phone;
+                  try {
+                    const [rName, rEmail, rPhone] = await Promise.all([
+                      signedFetch('/@name').then(r => r.ok ? r.json() : null).catch(() => null),
+                      signedFetch('/@email').then(r => r.ok ? r.json() : null).catch(() => null),
+                      signedFetch('/@phone').then(r => r.ok ? r.json() : null).catch(() => null),
+                    ]);
+                    if (rName?.value)  monadName  = String(rName.value);
+                    if (rEmail?.value) monadEmail = String(rEmail.value);
+                    if (rPhone?.value) monadPhone = String(rPhone.value);
+                  } catch { /* non-fatal — fall back to activeProfile */ }
+
                   const gatewayProfile: CleakerProfileSnapshot = {
                     username:  value,
-                    name:      activeProfile.name,
-                    email:     activeProfile.email,
-                    phone:     activeProfile.phone,
+                    name:      monadName,
+                    email:     monadEmail,
+                    phone:     monadPhone,
                     namespace: `${value}.${hostname}`,
                     claimedAt: activeProfile.claimedAt ?? Date.now(),
                   };
@@ -636,11 +652,17 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
       const proofB64  = btoa(JSON.stringify(proof))
         .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-      // Step 4 — POST /me/claim
+      // Step 4 — POST /me/claim (include profile so monad can persist name/email/phone)
       const claimRes = await fetch('/me/claim', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ proof: proofB64, username: validated.value }),
+        body: JSON.stringify({
+          proof: proofB64,
+          username: validated.value,
+          name: input.fullName || '',
+          email: input.email || '',
+          phone: input.phone || '',
+        }),
       });
 
       const claimData = await claimRes.json().catch(() => ({}));
@@ -655,6 +677,26 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
       // Step 5 — store session, signal authenticated
       cleakerNodeRef.current     = node;
       gatewayHostnameRef.current = hostname;
+
+      // Step 5b — write profile fields to the monad kernel so they persist across sessions
+      // signedFetch is not yet available (it uses cleakerNodeRef which we just set).
+      // Use the node directly to sign and write each field.
+      const profileWrites: Array<{ expression: string; value: string }> = [];
+      if (input.fullName) profileWrites.push({ expression: 'name',  value: input.fullName });
+      if (input.email)    profileWrites.push({ expression: 'email', value: input.email });
+      if (input.phone)    profileWrites.push({ expression: 'phone', value: input.phone });
+      for (const write of profileWrites) {
+        try {
+          const wChallenge = canonicalJson({ method: 'POST', nonce: genNonce(), path: '/', timestamp: Date.now() });
+          const wProof = await (node as any).prove({ rootNamespace: hostname, challenge: wChallenge });
+          const wProofB64 = btoa(JSON.stringify(wProof)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+          await fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Me-Proof': wProofB64 },
+            body: JSON.stringify(write),
+          });
+        } catch { /* non-fatal */ }
+      }
 
       const claimedProfile: CleakerProfileSnapshot = {
         username:  validated.value,
