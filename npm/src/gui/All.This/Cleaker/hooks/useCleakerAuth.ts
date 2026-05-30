@@ -497,12 +497,13 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
                   let monadEmail = activeProfile.email;
                   let monadPhone = activeProfile.phone;
                   try {
-                    // Read from USER's namespace blockchain (jabellae.suis-macbook-air.local)
-                    const userNs = `${value}.${hostname}`;
+                    // Read from user's namespace via NRP path: @username/field
+                    // suis-macbook-air.local/@jabellae/name → jabellae.suis-macbook-air.local/name
+                    const base = `https://${hostname}/@${value}`;
                     const [rName, rEmail, rPhone] = await Promise.all([
-                      signedFetch(`https://${userNs}/name`).then(r => r.ok ? r.json() : null).catch(() => null),
-                      signedFetch(`https://${userNs}/email`).then(r => r.ok ? r.json() : null).catch(() => null),
-                      signedFetch(`https://${userNs}/phone`).then(r => r.ok ? r.json() : null).catch(() => null),
+                      signedFetch(`${base}/name`).then(r => r.ok ? r.json() : null).catch(() => null),
+                      signedFetch(`${base}/email`).then(r => r.ok ? r.json() : null).catch(() => null),
+                      signedFetch(`${base}/phone`).then(r => r.ok ? r.json() : null).catch(() => null),
                     ]);
                     if (rName?.value)  monadName  = String(rName.value);
                     if (rEmail?.value) monadEmail = String(rEmail.value);
@@ -687,18 +688,20 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
       if (input.fullName) profileWrites.push({ expression: 'name',  value: input.fullName });
       if (input.email)    profileWrites.push({ expression: 'email', value: input.email });
       if (input.phone)    profileWrites.push({ expression: 'phone', value: input.phone });
-      // The user's namespace is username.hostname — this is the blockchain thread
+      // The user's namespace is username.hostname — this is the blockchain thread.
+      // mDNS only resolves the machine hostname, not subdomains, so we route through
+      // the machine endpoint and pass the user's namespace in the body.
       const userNamespace = `${validated.value}.${hostname}`;
       for (const write of profileWrites) {
         try {
           const wChallenge = canonicalJson({ method: 'POST', nonce: genNonce(), path: '/', timestamp: Date.now() });
           const wProof = await (node as any).prove({ rootNamespace: hostname, challenge: wChallenge });
           const wProofB64 = btoa(JSON.stringify(wProof)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-          // Write to the USER's namespace (jabellae.suis-macbook-air.local), not the machine namespace
-          await fetch(`https://${userNamespace}/`, {
+          // POST to machine hostname, namespace in body routes write to jabellae.hostname chain
+          await fetch(`https://${hostname}/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-Me-Proof': wProofB64 },
-            body: JSON.stringify(write),
+            body: JSON.stringify({ ...write, namespace: userNamespace }),
           });
         } catch { /* non-fatal */ }
       }
