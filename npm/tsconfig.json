@@ -52,6 +52,7 @@
       "@/gui/components/*": ["gui/Compounds/*"],
       "@/stories": ["stories"],
       "@/stories/*": ["stories/*"],
+      "cleaker": ["../../../../modules/cleaker/Typescript/dist-types/index.d.ts"],
       "@/*": ["*"]
     },
     // IMPORTANT:
