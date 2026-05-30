@@ -494,7 +494,7 @@ export default function CleakerCard(props: CleakerCardProps) {
       >
         {showProfileView ? (
           <Stack spacing={1}>
-            <Box {...nodeAttrs('profile-card', 'Cleaker.ProfileCard')} sx={{ minWidth: 0 }}>
+            <Box {...nodeAttrs('profile-card', 'Cleaker.ProfileCard')} sx={{ minWidth: 0, width: '100%' }}>
               {renderProfileCard()}
             </Box>
             <Box
