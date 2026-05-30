@@ -25,6 +25,9 @@ export interface BlocksTableEntry {
 
 type BlocksTableProps = {
   endpoint: string;
+  /** Override the fetch path. Default: /blockchain or /blocks.
+   *  Pass an NRP path like /@fatima/name to show blocks for that target only. */
+  blockPath?: string;
   namespaceRootUrl?: string;
   namespaceLabel?: string;
   rowsLimit?: number;
@@ -302,6 +305,7 @@ function renderResolvedValueContent(resolved: ResolvedValuePresentation) {
 
 export function BlocksTable({
   endpoint,
+  blockPath,
   namespaceRootUrl = '',
   namespaceLabel = '',
   rowsLimit = 120,
@@ -367,10 +371,15 @@ export function BlocksTable({
       try {
         const fetchLimit = Math.max(120, Math.min(500, safeRenderLimit * 4));
         let json: any;
-        try {
-          json = await tryFetchJson(`${base}/blockchain?limit=${encodeURIComponent(String(fetchLimit))}`);
-        } catch {
-          json = await tryFetchJson(`${base}/blocks?limit=${encodeURIComponent(String(fetchLimit))}`);
+        if (blockPath) {
+          // NRP path given — fetch that specific path (e.g. /@fatima/name)
+          json = await tryFetchJson(`${base}${blockPath}`);
+        } else {
+          try {
+            json = await tryFetchJson(`${base}/blockchain?limit=${encodeURIComponent(String(fetchLimit))}`);
+          } catch {
+            json = await tryFetchJson(`${base}/blocks?limit=${encodeURIComponent(String(fetchLimit))}`);
+          }
         }
 
         if (Array.isArray(json)) setData(json as any);
@@ -385,7 +394,7 @@ export function BlocksTable({
       }
     }
     loadBlocks();
-  }, [endpoint, safeRenderLimit]);
+  }, [endpoint, blockPath, safeRenderLimit]);
 
   const namespaceMeta = React.useMemo(() => {
     const meta = new Map<string, { imageUrl: string | null }>();

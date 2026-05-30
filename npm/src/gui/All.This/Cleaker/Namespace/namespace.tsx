@@ -33,6 +33,9 @@ export interface NamespaceProps {
   defaultTab?: 'users' | 'blocks' | 'details' | 'surface';
   /** Restrict which tabs are visible. Omit to show all. */
   tabs?: Array<'users' | 'blocks' | 'details' | 'surface'>;
+  /** NRP path to use as blockchain data source (e.g. /@fatima/name).
+   *  Overrides the default /blockchain fetch. Parsed from URL if not provided. */
+  blockPath?: string;
   blockRowsLimit?: number;
   namespaceExpression?: string;
   namespaceHandle?: string;
@@ -375,6 +378,7 @@ export default function Namespace({
   endpoint: endpointProp = 'http://localhost:8161',
   defaultTab = 'users',
   tabs: allowedTabs,
+  blockPath: blockPathProp,
   blockRowsLimit = 120,
   namespaceExpression = '',
   namespaceHandle = '',
@@ -2185,6 +2189,7 @@ export default function Namespace({
         <Box {...nodeAttrs('blocks-view', 'Namespace.BlocksView')}>
           <BlockchainTable
             endpoint={safeEndpoint}
+            blockPath={blockPathProp}
             namespaceLabel={namespaceDisplayTitle}
             rowsLimit={appliedBlockchainRowsLimit}
             namespaceRootUrl={
