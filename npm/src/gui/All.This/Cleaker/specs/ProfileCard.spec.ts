@@ -92,7 +92,6 @@ export function createProfileCardSpec(options: ProfileCardSpecOptions = {}): Gui
       'data-gui-component': 'Cleaker.ProfileCardSpec',
       sx: (theme: any) => ({
         width: '100%',
-        maxWidth: 332,
         borderRadius: 3,
         borderColor: 'divider',
         bgcolor: 'background.paper',
