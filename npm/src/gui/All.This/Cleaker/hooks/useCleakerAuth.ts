@@ -697,13 +697,18 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
           const wChallenge = canonicalJson({ method: 'POST', nonce: genNonce(), path: '/', timestamp: Date.now() });
           const wProof = await (node as any).prove({ rootNamespace: hostname, challenge: wChallenge });
           const wProofB64 = btoa(JSON.stringify(wProof)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-          // POST to machine hostname, namespace in body routes write to jabellae.hostname chain
-          await fetch(`https://${hostname}/`, {
+          const identityHash = String(wProof.identityHash || '');
+          // POST to machine hostname, namespace + identityHash in body routes write to jabellae.hostname chain
+          const writeRes = await fetch(`https://${hostname}/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-Me-Proof': wProofB64 },
-            body: JSON.stringify({ ...write, namespace: userNamespace }),
+            body: JSON.stringify({ ...write, namespace: userNamespace, identityHash }),
           });
-        } catch { /* non-fatal */ }
+          const writeBody = await writeRes.json().catch(() => ({}));
+          console.log('[profile write]', write.expression, writeRes.status, writeBody);
+        } catch (err) {
+          console.warn('[profile write failed]', write.expression, err);
+        }
       }
 
       const claimedProfile: CleakerProfileSnapshot = {
