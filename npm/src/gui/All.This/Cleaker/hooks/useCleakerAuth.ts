@@ -497,12 +497,12 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
                   let monadEmail = activeProfile.email;
                   let monadPhone = activeProfile.phone;
                   try {
-                    // Read from monad blockchain via HTTPS hostname (nginx proxies to monad)
-                    const monadBase = `https://${hostname}`;
+                    // Read from USER's namespace blockchain (jabellae.suis-macbook-air.local)
+                    const userNs = `${value}.${hostname}`;
                     const [rName, rEmail, rPhone] = await Promise.all([
-                      signedFetch(`${monadBase}/@name`).then(r => r.ok ? r.json() : null).catch(() => null),
-                      signedFetch(`${monadBase}/@email`).then(r => r.ok ? r.json() : null).catch(() => null),
-                      signedFetch(`${monadBase}/@phone`).then(r => r.ok ? r.json() : null).catch(() => null),
+                      signedFetch(`https://${userNs}/name`).then(r => r.ok ? r.json() : null).catch(() => null),
+                      signedFetch(`https://${userNs}/email`).then(r => r.ok ? r.json() : null).catch(() => null),
+                      signedFetch(`https://${userNs}/phone`).then(r => r.ok ? r.json() : null).catch(() => null),
                     ]);
                     if (rName?.value)  monadName  = String(rName.value);
                     if (rEmail?.value) monadEmail = String(rEmail.value);
@@ -687,13 +687,15 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
       if (input.fullName) profileWrites.push({ expression: 'name',  value: input.fullName });
       if (input.email)    profileWrites.push({ expression: 'email', value: input.email });
       if (input.phone)    profileWrites.push({ expression: 'phone', value: input.phone });
+      // The user's namespace is username.hostname — this is the blockchain thread
+      const userNamespace = `${validated.value}.${hostname}`;
       for (const write of profileWrites) {
         try {
           const wChallenge = canonicalJson({ method: 'POST', nonce: genNonce(), path: '/', timestamp: Date.now() });
           const wProof = await (node as any).prove({ rootNamespace: hostname, challenge: wChallenge });
           const wProofB64 = btoa(JSON.stringify(wProof)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-          // Write to the monad via its HTTPS hostname (nginx proxies suis-macbook-air.local → monad)
-          await fetch(`https://${hostname}/`, {
+          // Write to the USER's namespace (jabellae.suis-macbook-air.local), not the machine namespace
+          await fetch(`https://${userNamespace}/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-Me-Proof': wProofB64 },
             body: JSON.stringify(write),
