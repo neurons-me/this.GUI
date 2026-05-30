@@ -497,13 +497,17 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
                   let monadEmail = activeProfile.email;
                   let monadPhone = activeProfile.phone;
                   try {
-                    // Read from user's namespace via NRP path: @username/field
-                    // suis-macbook-air.local/@jabellae/name → jabellae.suis-macbook-air.local/name
+                    // Read via NRP path @username/field — monad resolves to username.hostname namespace.
+                    // X-Me-Proof works on GETs (no LOCAL_MONADS_CONTROL_ONLY issue).
                     const base = `https://${hostname}/@${value}`;
+                    const proofForRead = await (cleakerNodeRef.current as any)?.prove?.({ rootNamespace: hostname, challenge: canonicalJson({ method: 'GET', nonce: genNonce(), path: `/@${value}/`, timestamp: Date.now() }) });
+                    const readProofB64 = proofForRead ? btoa(JSON.stringify(proofForRead)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '') : '';
+                    const readHeaders: Record<string, string> = { 'Content-Type': 'application/json' };
+                    if (readProofB64) readHeaders['X-Me-Proof'] = readProofB64;
                     const [rName, rEmail, rPhone] = await Promise.all([
-                      signedFetch(`${base}/name`).then(r => r.ok ? r.json() : null).catch(() => null),
-                      signedFetch(`${base}/email`).then(r => r.ok ? r.json() : null).catch(() => null),
-                      signedFetch(`${base}/phone`).then(r => r.ok ? r.json() : null).catch(() => null),
+                      fetch(`${base}/name`, { headers: readHeaders }).then(r => r.ok ? r.json() : null).catch(() => null),
+                      fetch(`${base}/email`, { headers: readHeaders }).then(r => r.ok ? r.json() : null).catch(() => null),
+                      fetch(`${base}/phone`, { headers: readHeaders }).then(r => r.ok ? r.json() : null).catch(() => null),
                     ]);
                     if (rName?.value)  monadName  = String(rName.value);
                     if (rEmail?.value) monadEmail = String(rEmail.value);
@@ -697,12 +701,12 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
           const wChallenge = canonicalJson({ method: 'POST', nonce: genNonce(), path: '/', timestamp: Date.now() });
           const wProof = await (node as any).prove({ rootNamespace: hostname, challenge: wChallenge });
           const identityHash = String(wProof.identityHash || '');
-          // POST without X-Me-Proof — monad uses identityHash in body for attribution.
-          // X-Me-Proof triggers LOCAL_MONADS_CONTROL_ONLY rejection.
-          const writeRes = await fetch(`https://${hostname}/`, {
+          // POST to /@username/ path — monad resolves namespace from URL, not body.
+          // X-Me-Proof triggers LOCAL_MONADS_CONTROL_ONLY on POST, so omit it.
+          const writeRes = await fetch(`https://${hostname}/@${validated.value}/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...write, namespace: userNamespace, identityHash }),
+            body: JSON.stringify({ ...write, identityHash }),
           });
           const writeBody = await writeRes.json().catch(() => ({}));
           console.log('[profile write]', write.expression, writeRes.status, writeBody);
