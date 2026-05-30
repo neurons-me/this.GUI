@@ -26,14 +26,5 @@ export function deriveChildIdentityHash(parentHash: string, segment: string): st
  */
 export function deriveIdentity({ secret, namespace }: IdentityInput): IdentityResult {
   const identityRoot = deriveIdentityRootHash(secret, namespace);
-  // Log to browser console
-  if (typeof window !== "undefined") {
-    console.log("ME Identity Derived:");
-    console.log("secret:", secret);
-    console.log("namespace:", namespace);
-    const masked = "••••••••••••••••••••••••••••••••" + identityRoot.slice(-4);
-    console.log("identityRoot:", masked);
-  }
-
   return { namespace, identityRoot };
 }

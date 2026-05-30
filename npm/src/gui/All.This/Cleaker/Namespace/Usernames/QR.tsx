@@ -3,7 +3,7 @@ import qrcodegen from "qrcode-generator";
 export type QREmbedMode = "none" | "negative-space" | "positive-overlay";
 export type QRProps = {
   /** The string to encode in the QR (e.g. identityRoot / cleak) */
-  value: string;
+  value?: string | null;
   /** Overall rendered size in px */
   size?: number;
   /** Background color (can use CSS variables, e.g. var(--qr-bg)) */
@@ -65,10 +65,11 @@ function parseStringBitmap(rows: string[]): boolean[][] {
 
 type ModuleMatrix = boolean[][];
 
-function buildQRMatrix(value: string, ecc: "L" | "M" | "Q" | "H"): ModuleMatrix {
+function buildQRMatrix(value: string | null | undefined, ecc: "L" | "M" | "Q" | "H"): ModuleMatrix {
+  const encodedValue = String(value ?? "");
   // qrcode-generator expects typeNumber 0 for auto
   const qr = (qrcodegen as any)(0, ecc);
-  qr.addData(value);
+  qr.addData(encodedValue);
   qr.make();
   const count: number = qr.getModuleCount();
   const m: boolean[][] = [];

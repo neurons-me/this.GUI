@@ -55,6 +55,8 @@ import CleakerQRResolver from "@/gui/All.This/Cleaker/QR/CleakerQR.resolver";
 import CleakerGroupResolver from "@/gui/All.This/Cleaker/Group/CleakerGroup.resolver";
 import CleakerUserResolver from "@/gui/All.This/Cleaker/User/CleakerUser.resolver";
 import NamespaceResolver from "@/gui/All.This/Cleaker/Namespace/Namespace.resolver";
+import NamespaceUsersResolver from "@/gui/All.This/Cleaker/Namespace/NamespaceUsers.resolver";
+import NamespaceSurfaceResolver from "@/gui/All.This/Cleaker/Namespace/NamespaceSurface.resolver";
 import QRmeResolver from "@/gui/All.This/me/QR/QR.me.resolver";
 import SessionQRResolver from "@/gui/All.This/me/QR.resolver";
 import MeResolver from "@/gui/All.This/me/me.resolver";
@@ -113,6 +115,8 @@ export const GuiRegistry = createRegistry([
   CleakerComposerResolver,
   CleakerResolver,
   NamespaceResolver,
+  NamespaceUsersResolver,
+  NamespaceSurfaceResolver,
   CleakerGroupResolver,
   CleakerUserResolver,
 ]);

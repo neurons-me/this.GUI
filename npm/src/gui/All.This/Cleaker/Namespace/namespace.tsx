@@ -31,6 +31,8 @@ import {
 export interface NamespaceProps {
   endpoint?: string;
   defaultTab?: 'users' | 'blocks' | 'details' | 'surface';
+  /** Restrict which tabs are visible. Omit to show all. */
+  tabs?: Array<'users' | 'blocks' | 'details' | 'surface'>;
   blockRowsLimit?: number;
   namespaceExpression?: string;
   namespaceHandle?: string;
@@ -372,6 +374,7 @@ function mergeSurfaceEntry(
 export default function Namespace({
   endpoint: endpointProp = 'http://localhost:8161',
   defaultTab = 'users',
+  tabs: allowedTabs,
   blockRowsLimit = 120,
   namespaceExpression = '',
   namespaceHandle = '',
@@ -2109,42 +2112,50 @@ export default function Namespace({
           paddingBottom: '0.5rem',
         }}
       >
-        <Button
-          {...nodeAttrs('tab-users', 'Namespace.TabUsers')}
-          variant={activeTab === 'users' ? 'outlined' : 'text'}
-          size="small"
-          sx={{ minHeight: 32, px: 1.25, fontSize: '0.8rem' }}
-          onClick={() => setActiveTab('users')}
-        >
-          Users
-        </Button>
-        <Button
-          {...nodeAttrs('tab-blocks', 'Namespace.TabBlocks')}
-          variant={activeTab === 'blocks' ? 'outlined' : 'text'}
-          size="small"
-          sx={{ minHeight: 32, px: 1.25, fontSize: '0.8rem' }}
-          onClick={() => setActiveTab('blocks')}
-        >
-          Blockchain
-        </Button>
-        <Button
-          {...nodeAttrs('tab-details', 'Namespace.TabDetails')}
-          variant={activeTab === 'details' ? 'outlined' : 'text'}
-          size="small"
-          sx={{ minHeight: 32, px: 1.25, fontSize: '0.8rem' }}
-          onClick={() => setActiveTab('details')}
-        >
-          Details
-        </Button>
-        <Button
-          {...nodeAttrs('tab-surface', 'Namespace.TabSurface')}
-          variant={activeTab === 'surface' ? 'outlined' : 'text'}
-          size="small"
-          sx={{ minHeight: 32, px: 1.25, fontSize: '0.8rem' }}
-          onClick={() => setActiveTab('surface')}
-        >
-          Surface
-        </Button>
+        {(!allowedTabs || allowedTabs.includes('users')) && (
+          <Button
+            {...nodeAttrs('tab-users', 'Namespace.TabUsers')}
+            variant={activeTab === 'users' ? 'outlined' : 'text'}
+            size="small"
+            sx={{ minHeight: 32, px: 1.25, fontSize: '0.8rem' }}
+            onClick={() => setActiveTab('users')}
+          >
+            Users
+          </Button>
+        )}
+        {(!allowedTabs || allowedTabs.includes('blocks')) && (
+          <Button
+            {...nodeAttrs('tab-blocks', 'Namespace.TabBlocks')}
+            variant={activeTab === 'blocks' ? 'outlined' : 'text'}
+            size="small"
+            sx={{ minHeight: 32, px: 1.25, fontSize: '0.8rem' }}
+            onClick={() => setActiveTab('blocks')}
+          >
+            Blockchain
+          </Button>
+        )}
+        {(!allowedTabs || allowedTabs.includes('details')) && (
+          <Button
+            {...nodeAttrs('tab-details', 'Namespace.TabDetails')}
+            variant={activeTab === 'details' ? 'outlined' : 'text'}
+            size="small"
+            sx={{ minHeight: 32, px: 1.25, fontSize: '0.8rem' }}
+            onClick={() => setActiveTab('details')}
+          >
+            Details
+          </Button>
+        )}
+        {(!allowedTabs || allowedTabs.includes('surface')) && (
+          <Button
+            {...nodeAttrs('tab-surface', 'Namespace.TabSurface')}
+            variant={activeTab === 'surface' ? 'outlined' : 'text'}
+            size="small"
+            sx={{ minHeight: 32, px: 1.25, fontSize: '0.8rem' }}
+            onClick={() => setActiveTab('surface')}
+          >
+            Surface
+          </Button>
+        )}
       </Box>
       {/* Render Only Child Components */}
       {activeTab === 'users' && safeEndpoint && (
