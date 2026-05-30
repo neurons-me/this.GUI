@@ -696,12 +696,12 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
         try {
           const wChallenge = canonicalJson({ method: 'POST', nonce: genNonce(), path: '/', timestamp: Date.now() });
           const wProof = await (node as any).prove({ rootNamespace: hostname, challenge: wChallenge });
-          const wProofB64 = btoa(JSON.stringify(wProof)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
           const identityHash = String(wProof.identityHash || '');
-          // POST to machine hostname, namespace + identityHash in body routes write to jabellae.hostname chain
+          // POST without X-Me-Proof — monad uses identityHash in body for attribution.
+          // X-Me-Proof triggers LOCAL_MONADS_CONTROL_ONLY rejection.
           const writeRes = await fetch(`https://${hostname}/`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Me-Proof': wProofB64 },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ...write, namespace: userNamespace, identityHash }),
           });
           const writeBody = await writeRes.json().catch(() => ({}));
