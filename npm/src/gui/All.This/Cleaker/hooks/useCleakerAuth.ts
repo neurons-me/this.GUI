@@ -497,10 +497,12 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
                   let monadEmail = activeProfile.email;
                   let monadPhone = activeProfile.phone;
                   try {
+                    // Read from monad blockchain via HTTPS hostname (nginx proxies to monad)
+                    const monadBase = `https://${hostname}`;
                     const [rName, rEmail, rPhone] = await Promise.all([
-                      signedFetch('/@name').then(r => r.ok ? r.json() : null).catch(() => null),
-                      signedFetch('/@email').then(r => r.ok ? r.json() : null).catch(() => null),
-                      signedFetch('/@phone').then(r => r.ok ? r.json() : null).catch(() => null),
+                      signedFetch(`${monadBase}/@name`).then(r => r.ok ? r.json() : null).catch(() => null),
+                      signedFetch(`${monadBase}/@email`).then(r => r.ok ? r.json() : null).catch(() => null),
+                      signedFetch(`${monadBase}/@phone`).then(r => r.ok ? r.json() : null).catch(() => null),
                     ]);
                     if (rName?.value)  monadName  = String(rName.value);
                     if (rEmail?.value) monadEmail = String(rEmail.value);
