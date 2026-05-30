@@ -184,18 +184,6 @@ export function createProfileCardSpec(options: ProfileCardSpecOptions = {}): Gui
                         children: ['@', { read: usernamePath }],
                       },
                     },
-                    {
-                      type: 'Typography',
-                      props: {
-                        variant: 'body2',
-                        color: 'text.secondary',
-                        sx: {
-                          overflowWrap: 'anywhere',
-                          lineHeight: 1.35,
-                        },
-                        children: { read: namespacePath },
-                      },
-                    },
                   ],
                 },
                 {
