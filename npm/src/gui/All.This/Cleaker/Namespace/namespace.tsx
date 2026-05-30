@@ -399,6 +399,9 @@ export default function Namespace({
   const [activeTab, setActiveTab] = useState<'users' | 'blocks' | 'details' | 'surface'>(defaultTab);
   const [showEndpointInput, setShowEndpointInput] = useState(false);
   const [showNamespaceTip, setShowNamespaceTip] = useState(false);
+  const [namespaceHistory, setNamespaceHistory] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem('ns:history') || '[]'); } catch { return []; }
+  });
   const [bootstrapInfo, setBootstrapInfo] = useState<CleakerBootstrapInfo | null>(null);
   const [surfaceTelemetry, setSurfaceTelemetry] = useState<Partial<CleakerSurfaceEntry> | null>(null);
   const [surfaceRequestEvents, setSurfaceRequestEvents] = useState<CleakerSurfaceRequestEvent[]>([]);
@@ -1120,6 +1123,12 @@ export default function Namespace({
       const res = await fetch(`${base}/`, { method: 'GET' });
       if (!res.ok) throw new Error('Failed');
       setConnected(true);
+      // Save to history
+      setNamespaceHistory(prev => {
+        const next = [base, ...prev.filter(h => h !== base)].slice(0, 8);
+        try { localStorage.setItem('ns:history', JSON.stringify(next)); } catch {}
+        return next;
+      });
     } catch {
       setConnected(false);
     }
@@ -1873,43 +1882,6 @@ export default function Namespace({
           gap: 0.5,
         }}
       >
-        <Tooltip
-          title={showEndpointInput ? 'Hide namespace input' : 'Show namespace input'}
-          placement="bottom"
-          arrow
-        >
-          <Box component="span" sx={{ display: 'inline-flex' }}>
-            <IconButton
-              {...nodeAttrs('endpoint-toggle', 'Namespace.EndpointToggle')}
-              aria-label={showEndpointInput ? 'Hide namespace input' : 'Show namespace input'}
-              onClick={() => setShowEndpointInput((v) => !v)}
-              size="small"
-              sx={{
-                border: '1px solid',
-                borderColor: 'divider',
-                bgcolor: 'background.paper',
-                color:
-                  !safeEndpoint
-                    ? 'divider'
-                    : connected
-                      ? 'success.main'
-                      : 'error.main',
-                '&:hover': {
-                  bgcolor: 'background.nav',
-                  color:
-                    !safeEndpoint
-                      ? 'text.secondary'
-                      : connected
-                        ? 'success.main'
-                        : 'error.main',
-                },
-              }}
-            >
-              <Icon name="dns" fontSize={18} />
-            </IconButton>
-          </Box>
-        </Tooltip>
-
         <Tooltip title={showNamespaceTip ? 'Hide namespace tip' : 'Show namespace tip'} placement="bottom" arrow>
           <Box component="span" sx={{ display: 'inline-flex' }}>
             <IconButton
@@ -2073,33 +2045,68 @@ export default function Namespace({
               <Icon name={connected ? 'check' : 'sync'} />
             </IconButton>
           </Box>
+          {namespaceHistory.length > 0 && (
+            <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 0.5, alignItems: 'center', width: '100%' }}>
+              <Typography variant="caption" sx={{ color: 'text.disabled', mr: 0.5, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', fontSize: '0.68rem' }}>
+                History
+              </Typography>
+              {namespaceHistory.map((h) => (
+                <Box
+                  key={h}
+                  component="button"
+                  onClick={() => { setEndpoint(h); scheduleConnect(h); }}
+                  sx={{
+                    px: 0.9, py: 0.3,
+                    border: '1px solid',
+                    borderColor: h === safeEndpoint ? 'primary.main' : 'divider',
+                    borderRadius: 1,
+                    bgcolor: h === safeEndpoint ? 'background.nav' : 'transparent',
+                    color: h === safeEndpoint ? 'primary.main' : 'text.secondary',
+                    fontFamily: 'monospace',
+                    fontSize: '0.72rem',
+                    cursor: 'pointer',
+                    lineHeight: 1.4,
+                    '&:hover': { borderColor: 'primary.main', color: 'primary.main' },
+                  }}
+                >
+                  {h.replace(/^https?:\/\//, '')}
+                </Box>
+              ))}
+            </Box>
+          )}
         </Box>
       )}
       <Box
         {...nodeAttrs('summary', 'Namespace.Summary')}
-        sx={{
-          mt: 1.5,
-          mb: 1.25,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 0.25,
-        }}
+        sx={{ mt: 1.5, mb: 1.25, display: 'flex', flexDirection: 'column', gap: 0.25 }}
       >
         <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.1 }}>
           Namespace:
         </Typography>
-        <Typography
-          variant="body2"
-          sx={{
-            color: 'text.secondary',
-            fontFamily: 'monospace',
-            fontSize: '0.85rem',
-            wordBreak: 'break-all',
-          }}
-          title={namespaceDisplayTitle}
+        {/* Namespace name + inline edit trigger */}
+        <Box
+          sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, cursor: 'pointer' }}
+          onClick={() => setShowEndpointInput((v) => !v)}
+          title="Edit namespace"
         >
-          {namespaceDisplayTitle}
-        </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              color: showEndpointInput ? 'primary.main' : 'text.secondary',
+              fontFamily: 'monospace',
+              fontSize: '0.85rem',
+              wordBreak: 'break-all',
+              transition: 'color 120ms ease',
+            }}
+          >
+            {namespaceDisplayTitle}
+          </Typography>
+          <Icon
+            name={showEndpointInput ? 'edit_off' : 'edit'}
+            fontSize={14}
+            iconColor={showEndpointInput ? 'primary' : undefined}
+          />
+        </Box>
       </Box>
       {/* Tabs */}
       <Box
