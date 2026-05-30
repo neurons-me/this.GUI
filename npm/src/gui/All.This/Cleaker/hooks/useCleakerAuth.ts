@@ -685,31 +685,33 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
       cleakerNodeRef.current     = node;
       gatewayHostnameRef.current = hostname;
 
-      // Step 5b — write profile fields to the monad kernel so they persist across sessions
-      // signedFetch is not yet available (it uses cleakerNodeRef which we just set).
-      // Use the node directly to sign and write each field.
-      const profileWrites: Array<{ expression: string; value: string }> = [];
-      if (input.fullName) profileWrites.push({ expression: 'name',  value: input.fullName });
-      if (input.email)    profileWrites.push({ expression: 'email', value: input.email });
-      if (input.phone)    profileWrites.push({ expression: 'phone', value: input.phone });
+      // Step 5b — write to monad blockchain: claim event + profile fields.
+      // The blockchain is the source of truth. gateway-claims.json is just a fast nginx cache.
+      const wProofBase = await (node as any).prove({ rootNamespace: hostname, challenge: canonicalJson({ method: 'POST', nonce: genNonce(), path: '/', timestamp: Date.now() }) });
+      const identityHashBase = String(wProofBase.identityHash || '');
+
+      const profileWrites: Array<{ expression: string; value: unknown }> = [
+        // Claim event — record the identity anchoring in the blockchain
+        { expression: 'claim', value: { username: validated.value, identityHash: identityHashBase, claimedAt: Date.now() } },
+        // Profile fields
+        ...(input.fullName ? [{ expression: 'name',  value: input.fullName }] : []),
+        ...(input.email    ? [{ expression: 'email', value: input.email }]    : []),
+        ...(input.phone    ? [{ expression: 'phone', value: input.phone }]    : []),
+      ];
       // The user's namespace is username.hostname — this is the blockchain thread.
       // mDNS only resolves the machine hostname, not subdomains, so we route through
       // the machine endpoint and pass the user's namespace in the body.
       const userNamespace = `${validated.value}.${hostname}`;
       for (const write of profileWrites) {
         try {
-          const wChallenge = canonicalJson({ method: 'POST', nonce: genNonce(), path: '/', timestamp: Date.now() });
-          const wProof = await (node as any).prove({ rootNamespace: hostname, challenge: wChallenge });
-          const identityHash = String(wProof.identityHash || '');
-          // POST to /@username/ path — monad resolves namespace from URL, not body.
-          // X-Me-Proof triggers LOCAL_MONADS_CONTROL_ONLY on POST, so omit it.
+          // POST to /@username/ — monad resolves namespace from URL path (NRP)
           const writeRes = await fetch(`https://${hostname}/@${validated.value}/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...write, identityHash }),
+            body: JSON.stringify({ ...write, identityHash: identityHashBase }),
           });
           const writeBody = await writeRes.json().catch(() => ({}));
-          console.log('[profile write]', write.expression, writeRes.status, writeBody);
+          console.log('[blockchain write]', write.expression, writeRes.status, writeBody);
         } catch (err) {
           console.warn('[profile write failed]', write.expression, err);
         }
