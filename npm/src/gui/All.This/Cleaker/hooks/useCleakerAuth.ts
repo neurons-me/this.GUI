@@ -690,7 +690,8 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
           const wChallenge = canonicalJson({ method: 'POST', nonce: genNonce(), path: '/', timestamp: Date.now() });
           const wProof = await (node as any).prove({ rootNamespace: hostname, challenge: wChallenge });
           const wProofB64 = btoa(JSON.stringify(wProof)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-          await fetch('/', {
+          // Write to the monad via its HTTPS hostname (nginx proxies suis-macbook-air.local → monad)
+          await fetch(`https://${hostname}/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-Me-Proof': wProofB64 },
             body: JSON.stringify(write),
