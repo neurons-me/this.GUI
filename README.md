@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="npm/public/GUI.png" alt=".GUI logo" width="320"/>
+  <img src="Typescript/public/GUI.png" alt=".GUI logo" width="320"/>
 </p>
 <h1 align="center">.GUI</h1>
 <p align="center">

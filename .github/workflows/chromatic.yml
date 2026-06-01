@@ -20,19 +20,19 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: npm/package-lock.json
+          cache-dependency-path: Typescript/package-lock.json
 
       - name: Install deps
-        working-directory: npm
+        working-directory: Typescript
         run: npm ci
 
       # (opcional pero recomendado si tu build depende de esto)
       - name: Build package
-        working-directory: npm
+        working-directory: Typescript
         run: npm run build
 
       - name: Publish to Chromatic
-        working-directory: npm
+        working-directory: Typescript
         env:
           CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
         run: npm run chromatic
