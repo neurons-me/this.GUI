@@ -11,7 +11,7 @@ hero:
   actions:
     - theme: brand
       text: Storybook
-      link: https://neurons-me.github.io/GUI/storybook/
+      link: https://neurons-me.github.io/GUI/docs/storybook/
     - theme: alt
       text: API Reference
       link: /api/

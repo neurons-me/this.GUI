@@ -22,7 +22,7 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Storybook', link: 'https://neurons-me.github.io/GUI/storybook/' },
+      { text: 'Storybook', link: 'https://neurons-me.github.io/GUI/docs/storybook/' },
       { text: 'Semantic Taxonomy', link: '/Semantic-Taxonomy' },
       { text: 'API', link: '/api/' },
     ],
