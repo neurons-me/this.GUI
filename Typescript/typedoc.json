@@ -1,0 +1,10 @@
+{
+  "entryPoints": ["src/index.ts"],
+  "out": "../Typescript/typedocs",
+  "plugin": ["typedoc-plugin-markdown"],
+  "outputFileStrategy": "members",
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "githubPages": false
+}

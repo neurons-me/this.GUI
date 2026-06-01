@@ -1,0 +1,45 @@
+title: this.gui
+description: Composable React component library for the neurons.me stack.
+url: https://neurons-me.github.io
+baseurl: "/GUI"
+
+remote_theme: neurons-me/neurons-me
+
+plugins:
+  - jekyll-remote-theme
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  parse_block_html: true
+  hard_wrap: false
+
+exclude:
+  - Typescript/node_modules
+  - Typescript/dist
+  - Typescript/dist-types
+  - Typescript/src
+  - Typescript/tests
+  - Typescript/build
+  - Python/__pycache__
+  - Python/dist
+  - Python/build
+  - Rust/target
+  - node_modules
+  - "*/node_modules"
+  - vendor
+
+me_theme:
+  brand: this.gui
+  favicon: "https://neurons-me.github.io/GUI/Typescript/public/GUI.png"
+  nav:
+    - label: Home
+      url: https://neurons-me.github.io/
+    - label: Docs
+      relative_url: /Typescript/typedocs/
+    - label: Storybook
+      relative_url: /storybook/
+    - label: Github
+      url: https://github.com/neurons-me/GUI
+    - label: All.This
+      url: https://neurons-me.github.io/all.this/
