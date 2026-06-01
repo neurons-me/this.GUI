@@ -3,8 +3,7 @@
 </p>
 <h1 align="center">.GUI</h1>
 <p align="center">
-  A collection of components and building blocks for <strong>Generative User Iinterfaces.</br> </br>  
-<strong>Composable, Declarative & Imperative.</strong>
+  A collection of components and building blocks for <strong>Generative User Iinterfaces.</strong> 
 </p>
 
 

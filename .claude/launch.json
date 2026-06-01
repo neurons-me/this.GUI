@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "gui-docs",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "docs", "--listen", "3001"],
+      "port": 3001
+    }
+  ]
+}
