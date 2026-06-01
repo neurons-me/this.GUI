@@ -4,6 +4,8 @@
 
 # this.gui
 
+[![npm](https://img.shields.io/npm/v/this.gui)](https://www.npmjs.com/package/this.gui) [![docs](https://img.shields.io/badge/docs-neurons--me.github.io-blue)](https://neurons-me.github.io/GUI/docs/)
+
 `this.gui` is a React-first runtime for semantic interfaces.
 
 It gives you three clean layers:
