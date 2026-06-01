@@ -137,6 +137,24 @@ function formatTimestampParts(timestamp: number): { date: string; time: string; 
   };
 }
 
+// Known rootspace suffixes — these are spaces, not user handles.
+// A namespace that IS one of these (or ends with one) has no user prefix.
+const ROOTSPACE_SUFFIXES = ['.local', '.me', '.cleaker.me', '.neurons.me'];
+
+function isRootspace(value: string): boolean {
+  // A pure rootspace has no user prefix: e.g. "suis-macbook-air.local", "cleaker.me"
+  // A user namespace has a prefix: e.g. "jabellae.suis-macbook-air.local"
+  for (const suffix of ROOTSPACE_SUFFIXES) {
+    if (value.endsWith(suffix)) {
+      // The part before the suffix should be a single label (no dots) to be a user handle
+      const prefix = value.slice(0, value.length - suffix.length);
+      if (!prefix || prefix.includes('.')) return true; // no prefix or multi-label prefix = rootspace
+      return false; // single label prefix = user handle
+    }
+  }
+  return false;
+}
+
 function splitNamespace(namespace: string): { subject: string; root: string } {
   const value = String(namespace || '').trim();
   if (!value) return { subject: '—', root: '—' };
@@ -144,6 +162,12 @@ function splitNamespace(namespace: string): { subject: string; root: string } {
   const parts = value.split('.');
   if (parts.length <= 1) return { subject: value, root: value };
 
+  // If this is a pure rootspace (no user prefix), subject = root = full value
+  if (isRootspace(value)) {
+    return { subject: value, root: value };
+  }
+
+  // User namespace: first label is the handle, rest is the rootspace
   return {
     subject: parts[0] || value,
     root: parts.slice(1).join('.') || value,
@@ -354,18 +378,26 @@ export function BlocksTable({
       }
 
       const tryFetchJson = async (url: string) => {
-        const res = await fetch(url, { method: 'GET' });
+        const res = await fetch(url, {
+          method: 'GET',
+          cache: 'no-store',
+          headers: {
+            'Accept': 'application/json',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+          },
+        });
         const text = await res.text();
-        const ct = res.headers.get('content-type') || '';
-        const looksJson =
-          ct.includes('application/json') ||
-          text.trim().startsWith('{') ||
-          text.trim().startsWith('[');
-
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        if (!looksJson) throw new Error('Not JSON');
-
-        return JSON.parse(text);
+        const contentType = res.headers.get('content-type') || 'unknown';
+        const preview = text.trim().slice(0, 180).replace(/\s+/g, ' ');
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status} from ${url} (${contentType}): ${preview}`);
+        }
+        try {
+          return JSON.parse(text);
+        } catch {
+          throw new Error(`Not JSON from ${url} (${contentType}): ${preview}`);
+        }
       };
 
       try {

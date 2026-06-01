@@ -120,18 +120,22 @@ function CleakerInner(props: CleakerProps) {
   const rootNodeType = String(props['data-gui-component'] || 'Cleaker');
   // Root paths are canonical. Both hooks always called (Rules of Hooks);
   // legacy profile.* value used as fallback for existing kernels.
-  const _username      = useMeValue<string>('username');
-  const _legacyUsername = useMeValue<string>('profile.username');
-  const _name          = useMeValue<string>('name');
-  const _legacyName    = useMeValue<string>('profile.name');
-  const _email         = useMeValue<string>('email');
-  const _legacyEmail   = useMeValue<string>('profile.email');
-  const _phone         = useMeValue<string>('phone');
-  const _legacyPhone   = useMeValue<string>('profile.phone');
-  const profileUsername = _username || _legacyUsername || '';
-  const profileName     = _name     || _legacyName     || '';
-  const profileEmail    = _email    || _legacyEmail    || '';
-  const profilePhone    = _phone    || _legacyPhone    || '';
+  const _username        = useMeValue<string>('me.username');
+  const _legacyUsername  = useMeValue<string>('username');
+  const _legacyUsername2 = useMeValue<string>('profile.username');
+  const _name            = useMeValue<string>('me.name');
+  const _legacyName      = useMeValue<string>('name');
+  const _legacyName2     = useMeValue<string>('profile.name');
+  const _email           = useMeValue<string>('me.email.primary');
+  const _legacyEmail     = useMeValue<string>('email');
+  const _legacyEmail2    = useMeValue<string>('profile.email');
+  const _phone           = useMeValue<string>('me.phone.primary');
+  const _legacyPhone     = useMeValue<string>('phone');
+  const _legacyPhone2    = useMeValue<string>('profile.phone');
+  const profileUsername = _username || _legacyUsername || _legacyUsername2 || '';
+  const profileName     = _name     || _legacyName     || _legacyName2     || '';
+  const profileEmail    = _email    || _legacyEmail    || _legacyEmail2    || '';
+  const profilePhone    = _phone    || _legacyPhone    || _legacyPhone2    || '';
   const claimedAtPath = useMeValue<number | null>('auth.claimed_at');
   const activeSessionNamespace = useMeValue<string>('identity.session.namespace') || '';
   const kernelRuntimeAuthenticated = Boolean(useMeValue<boolean>('identity.session.authenticated'));
@@ -809,12 +813,12 @@ const {
       { path: KERNEL_CLEAKER_REGISTER_PATH,       value: registerSemanticState },
       { path: KERNEL_CLEAKER_CANONICAL_AUTH_PATH, value: canonicalAuthSemanticState },
     ],
-    // Identity fields live at the kernel root — me.username, me.name, etc.
+    // Identity fields — canonical me.* paths
     entries: [
-      { path: 'username', value: profileSemanticState.username },
-      { path: 'name',     value: profileSemanticState.name },
-      { path: 'email',    value: profileSemanticState.email },
-      { path: 'phone',    value: profileSemanticState.phone },
+      { path: 'me.username',      value: profileSemanticState.username },
+      { path: 'me.name',          value: profileSemanticState.name },
+      { path: 'me.email.primary', value: profileSemanticState.email },
+      { path: 'me.phone.primary', value: profileSemanticState.phone },
     ],
   });
 

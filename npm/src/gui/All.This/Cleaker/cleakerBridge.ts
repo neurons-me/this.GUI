@@ -7,6 +7,7 @@ import {
   SESSION_CREDENTIALS_EVENT,
   SESSION_USERNAME_STORAGE_KEY,
   sanitizeCleakerUsername,
+  extractUsernameFromHost,
 } from "./runtimeUsername";
 
 export const CLEAKER_NAMESPACE_STORAGE_KEY = "cleaker.namespace.v1";
@@ -156,13 +157,21 @@ export function readCleakerNamespacePreview(
     parsed = parseCleakerNamespaceExpression(DEFAULT_CLEAKER_NAMESPACE_EXPRESSION);
   }
 
-  const fallbackEndpoint =
+  const windowOrigin =
     typeof window !== "undefined" && /^https?:\/\//i.test(String(window.location.origin || ""))
       ? String(window.location.origin).trim()
-      : "http://localhost:8161";
+      : "";
+
+  const fallbackEndpoint = windowOrigin || "http://localhost:8161";
+
+  // When running on a local host (.local, localhost), always use the browser
+  // origin as endpoint so API calls go to the same server that served the page.
+  const isLocalHost =
+    typeof window !== "undefined" &&
+    /\.(local)$|^localhost$/i.test(window.location.hostname || "");
 
   const endpoint = normalizeEndpoint(
-    explicitEndpoint || parsed.transport.origin || fallbackEndpoint,
+    explicitEndpoint || (isLocalHost ? windowOrigin : parsed.transport.origin) || fallbackEndpoint,
   );
 
   let namespaceUrl = "";
@@ -172,10 +181,19 @@ export function readCleakerNamespacePreview(
     namespaceUrl = "";
   }
 
+  // If the browser is on a user subdomain (jabellae.suis-macbook-air.local),
+  // prefer that handle over the parsed constant from localStorage.
+  const locationHandle =
+    typeof window !== "undefined"
+      ? extractUsernameFromHost(window.location.hostname || "")
+      : "";
+  const parsedHandle = String(parsed.constant || "").trim();
+  const namespaceHandle = locationHandle || parsedHandle;
+
   return {
     namespaceExpression,
     endpoint,
-    namespaceHandle: String(parsed.constant || "").trim(),
+    namespaceHandle,
     namespaceUrl,
   };
 }

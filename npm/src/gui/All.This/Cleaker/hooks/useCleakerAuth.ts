@@ -505,9 +505,9 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
                     const readHeaders: Record<string, string> = { 'Content-Type': 'application/json' };
                     if (readProofB64) readHeaders['X-Me-Proof'] = readProofB64;
                     const [rName, rEmail, rPhone] = await Promise.all([
-                      fetch(`${base}/name`, { headers: readHeaders }).then(r => r.ok ? r.json() : null).catch(() => null),
-                      fetch(`${base}/email`, { headers: readHeaders }).then(r => r.ok ? r.json() : null).catch(() => null),
-                      fetch(`${base}/phone`, { headers: readHeaders }).then(r => r.ok ? r.json() : null).catch(() => null),
+                      fetch(`${base}/me/name`, { headers: readHeaders }).then(r => r.ok ? r.json() : null).catch(() => null),
+                      fetch(`${base}/me/email/primary`, { headers: readHeaders }).then(r => r.ok ? r.json() : null).catch(() => null),
+                      fetch(`${base}/me/phone/primary`, { headers: readHeaders }).then(r => r.ok ? r.json() : null).catch(() => null),
                     ]);
                     if (rName?.value)  monadName  = String(rName.value);
                     if (rEmail?.value) monadEmail = String(rEmail.value);
@@ -693,10 +693,10 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
       const profileWrites: Array<{ expression: string; value: unknown }> = [
         // Claim event — record the identity anchoring in the blockchain
         { expression: 'claim', value: { username: validated.value, identityHash: identityHashBase, claimedAt: Date.now() } },
-        // Profile fields
-        ...(input.fullName ? [{ expression: 'name',  value: input.fullName }] : []),
-        ...(input.email    ? [{ expression: 'email', value: input.email }]    : []),
-        ...(input.phone    ? [{ expression: 'phone', value: input.phone }]    : []),
+        // Profile fields — canonical NRP paths
+        ...(input.fullName ? [{ expression: 'me.name',          value: input.fullName }] : []),
+        ...(input.email    ? [{ expression: 'me.email.primary',  value: input.email }]    : []),
+        ...(input.phone    ? [{ expression: 'me.phone.primary',  value: input.phone }]    : []),
       ];
       // The user's namespace is username.hostname — this is the blockchain thread.
       // mDNS only resolves the machine hostname, not subdomains, so we route through

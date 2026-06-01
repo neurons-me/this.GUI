@@ -24,6 +24,7 @@ const isStorybook =
   argv.includes('storybook');
 const isUMD = process.env.UMD === 'true';
 const umdTarget = process.env.UMD_TARGET || 'core'; // 'core' | 'bootstrap'
+const isDev = !isUMD && !isStorybook && !isDemo && process.env.NODE_ENV !== 'test';
 export default defineConfig({
   plugins: [
     ...(isStorybook ? [] : [mdx({ include: ['**/*.mdx', '**/*.md'] })]),
@@ -235,9 +236,19 @@ export default defineConfig({
   },
   root: isDemo ? resolve(dirname, 'demo') : '.',
   publicDir: isDemo ? resolve(dirname, 'demo/public') : 'public',
-  server: isDemo ? {
-    open: true
-  } : false,
+  // Dev server: serve under /gui/ so the monad can proxy /gui/* to Vite.
+  // The monad handles all API routes; Vite only handles GUI assets + HMR.
+  base: isDev ? '/gui/' : '/',
+  server: isDev ? {
+    port: 5173,
+    strictPort: true,
+    // Allow the monad (any local host) to load assets from this dev server.
+    cors: true,
+    hmr: {
+      // HMR websocket path stays under /gui/ so the monad can proxy it too.
+      path: '/gui/__vite_hmr',
+    },
+  } : isDemo ? { open: true } : false,
   test: {
     projects: [{
       extends: true,

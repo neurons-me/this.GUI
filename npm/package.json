@@ -91,6 +91,7 @@
     "pack:local": "npm run build && npm pack",
     "prepublishOnly": "npm run build",
     "dev": "vite",
+    "dev:monad": "vite",
     "dev:demo": "DEMO=true vite",
     "dev:lib": "vite build --watch",
     "dev:root": "vite",
