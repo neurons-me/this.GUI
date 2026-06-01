@@ -21,6 +21,8 @@ exclude:
   - Typescript/src
   - Typescript/tests
   - Typescript/build
+  - Typescript/docs
+  - Typescript/.storybook
   - Python/__pycache__
   - Python/dist
   - Python/build

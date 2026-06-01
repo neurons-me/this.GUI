@@ -4,8 +4,8 @@ This document translates the high-level access protocol into implementation-faci
 
 It is the practical companion to:
 
-- [Cleaker-Access-Protocol.md](/Users/suign/Desktop/Neuroverse/neurons.me/this/GUI/npm/docs/Cleaker-Access-Protocol.md)
-- [Semantic-Taxonomy.md](/Users/suign/Desktop/Neuroverse/neurons.me/this/GUI/npm/docs/Semantic-Taxonomy.md)
+- [Cleaker-Access-Protocol.md](./Cleaker-Access-Protocol)
+- [Semantic-Taxonomy.md](./Semantic-Taxonomy)
 
 Its purpose is to answer:
 
