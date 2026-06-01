@@ -36,7 +36,7 @@ me_theme:
     - label: Home
       url: https://neurons-me.github.io/
     - label: Docs
-      relative_url: /Typescript/typedocs/
+      relative_url: /docs/
     - label: Storybook
       relative_url: /storybook/
     - label: Github
