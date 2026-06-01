@@ -46,14 +46,5 @@ jobs:
           destination_dir: Typescript/typedocs
           keep_files: true
 
-      # Deploy Storybook build to gh-pages under storybook/
-      - name: Add .nojekyll to storybook
-        run: touch docs/storybook/.nojekyll
-
-      - name: Deploy Storybook to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/storybook
-          destination_dir: storybook
-          keep_files: true
+      # Storybook is committed at docs/storybook/ and served directly
+      # by Jekyll from the main branch — no separate deploy needed.
