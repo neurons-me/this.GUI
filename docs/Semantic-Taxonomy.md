@@ -3,33 +3,45 @@ layout: readme
 title: Semantic Taxonomy — this.gui
 ---
 
-This document defines the official path taxonomy for `.me + GUI + Cleaker`.
+This document defines the agreed path conventions for `.me + GUI + Cleaker`.
 
 Its purpose is simple:
 
-- keep canonical meaning clean
+- keep agreed meaning consistent across the stack
 - keep runtime state operational
 - keep UI state ephemeral
 - avoid contaminating namespaces with view logic
+
+## Important: `.me` Has No Schema
+
+`.me` is a schema-free kernel. It accepts any path:
+
+```ts
+me('suign', 'secret')
+me.whatever.you.want = 'yes'        // perfectly valid
+me.foo.bar.baz.deeply.nested = 42   // also valid
+```
+
+This document does **not** define what `.me` enforces — it defines what **this stack** (monad + GUI + cleaker) has agreed to write and read, so components can find data where they expect it.
 
 ## Core Rule
 
 The namespace owns meaning.
 
-- `me.*` and `auth.*` are canonical — written by monad on claim/registration
-- `identity.session.*`, `runtime.*`, and `ui.cleaker.*` are local/ephemeral
-- GUI must not write canonical paths accidentally
+- Some paths are **agreed as source-of-truth** — written by monad at registration, read back by GUI and cleaker
+- Other paths are **local/ephemeral** — written and read only within a session or component
+- GUI should not write agreed source-of-truth paths accidentally
 
 ## Path Categories
 
-| Prefix | Category | Purpose | Canonical | Examples |
+| Prefix | Written by | Purpose | Lifetime | Examples |
 | --- | --- | --- | --- | --- |
-| `me.*` | Canonical identity | Public, persistent user identity written at claim time | Yes | `me.username`, `me.name`, `me.email.primary`, `me.phone.primary` |
-| `auth.*` | Canonical auth facts | Claim and key facts that can be resolved by a namespace | Yes | `auth.claimed_at`, `auth.keys` |
-| `identity.session.*` | Active session binding | Who is currently operating and under which personal namespace | No | `identity.session.username`, `identity.session.namespace`, `identity.session.authenticated`, `identity.session.identityHash`, `identity.session.openedAt` |
-| `runtime.cleaker.*` | Namespace runtime | Host, resolver, origin, network state, active transport | No | `runtime.cleaker.namespace.activeUrl`, `runtime.cleaker.namespace.expression`, `runtime.cleaker.namespace.previewQrValue` |
-| `runtime.mesh.*` | Mesh runtime | Surface discovery, pairing tokens, active mesh state | No | `runtime.mesh.surfaces`, `runtime.mesh.pairing.tokens`, `runtime.mesh.pairing.currentExpression` |
-| `ui.cleaker.*` | Shared UI state | Visual or temporary state shared across components | No | `ui.cleaker.modalOpen`, `ui.cleaker.viewMode`, `ui.cleaker.loading`, `ui.cleaker.error` |
+| `me.*` | monad at registration | Agreed identity paths — username, name, contact | Persistent | `me.username`, `me.name`, `me.email.primary`, `me.phone.primary` |
+| `auth.*` | monad at claim | Claim facts — timestamps, keys | Persistent | `auth.claimed_at`, `auth.keys` |
+| `identity.session.*` | GUI during login/logout | Who is currently operating and under which namespace | Ephemeral | `identity.session.username`, `identity.session.namespace`, `identity.session.authenticated`, `identity.session.identityHash` |
+| `runtime.cleaker.*` | GUI during runtime | Host, resolver, origin, active transport | Ephemeral | `runtime.cleaker.namespace.activeUrl`, `runtime.cleaker.namespace.expression`, `runtime.cleaker.namespace.previewQrValue` |
+| `runtime.mesh.*` | GUI during mesh scan | Surface discovery, pairing tokens, mesh state | Ephemeral | `runtime.mesh.surfaces`, `runtime.mesh.pairing.tokens`, `runtime.mesh.pairing.currentExpression` |
+| `ui.cleaker.*` | GUI components | Visual or temporary state shared across components | Ephemeral | `ui.cleaker.modalOpen`, `ui.cleaker.viewMode`, `ui.cleaker.loading` |
 
 ## Legacy Paths
 
