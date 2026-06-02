@@ -14,7 +14,7 @@ Its purpose is simple:
 
 ## Important: `.me` Has No Schema
 
-`.me` is a schema-free kernel. It accepts any path:
+[`.me`](https://neurons-me.github.io/.me/) is a schema-free kernel. It accepts any path:
 
 ```ts
 me('suign', 'secret')
@@ -22,7 +22,7 @@ me.whatever.you.want = 'yes'        // perfectly valid
 me.foo.bar.baz.deeply.nested = 42   // also valid
 ```
 
-This document does **not** define what `.me` enforces — it defines what **this stack** (monad + GUI + cleaker) has agreed to write and read, so components can find data where they expect it.
+This document does **not** define what [`.me`](https://neurons-me.github.io/.me/) enforces — it defines what **this stack** ([monad](https://neurons-me.github.io/monad/) + [this.gui](https://neurons-me.github.io/GUI/) + [cleaker](https://neurons-me.github.io/Cleaker/)) has agreed to write and read, so components can find data where they expect it.
 
 ## Core Rule
 
@@ -131,3 +131,42 @@ If a field answers one of these questions:
 - "What is the UI doing right now?" → `ui.cleaker.*`
 
 then it belongs in exactly one layer.
+
+---
+
+<div class="stack-grid" data-show=".me,monad,cleaker,GUI"></div>
+
+<script>
+(function() {
+  const ALL = {
+    '.me':    { label: '.me',      icon: '🧬', url: 'https://neurons-me.github.io/.me/',      desc: 'Schema-free sovereign kernel. Identity and memory root.' },
+    'monad':  { label: 'monad',    icon: '⚡', url: 'https://neurons-me.github.io/monad/',    desc: 'HTTP daemon. Runs the mesh. Exposes namespace over HTTP.' },
+    'cleaker':{ label: 'cleaker',  icon: '🔑', url: 'https://neurons-me.github.io/Cleaker/',  desc: 'Namespace resolver. Projects .me into a surface.' },
+    'GUI':    { label: 'this.gui', icon: '🎨', url: 'https://neurons-me.github.io/GUI/',      desc: 'React component library. Renders the surface.' },
+    'netget': { label: 'netget',   icon: '🌐', url: 'https://neurons-me.github.io/netget/',   desc: 'Gateway. Routes hostnames to monads.' },
+  };
+  function render() { if (typeof document === "undefined") return;
+    const el = document.querySelector('.stack-grid');
+    if (!el) return;
+    const keys = (el.dataset.show || '').split(',').map(s => s.trim()).filter(Boolean);
+    const css = `
+      .stack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:8px}
+      .stack-grid a{display:flex;flex-direction:column;gap:6px;padding:14px 16px;border-radius:10px;border:1px solid rgba(128,128,128,0.2);text-decoration:none;color:inherit;transition:border-color 120ms,transform 120ms}
+      .stack-grid a:hover{border-color:#0f6a78;transform:translateY(-1px)}
+      .stack-grid .sg-icon{font-size:1.3rem}
+      .stack-grid .sg-label{font-weight:700;font-size:0.95rem}
+      .stack-grid .sg-desc{font-size:0.8rem;opacity:0.65;line-height:1.4}
+    `;
+    if (!document.getElementById('sg-style')) {
+      const s = document.createElement('style'); s.id = 'sg-style'; s.textContent = css;
+      document.head.appendChild(s);
+    }
+    el.innerHTML = keys.map(k => {
+      const p = ALL[k]; if (!p) return '';
+      return `<a href="${p.url}"><span class="sg-icon">${p.icon}</span><span class="sg-label">${p.label}</span><span class="sg-desc">${p.desc}</span></a>`;
+    }).join('');
+  }
+  if (typeof document !== "undefined" && document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render);
+  else render();
+})();
+</script>
