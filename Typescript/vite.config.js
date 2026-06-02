@@ -13,6 +13,9 @@ import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 const cleakerSourceEntry = resolve(dirname, '../../../modules/cleaker/Typescript/src/index.ts');
 const meSourceEntry = resolve(dirname, '../../../me/Typescript/dist/me.es.js');
+// Only use monorepo aliases when the local paths actually exist (local dev).
+// In CI, fall back to the published npm packages.
+const useMonorepoAliases = fs.existsSync(meSourceEntry) && fs.existsSync(cleakerSourceEntry);
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 const isDemo = process.env.DEMO === 'true';
 const lifecycle = process.env.npm_lifecycle_event || '';
@@ -61,8 +64,10 @@ export default defineConfig({
       { find: /^@\/gui\/contexts\//, replacement: `${resolve(dirname, 'src/gui-internals/Contexts')}/` },
       { find: /^@\/gui\/components$/, replacement: resolve(dirname, 'src/gui/Compounds/compounds.ts') },
       { find: /^@\/gui\/components\//, replacement: `${resolve(dirname, 'src/gui/Compounds')}/` },
-      { find: /^cleaker$/, replacement: cleakerSourceEntry },
-      { find: /^this\.me$/, replacement: meSourceEntry },
+      ...(useMonorepoAliases ? [
+        { find: /^cleaker$/, replacement: cleakerSourceEntry },
+        { find: /^this\.me$/, replacement: meSourceEntry },
+      ] : []),
       { find: '@', replacement: resolve(dirname, 'src') },
     ],
     dedupe: ['react', 'react-dom', 'react-router', 'react-router-dom']
