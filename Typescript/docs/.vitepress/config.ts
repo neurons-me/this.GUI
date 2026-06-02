@@ -24,7 +24,7 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'Storybook', link: 'https://neurons-me.github.io/GUI/docs/storybook/' },
       { text: 'Semantic Taxonomy', link: '/Semantic-Taxonomy' },
-      { text: 'API', link: '/api/' },
+      { text: 'API', link: 'https://neurons-me.github.io/GUI/Typescript/docs/api/' },
     ],
     sidebar: [
       {
@@ -46,7 +46,7 @@ export default defineConfig({
       {
         text: 'API Reference',
         items: [
-          { text: 'Overview', link: '/api/' },
+          { text: 'Overview', link: 'https://neurons-me.github.io/GUI/Typescript/docs/api/' },
         ],
       },
     ],
