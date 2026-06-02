@@ -1,23 +1,10 @@
----
-layout: home
+# this.gui `2.1.8`
 
-hero:
-  name: "this.gui"
-  text: "Generative User Interfaces"
-  tagline: "React ⚡ TypeScript — Composable, Declarative & Imperative"
-  image:
-    src: https://neurons-me.github.io/GUI/Typescript/public/GUI.png
-    alt: this.gui
-  actions:
-    - theme: brand
-      text: Storybook
-      link: https://neurons-me.github.io/GUI/docs/storybook/
-    - theme: alt
-      text: API Reference
-      link: /api/
----
+> Composable React component library for the neurons.me stack.
 
-<div class="vp-doc" style="max-width:960px;margin:0 auto;padding:2rem 1.5rem">
+`this.gui` is a React-first runtime for semantic interfaces — composable, declarative, and imperative UI primitives built on top of `.me` identity and cleaker namespaces.
+
+---
 
 ## Install
 
@@ -30,10 +17,19 @@ npm install this.gui
 ```tsx
 import { GUI } from 'this.gui'
 
-// Mount the GUI runtime into your app
 GUI.mount(document.getElementById('root'), {
   namespace: 'me://your.namespace',
 })
+```
+
+---
+
+## Three layers
+
+```
+this.gui          → UI primitives and high-level package surface
+this.gui/react    → .me React bridge (MeRuntimeProvider, useMeValue, etc.)
+this.gui/runtime  → spec mounting and runtime adapters
 ```
 
 ---
@@ -50,5 +46,3 @@ this.gui   → React component library. renders the surface.
 > *Composable, Declarative & Imperative.*
 
 [Semantic Taxonomy →](./Semantic-Taxonomy) · [Monad Discovery →](./Monad-Discovery) · [Cleaker Access Protocol →](./Cleaker-Access-Protocol)
-
-</div>
