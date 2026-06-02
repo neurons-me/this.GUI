@@ -21,7 +21,13 @@ exclude:
   - Typescript/src
   - Typescript/tests
   - Typescript/build
-  - Typescript/docs
+  - Typescript/docs/index.md
+  - Typescript/docs/Cleaker-Access-Protocol.md
+  - Typescript/docs/Cleaker-Access-Protocol-Implementation.md
+  - Typescript/docs/Molecule-Laws.md
+  - Typescript/docs/Monad-Discovery.md
+  - Typescript/docs/Semantic-Taxonomy.md
+  - Typescript/docs/.vitepress
   - Typescript/.storybook
   - Python/__pycache__
   - Python/dist
