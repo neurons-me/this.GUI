@@ -10,7 +10,7 @@ Its purpose is to answer one question cleanly:
 
 - how does an external app ask Cleaker for identity, session, or key access without bypassing the kernel contract?
 
-This protocol sits on top of the path taxonomy in [Semantic-Taxonomy.md](/Users/suign/Desktop/Neuroverse/neurons.me/this/GUI/npm/docs/Semantic-Taxonomy.md).
+This protocol sits on top of the path taxonomy in [Semantic-Taxonomy.md](./Semantic-Taxonomy).
 
 ## Core Model
 
