@@ -4,6 +4,9 @@
 *.log
 *.tmp
 
+# ─── Claude Code internal ─────────────────────
+.claude/
+
 # ─── General Ignore ───────────────────────────
 .env
 .vscode/
