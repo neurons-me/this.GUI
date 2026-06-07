@@ -29,7 +29,7 @@ import { Stack } from '@/gui/Molecules';
 import { useTheme } from '@mui/material/styles';
 import type { Meta, StoryObj } from '@storybook/react';
 
-type AccentKey = 'aurora' | 'ember' | 'monolith';
+type AccentKey = 'aurora' | 'ember' | 'monolith' | 'neutral';
 
 const TopbarIdentity = () => {
   const { me, runtime } = useMe();
@@ -144,9 +144,12 @@ const DemoBody = () => {
     } else if (next === 'ember') {
       setStatus('reviewing');
       setHeadline('A warmer landing surface for demos, product pages, and operational dashboards.');
-    } else {
+    } else if (next === 'monolith') {
       setStatus('offline');
       setHeadline('A heavier systems aesthetic for internal control rooms and focused workspaces.');
+    } else {
+      setStatus('idle');
+      setHeadline('A flat, shade-free surface — pure structure with no gradient or tint.');
     }
   };
 
@@ -338,6 +341,14 @@ const DemoBody = () => {
                             onClick={() => applyPreset('monolith')}
                           >
                             Monolith
+                          </Button>
+                          <Button
+                            size="small"
+                            fullWidth
+                            variant={accent === 'neutral' ? 'contained' : 'outlined'}
+                            onClick={() => applyPreset('neutral')}
+                          >
+                            Neutral
                           </Button>
                         </Stack>
                       </Stack>

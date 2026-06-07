@@ -47,6 +47,11 @@ declare module '@mui/material/styles' {
           strong: string;
           chip: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'default';
         };
+        neutral: {
+          soft: string;
+          strong: string;
+          chip: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'default';
+        };
       };
     };
   }
@@ -64,6 +69,11 @@ declare module '@mui/material/styles' {
           chip?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'default';
         };
         monolith?: {
+          soft?: string;
+          strong?: string;
+          chip?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'default';
+        };
+        neutral?: {
           soft?: string;
           strong?: string;
           chip?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'default';
@@ -177,6 +187,12 @@ export function makeMuiTheme(themeTokens: any, modeTokens: any, mode: 'light' | 
         soft: `linear-gradient(135deg, ${rgbaFromHex(infoMain, 0.16)}, ${rgbaFromHex(backgroundPaper, 0.18)})`,
         strong: `linear-gradient(135deg, ${infoMain} 0%, ${backgroundDefault} 100%)`,
         chip: 'secondary' as const,
+      },
+      neutral: {
+        // Flat — no gradient, no shading. Solid surface tones only.
+        soft: backgroundPaper,
+        strong: backgroundDefault,
+        chip: 'default' as const,
       },
     },
   };
