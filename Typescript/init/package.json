@@ -1,23 +1,31 @@
 {
-  "name": "gui-starter",
+  "name": "__APP_NAME__",
   "private": true,
-  "version": "1.0.1",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "storybook": "storybook dev -p 6007",
+    "build-storybook": "storybook build -o storybook-static"
   },
   "dependencies": {
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^6.30.1",
-    "this.gui": "^1.3.43"
+    "this.gui": "^2.1.8",
+    "this.me": "^3.5.7"
   },
   "devDependencies": {
+    "@storybook/addon-docs": "^10.3.5",
+    "@storybook/addon-links": "^10.3.5",
+    "@storybook/addon-themes": "^10.3.5",
+    "@storybook/react-vite": "^10.3.5",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "storybook": "^10.3.5",
     "typescript": "^5.9.0",
     "vite": "^6.0.0"
   }

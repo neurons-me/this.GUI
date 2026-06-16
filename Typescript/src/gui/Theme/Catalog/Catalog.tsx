@@ -16,6 +16,7 @@ import Tooltip from '@/gui/Molecules/Tooltip/Tooltip';
 import Switch from '@/gui/Atoms/Switch/Switch';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import { useThemeContext } from '@/gui-internals/Contexts/ThemeContext';
+import { LeftSidebarContext } from '@/gui-internals/Contexts/LeftSidebarContext';
 import {
   alphabetical,
   applyCollectionRules,
@@ -48,15 +49,22 @@ export default function ThemesCatalog({
   compact = false,
   hideTitle = false,
   hideModeToggle = false,
+  sidebarView,
+  onThemeSelect,
 }: ThemesCatalogProps = {}) {
   const themes = getGuiThemes();
   const { setMode, mode: activeMode, themeId, setThemeId } = useThemeContext();
+  const leftSidebarContext = React.useContext(LeftSidebarContext);
   const isCompact = Boolean(compact);
   const isMinimal = Boolean(minimal || isCompact);
   const effectiveVariant = isCompact ? 'grid' : variant;
   const effectiveHideDescription = isMinimal ? true : hideDescription;
   const effectiveHideAuthor = isMinimal ? true : hideAuthor;
   const effectiveHideTitle = Boolean(hideTitle);
+  const effectiveSidebarView =
+    sidebarView === 'auto' ? leftSidebarContext?.view : sidebarView;
+  const isRailView = effectiveSidebarView === 'rail';
+  const isExpandedSidebarView = effectiveSidebarView === 'expanded';
   const isBrowser = typeof window !== 'undefined';
   const meRef: any = isBrowser ? (window as any).me : undefined;
   const instanceId = useId();
@@ -93,6 +101,159 @@ export default function ThemesCatalog({
   const normalizedInstance = String(instanceId || 'catalog').replace(/[^a-zA-Z0-9_-]/g, '');
   const catalogPrefix = `themes-catalog-${normalizedInstance}`;
 
+  const selectThemeById = (selectedId: string, theme?: ThemeManifest) => {
+    if (typeof setThemeId === 'function') {
+      setThemeId(selectedId);
+    }
+    if (typeof setMode === 'function') {
+      const nextMode: 'light' | 'dark' = activeMode === 'dark' ? 'dark' : 'light';
+      setMode(nextMode);
+      if (meRef && selectedId) {
+        try {
+          meRef.public.ui.theme.selected(selectedId);
+          meRef.public.ui.theme.mode(nextMode);
+        } catch {}
+      }
+    }
+    if (selectedId) {
+      const nextHistory = [selectedId, ...history.filter((id) => id !== selectedId)].slice(0, 12);
+      setHistory(nextHistory);
+      if (meRef) {
+        try {
+          meRef.public.ui.theme.history(nextHistory);
+        } catch {}
+      }
+    }
+    if (theme) onThemeSelect?.(theme, selectedId);
+  };
+
+  if (isExpandedSidebarView) {
+    return (
+      <Box sx={{ width: '100%', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 0.5, ...sx }}>
+        {orderedThemes.map((theme: ThemeManifest) => {
+          const selected = theme.themeId === themeId;
+          const isDarkSelected = activeMode === 'dark';
+          const activePalette = (theme.mode as any)?.[isDarkSelected ? 'dark' : 'light']?.palette;
+          const activePrimary = activePalette?.primary?.main;
+          const selectedId = theme.themeId ?? '';
+          const label = theme.themeName ?? 'Theme';
+          return (
+            <Box
+              key={selectedId || label}
+              component="button"
+              type="button"
+              aria-label={`Select ${label} theme`}
+              aria-pressed={selected}
+              onClick={() => selectThemeById(selectedId, theme)}
+              sx={{
+                width: '100%',
+                p: '6px 8px',
+                border: '1px solid',
+                borderColor: selected ? (activePrimary || 'primary.main') : 'transparent',
+                borderRadius: 1.5,
+                background: selected ? 'action.selected' : 'transparent',
+                color: 'inherit',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                cursor: 'pointer',
+                boxSizing: 'border-box',
+                textAlign: 'left',
+                transition: 'background 120ms ease, border-color 120ms ease',
+                '&:hover': { bgcolor: 'action.hover' },
+              }}
+            >
+              {theme.badgeUrl ? (
+                <Avatar src={theme.badgeUrl} alt={label} sx={{ width: 28, height: 28, flexShrink: 0 }} />
+              ) : (
+                <Avatar sx={{ width: 28, height: 28, fontSize: 11, flexShrink: 0 }}>{label[0] ?? 'T'}</Avatar>
+              )}
+              <Typography variant="body2" sx={{ fontWeight: selected ? 700 : 400, fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {label}
+              </Typography>
+            </Box>
+          );
+        })}
+      </Box>
+    );
+  }
+
+  if (isRailView) {
+    return (
+      <Box
+        sx={{
+          width: '100%',
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 1.5,
+          ...sx,
+        }}
+      >
+        {orderedThemes.map((theme: ThemeManifest) => {
+          const selected = theme.themeId === themeId;
+          const isDarkSelected = activeMode === 'dark';
+          const activePalette = (theme.mode as any)?.[isDarkSelected ? 'dark' : 'light']?.palette;
+          const activePrimary = activePalette?.primary?.main;
+          const selectedColor = activePrimary || 'primary.main';
+          const selectedId = theme.themeId ?? '';
+          const label = theme.themeName ?? 'Theme';
+
+          return (
+            <Tooltip key={selectedId || label} title={label} placement="right" arrow>
+              <Box
+                component="button"
+                type="button"
+                aria-label={`Select ${label} theme`}
+                aria-pressed={selected}
+                onClick={() => selectThemeById(selectedId, theme)}
+                sx={{
+                  width: 44,
+                  height: 44,
+                  p: 0,
+                  border: selected ? '2px solid' : '1px solid',
+                  borderColor: selected ? selectedColor : 'divider',
+                  borderRadius: '999px',
+                  background: 'transparent',
+                  color: 'inherit',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  overflow: 'hidden',
+                  boxSizing: 'border-box',
+                  transition: 'border-color 120ms ease, transform 120ms ease',
+                  '&:hover': {
+                    transform: 'translateY(-1px)',
+                    borderColor: selectedColor,
+                  },
+                  '&:focus-visible': {
+                    outline: '2px solid',
+                    outlineColor: selectedColor,
+                    outlineOffset: 2,
+                  },
+                }}
+              >
+                {theme.badgeUrl ? (
+                  <Avatar
+                    src={theme.badgeUrl}
+                    alt={label}
+                    sx={{ width: 34, height: 34, display: 'block' }}
+                  />
+                ) : (
+                  <Avatar sx={{ width: 34, height: 34, fontSize: 13 }}>
+                    {label[0] ?? 'T'}
+                  </Avatar>
+                )}
+              </Box>
+            </Tooltip>
+          );
+        })}
+      </Box>
+    );
+  }
+
   const renderDeclarative = (spec: any, prefix: string) => {
     if (!gui || typeof renderWithGUI !== 'function') return null;
     try {
@@ -115,30 +276,7 @@ export default function ThemesCatalog({
     const fallbackBorder = isDarkSelected ? 'rgba(255,255,255,0.22)' : 'rgba(0,0,0,0.12)';
     const selectedId = theme.themeId ?? '';
 
-    const selectTheme = () => {
-      if (typeof setThemeId === 'function') {
-        setThemeId(selectedId);
-      }
-      if (typeof setMode === 'function') {
-        const nextMode: 'light' | 'dark' = activeMode === 'dark' ? 'dark' : 'light';
-        setMode(nextMode);
-        if (meRef && selectedId) {
-          try {
-            meRef.public.ui.theme.selected(selectedId);
-            meRef.public.ui.theme.mode(nextMode);
-          } catch {}
-        }
-      }
-      if (selectedId) {
-        const nextHistory = [selectedId, ...history.filter((id) => id !== selectedId)].slice(0, 12);
-        setHistory(nextHistory);
-        if (meRef) {
-          try {
-            meRef.public.ui.theme.history(nextHistory);
-          } catch {}
-        }
-      }
-    };
+    const selectTheme = () => selectThemeById(selectedId, theme);
 
     const handleCardKeyDown = (e: React.KeyboardEvent) => {
       if (e.key === 'Enter' || e.key === ' ') {
@@ -409,7 +547,9 @@ export default function ThemesCatalog({
         props: {
           sx: {
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(132px, 1fr))',
+            gridTemplateColumns: effectiveHideTitle
+              ? 'repeat(auto-fit, minmax(40px, 1fr))'
+              : 'repeat(auto-fit, minmax(132px, 1fr))',
             gap: 1,
             alignItems: 'stretch',
             containerType: 'inline-size',
@@ -480,29 +620,7 @@ export default function ThemesCatalog({
     const fallbackBorder = isDarkSelected ? 'rgba(255,255,255,0.22)' : 'rgba(0,0,0,0.12)';
     // Helper: selectTheme logic (same as Checkbox onChange)
     function selectTheme() {
-      const selectedId = theme.themeId ?? '';
-      if (typeof setThemeId === 'function') {
-        setThemeId(selectedId);
-      }
-      if (typeof setMode === 'function') {
-        const nextMode: 'light' | 'dark' = activeMode === 'dark' ? 'dark' : 'light';
-        setMode(nextMode);
-        if (meRef && selectedId) {
-          try {
-            meRef.public.ui.theme.selected(selectedId);
-            meRef.public.ui.theme.mode(nextMode);
-          } catch {}
-        }
-      }
-      if (selectedId) {
-        const nextHistory = [selectedId, ...history.filter((id) => id !== selectedId)].slice(0, 12);
-        setHistory(nextHistory);
-        if (meRef) {
-          try {
-            meRef.public.ui.theme.history(nextHistory);
-          } catch {}
-        }
-      }
+      selectThemeById(theme.themeId ?? '', theme);
     }
     // Keyboard handler for card
     function handleCardKeyDown(e: React.KeyboardEvent) {
@@ -589,7 +707,7 @@ export default function ThemesCatalog({
           />
           <Box
             sx={{
-              display: 'flex',
+              display: effectiveHideTitle ? 'none' : 'flex',
               gap: isCompact ? 0.35 : (isMinimal ? 0.5 : 0.75),
               flexWrap: 'wrap',
               mt: isCompact ? 0.2 : (isMinimal ? 0.45 : 0.6),
@@ -611,7 +729,7 @@ export default function ThemesCatalog({
               </Tooltip>
             ))}
           </Box>
-          <Box sx={{ position: 'absolute', top: isCompact ? 4 : (isMinimal ? 6 : 8), right: isCompact ? 4 : (isMinimal ? 6 : 8) }}>
+          <Box sx={{ display: effectiveHideTitle ? 'none' : 'block', position: 'absolute', top: isCompact ? 4 : (isMinimal ? 6 : 8), right: isCompact ? 4 : (isMinimal ? 6 : 8) }}>
             <Checkbox
               size="small"
               color="primary"

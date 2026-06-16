@@ -91,8 +91,9 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
           justifyContent: view === 'rail' ? 'center' : 'flex-start',
           alignItems: 'center',
           width: '100%',
+          boxSizing: 'border-box',
           textAlign: view === 'rail' ? 'center' : 'left',
-          px: view === 'rail' ? 0 : 1.23,
+          px: view === 'rail' ? 0 : 0,
         }}
       >
         <Box
@@ -100,7 +101,9 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            flex: '0 0 auto',
+            width: '100%',
+            minWidth: 0,
+            flex: view === 'rail' ? '0 0 auto' : '1 1 auto',
           }}
         >
           {element}
@@ -136,11 +139,13 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
         className={clsx('LeftSidebarAction', className)}
         style={style}
         sx={{
-          p: 1.123,
+          p: view === 'rail' ? 0.5 : 1.123,
           display: 'flex',
           justifyContent: view === 'rail' ? 'center' : 'flex-start',
           alignItems: 'center',
           width: '100%',
+          boxSizing: 'border-box',
+          overflow: 'visible',
           textAlign: view === 'rail' ? 'center' : 'left',
         }}
       >

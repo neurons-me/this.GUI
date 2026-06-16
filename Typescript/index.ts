@@ -140,6 +140,7 @@ export type {
   SideBarsCollectionSlot,
 } from '@/gui/Layout/Sidebars/Collections';
 export { ThemesCatalog, Catalog } from '@/gui/Theme';
+export { default as ThemeLauncher } from '@/gui/Theme/Launcher/ThemeLauncher';
 export {
   default as GUITools,
   guiToolsElements,

@@ -286,6 +286,9 @@ const LeftSidebar = ({
               display: 'flex',
               flexDirection: 'column',
               gap: 0.5,
+              maxWidth: '100%',
+              overflowX: 'hidden',
+              overflowY: 'auto',
             }}
           >
             {renderFooterItems()}

@@ -6,7 +6,7 @@ The current direction is:
 
 - React-first apps
 - `.me` as the semantic state layer
-- explicit runtime/devtools boundaries
+- explicit **runtime/devtools** boundaries
 
 ## 1. Runtime Sources
 
@@ -18,7 +18,7 @@ import * as ReactDOM from 'react-dom/client';
 import * as GUI from 'this.gui';
 ```
 
-`this.gui` can render in three modes:
+`this.GUI` can render in three modes:
 
 - static render with no runtime
 - custom runtime adapter
@@ -262,7 +262,7 @@ For direct imports, use `this.gui/devtools`.
 
 ## 7. Package Boundaries
 
-Modern boundaries:
+modern boundaries:
 
 - `this.gui` → UI surface
 - `this.gui/react` → React + `.me` bridge

@@ -150,7 +150,7 @@ ${isChild
 
 // ─── Token replacement helper (for child template) ────────────────────────────
 /**
- * Replace __APP_NAME__ and __APP_NAME_PASCAL__ tokens in all text files
+ * Replace app-name tokens in all text files
  * under targetDir after copying the template.
  */
 function applyTokens(dir: string, kebab: string): void {
@@ -158,6 +158,11 @@ function applyTokens(dir: string, kebab: string): void {
     .split(/[-_]/)
     .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
     .join("");
+  const title = kebab
+    .split(/[-_]/)
+    .filter(Boolean)
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+    .join(" ");
 
   const TEXT_EXTS = new Set([
     ".ts", ".tsx", ".js", ".jsx", ".json", ".md",
@@ -176,8 +181,13 @@ function applyTokens(dir: string, kebab: string): void {
         if (TEXT_EXTS.has(ext) || entry.startsWith(".")) {
           try {
             const content = fsExtra.readFileSync(full, "utf8");
-            if (content.includes("__APP_NAME__") || content.includes("__APP_NAME_PASCAL__")) {
+            if (
+              content.includes("__APP_NAME__") ||
+              content.includes("__APP_NAME_PASCAL__") ||
+              content.includes("__APP_NAME_TITLE__")
+            ) {
               const replaced = content
+                .replace(/__APP_NAME_TITLE__/g, title)
                 .replace(/__APP_NAME_PASCAL__/g, pascal)
                 .replace(/__APP_NAME__/g, kebab);
               fsExtra.writeFileSync(full, replaced, "utf8");
@@ -210,9 +220,7 @@ try {
 
   fsExtra.copySync(templateDir, targetDir);
 
-  if (isChild) {
-    applyTokens(targetDir, appName);
-  }
+  applyTokens(targetDir, appName);
 
   console.log(`📁 Project @ ${targetDir}`);
 

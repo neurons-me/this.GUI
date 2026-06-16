@@ -1,5 +1,13 @@
 import type { SxProps, Theme } from '@mui/system';
+import type { LeftSidebarView } from '@/gui-internals/Contexts';
+
 export type ThemesCatalogVariant = 'grid' | 'list';
+export type ThemesCatalogSidebarView = LeftSidebarView | 'auto';
+export type ThemesCatalogSelection = {
+  themeId?: string;
+  themeName?: string;
+  badgeUrl?: string;
+};
 
 /**
  * Props passed directly to the ThemesCatalog React component.
@@ -38,6 +46,16 @@ export interface ThemesCatalogProps {
    * If true, hides the per-card light/dark toggle.
    */
   hideModeToggle?: boolean;
+  /**
+   * Sidebar-aware rendering mode. `auto` renders avatar-only rail controls
+   * while the catalog lives in a collapsed LeftBar, then returns to the normal
+   * catalog layout when the LeftBar expands.
+   */
+  sidebarView?: ThemesCatalogSidebarView;
+  /**
+   * Called after a theme is selected.
+   */
+  onThemeSelect?: (theme: ThemesCatalogSelection, themeId: string) => void;
 }
 
 /**
@@ -81,4 +99,12 @@ export interface ThemesCatalogResolverSpec {
    * If true, hides the per-card light/dark toggle.
    */
   hideModeToggle?: boolean;
+  /**
+   * Sidebar-aware rendering mode.
+   */
+  sidebarView?: ThemesCatalogSidebarView;
+  /**
+   * Called after a theme is selected.
+   */
+  onThemeSelect?: (theme: ThemesCatalogSelection, themeId: string) => void;
 }

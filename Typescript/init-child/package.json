@@ -40,7 +40,7 @@
     "build-storybook": "storybook build -o storybook-static"
   },
   "dependencies": {
-    "this.gui": "^2.1.7"
+    "this.gui": "^2.1.8"
   },
   "devDependencies": {
     "@storybook/addon-docs": "^8.0.0",

@@ -23,8 +23,6 @@ function resolveOverlayColor(
       : typeof paletteBlur === 'string'
       ? paletteBlur
       : overlayColor || 'transparent';
-  console.log('resolveOverlayColor inputs:', { blur, customColor, overlayColor, paletteBlur });
-  console.log('resolveOverlayColor resolved:', resolved);
   return resolved;
 }
 
