@@ -2,7 +2,7 @@
   <img src="Typescript/public/GUI.png" alt=".GUI" width="320"/>
 </p>
 <h1 align="center">.GUI</h1>
-<h6 align="center">Generative User Interface</h6>
+<h5 align="center" style="color: gray;">Generative User Interface</h5>
 
 <p align="center">
   <a href="https://neurons-me.github.io/GUI/docs/">⌬ Docs</a>
