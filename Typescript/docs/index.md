@@ -45,4 +45,4 @@ this.gui   → React component library. renders the surface.
 
 > *Composable, Declarative & Imperative.*
 
-[Semantic Taxonomy →](./Semantic-Taxonomy) · [Monad Discovery →](./Monad-Discovery) · [Cleaker Access Protocol →](./Cleaker-Access-Protocol)
+[GUI Mount →](./GUI-Mount) · [Semantic Taxonomy →](./Semantic-Taxonomy) · [Monad Discovery →](./Monad-Discovery) · [Cleaker Access Protocol →](./Cleaker-Access-Protocol)

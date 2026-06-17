@@ -8,7 +8,7 @@
 
 [![npm](https://img.shields.io/npm/v/this.gui)](https://www.npmjs.com/package/this.gui) [![docs](https://img.shields.io/badge/docs-neurons--me.github.io-blue)](https://neurons-me.github.io/GUI/docs/)
 
-`this.gui` is a React component library for `.me`-native apps. It gives you Layout, Theme, atoms, molecules, and the React bridge to read and write `.me` namespaces.
+A collection of components and building blocks for **UI Generation**.
 
 ## Scaffold a new app
 
@@ -19,18 +19,64 @@ npm install
 npm run dev
 ```
 
-## Install manually
+## Install
 
 ```bash
-npm install this.gui this.me
+npm install this.gui
 ```
 
-## Quick Start
+Add `this.me` only if you want namespace-backed state:
 
-```ts
-// app.ts
-import Home from './views/Home';
+```bash
+npm install this.me
+```
 
+## Composition
+
+`this.gui` separates five concerns: **syntax, form, composition, routes, identity.**
+
+```
+Theme → Layout → view
+```
+
+`Theme` is the visual environment. `Layout` is the chrome — topbar, sidebar, footer. Your view fills the content area.
+
+```tsx
+import { Theme, Layout } from 'this.gui';
+import { Typography, Button } from 'this.gui/atoms';
+import { Hero, Stack } from 'this.gui/molecules';
+
+function Home() {
+  return (
+    <Hero height="100vh" mode="left" padding={{ xs: 3, md: 8 }}>
+      <Stack spacing={2} alignItems="flex-start">
+        <Typography variant="h1">My App</Typography>
+        <Button variant="contained" size="large">Get started</Button>
+      </Stack>
+    </Hero>
+  );
+}
+
+export default function App() {
+  return (
+    <Theme initialThemeId="neurons.me">
+      <Layout
+        TopBar={{ title: 'My App' }}
+        LeftBar={{ initialView: 'rail' }}
+      >
+        <Home />
+      </Layout>
+    </Theme>
+  );
+}
+```
+
+## Routes + Identity
+
+Use `this.me` when your app should be declared as a namespace-backed identity. The app manifest is written into `.me`, and views read from that namespace.
+
+```tsx
+// app.ts — declare the app as a namespace context
 export default {
   id: 'my-app',
   namespace: 'apps.my-app',
@@ -43,15 +89,15 @@ export default {
 ```tsx
 // main.tsx
 import ME from 'this.me';
-import { mountApp } from './runtime';
+import { mountApp } from 'this.gui/runtime';
 import app from './app';
 
 mountApp({ me: new ME() as any, app, target: '#root' });
 ```
 
 ```tsx
-// views/Home.tsx
-import { Typography } from 'this.gui/atoms';
+// views/Home.tsx — reads from .me namespace
+import { Typography, Button } from 'this.gui/atoms';
 import { Hero, Stack } from 'this.gui/molecules';
 import { useMeValue } from 'this.gui/react';
 
@@ -59,8 +105,9 @@ export default function Home() {
   const title = useMeValue<string>('apps.my-app.manifest.title') || 'My App';
   return (
     <Hero height="100vh" mode="left" padding={{ xs: 3, md: 8 }}>
-      <Stack spacing={2}>
+      <Stack spacing={2} alignItems="flex-start">
         <Typography variant="h1">{title}</Typography>
+        <Button variant="contained" size="large">Get started</Button>
       </Stack>
     </Hero>
   );
@@ -79,7 +126,7 @@ into patterns, patterns compose into features.
 | `this.gui/molecules` | Compositions — `Hero`, `Stack`, `Page`, … |
 | `this.gui/compounds` | Feature panels built from molecules |
 | `this.gui/react` | `.me` bridge — `MeRuntimeProvider`, `useMeValue`, `useMeAction` |
-| `this.gui/runtime` | `mountApp`, `writeMeValue`, `readMeValue` |
+| `this.gui/runtime` | `mountApp`, `declareApp`, `writeMeValue`, `readMeValue` |
 
 ## Docs
 

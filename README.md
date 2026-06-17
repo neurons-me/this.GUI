@@ -1,23 +1,3 @@
-<p align="center">
-  <img src="Typescript/public/GUI.png" alt=".GUI logo" width="320"/>
-</p>
-<h1 align="center">.GUI</h1>
-<p align="center">
-  Generative User Interfaces. 
-</p>
-
-<p align="center">
-  <a href="https://www.npmjs.com/package/this.gui"><img src="https://img.shields.io/npm/v/this.gui" alt="npm" /></a>
-  &nbsp;
-  <a href="https://neurons-me.github.io/GUI/docs/"><img src="https://img.shields.io/badge/docs-neurons--me.github.io-blue" alt="docs" /></a>
-</p>
-
-<p align="center">
-  <a href="https://neurons-me.github.io/GUI/docs/" style="text-decoration:none" target="_blank"><strong>→ Documentation</strong></a>
-  &nbsp;·&nbsp;
-  <a href="https://neurons-me.github.io/GUI/docs/storybook/" style="text-decoration:none" target="_blank"><strong>→ Storybook</strong></a>
-</p>
-
 <div align="center">
 <table width="540" cellpadding="0" cellspacing="0" style="border:1px solid #30363d;border-radius:12px;overflow:hidden;background:#0d1117;font-family:sans-serif;margin:0 auto;">
   <tr>
@@ -37,7 +17,15 @@
       <div style="width:18px;height:4px;background:#30363d;border-radius:2px;"></div>
     </td>
     <td valign="middle" align="center" style="padding:32px 20px;height:120px;">
-      <a href="https://neurons-me.github.io/GUI/docs/storybook/iframe.html?id=getting-started-gui-overview--default&viewMode=story" target="_blank" style="color:#58a6ff;font-size:15px;font-weight:600;letter-spacing:0.02em;text-decoration:none;">→ Live Preview</a>
+ <a href="https://neurons-me.github.io/GUI/docs/storybook/iframe.html?id=getting-started-gui-overview--default&viewMode=story" target="_blank" style="color:#58a6ff;font-size:15px;font-weight:600;letter-spacing:0.02em;text-decoration:none;">
+<p align="center">
+  <img src="Typescript/public/GUI.png" alt=".GUI logo" width="320"/>
+</p>→ Live Preview</a>
+      <p align="center">
+  <a href="https://www.npmjs.com/package/this.gui"><img src="https://img.shields.io/npm/v/this.gui" alt="npm" /></a>
+  &nbsp;
+  <a href="https://neurons-me.github.io/GUI/docs/"><img src="https://img.shields.io/badge/docs-neurons--me.github.io-blue" alt="docs" /></a>
+</p>
       <div style="color:#8b949e;font-size:11px;margin-top:6px;">neurons-me.github.io/GUI</div>
     </td>
     <td width="120" valign="top" style="background:#161b22;border-left:1px solid #30363d;padding:12px 8px;">
@@ -49,3 +37,16 @@
   </tr>
 </table>
 </div>
+
+
+
+# .GUI
+
+###### Generative User Interface.
+
+<p>
+  <a href="https://neurons-me.github.io/GUI/docs/storybook/" style="text-decoration:none" target="_blank"><strong>→ Storybook</strong></a>
+</p>
+
+
+

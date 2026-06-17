@@ -12,3 +12,5 @@ export * from './runtime/run-me';
 export * from './runtime/runtimeContext';
 export * from './runtime/start-app';
 export * from './runtime/renderer';
+export { mountApp, declareApp } from './runtime/mountApp';
+export type { AppDeclaration, MountAppOptions } from './runtime/mountApp';
