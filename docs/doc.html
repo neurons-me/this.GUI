@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>.GUI — Docs</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; background: #f4f7f8; color: #0f1720; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+    .page { max-width: 780px; margin: 0 auto; padding: 48px 32px 96px; }
+
+    .back { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; color: #51606d; text-decoration: none; letter-spacing: 0.04em; margin-bottom: 40px; transition: color 120ms; }
+    .back:hover { color: #0f6a78; }
+    .back::before { content: "←"; font-size: 1rem; }
+
+    .prose h1 { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 20px; }
+    .prose h2 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.01em; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(15,23,32,0.10); }
+    .prose h3 { font-size: 1.1rem; font-weight: 700; margin: 28px 0 8px; }
+    .prose p { font-size: 0.975rem; line-height: 1.75; color: #1e2a33; margin-bottom: 16px; }
+    .prose ul, .prose ol { padding-left: 1.5em; margin-bottom: 16px; }
+    .prose li { font-size: 0.975rem; line-height: 1.7; color: #1e2a33; margin-bottom: 4px; }
+    .prose a { color: #0f6a78; text-decoration: none; border-bottom: 1px solid rgba(15,106,120,0.3); transition: border-color 120ms; }
+    .prose a:hover { border-color: #0f6a78; }
+    .prose code { font-family: "SF Mono", "Fira Code", monospace; font-size: 0.85em; background: rgba(15,106,120,0.08); color: #0f5a66; padding: 2px 6px; border-radius: 4px; }
+    .prose pre { background: #111a1f; color: #e8eded; border-radius: 10px; padding: 20px 22px; margin: 20px 0; overflow-x: auto; }
+    .prose pre code { background: none; color: inherit; padding: 0; font-size: 0.875rem; line-height: 1.65; }
+    .prose hr { border: none; border-top: 1px solid rgba(15,23,32,0.10); margin: 36px 0; }
+    .prose table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.9rem; }
+    .prose th { text-align: left; font-weight: 700; padding: 10px 14px; background: rgba(15,106,120,0.06); border-bottom: 2px solid rgba(15,106,120,0.15); }
+    .prose td { padding: 9px 14px; border-bottom: 1px solid rgba(15,23,32,0.08); vertical-align: top; line-height: 1.6; }
+    .prose blockquote { border-left: 3px solid #0f6a78; padding-left: 18px; margin: 20px 0; color: #51606d; font-style: italic; }
+
+    @media (prefers-color-scheme: dark) {
+      body { background: #0b1114; color: #e8eded; }
+      .back { color: #98a7b3; }
+      .back:hover { color: #4fd1c5; }
+      .prose h2 { border-color: rgba(232,237,237,0.10); }
+      .prose p, .prose li { color: #c8d5db; }
+      .prose code { background: rgba(79,209,197,0.10); color: #4fd1c5; }
+      .prose pre { background: #0d1a1f; }
+      .prose hr { border-color: rgba(232,237,237,0.10); }
+      .prose th { background: rgba(79,209,197,0.06); border-color: rgba(79,209,197,0.15); }
+      .prose td { border-color: rgba(232,237,237,0.08); }
+      .prose a { color: #4fd1c5; border-color: rgba(79,209,197,0.3); }
+      .prose a:hover { border-color: #4fd1c5; }
+    }
+
+    #error { display: none; padding: 40px; text-align: center; color: #51606d; }
+  </style>
+  <link rel="icon" type="image/png" href="../Typescript/public/GUI.png">
+</head>
+<body>
+  <div class="page">
+    <a class="back" href="./index.html">.GUI Docs</a>
+    <div id="error">Document not found.</div>
+    <div class="prose" id="content"></div>
+  </div>
+  <footer style="margin-top:64px;padding:32px 0;text-align:center;border-top:1px solid rgba(15,23,32,0.08);">
+    <a href="https://neurons-me.github.io/" style="display:inline-flex;align-items:center;text-decoration:none;opacity:0.6;transition:opacity 140ms ease;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6">
+      <img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760629064/neurons.me_b50f6a.png" alt="neurons.me" style="width:28px;height:28px;object-fit:contain;" />
+    </a>
+  </footer>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const file = params.get('f');
+    if (!file || !/^[\w\-]+\.md$/.test(file)) {
+      document.getElementById('error').style.display = 'block';
+    } else {
+      fetch('./' + file)
+        .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+        .then(md => {
+          document.getElementById('content').innerHTML = marked.parse(md);
+          const h1 = document.querySelector('.prose h1');
+          document.title = (h1 ? h1.textContent + ' — ' : '') + '.GUI Docs';
+        })
+        .catch(() => { document.getElementById('error').style.display = 'block'; });
+    }
+  </script>
+</body>
+</html>
