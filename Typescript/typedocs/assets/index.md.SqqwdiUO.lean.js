@@ -1,0 +1,1 @@
+import{_ as s,o as e,c as i,ae as t}from"./chunks/framework.CaDtCrLE.js";const k=JSON.parse('{"title":"this.gui 2.1.8","description":"","frontmatter":{},"headers":[],"relativePath":"index.md","filePath":"index.md"}'),n={name:"index.md"};function l(p,a,r,h,o,c){return e(),i("div",null,[...a[0]||(a[0]=[t("",16)])])}const u=s(n,[["render",l]]);export{k as __pageData,u as default};
