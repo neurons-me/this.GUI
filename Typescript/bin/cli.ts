@@ -5,8 +5,6 @@
  *
  * Usage:
  *   npx this.gui my-app
- *   npx this.gui child netget        ← child library package (lib mode + Storybook)
- *   npx this.gui --main-server-ui
  *   npx this.gui --html
  */
 
@@ -23,63 +21,33 @@ if (args.includes("--help") || args.includes("-h")) {
 
 Usage:
   npx this.gui <project-name>
-  npx this.gui child <app-name>
-  npx this.gui main-server-ui
-  npx this.gui <project-name> --main-server-ui
   npx this.gui <dir> --html
   npx this.gui --html
 
-Commands:
-  child <name>   Scaffold a child library package (<name>-gui) with atoms/molecules/compounds
-                 and its own Storybook, ready to extend this.gui.
-
 Flags:
-  --html             Generate a plain HTML runtime with a basic GUI.mount() (no Vite, no Storybook)
-  --main-server-ui   Generate the NetGet Main Server UI starter, wired to all.this
+  --html   Generate a plain HTML runtime with GUI.mount() (no Vite)
 
 What you get (default):
-  - Vite + React app pre-wired with this.gui
-  - Storybook included by default
-
-What you get (child):
-  - Vite lib-mode package extending this.gui
-  - atoms / molecules / compounds structure with stub examples
-  - Own Storybook with this.gui Theme decorator
-  - Ready to publish as <name>-gui
+  - Vite + React app pre-wired with this.gui and this.me
+  - mountApp() pattern — declare your app in .me, project it in GUI
+  - ThemeLauncher in the rail out of the box
 
 Docs:
   https://neurons-me.github.io/GUI/
 
 Examples:
   npx this.gui my-app
-  npx this.gui child netget        → creates netget-gui/
-  npx this.gui child monad         → creates monad-gui/
+  npx this.gui fulltrailer
 `);
   process.exit(0);
 }
 
-// ─── Detect subcommand: "child" ───────────────────────────────────────────────
-const isChild = args[0] === "child";
-const effectiveArgs = isChild ? args.slice(1) : args;
-
 // ─── Determine app name ────────────────────────────────────────────────────────
-const templateFlagIndex = effectiveArgs.indexOf("--template");
-const appName =
-  effectiveArgs.find((arg, index) => {
-    if (arg.startsWith("-")) return false;
-    if (templateFlagIndex >= 0 && index === templateFlagIndex + 1) return false;
-    return true;
-  }) || (isChild ? "my-app-gui" : "my-app");
-
-const wantsHtml = effectiveArgs.includes("--html");
-const templateName = templateFlagIndex >= 0 ? effectiveArgs[templateFlagIndex + 1] : "";
-const wantsMainServerUi =
-  effectiveArgs.includes("--main-server-ui") ||
-  templateName === "main-server-ui" ||
-  appName === "main-server-ui";
+const appName = args.find((arg) => !arg.startsWith("-")) || "my-app";
+const wantsHtml = args.includes("--html");
 
 // ─── HTML mode ────────────────────────────────────────────────────────────────
-const firstArg = effectiveArgs[0];
+const firstArg = args[0];
 const htmlDirName = firstArg && !firstArg.startsWith("-") ? firstArg : ".";
 const htmlTargetDir = path.resolve(process.cwd(), htmlDirName);
 const htmlOutPath = path.join(htmlTargetDir, "index.html");
@@ -120,19 +88,11 @@ const htmlTemplate = `<!doctype html>
 `;
 
 // ─── Template selection ────────────────────────────────────────────────────────
-const templateFolder = wantsMainServerUi
-  ? "init-main-server-ui"
-  : isChild
-  ? "init-child"
-  : "init";
-
-const distTemplateDir = path.resolve(__dirname, `../../${templateFolder}`);
-const srcTemplateDir  = path.resolve(__dirname, `../${templateFolder}`);
+const distTemplateDir = path.resolve(__dirname, "../../npx/template");
+const srcTemplateDir  = path.resolve(__dirname, "../npx/template");
 const templateDir = fsExtra.existsSync(distTemplateDir) ? distTemplateDir : srcTemplateDir;
 
-// For child mode, the output directory is <appName>-gui
-const targetDirName = isChild ? `${appName}-gui` : appName;
-const targetDir = path.resolve(process.cwd(), targetDirName);
+const targetDir = path.resolve(process.cwd(), appName);
 
 // ─── Banner ────────────────────────────────────────────────────────────────────
 console.log(`
@@ -140,13 +100,7 @@ console.log(`
      ▐▌   ▐▌ ▐▌  █
      ▐▌▝▜▌▐▌ ▐▌  █
 this.▝▚▄▞▘▝▚▄▞▘▗▄█▄▖
-${isChild
-  ? `🧩 Scaffolding child lib: ${targetDirName}`
-  : wantsHtml
-  ? `🧩 Creating HTML runtime (${htmlDirName})`
-  : wantsMainServerUi
-  ? `🧩 Creating: ${appName} (main-server-ui)`
-  : `🧩 Creating: ${appName}`}`);
+${wantsHtml ? `🧩 Creating HTML runtime (${htmlDirName})` : `🧩 Creating: ${appName}`}`);
 
 // ─── Token replacement helper (for child template) ────────────────────────────
 /**
@@ -154,10 +108,6 @@ ${isChild
  * under targetDir after copying the template.
  */
 function applyTokens(dir: string, kebab: string): void {
-  const pascal = kebab
-    .split(/[-_]/)
-    .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
-    .join("");
   const title = kebab
     .split(/[-_]/)
     .filter(Boolean)
@@ -166,36 +116,25 @@ function applyTokens(dir: string, kebab: string): void {
 
   const TEXT_EXTS = new Set([
     ".ts", ".tsx", ".js", ".jsx", ".json", ".md",
-    ".html", ".css", ".gitignore", ".storybook",
+    ".html", ".css", ".gitignore",
   ]);
 
   function walk(current: string) {
-    const entries = fsExtra.readdirSync(current);
-    for (const entry of entries) {
+    for (const entry of fsExtra.readdirSync(current)) {
       const full = path.join(current, entry);
-      const stat = fsExtra.statSync(full);
-      if (stat.isDirectory()) {
+      if (fsExtra.statSync(full).isDirectory()) {
         walk(full);
-      } else {
-        const ext = path.extname(full);
-        if (TEXT_EXTS.has(ext) || entry.startsWith(".")) {
-          try {
-            const content = fsExtra.readFileSync(full, "utf8");
-            if (
-              content.includes("__APP_NAME__") ||
-              content.includes("__APP_NAME_PASCAL__") ||
-              content.includes("__APP_NAME_TITLE__")
-            ) {
-              const replaced = content
-                .replace(/__APP_NAME_TITLE__/g, title)
-                .replace(/__APP_NAME_PASCAL__/g, pascal)
-                .replace(/__APP_NAME__/g, kebab);
-              fsExtra.writeFileSync(full, replaced, "utf8");
-            }
-          } catch {
-            // skip binary files silently
+      } else if (TEXT_EXTS.has(path.extname(full)) || entry.startsWith(".")) {
+        try {
+          const content = fsExtra.readFileSync(full, "utf8");
+          if (content.includes("__APP_ID__") || content.includes("__APP_TITLE__")) {
+            fsExtra.writeFileSync(
+              full,
+              content.replace(/__APP_TITLE__/g, title).replace(/__APP_ID__/g, kebab),
+              "utf8"
+            );
           }
-        }
+        } catch { /* skip binary */ }
       }
     }
   }
@@ -223,30 +162,8 @@ try {
   applyTokens(targetDir, appName);
 
   console.log(`📁 Project @ ${targetDir}`);
-
-  if (isChild) {
-    console.log(`\n✅ Child library scaffolded!\n`);
-    console.log(`Next steps:
-  cd ${targetDirName}
-  npm install
-  npm run storybook       ← develop components
-  npm run build           ← build the lib
-
-Structure:
-  src/atoms/       ← domain primitives (wrap/extend this.gui atoms)
-  src/molecules/   ← compositions with domain layout
-  src/compounds/   ← feature panels (may fetch data)
-
-Import in your app:
-  import { ExampleAtom } from '${appName}-gui/atoms'
-  import { ExampleMolecule } from '${appName}-gui/molecules'
-`);
-  } else {
-    console.log(`\n✅ Success!\n`);
-    console.log(
-      `Next steps:\n  cd ${targetDirName}\n  npm install\n  npm run dev\n\nStorybook:\n  npm run storybook\n\nDocs:\n  https://neurons-me.github.io/GUI/\n`
-    );
-  }
+  console.log(`\n✅ Done!\n`);
+  console.log(`Next steps:\n  cd ${appName}\n  npm install\n  npm run dev\n\nDocs:\n  https://neurons-me.github.io/GUI/\n`);
 } catch (error) {
   console.error("❌ Error creating project:", error);
   process.exit(1);
