@@ -10,7 +10,7 @@
     .page { max-width: 960px; margin: 0 auto; padding: 56px 32px 80px; }
     .kicker { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #51606d; margin-bottom: 12px; }
     h1 { font-size: 2.75rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 12px; }
-    .subtitle { color: #51606d; margin-bottom: 48px; font-size: 1.05rem; }
+    .subtitle { color: #51606d; margin-bottom: 40px; font-size: 1.05rem; }
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
     @media (max-width: 720px) { .grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }
@@ -19,12 +19,50 @@
     .card-icon { width: 36px; height: 36px; border-radius: 8px; background: rgba(15,106,120,0.10); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
     .card-title { font-size: 1rem; font-weight: 700; }
     .card-desc { font-size: 0.875rem; color: #51606d; line-height: 1.55; }
+
+    .tier-trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 48px; }
+    @media (max-width: 600px) { .tier-trio { grid-template-columns: 1fr; } }
+    .tier-card { display: flex; flex-direction: column; border-radius: 16px; border: 1px solid rgba(15,23,32,0.12); background: #fff; text-decoration: none; color: inherit; overflow: hidden; transition: transform 160ms ease, border-color 160ms ease; }
+    .tier-card:hover { transform: translateY(-3px); border-color: #0f6a78; }
+    .tier-art { flex: 0 0 150px; display: flex; align-items: center; justify-content: center; background: rgba(15,106,120,0.04); color: #0f6a78; }
+    .tier-art svg { width: 180px; height: 130px; }
+    .tier-info { padding: 14px 18px 18px; }
+    .tier-label { font-size: 1.05rem; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 5px; }
+    .tier-subdesc { font-size: 0.8rem; color: #51606d; line-height: 1.6; }
+    .tier-count { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #0f6a78; margin-bottom: 4px; opacity: 0.7; }
+
+    @keyframes atom-wobble {
+      0%,100% { transform: perspective(220px) rotateY(0deg) rotateX(0deg) rotateZ(0deg); }
+      28% { transform: perspective(220px) rotateY(22deg) rotateX(10deg) rotateZ(4deg); }
+      55% { transform: perspective(220px) rotateY(-16deg) rotateX(-14deg) rotateZ(-6deg); }
+      80% { transform: perspective(220px) rotateY(8deg) rotateX(20deg) rotateZ(3deg); }
+    }
+    @keyframes mol-tumble {
+      0%,100% { transform: perspective(280px) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+      22% { transform: perspective(280px) rotateX(14deg) rotateY(20deg) rotateZ(6deg); }
+      48% { transform: perspective(280px) rotateX(-16deg) rotateY(-14deg) rotateZ(-10deg); }
+      72% { transform: perspective(280px) rotateX(18deg) rotateY(-16deg) rotateZ(12deg); }
+      90% { transform: perspective(280px) rotateX(-10deg) rotateY(14deg) rotateZ(-5deg); }
+    }
+    @keyframes cpd-tumble {
+      0%,100% { transform: perspective(280px) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+      35% { transform: perspective(280px) rotateX(-12deg) rotateY(22deg) rotateZ(8deg); }
+      70% { transform: perspective(280px) rotateX(16deg) rotateY(-14deg) rotateZ(-11deg); }
+    }
+    .atom-body { transform-box: fill-box; transform-origin: center; animation: atom-wobble 18s ease-in-out infinite; }
+    .mol-body  { transform-box: fill-box; transform-origin: center; animation: mol-tumble 26s ease-in-out infinite; }
+    .cpd-body  { transform-box: fill-box; transform-origin: center; animation: cpd-tumble 32s ease-in-out infinite; }
+
     @media (prefers-color-scheme: dark) {
       body { background: #0b1114; color: #e8eded; }
-      .kicker, .subtitle, .card-desc { color: #98a7b3; }
+      .kicker, .subtitle, .card-desc, .tier-subdesc { color: #98a7b3; }
       .card { background: #111a1f; border-color: rgba(232,237,237,0.10); }
       .card:hover { border-color: #4fd1c5; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
       .card-icon { background: rgba(79,209,197,0.12); }
+      .tier-card { background: #111a1f; border-color: rgba(232,237,237,0.10); }
+      .tier-card:hover { border-color: #4fd1c5; }
+      .tier-art { background: rgba(79,209,197,0.04); color: #4fd1c5; }
+      .tier-count { color: #4fd1c5; }
     }
 
     .lang-nav { display: flex; gap: 8px; margin-bottom: 40px; }
@@ -43,6 +81,85 @@
     <h1>.GUI Docs</h1>
     <p class="subtitle">Composable reactive interfaces for distributed intelligence systems.</p>
 
+    <div class="tier-trio">
+
+      <a class="tier-card" href="./storybook/">
+        <div class="tier-art">
+          <!-- 3D Bohr atom — 3 orbital rings as great circles in 3D, JS perspective projection -->
+          <svg id="atom-svg" viewBox="0 0 180 130" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div class="tier-info">
+          <div class="tier-count">Layer 1</div>
+          <div class="tier-label">Atoms</div>
+          <div class="tier-subdesc">Primitive elements — buttons, inputs, icons, typography.</div>
+        </div>
+      </a>
+
+      <a class="tier-card" href="./Molecule-Laws.html">
+        <div class="tier-art">
+          <!-- Benzene C₆H₆ — true 3D planar molecule, 12 atoms + aromatic ring, JS perspective projection -->
+          <svg id="mol-svg" viewBox="0 0 180 130" xmlns="http://www.w3.org/2000/svg"></svg>
+          <svg viewBox="0 0 180 130" xmlns="http://www.w3.org/2000/svg" style="display:none">
+            <g class="mol-body">
+              <line x1="116" y1="50" x2="131" y2="41" stroke="currentColor" stroke-width="0.75" opacity="0.45"/>
+              <line x1="90" y1="35" x2="90" y2="18" stroke="currentColor" stroke-width="0.75" opacity="0.45"/>
+              <line x1="64" y1="50" x2="49" y2="41" stroke="currentColor" stroke-width="0.75" opacity="0.45"/>
+              <line x1="64" y1="80" x2="49" y2="89" stroke="currentColor" stroke-width="0.75" opacity="0.45"/>
+              <line x1="90" y1="95" x2="90" y2="112" stroke="currentColor" stroke-width="0.75" opacity="0.45"/>
+              <line x1="116" y1="80" x2="131" y2="89" stroke="currentColor" stroke-width="0.75" opacity="0.45"/>
+              <polygon points="116,50 90,35 64,50 64,80 90,95 116,80" fill="none" stroke="currentColor" stroke-width="1.25" opacity="0.85"/>
+              <circle cx="90" cy="65" fill="none" stroke="currentColor">
+                <animate attributeName="r" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" values="16;22;16"/>
+                <animate attributeName="stroke-width" dur="9s" repeatCount="indefinite" values="1;0.3;1"/>
+                <animate attributeName="opacity" dur="9s" repeatCount="indefinite" values="0.65;0.2;0.65"/>
+              </circle>
+              <circle cx="116" cy="50" fill="none" stroke="currentColor" stroke-width="1">
+                <animate attributeName="r" dur="7s" begin="0s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" values="3;6;3"/>
+              </circle>
+              <circle cx="90" cy="35" fill="none" stroke="currentColor" stroke-width="1">
+                <animate attributeName="r" dur="7s" begin="1.17s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" values="3;6;3"/>
+              </circle>
+              <circle cx="64" cy="50" fill="none" stroke="currentColor" stroke-width="1">
+                <animate attributeName="r" dur="7s" begin="2.33s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" values="3;6;3"/>
+              </circle>
+              <circle cx="64" cy="80" fill="none" stroke="currentColor" stroke-width="1">
+                <animate attributeName="r" dur="7s" begin="3.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" values="3;6;3"/>
+              </circle>
+              <circle cx="90" cy="95" fill="none" stroke="currentColor" stroke-width="1">
+                <animate attributeName="r" dur="7s" begin="4.67s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" values="3;6;3"/>
+              </circle>
+              <circle cx="116" cy="80" fill="none" stroke="currentColor" stroke-width="1">
+                <animate attributeName="r" dur="7s" begin="5.83s" repeatCount="indefinite" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" values="3;6;3"/>
+              </circle>
+              <circle cx="131" cy="41" r="2.5" fill="currentColor" opacity="0.5"/>
+              <circle cx="90" cy="18" r="2.5" fill="currentColor" opacity="0.5"/>
+              <circle cx="49" cy="41" r="2.5" fill="currentColor" opacity="0.5"/>
+              <circle cx="49" cy="89" r="2.5" fill="currentColor" opacity="0.5"/>
+              <circle cx="90" cy="112" r="2.5" fill="currentColor" opacity="0.5"/>
+              <circle cx="131" cy="89" r="2.5" fill="currentColor" opacity="0.5"/>
+            </g>
+          </svg>
+        </div>
+        <div class="tier-info">
+          <div class="tier-count">Layer 2 · C₆H₆</div>
+          <div class="tier-label">Molecules</div>
+          <div class="tier-subdesc">Composed primitives — search bars, form fields, nav items.</div>
+        </div>
+      </a>
+
+      <a class="tier-card" href="./storybook/">
+        <div class="tier-art">
+          <!-- C₆₀ Buckminsterfullerene — true 3D, all 60 carbons + 90 bonds, JS perspective projection -->
+          <svg id="c60-svg" viewBox="0 0 180 130" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div class="tier-info">
+          <div class="tier-count">Layer 3 · C₆₀</div>
+          <div class="tier-label">Compounds</div>
+          <div class="tier-subdesc">Complex assemblies — sidebars, tables, layout systems.</div>
+        </div>
+      </a>
+
+    </div>
 
     <nav class="lang-nav">
       <a href="../Typescript/">🟦 TypeScript</a>
@@ -109,10 +226,288 @@
     </div>
   </div>
   <footer style="margin-top:64px;padding:32px 0;text-align:center;border-top:1px solid rgba(15,23,32,0.08);">
-    <a href="https://neurons-me.github.io/" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;opacity:0.6;transition:opacity 140ms ease;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6">
+    <a href="https://neurons-me.github.io/" style="display:inline-flex;align-items:center;text-decoration:none;opacity:0.6;transition:opacity 140ms ease;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6">
       <img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760629064/neurons.me_b50f6a.png" alt="neurons.me" style="width:28px;height:28px;object-fit:contain;" />
-      <span style="font-size:0.875rem;font-weight:600;color:inherit;">neurons.me</span>
     </a>
   </footer>
+<script>
+// ── 3D Atom ──────────────────────────────────────────────────────────────────
+(function(){
+  const svg=document.getElementById('atom-svg');
+  if(!svg)return;
+  const NS='http://www.w3.org/2000/svg';
+  const dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const clr=dark?'79,209,197':'15,106,120';
+
+  const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+  const nrm=v=>{const l=Math.hypot(...v);return v.map(x=>x/l)};
+  const mm=(a,b)=>a.map((r,i)=>b[0].map((_,j)=>r.reduce((s,_,k)=>s+a[i][k]*b[k][j],0)));
+  const Rx=a=>{const c=Math.cos(a),s=Math.sin(a);return[[1,0,0],[0,c,-s],[0,s,c]]};
+  const Ry=a=>{const c=Math.cos(a),s=Math.sin(a);return[[c,0,s],[0,1,0],[-s,0,c]]};
+  const Rz=a=>{const c=Math.cos(a),s=Math.sin(a);return[[c,-s,0],[s,c,0],[0,0,1]]};
+  let rot=[[1,0,0],[0,1,0],[0,0,1]];
+  const mv=p=>rot.map(r=>dot(r,p));
+
+  // Three orbital planes — normals 120° apart, each at ~68° from Z so the rings
+  // appear with ry/rx≈0.37 from the default viewpoint (matches original SVG feel)
+  const base=nrm([0,0.93,0.37]);
+  const rzN=(n,a)=>{const c=Math.cos(a),s=Math.sin(a);return[c*n[0]-s*n[1],s*n[0]+c*n[1],n[2]];};
+  const norms=[base,rzN(base,Math.PI*2/3),rzN(base,-Math.PI*2/3)];
+
+  // Orbital basis vectors (u,v) for each ring — two vectors spanning the plane
+  const orbs=norms.map(n=>{
+    const ref=Math.abs(n[0])<0.9?[1,0,0]:[0,1,0];
+    const u=nrm(cross(ref,n));
+    const v=nrm(cross(u,n));
+    return{u,v};
+  });
+
+  const R=0.82,NSEG=40,cx=90,cy=65,scale=40,fov=4;
+  const θs=Array.from({length:NSEG},(_,i)=>2*Math.PI*i/NSEG);
+  const prj=p=>{const r=mv(p),iz=fov/(fov-r[2]);return[r[0]*iz*scale+cx,r[1]*iz*scale+cy,r[2]];};
+  const oPt=(o,θ)=>o.u.map((x,i)=>Math.cos(θ)*R*x+Math.sin(θ)*R*o.v[i]);
+
+  // SVG elements — ring segments
+  const ringEls=orbs.map(()=>θs.map(()=>{
+    const l=document.createElementNS(NS,'line');
+    l.setAttribute('stroke',`rgb(${clr})`);svg.appendChild(l);return l;
+  }));
+  // Electrons
+  const eEls=orbs.map(()=>{const c=document.createElementNS(NS,'circle');c.setAttribute('fill',`rgb(${clr})`);svg.appendChild(c);return c;});
+  // Nucleus ring + fill
+  const nucRing=document.createElementNS(NS,'circle');
+  nucRing.setAttribute('stroke',`rgb(${clr})`);nucRing.setAttribute('fill','none');svg.appendChild(nucRing);
+  const nucFill=document.createElementNS(NS,'circle');
+  nucFill.setAttribute('cx','90');nucFill.setAttribute('cy','65');nucFill.setAttribute('fill',`rgb(${clr})`);svg.appendChild(nucFill);
+
+  const ω=[0.0022,0.0014,0.0009];
+  const phases=[0,Math.PI*0.7,Math.PI*1.4];
+  const speeds=[0.016,0.012,0.014]; // rad/frame — slow, peaceful
+  let t=0;
+
+  (function frame(){
+    t++;
+    ω[0]+=Math.sin(t*0.006)*0.0000025;
+    ω[1]+=Math.cos(t*0.005)*0.000002;
+    rot=mm(Rz(ω[2]),mm(Ry(ω[1]),mm(Rx(ω[0]),rot)));
+    phases.forEach((_,i)=>{phases[i]+=speeds[i];});
+
+    orbs.forEach((o,oi)=>{
+      θs.forEach((θ,si)=>{
+        const θ2=θs[(si+1)%NSEG];
+        const[x1,y1,z1]=prj(oPt(o,θ)),[x2,y2,z2]=prj(oPt(o,θ2));
+        const d=((z1+z2)*0.5+1)*0.5;
+        const el=ringEls[oi][si];
+        el.setAttribute('x1',x1.toFixed(1));el.setAttribute('y1',y1.toFixed(1));
+        el.setAttribute('x2',x2.toFixed(1));el.setAttribute('y2',y2.toFixed(1));
+        el.setAttribute('stroke-width',(0.25+d*0.7).toFixed(2));
+        el.setAttribute('opacity',(0.06+d*0.55).toFixed(2));
+      });
+      const[ex,ey,ez]=prj(oPt(o,phases[oi]));
+      const de=(ez+1)*0.5;
+      eEls[oi].setAttribute('cx',ex.toFixed(1));eEls[oi].setAttribute('cy',ey.toFixed(1));
+      eEls[oi].setAttribute('r',(1.5+de*2.8).toFixed(2));
+      eEls[oi].setAttribute('opacity',(0.35+de*0.65).toFixed(2));
+    });
+
+    // Nucleus — always at origin (projects to center)
+    const pulse=4+1.5*Math.sin(t*0.045);
+    nucRing.setAttribute('cx','90');nucRing.setAttribute('cy','65');
+    nucRing.setAttribute('r',(pulse+4).toFixed(1));
+    nucRing.setAttribute('stroke-width',(1.2+0.4*Math.sin(t*0.045)).toFixed(2));
+    nucRing.setAttribute('opacity',(0.4+0.25*Math.sin(t*0.045)).toFixed(2));
+    nucFill.setAttribute('r',pulse.toFixed(1));
+    nucFill.setAttribute('opacity',(0.75+0.2*Math.sin(t*0.045)).toFixed(2));
+
+    requestAnimationFrame(frame);
+  })();
+})();
+
+// ── Benzene C₆H₆ ─────────────────────────────────────────────────────────────
+(function(){
+  const svg=document.getElementById('mol-svg');
+  if(!svg)return;
+  const NS='http://www.w3.org/2000/svg';
+  const dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const clr=dark?'79,209,197':'15,106,120';
+
+  const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  const mm=(a,b)=>a.map((r,i)=>b[0].map((_,j)=>r.reduce((s,_,k)=>s+a[i][k]*b[k][j],0)));
+  const Rx=a=>{const c=Math.cos(a),s=Math.sin(a);return[[1,0,0],[0,c,-s],[0,s,c]]};
+  const Ry=a=>{const c=Math.cos(a),s=Math.sin(a);return[[c,0,s],[0,1,0],[-s,0,c]]};
+  const Rz=a=>{const c=Math.cos(a),s=Math.sin(a);return[[c,-s,0],[s,c,0],[0,0,1]]};
+  let rot=mm(Rx(0.35),mm(Ry(0.28),[[1,0,0],[0,1,0],[0,0,1]]));
+  const mv=p=>rot.map(r=>dot(r,p));
+
+  // Molecular plane: XY (z=0). π orbitals extend above/below at ±zpi
+  const Rc=0.55, Rh=0.88, Ra=0.32, Rpi=0.44, zpi=0.30;
+  const as6=Array.from({length:6},(_,i)=>i*Math.PI/3);
+  const carbons  = as6.map(a=>[Math.sin(a)*Rc, Math.cos(a)*Rc, 0]);
+  const hydrogens= as6.map(a=>[Math.sin(a)*Rh, Math.cos(a)*Rh, 0]);
+  const NARC=36;
+  const mkRing=(r,z)=>Array.from({length:NARC},(_,i)=>{const a=2*Math.PI*i/NARC;return[Math.sin(a)*r,Math.cos(a)*r,z];});
+  const arcPts=mkRing(Ra,0);       // aromatic circle in plane
+  const piTop =mkRing(Rpi, zpi);   // π cloud top
+  const piBot =mkRing(Rpi,-zpi);   // π cloud bottom
+  // p-orbital sticks: vertical segment at each carbon (connects top π to bottom π)
+  const pStickTop=as6.map(a=>[Math.sin(a)*Rc,Math.cos(a)*Rc, zpi*0.75]);
+  const pStickBot=as6.map(a=>[Math.sin(a)*Rc,Math.cos(a)*Rc,-zpi*0.75]);
+
+  const cx=90,cy=65,scale=42,fov=4;
+  const prj=p=>{const r=mv(p),iz=fov/(fov-r[2]);return[r[0]*iz*scale+cx,r[1]*iz*scale+cy,r[2]];};
+
+  const mkLines=(n)=>Array.from({length:n},()=>{const l=document.createElementNS(NS,'line');l.setAttribute('stroke',`rgb(${clr})`);svg.appendChild(l);return l;});
+  const mkCircles=(n)=>Array.from({length:n},()=>{const c=document.createElementNS(NS,'circle');c.setAttribute('fill',`rgb(${clr})`);svg.appendChild(c);return c;});
+
+  // Layer order: π clouds behind, then bonds, then nodes on top
+  const piTopEls =mkLines(NARC);
+  const piBotEls =mkLines(NARC);
+  const pStickEls=mkLines(6);
+  const ccEls    =mkLines(6);
+  const chEls    =mkLines(6);
+  const arcEls   =mkLines(NARC);
+  const hEls     =mkCircles(6);
+  const cEls     =mkCircles(6);
+
+  const ω=[0.0020,0.0013,0.0009];
+  let t=0;
+
+  (function frame(){
+    t++;
+    ω[0]+=Math.sin(t*0.007)*0.0000022;
+    ω[1]+=Math.cos(t*0.005)*0.0000018;
+    rot=mm(Rz(ω[2]),mm(Ry(ω[1]),mm(Rx(ω[0]),rot)));
+
+    const pC=carbons.map(prj),pH=hydrogens.map(prj),pA=arcPts.map(prj);
+    const pPT=piTop.map(prj),pPB=piBot.map(prj);
+    const pST=pStickTop.map(prj),pSB=pStickBot.map(prj);
+
+    // π cloud rings (top + bottom) — faint, large radius
+    [piTopEls,piBotEls].forEach((els,side)=>{
+      const pts=side===0?pPT:pPB;
+      els.forEach((el,i)=>{
+        const[x1,y1,z1]=pts[i],[x2,y2,z2]=pts[(i+1)%NARC];
+        const d=((z1+z2)*0.5+1)*0.5;
+        el.setAttribute('x1',x1.toFixed(1));el.setAttribute('y1',y1.toFixed(1));
+        el.setAttribute('x2',x2.toFixed(1));el.setAttribute('y2',y2.toFixed(1));
+        el.setAttribute('stroke-width',(0.3+d*0.55).toFixed(2));
+        el.setAttribute('opacity',(0.08+d*0.38).toFixed(2));
+      });
+    });
+    // p-orbital sticks (vertical, one per carbon)
+    pStickEls.forEach((el,i)=>{
+      const[x1,y1,z1]=pST[i],[x2,y2,z2]=pSB[i];
+      const d=((z1+z2)*0.5+1)*0.5;
+      el.setAttribute('x1',x1.toFixed(1));el.setAttribute('y1',y1.toFixed(1));
+      el.setAttribute('x2',x2.toFixed(1));el.setAttribute('y2',y2.toFixed(1));
+      el.setAttribute('stroke-width',(0.3+d*0.3).toFixed(2));
+      el.setAttribute('opacity',(0.12+d*0.3).toFixed(2));
+    });
+    // C-C bonds
+    ccEls.forEach((el,i)=>{
+      const[x1,y1,z1]=pC[i],[x2,y2,z2]=pC[(i+1)%6];
+      const d=((z1+z2)*0.5+1)*0.5;
+      el.setAttribute('x1',x1.toFixed(1));el.setAttribute('y1',y1.toFixed(1));
+      el.setAttribute('x2',x2.toFixed(1));el.setAttribute('y2',y2.toFixed(1));
+      el.setAttribute('stroke-width',(0.8+d*0.7).toFixed(2));
+      el.setAttribute('opacity',(0.38+d*0.57).toFixed(2));
+    });
+    // C-H bonds
+    chEls.forEach((el,i)=>{
+      const[x1,y1,z1]=pC[i],[x2,y2,z2]=pH[i];
+      const d=((z1+z2)*0.5+1)*0.5;
+      el.setAttribute('x1',x1.toFixed(1));el.setAttribute('y1',y1.toFixed(1));
+      el.setAttribute('x2',x2.toFixed(1));el.setAttribute('y2',y2.toFixed(1));
+      el.setAttribute('stroke-width',(0.4+d*0.3).toFixed(2));
+      el.setAttribute('opacity',(0.18+d*0.45).toFixed(2));
+    });
+    // Aromatic circle (in-plane)
+    arcEls.forEach((el,i)=>{
+      const[x1,y1,z1]=pA[i],[x2,y2,z2]=pA[(i+1)%NARC];
+      const d=((z1+z2)*0.5+1)*0.5;
+      el.setAttribute('x1',x1.toFixed(1));el.setAttribute('y1',y1.toFixed(1));
+      el.setAttribute('x2',x2.toFixed(1));el.setAttribute('y2',y2.toFixed(1));
+      el.setAttribute('stroke-width',(0.35+d*0.55).toFixed(2));
+      el.setAttribute('opacity',(0.12+d*0.52).toFixed(2));
+    });
+    // Hydrogen nodes
+    hEls.forEach((el,i)=>{
+      const[x,y,z]=pH[i];const d=(z+1)*0.5;
+      el.setAttribute('cx',x.toFixed(1));el.setAttribute('cy',y.toFixed(1));
+      el.setAttribute('r',(0.7+d*1).toFixed(2));
+      el.setAttribute('opacity',(0.28+d*0.45).toFixed(2));
+    });
+    // Carbon nodes
+    cEls.forEach((el,i)=>{
+      const[x,y,z]=pC[i];const d=(z+1)*0.5;
+      el.setAttribute('cx',x.toFixed(1));el.setAttribute('cy',y.toFixed(1));
+      el.setAttribute('r',(1.5+d*1.9).toFixed(2));
+      el.setAttribute('opacity',(0.48+d*0.52).toFixed(2));
+    });
+    requestAnimationFrame(frame);
+  })();
+})();
+
+// ── C₆₀ Buckminsterfullerene ──────────────────────────────────────────────────
+(function(){
+  const phi=(1+Math.sqrt(5))/2;
+  // 60 vertices of truncated icosahedron (C₆₀ Buckminsterfullerene)
+  const v=[];
+  for(const s of[1,-1])for(const t of[1,-1]){
+    v.push([0,s,t*3*phi]);v.push([t*3*phi,0,s]);v.push([s,t*3*phi,0]);
+  }
+  for(const s of[1,-1])for(const t of[1,-1])for(const u of[1,-1]){
+    v.push([s,t*(2+phi),u*2*phi]);v.push([u*2*phi,s,t*(2+phi)]);v.push([t*(2+phi),u*2*phi,s]);
+    v.push([s*2,t*(1+2*phi),u*phi]);v.push([u*phi,s*2,t*(1+2*phi)]);v.push([t*(1+2*phi),u*phi,s*2]);
+  }
+  const R=Math.hypot(...v[0]);
+  const nv=v.map(p=>p.map(x=>x/R));
+  // 90 bonds: pairs within edge-length threshold
+  const thresh=(2*phi/R)+0.01;
+  const edges=[];
+  for(let i=0;i<60;i++)for(let j=i+1;j<60;j++){
+    if(Math.hypot(nv[i][0]-nv[j][0],nv[i][1]-nv[j][1],nv[i][2]-nv[j][2])<thresh)edges.push([i,j]);
+  }
+  const NS='http://www.w3.org/2000/svg';
+  const svg=document.getElementById('c60-svg');
+  if(!svg)return;
+  const dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const clr=dark?'79,209,197':'15,106,120';
+  const eLs=edges.map(()=>{const l=document.createElementNS(NS,'line');l.setAttribute('stroke',`rgb(${clr})`);svg.appendChild(l);return l;});
+  const nLs=nv.map(()=>{const c=document.createElementNS(NS,'circle');c.setAttribute('fill',`rgb(${clr})`);svg.appendChild(c);return c;});
+  // Rotation via accumulating 3×3 matrix — zero-gravity torque-free tumble
+  const mm=(a,b)=>a.map((r,i)=>b[0].map((_,j)=>r.reduce((s,_,k)=>s+a[i][k]*b[k][j],0)));
+  const Rx=a=>{const c=Math.cos(a),s=Math.sin(a);return[[1,0,0],[0,c,-s],[0,s,c]]};
+  const Ry=a=>{const c=Math.cos(a),s=Math.sin(a);return[[c,0,s],[0,1,0],[-s,0,c]]};
+  const Rz=a=>{const c=Math.cos(a),s=Math.sin(a);return[[c,-s,0],[s,c,0],[0,0,1]]};
+  let rot=[[1,0,0],[0,1,0],[0,0,1]];
+  const mRv=p=>rot.map(r=>r[0]*p[0]+r[1]*p[1]+r[2]*p[2]);
+  const ω=[0.0028,0.0017,0.0011]; // rad/frame — slow and peaceful
+  const cx=90,cy=65,scale=35,fov=4;
+  let t=0;
+  (function frame(){
+    t++;
+    ω[0]+=Math.sin(t*0.007)*0.0000025;
+    ω[1]+=Math.cos(t*0.005)*0.0000018;
+    rot=mm(Rz(ω[2]),mm(Ry(ω[1]),mm(Rx(ω[0]),rot)));
+    const pr=nv.map(p=>{const r=mRv(p),iz=fov/(fov-r[2]);return[r[0]*iz*scale+cx,r[1]*iz*scale+cy,r[2]];});
+    edges.forEach(([i,j],k)=>{
+      const[x1,y1,z1]=pr[i],[x2,y2,z2]=pr[j],d=((z1+z2)*0.5+1)*0.5;
+      eLs[k].setAttribute('x1',x1.toFixed(1));eLs[k].setAttribute('y1',y1.toFixed(1));
+      eLs[k].setAttribute('x2',x2.toFixed(1));eLs[k].setAttribute('y2',y2.toFixed(1));
+      eLs[k].setAttribute('stroke-width',(0.3+d*1.1).toFixed(2));
+      eLs[k].setAttribute('opacity',(0.04+d*0.86).toFixed(2));
+    });
+    nv.forEach((_,i)=>{
+      const[x,y,z]=pr[i],d=(z+1)*0.5;
+      nLs[i].setAttribute('cx',x.toFixed(1));nLs[i].setAttribute('cy',y.toFixed(1));
+      nLs[i].setAttribute('r',(0.4+d*2.2).toFixed(2));
+      nLs[i].setAttribute('opacity',(0.05+d*0.9).toFixed(2));
+    });
+    requestAnimationFrame(frame);
+  })();
+})();
+</script>
 </body>
 </html>
