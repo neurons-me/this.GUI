@@ -2,6 +2,11 @@
 layout: readme
 title: Cleaker Access Protocol Implementation — this.gui
 ---
+
+[← Back to GUI Docs](https://neurons-me.github.io/GUI/docs/)
+
+---
+
 # Cleaker Access Protocol - Implementation Reference
 
 This document translates the high-level access protocol into implementation-facing decisions.
@@ -440,3 +445,7 @@ The next correct code step is:
 4. surface consent state in `ui.cleaker.*` and `runtime.cleaker.auth.*`
 
 Only after that should `monad.ai` become the live source for claim/open/session truth.
+
+---
+
+[← Back to GUI Docs](https://neurons-me.github.io/GUI/docs/)

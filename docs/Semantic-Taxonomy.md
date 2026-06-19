@@ -3,6 +3,10 @@ layout: readme
 title: Semantic Taxonomy — this.gui
 ---
 
+[← Back to GUI Docs](https://neurons-me.github.io/GUI/docs/)
+
+---
+
 This document defines the agreed path conventions for `.me + GUI + Cleaker`.
 
 Its purpose is simple:
@@ -170,3 +174,7 @@ then it belongs in exactly one layer.
   else render();
 })();
 </script>
+
+---
+
+[← Back to GUI Docs](https://neurons-me.github.io/GUI/docs/)

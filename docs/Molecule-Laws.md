@@ -2,6 +2,11 @@
 layout: readme
 title: Molecule Laws — this.gui
 ---
+
+[← Back to GUI Docs](https://neurons-me.github.io/GUI/docs/)
+
+---
+
 # Molecule Laws
 
 This document defines the architectural meaning of a molecule in this.GUI.
@@ -56,3 +61,7 @@ MarkdownDocument shell
 
 The public contract is GUI-owned. It must not expose parser or renderer
 implementation details such as `@uiw`, `remark`, or `unified`.
+
+---
+
+[← Back to GUI Docs](https://neurons-me.github.io/GUI/docs/)

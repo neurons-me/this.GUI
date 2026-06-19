@@ -2,6 +2,11 @@
 layout: readme
 title: Monad Discovery — this.gui
 ---
+
+[← Back to GUI Docs](https://neurons-me.github.io/GUI/docs/)
+
+---
+
 # Monad Discovery
 
 GUI treats monads as a live topology. NetGet is now a primary discovery source, while direct port probing remains a fallback for older or partially configured local environments.
@@ -22,3 +27,7 @@ npm run test:runtime
 ```
 
 `npm run build` runs this guard through `prebuild`.
+
+---
+
+[← Back to GUI Docs](https://neurons-me.github.io/GUI/docs/)

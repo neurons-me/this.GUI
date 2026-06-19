@@ -2,6 +2,11 @@
 layout: readme
 title: Cleaker Access Protocol — this.gui
 ---
+
+[← Back to GUI Docs](https://neurons-me.github.io/GUI/docs/)
+
+---
+
 # Cleaker Access Protocol v0.1
 
 This document defines the external access contract for apps that want to use Cleaker as a sovereign identity and key manager.
@@ -338,3 +343,7 @@ Implement a local contract first:
 - define how temporary access tokens are represented in runtime/session state
 
 Only after that should network-backed claim/open move into the same contract.
+
+---
+
+[← Back to GUI Docs](https://neurons-me.github.io/GUI/docs/)
