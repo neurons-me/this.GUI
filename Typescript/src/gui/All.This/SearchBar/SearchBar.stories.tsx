@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import JsonSearchMe from './JsonSearchMe';
-import type { JsonSearchItem } from './JsonSearchMe.types';
+import SearchBar from './SearchBar';
+import type { JsonSearchItem } from './SearchBar.types';
 
 const mockItems: JsonSearchItem[] = [
   {
@@ -141,9 +141,9 @@ const mockItems: JsonSearchItem[] = [
   },
 ];
 
-const meta: Meta<typeof JsonSearchMe> = {
-  title: 'Marketplace/JsonSearchMe',
-  component: JsonSearchMe,
+const meta: Meta<typeof SearchBar> = {
+  title: 'All.This/SearchBar',
+  component: SearchBar,
   tags: ['autodocs'],
   args: {
     items: mockItems,
@@ -152,7 +152,7 @@ const meta: Meta<typeof JsonSearchMe> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof JsonSearchMe>;
+type Story = StoryObj<typeof SearchBar>;
 
 export const Default: Story = {
   name: 'Default (mock items)',

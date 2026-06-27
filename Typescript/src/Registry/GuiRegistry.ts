@@ -38,9 +38,6 @@ import LineChartResolver from "@/gui/Compounds/Charts/LineChart/LineChart.resolv
 import BarChartResolver from "@/gui/Compounds/Charts/BarChart/BarChart.resolver";
 import ChartSliderResolver from "@/gui/Compounds/Charts/Slider/Slider.resolver";
 
-// Marketplace (custom/app-contributed components — each resolver lazy-loads its component)
-import JsonSearchMeResolver from "@/gui/Marketplace/JsonSearchMe/JsonSearchMe.resolver";
-
 // Layout
 import LayoutResolver from "@/gui/Layout/Layout.resolver";
 import StickyOptionsTopResolver, {
@@ -63,6 +60,7 @@ import NamespaceSurfaceResolver from "@/gui/All.This/Cleaker/Namespace/Namespace
 import QRmeResolver from "@/gui/All.This/me/QR/QR.me.resolver";
 import SessionQRResolver from "@/gui/All.This/me/QR.resolver";
 import MeResolver from "@/gui/All.This/me/me.resolver";
+import SearchBarResolver from "@/gui/All.This/SearchBar/SearchBar.resolver";
 
 export const GuiRegistry = createRegistry([
   // Atoms
@@ -102,8 +100,6 @@ export const GuiRegistry = createRegistry([
   LineChartResolver,
   BarChartResolver,
   ChartSliderResolver,
-  // Marketplace
-  JsonSearchMeResolver,
   // Layout
   LayoutResolver,
   StickyOptionsTopResolver,
@@ -124,4 +120,5 @@ export const GuiRegistry = createRegistry([
   NamespaceSurfaceResolver,
   CleakerGroupResolver,
   CleakerUserResolver,
+  SearchBarResolver,
 ]);

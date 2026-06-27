@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useGuiTheme } from '@/gui-internals/Hooks';
-import type { JsonSearchMeProps, JsonSearchIcon, JsonSearchItem } from './JsonSearchMe.types';
+import type { SearchBarProps, JsonSearchIcon, JsonSearchItem } from './SearchBar.types';
 
-export type { JsonSearchMeProps, JsonSearchItem };
+export type { SearchBarProps, JsonSearchItem };
 
 const DEFAULT_KIND_ORDER = ['root', 'doc', 'source'];
 
@@ -76,13 +76,13 @@ function Icon({
 }
 
 /**
- * JsonSearchMe
+ * SearchBar
  * -------------
  * A search input whose results come from a generic JSON index
  * (`{ id, title, desc, url, icon, repo, kind }[]`), fetched once from `src`
  * or passed directly via `items`. Filters by title/desc/repo, groups by `kind`.
  */
-export default function JsonSearchMe(props: JsonSearchMeProps) {
+export default function SearchBar(props: SearchBarProps) {
   const {
     src,
     items: providedItems,

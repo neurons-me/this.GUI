@@ -5,6 +5,7 @@
  */
 import AllThis from '@/gui/All.This/All.This';
 import Cleaker from '@/gui/All.This/Cleaker/Cleaker';
+import SearchBar from '@/gui/All.This/SearchBar/SearchBar';
 import Charts, {
   BarChart,
   LineChart,
@@ -17,8 +18,10 @@ import Charts, {
 const Compounds = {
   AllThis,
   Cleaker,
+  SearchBar,
   Charts,
 } as const;
-export { AllThis, Cleaker, Charts, LineChart, BarChart, ChartsSlider };
+export { AllThis, Cleaker, SearchBar, Charts, LineChart, BarChart, ChartsSlider };
+export type { JsonSearchItem, JsonSearchIcon, SearchBarProps } from '@/gui/All.This/SearchBar/SearchBar.types';
 export { Compounds };
 export default Compounds;

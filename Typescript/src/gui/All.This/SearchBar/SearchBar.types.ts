@@ -20,7 +20,7 @@ export type JsonSearchItem = {
   kind?: 'root' | 'doc' | 'source' | string;
 };
 
-export type JsonSearchMeProps = {
+export type SearchBarProps = {
   /** URL of the JSON index to fetch (e.g. https://neurons-me.github.io/index.json). */
   src?: string;
   /** Pre-loaded items, used instead of (or while) fetching `src`. */
@@ -41,7 +41,7 @@ export type JsonSearchMeProps = {
   sx?: SxProps<Theme>;
 };
 
-export type JsonSearchMeResolverSpec = {
-  type?: 'JsonSearchMe';
-  props?: JsonSearchMeProps;
+export type SearchBarResolverSpec = {
+  type?: 'SearchBar';
+  props?: SearchBarProps;
 };
