@@ -86,7 +86,7 @@ export default function SearchBar(props: SearchBarProps) {
   const {
     src,
     items: providedItems,
-    placeholder = 'Search docs...',
+    placeholder = 'Search in All.This',
     maxResults = 8,
     kindOrder = DEFAULT_KIND_ORDER,
     enableSlashShortcut = true,
@@ -245,7 +245,7 @@ export default function SearchBar(props: SearchBarProps) {
           onFocus={handleFocus}
           onBlur={handleBlur}
           placeholder={placeholder}
-          aria-label="Search docs"
+          aria-label="Search in All.This"
           style={{
             flex: 1,
             border: 'none',

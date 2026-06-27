@@ -147,7 +147,7 @@ const meta: Meta<typeof SearchBar> = {
   tags: ['autodocs'],
   args: {
     items: mockItems,
-    placeholder: 'Search docs...',
+    placeholder: 'Search in All.This',
   },
 };
 
