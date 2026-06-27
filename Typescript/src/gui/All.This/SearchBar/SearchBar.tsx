@@ -293,7 +293,7 @@ export default function SearchBar(props: SearchBarProps) {
             background: colors.bg,
             boxShadow: isLight ? '0 8px 24px rgba(15,23,32,0.12)' : '0 8px 24px rgba(0,0,0,0.4)',
             display: 'grid',
-            gridTemplateColumns: 'repeat(6, 1fr)',
+            gridTemplateColumns: 'repeat(4, 1fr)',
             gap: 6,
           }}
         >
@@ -318,17 +318,15 @@ export default function SearchBar(props: SearchBarProps) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 4,
-                aspectRatio: '1 / 1',
-                padding: 4,
+                padding: '8px 4px',
                 borderRadius: 8,
                 border: `1px solid ${colors.border}`,
-                overflow: 'hidden',
                 textDecoration: 'none',
                 color: colors.text,
                 textAlign: 'center',
               }}
             >
-              <Icon icon={item.icon} size={40} isLight={isLight} plate={item.iconPlate} />
+              <Icon icon={item.icon} size={28} isLight={isLight} plate={item.iconPlate} />
               <span
                 style={{
                   fontSize: 9,
