@@ -6,7 +6,7 @@ import { linkTo } from '@storybook/addon-links';
 
 // ======================= Meta =======================
 const meta: Meta<typeof ThemesCatalog> = {
-  title: 'GUI/Theme/Catalog',
+  title: 'Getting Started/Theme/Catalog',
   component: ThemesCatalog,
   tags: ['autodocs'],
   decorators: [

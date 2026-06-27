@@ -5,7 +5,7 @@ import Page from '@/gui/Molecules/Page/Page';
 import { Box, Typography } from '@/gui/Atoms';
 import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 const meta: Meta<typeof Layout> = {
-  title: "GUI/Layout",
+  title: "Getting Started/Layout",
   component: Layout,
   tags: ["autodocs"],
   parameters: {

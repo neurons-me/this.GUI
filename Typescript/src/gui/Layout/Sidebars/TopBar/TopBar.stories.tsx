@@ -2,7 +2,7 @@ import TopBar from './TopBar';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  title: 'GUI/Layout/TopBar',
+  title: 'Getting Started/Layout/TopBar',
   component: TopBar,
   tags: ['autodocs'],
   decorators: [

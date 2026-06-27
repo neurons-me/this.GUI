@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import ToggleMode from './ToggleMode';
 // ======================= Meta =======================
 const meta: Meta<typeof ToggleMode> = {
-  title: 'GUI/Theme/ToggleMode',
+  title: 'Getting Started/Theme/ToggleMode',
   component: ToggleMode,
   tags: ['autodocs'],
   decorators: [

@@ -3,7 +3,7 @@ import React from "react";
 import Layout from "@/gui/Layout/Layout";
 
 export default {
-  title: "GUI/Layout/LeftBar",
+  title: "Getting Started/Layout/LeftBar",
   component: Layout,
   tags: ['autodocs'],
   parameters: {

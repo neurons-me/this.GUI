@@ -4,7 +4,7 @@ import Layout from '@/gui/Layout/Layout';
 import Box from '@/gui/Atoms/Box/Box';
 import Typography from '@/gui/Atoms/Typography/Typography';
 const meta: Meta<typeof Layout> = {
-  title: 'GUI/Layout/Content',
+  title: 'Getting Started/Layout/Content',
   component: Layout,
   parameters: {
     layout: 'fullscreen',
