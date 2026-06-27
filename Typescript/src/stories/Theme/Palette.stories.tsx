@@ -7,7 +7,7 @@ import Icon from '@/gui/Atoms/Icon/Icon';
 import { useGuiTheme } from '@/gui/Hooks';
 
 const meta: Meta = {
-  title: 'GUI/Theme/Palette',
+  title: 'Getting Started/Theme/Palette',
   parameters: {
     layout: 'fullscreen',
   },
@@ -47,7 +47,7 @@ const PaletteViewer: React.FC = () => {
             aria-label="Go to Themes Catalog"
             onClick={() => {
               try {
-                const fn = linkTo('GUI/Theme/Catalog', 'Playground');
+                const fn = linkTo('Getting Started/Theme/Catalog', 'Playground');
                 if (typeof fn === 'function') return fn();
               } catch {
                 // ignore

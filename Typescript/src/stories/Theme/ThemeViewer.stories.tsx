@@ -60,7 +60,7 @@ export const CurrentThemeState = () => {
 };
 
 export default {
-  title: 'GUI/Theme/Viewer',
+  title: 'Getting Started/Theme/Viewer',
   component: CurrentThemeState,
 tags: ['autodocs'],
   parameters: {

@@ -60,7 +60,7 @@ export const TypographyThemeState = () => {
 };
 
 export default {
-  title: 'GUI/Theme/Typography',
+  title: 'Getting Started/Theme/Typography',
   component: TypographyThemeState,
   tags: ['autodocs'],
   parameters: {

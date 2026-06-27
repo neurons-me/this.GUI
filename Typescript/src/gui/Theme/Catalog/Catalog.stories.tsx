@@ -14,7 +14,7 @@ const meta: Meta<typeof ThemesCatalog> = {
       const goToPalette = () => {
         try {
           // If addon-links is present, this will navigate within Storybook
-          const fn = linkTo('Theme/Palette', 'Default');
+          const fn = linkTo('Getting Started/Theme/Palette', 'Default');
           if (typeof fn === 'function') return fn();
         } catch {
           // ignore and fallback
