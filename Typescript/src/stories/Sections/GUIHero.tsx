@@ -1,13 +1,12 @@
 import { Box, Typography } from '@/gui/Atoms';
+import RubiksCube from '@/gui/widgets/RubiksCube/RubiksCube';
 export default function GUIHero() {
   return (
     <>
       <Box sx={{ color: 'text.primary' }}>
-        <img
-          src="GUI.png"
-          alt="This.GUI"
-          style={{ width: '320px', height: 'auto', imageRendering: 'auto', marginBottom: '14px' }}
-        />
+        <Box sx={{ maxWidth: 320, mx: 'auto', mb: 1 }}>
+          <RubiksCube height={240} borderRadius={0} />
+        </Box>
         <Typography variant="h1" >
           .GUI
         </Typography>
