@@ -103,7 +103,6 @@ import AdminViewToggle from '@/gui/Molecules/AdminViewToggle/AdminViewToggle';
 export type { AdminViewToggleProps } from '@/gui/Molecules/AdminViewToggle/AdminViewToggle.types';
 import InspectorToggle from '@/gui/Molecules/InspectorToggle/InspectorToggle';
 export type { InspectorToggleProps } from '@/gui/Molecules/InspectorToggle/InspectorToggle.types';
-
 type MoleculesRegistry = {
   Dialog: typeof Dialog;
   Hero: typeof Hero;

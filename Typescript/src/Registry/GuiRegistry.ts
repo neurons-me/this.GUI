@@ -38,6 +38,9 @@ import LineChartResolver from "@/gui/Compounds/Charts/LineChart/LineChart.resolv
 import BarChartResolver from "@/gui/Compounds/Charts/BarChart/BarChart.resolver";
 import ChartSliderResolver from "@/gui/Compounds/Charts/Slider/Slider.resolver";
 
+// Marketplace (custom/app-contributed components — each resolver lazy-loads its component)
+import JsonSearchMeResolver from "@/gui/Marketplace/JsonSearchMe/JsonSearchMe.resolver";
+
 // Layout
 import LayoutResolver from "@/gui/Layout/Layout.resolver";
 import StickyOptionsTopResolver, {
@@ -99,6 +102,8 @@ export const GuiRegistry = createRegistry([
   LineChartResolver,
   BarChartResolver,
   ChartSliderResolver,
+  // Marketplace
+  JsonSearchMeResolver,
   // Layout
   LayoutResolver,
   StickyOptionsTopResolver,
