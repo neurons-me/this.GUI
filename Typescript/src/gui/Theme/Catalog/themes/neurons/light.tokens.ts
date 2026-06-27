@@ -22,45 +22,45 @@ const lightTokens = {
     },
     "default": {
       "$type": "color",
-      "$value": "#f8f9fa"
+      "$value": "#f4f7f8"
     },
     "paper": {
       "$type": "color",
-      "$value": "#f9f9fb"
+      "$value": "#ffffff"
     },
     "nav": {
       "$type": "color",
-      "$value": "#fdfdfd"
+      "$value": "#ffffff"
     },
     "background": {
-      "default": { "$type": "color", "$value": "#f8f9fa" },
-      "paper": { "$type": "color", "$value": "#f9f9fb" },
-      "nav": { "$type": "color", "$value": "#fdfdfd" }
+      "default": { "$type": "color", "$value": "#f4f7f8" },
+      "paper": { "$type": "color", "$value": "#ffffff" },
+      "nav": { "$type": "color", "$value": "#ffffff" }
     },
     "textPrimary": {
       "$type": "color",
-      "$value": "#111111"
+      "$value": "#0f1720"
     },
     "textSecondary": {
       "$type": "color",
-      "$value": "#444444"
+      "$value": "#51606d"
     },
     "link": {
       "$type": "color",
-      "$value": "#008c7d"
+      "$value": "#0f6a78"
     },
     "linkVisited": {
       "$type": "color",
-      "$value": "#006e64"
+      "$value": "#0a3a42"
     },
     "border": {
       "$type": "color",
-      "$value": "rgba(0,0,0,0.08)"
+      "$value": "rgba(15,23,32,0.12)"
     },
     "section": {
       "default": {
         "$type": "color",
-        "$value": "#f9f9fb"
+        "$value": "#ffffff"
       },
       "subtle": {
         "$type": "color",

@@ -10,41 +10,41 @@ const darkTokens = {
     },
     "secondary": {
       "$type": "color",
-      "$value": "#6FC7B5"
+      "$value": "#4fd1c5"
     },
     "icon": {
       "$type": "color",
-      "$value": "#a8a8a8"
+      "$value": "#98a7b3"
     },
     "background": {
-      "default": { "$type": "color", "$value": "#121214" },
-      "paper": { "$type": "color", "$value": "transparent" },
-      "nav": { "$type": "color", "$value": "rgba(18,18,20,0.95)" }
+      "default": { "$type": "color", "$value": "#0b1114" },
+      "paper": { "$type": "color", "$value": "#111a1f" },
+      "nav": { "$type": "color", "$value": "rgba(11,17,20,0.95)" }
     },
     "textPrimary": {
       "$type": "color",
-      "$value": "#ffffff"
+      "$value": "#e8eded"
     },
     "textSecondary": {
       "$type": "color",
-      "$value": "rgba(255,255,255,0.75)"
+      "$value": "#98a7b3"
     },
     "link": {
       "$type": "color",
-      "$value": "#00aa96"
+      "$value": "#4fd1c5"
     },
     "linkVisited": {
       "$type": "color",
-      "$value": "#008278"
+      "$value": "#3aa89d"
     },
     "border": {
       "$type": "color",
-      "$value": "rgb(45,45,55)"
+      "$value": "rgba(232,237,237,0.10)"
     },
     "section": {
-      "default": { "$type": "color", "$value": "#121212" },
-      "subtle": { "$type": "color", "$value": "#1a1a1a" },
-      "strong": { "$type": "color", "$value": "#202020" }
+      "default": { "$type": "color", "$value": "#0b1114" },
+      "subtle": { "$type": "color", "$value": "#111a1f" },
+      "strong": { "$type": "color", "$value": "#16222a" }
     },
     "blur": {
       "light": { "$type": "color", "$value": "rgba(34, 83, 70, 0.55);" },
@@ -54,7 +54,7 @@ const darkTokens = {
     }
   },
   "semantic": {
-    "success": { "$type": "color", "$value": "#6FC7B5" },
+    "success": { "$type": "color", "$value": "#4fd1c5" },
     "error": { "$type": "color", "$value": "#ff6b6b" },
     "warning": { "$type": "color", "$value": "#f4c95d" },
     "info": { "$type": "color", "$value": "#90caf9" }
