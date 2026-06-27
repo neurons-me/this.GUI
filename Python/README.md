@@ -13,7 +13,7 @@ Available for **[node.js](https://www.npmjs.com/package/this.gui)** only.
 
 [neurons.me](https://neurons.me/)
 [Website](https://neurons-me.github.io/GUI/)
-[Storybook](https://neurons-me.github.io/GUI/docs/storybook/)
+[Storybook](https://neurons-me.github.io/GUI/storybook/)
 
 ---
 

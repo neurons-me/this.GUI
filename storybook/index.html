@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <title>storybook - Storybook</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+    
+    <style>
+      @font-face {
+        font-family: 'Nunito Sans';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('./sb-common-assets/nunito-sans-regular.woff2') format('woff2');
+      }
+
+      @font-face {
+        font-family: 'Nunito Sans';
+        font-style: italic;
+        font-weight: 400;
+        font-display: swap;
+        src: url('./sb-common-assets/nunito-sans-italic.woff2') format('woff2');
+      }
+
+      @font-face {
+        font-family: 'Nunito Sans';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url('./sb-common-assets/nunito-sans-bold.woff2') format('woff2');
+      }
+
+      @font-face {
+        font-family: 'Nunito Sans';
+        font-style: italic;
+        font-weight: 700;
+        font-display: swap;
+        src: url('./sb-common-assets/nunito-sans-bold-italic.woff2') format('woff2');
+      }
+    </style>
+
+    <link href="./sb-manager/runtime.js" rel="modulepreload" />
+
+    
+    <link href="./sb-addons/storybook-core-server-presets-0/common-manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/docs-1/manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/a11y-2/manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/vitest-3/manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/themes-4/manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/links-5/manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/storybook-6/manager-bundle.js" rel="modulepreload" />
+      <style>
+  /* Asegura que el título .GUI aparezca junto al logo */
+  .sidebar-header a {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+  .sidebar-header img {
+    max-height: 55px !important;
+    max-width: 89px !important;
+  }
+</style>
+<link rel="icon" type="image/png" href="/favicon.ico" />
+<link rel="stylesheet" href="/material-symbols.css" />
+<script>
+  (() => {
+    const TARGET_LABEL = 'Getting Started';
+
+    function resetSidebarPersistence() {
+      try {
+        const keys = Object.keys(window.localStorage || {});
+        for (const key of keys) {
+          const isStorybookKey = /^storybook/i.test(String(key || ''));
+          const isSidebarState = /(sidebar|expanded|navigation|explorer)/i.test(String(key || ''));
+          if (isStorybookKey && isSidebarState) {
+            window.localStorage.removeItem(key);
+          }
+        }
+      } catch {
+        // ignore storage issues
+      }
+    }
+
+    function syncSidebarExpansion() {
+      const buttons = Array.from(document.querySelectorAll('[data-side="left"] button[aria-expanded]'));
+      if (!buttons.length) return;
+
+      for (const button of buttons) {
+        const label = (button.textContent || '').trim();
+        if (!label || label.includes('/')) continue;
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        const shouldExpand = label.includes(TARGET_LABEL);
+
+        if (shouldExpand && !expanded) {
+          button.click();
+        } else if (!shouldExpand && expanded) {
+          button.click();
+        }
+      }
+    }
+
+    const observer = new MutationObserver(() => {
+      window.requestAnimationFrame(syncSidebarExpansion);
+    });
+
+    window.addEventListener('load', () => {
+      resetSidebarPersistence();
+      syncSidebarExpansion();
+      observer.observe(document.body, {
+        subtree: true,
+        childList: true,
+        attributes: true,
+        attributeFilter: ['aria-expanded'],
+      });
+    });
+  })();
+</script>
+ 
+
+    <style>
+      #storybook-root[hidden] {
+        display: none !important;
+      }
+    </style>
+
+    
+  </head>
+  <body>
+    <div id="root"></div>
+
+    
+    <script>
+      
+        
+          window['FEATURES'] = {
+  "actions": true,
+  "argTypeTargetsV7": true,
+  "backgrounds": true,
+  "changeDetection": true,
+  "componentsManifest": false,
+  "controls": true,
+  "disallowImplicitActionsInRenderV8": true,
+  "highlight": true,
+  "interactions": true,
+  "legacyDecoratorFileOrder": false,
+  "measure": true,
+  "outline": true,
+  "sidebarOnboardingChecklist": true,
+  "viewport": true
+};
+        
+      
+        
+          window['REFS'] = {};
+        
+      
+        
+          window['LOGLEVEL'] = "info";
+        
+      
+        
+          window['DOCS_OPTIONS'] = {
+  "defaultName": "Docs"
+};
+        
+      
+        
+          window['CONFIG_TYPE'] = "PRODUCTION";
+        
+      
+        
+      
+        
+      
+        
+          window['TAGS_OPTIONS'] = {};
+        
+      
+        
+          window['STORYBOOK_BUILDER'] = "vite";
+        
+      
+        
+          window['STORYBOOK_FRAMEWORK'] = "react-vite";
+        
+      
+        
+          window['STORYBOOK_RENDERER'] = "react";
+        
+      
+        
+      
+    </script>
+    
+
+    <script type="module">
+      import './sb-manager/globals-runtime.js';
+
+      
+        import './sb-addons/storybook-core-server-presets-0/common-manager-bundle.js';
+      
+        import './sb-addons/docs-1/manager-bundle.js';
+      
+        import './sb-addons/a11y-2/manager-bundle.js';
+      
+        import './sb-addons/vitest-3/manager-bundle.js';
+      
+        import './sb-addons/themes-4/manager-bundle.js';
+      
+        import './sb-addons/links-5/manager-bundle.js';
+      
+        import './sb-addons/storybook-6/manager-bundle.js';
+      
+
+      import './sb-manager/runtime.js';
+    </script>
+  </body>
+</html>

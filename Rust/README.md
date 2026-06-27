@@ -19,5 +19,5 @@ Collaborate.
 <p align="center">
   <a href="https://neurons-me.github.io/GUI/" style="text-decoration:none" target="_blank">Website</a>
   &nbsp;&nbsp;•&nbsp;&nbsp;
-  <a href="https://neurons-me.github.io/GUI/docs/storybook" style="text-decoration:none" target="_blank">Storybook</a>
+  <a href="https://neurons-me.github.io/GUI/storybook" style="text-decoration:none" target="_blank">Storybook</a>
 </p>

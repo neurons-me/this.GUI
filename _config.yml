@@ -46,7 +46,7 @@ me_theme:
     - label: Docs
       relative_url: /docs/
     - label: Storybook
-      relative_url: /docs/storybook/
+      relative_url: /storybook/
     - label: Github
       url: https://github.com/neurons-me/GUI
     - label: All.This

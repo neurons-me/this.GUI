@@ -7,7 +7,7 @@ on:
       - "Typescript/docs/**"
       - "Typescript/src/**"
       - "Typescript/typedoc.json"
-      - "docs/storybook/**"
+      - "storybook/**"
       - ".github/workflows/docs.yml"
   workflow_dispatch:
 
@@ -46,5 +46,5 @@ jobs:
           destination_dir: Typescript/typedocs
           keep_files: true
 
-      # Storybook is committed at docs/storybook/ and served directly
+      # Storybook is committed at storybook/ and served directly
       # by Jekyll from the main branch — no separate deploy needed.

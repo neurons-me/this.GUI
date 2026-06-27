@@ -7,9 +7,9 @@
 <p align="center">
   <a href="https://neurons-me.github.io/GUI/docs/">⌬ Docs</a>
   &nbsp;·&nbsp;
-  <a href="https://neurons-me.github.io/GUI/docs/storybook/">⬡ Storybook</a>
+  <a href="https://neurons-me.github.io/GUI/storybook/">⬡ Storybook</a>
   &nbsp;·&nbsp;
-  <a href="https://neurons-me.github.io/GUI/docs/storybook/?path=/story/gui-layout--layout-with-page">⟡ Live Preview</a>
+  <a href="https://neurons-me.github.io/GUI/storybook/?path=/story/gui-layout--layout-with-page">⟡ Live Preview</a>
 </p>
 
 <p align="center">
