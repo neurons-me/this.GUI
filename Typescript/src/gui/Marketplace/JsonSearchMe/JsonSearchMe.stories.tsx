@@ -95,12 +95,12 @@ const mockItems: JsonSearchItem[] = [
     kind: 'source',
   },
   {
-    id: 'me-nrp',
+    id: 'nrp',
     title: 'NRP: Namespace Resolution Protocol',
     desc: 'How a me:// path resolves to a monad, hop by hop, across the mesh.',
-    url: 'https://github.com/neurons-me/neurons.me/blob/main/docs/en/Namespace%20Resolution%20Protocol.md',
+    url: 'https://neurons-me.github.io/NRP.html',
     icon: '🛰️',
-    repo: 'neurons.me',
+    repo: null,
     kind: 'doc',
   },
   {
