@@ -112,6 +112,8 @@ export type {
   TokenIssueInput,
 } from '@/gui/All.This/Cleaker/access';
 export { default as FaceRecognition } from '@/gui/widgets/FaceRecognition/FaceRecognition';
+export { default as RubiksCube } from '@/gui/widgets/RubiksCube/RubiksCube';
+export type { RubiksCubeProps } from '@/gui/widgets/RubiksCube/RubiksCube.types';
 export { default as Monad } from '@/gui/All.This/monad.ai/monad.ai';
 export type { MonadProps } from '@/gui/All.This/monad.ai/monad.ai';
 export { default as HighLighter } from '@/gui/widgets/HighLighter/HighLighter';
@@ -209,6 +211,7 @@ import AdminViewToggle from '@/gui/Molecules/AdminViewToggle/AdminViewToggle';
 import InspectorToggle from '@/gui/Molecules/InspectorToggle/InspectorToggle';
 import { GUISettings } from '@/gui/Layout/Sidebars/Collections';
 import FaceRecognition from '@/gui/widgets/FaceRecognition/FaceRecognition';
+import RubiksCube from '@/gui/widgets/RubiksCube/RubiksCube';
 import Monad from '@/gui/All.This/monad.ai/monad.ai';
 import HighLighter from '@/gui/widgets/HighLighter/HighLighter';
 import HighLightsDrawer from '@/gui/widgets/HighLighter/HighLightsDrawer';
@@ -222,6 +225,7 @@ export const Atoms: AtomsRegistry = AtomsBundle;
 export const Molecules = MoleculesBundle;
 export const Widgets = {
   FaceRecognition,
+  RubiksCube,
   HighLighter,
   HighLightsDrawer,
   Monad,

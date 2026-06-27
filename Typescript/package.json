@@ -111,6 +111,8 @@
     "@mui/icons-material": "^6.5.0",
     "@mui/material": "^6.4.6",
     "@mui/system": "^6.5.0",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
     "@uiw/react-markdown-preview": "^5.1.5",
     "@uiw/react-md-editor": "^4.0.11",
     "cleaker": "^3.2.1",
@@ -133,6 +135,7 @@
     "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
     "this.me": "^3.5.7",
+    "three": "^0.169.0",
     "unified": "^11.0.5",
     "uuid": "^13.0.0"
   },
