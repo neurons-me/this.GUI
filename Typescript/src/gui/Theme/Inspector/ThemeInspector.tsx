@@ -11,6 +11,11 @@ import Box from '@/gui/Atoms/Box/Box';
 import Typography from '@/gui/Atoms/Typography/Typography';
 import IconButton from '@/gui/Atoms/IconButton/IconButton';
 import Icon from '@/gui/Atoms/Icon/Icon';
+import Button from '@/gui/Atoms/Button/Button';
+import Chip from '@/gui/Atoms/Chip/Chip';
+import Link from '@/gui/Atoms/Link/Link';
+import Divider from '@/gui/Atoms/Divider/Divider';
+import Paper from '@/gui/Atoms/Paper/Paper';
 import { useGuiTheme } from '@/gui-internals/Hooks';
 
 export interface ThemeInspectorProps {
@@ -23,41 +28,116 @@ const TYPOGRAPHY_VARIANTS = [
   'subtitle1', 'subtitle2', 'body1', 'body2', 'caption', 'overline',
 ] as const;
 
+// One row per *semantic role* (not every raw palette key/shade) — each
+// shown via the real component that actually uses that color in the app,
+// so "what is primary" or "what is a link" is answered by example instead
+// of an abstract swatch + hex you have to mentally map back to usage.
+function PaletteRow({
+  label,
+  hex,
+  preview,
+}: {
+  label: string;
+  hex?: string;
+  preview: React.ReactNode;
+}) {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2,
+        py: 1,
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+      }}
+    >
+      <Typography variant="caption" sx={{ width: 88, flexShrink: 0, color: 'text.secondary', fontWeight: 700 }}>
+        {label}
+      </Typography>
+      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center' }}>{preview}</Box>
+      {hex && (
+        <Typography variant="caption" sx={{ flexShrink: 0, color: 'text.secondary', fontFamily: 'monospace' }}>
+          {hex}
+        </Typography>
+      )}
+    </Box>
+  );
+}
+
 function PaletteTab() {
   const theme = useGuiTheme();
   const palette: Record<string, any> = theme.palette as any;
 
   return (
-    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 2 }}>
-      {Object.entries(palette).map(([colorKey, colorValue]) => {
-        if (typeof colorValue === 'string') {
-          return (
-            <Box key={colorKey} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, p: 1 }}>
-              <Typography variant="caption" sx={{ fontWeight: 700 }}>{colorKey}</Typography>
-              <Box sx={{ bgcolor: colorValue, height: 40, borderRadius: 1, mt: 0.5, mb: 0.5 }} />
-              <Typography variant="caption" sx={{ color: 'text.secondary' }}>{colorValue}</Typography>
-            </Box>
-          );
+    <Box>
+      <PaletteRow
+        label="Primary"
+        hex={palette.primary?.main}
+        preview={<Button variant="contained" color="primary" size="small">Primary action</Button>}
+      />
+      <PaletteRow
+        label="Secondary"
+        hex={palette.secondary?.main}
+        preview={<Button variant="contained" color="secondary" size="small">Secondary action</Button>}
+      />
+      <PaletteRow
+        label="Success"
+        hex={palette.success?.main}
+        preview={<Chip label="Success" color="success" size="small" />}
+      />
+      <PaletteRow
+        label="Warning"
+        hex={palette.warning?.main}
+        preview={<Chip label="Warning" color="warning" size="small" />}
+      />
+      <PaletteRow
+        label="Error"
+        hex={palette.error?.main}
+        preview={<Chip label="Error" color="error" size="small" />}
+      />
+      <PaletteRow
+        label="Info"
+        hex={palette.info?.main}
+        preview={<Chip label="Info" color="info" size="small" />}
+      />
+      <PaletteRow
+        label="Text"
+        hex={palette.text?.primary}
+        preview={<Typography variant="body2">The quick brown fox</Typography>}
+      />
+      <PaletteRow
+        label="Text (muted)"
+        hex={palette.text?.secondary}
+        preview={<Typography variant="body2" color="text.secondary">The quick brown fox</Typography>}
+      />
+      <PaletteRow
+        label="Link"
+        hex={palette.primary?.main}
+        preview={<Link href="#" onClick={(e: any) => e.preventDefault()}>Visit neurons.me</Link>}
+      />
+      <PaletteRow
+        label="Divider"
+        preview={<Divider sx={{ width: '100%' }} />}
+      />
+      <PaletteRow
+        label="Background"
+        hex={palette.background?.default}
+        preview={
+          <Box sx={{ bgcolor: 'background.default', border: '1px solid', borderColor: 'divider', borderRadius: 1, px: 1.5, py: 0.75, width: '100%' }}>
+            <Typography variant="caption">Page background</Typography>
+          </Box>
         }
-        if (colorValue && typeof colorValue === 'object') {
-          const shades = Object.entries(colorValue).filter(([, v]) => typeof v === 'string');
-          if (!shades.length) return null;
-          return (
-            <Box key={colorKey} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, p: 1 }}>
-              <Typography variant="caption" sx={{ fontWeight: 700 }}>{colorKey}</Typography>
-              {shades.map(([shadeKey, shadeValue]) => (
-                <Box key={shadeKey} sx={{ mt: 0.5 }}>
-                  <Box sx={{ bgcolor: shadeValue as string, height: 28, borderRadius: 1, border: '1px solid', borderColor: 'divider' }} />
-                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                    {shadeKey}: {shadeValue as string}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          );
+      />
+      <PaletteRow
+        label="Surface"
+        hex={palette.background?.paper}
+        preview={
+          <Paper elevation={1} sx={{ px: 1.5, py: 0.75, width: '100%' }}>
+            <Typography variant="caption">Card / paper surface</Typography>
+          </Paper>
         }
-        return null;
-      })}
+      />
     </Box>
   );
 }
