@@ -187,6 +187,56 @@ function PaletteRow({
   );
 }
 
+const ICON_SAMPLE_NAMES = ['favorite', 'home', 'settings', 'notifications', 'bolt'];
+
+// A handful of icons rendered once per semantic palette role (so you can
+// see "an icon in error vs warning vs neutral" side by side, not just one
+// hardcoded heart), plus the same icon compared outlined vs filled (the
+// Material Symbols "FILL" axis — two visual modes, same icon).
+function IconShowcase({ palette }: { palette: Record<string, any> }) {
+  const colorRoles: { label: string; value?: string }[] = [
+    { label: 'Icon', value: palette.icon?.main },
+    { label: 'Primary', value: palette.primary?.main },
+    { label: 'Secondary', value: palette.secondary?.main },
+    { label: 'Success', value: palette.success?.main },
+    { label: 'Warning', value: palette.warning?.main },
+    { label: 'Error', value: palette.error?.main },
+    { label: 'Info', value: palette.info?.main },
+    { label: 'Text', value: palette.text?.primary },
+  ];
+
+  return (
+    <Box sx={{ py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
+      <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontWeight: 700, mb: 1 }}>
+        Icons
+      </Typography>
+
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 1.5 }}>
+        {colorRoles.map(({ label, value }) => (
+          <Box key={label} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5, width: 56 }}>
+            <Icon name="favorite" fontSize="1.3rem" style={{ color: value }} />
+            <Typography variant="caption" sx={{ fontSize: '0.62rem', color: 'text.secondary', textAlign: 'center' }}>
+              {label}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+
+      <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontWeight: 700, mb: 1 }}>
+        Outlined vs. filled
+      </Typography>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+        {ICON_SAMPLE_NAMES.map((name) => (
+          <Box key={name} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Icon name={name} fontSize="1.3rem" fill={0} style={{ color: palette.icon?.main }} />
+            <Icon name={name} fontSize="1.3rem" fill={1} style={{ color: palette.icon?.main }} />
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+}
+
 function PaletteTab() {
   const theme = useGuiTheme();
   const palette: Record<string, any> = theme.palette as any;
@@ -244,11 +294,7 @@ function PaletteTab() {
         hex={palette.link?.main ?? palette.primary?.main}
         preview={<Link href="#" onClick={(e: any) => e.preventDefault()}>Visit neurons.me</Link>}
       />
-      <PaletteRow
-        label="Icon"
-        hex={palette.icon?.main}
-        preview={<Icon name="favorite" fontSize="1.25rem" style={{ color: palette.icon?.main }} />}
-      />
+      <IconShowcase palette={palette} />
       <PaletteRow
         label="Divider"
         preview={<Divider sx={{ width: '100%' }} />}

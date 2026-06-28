@@ -1,1 +1,0 @@
-import{aq as e,ar as s}from"./iframe-BamSxvGl.js";function a(t){return s("MuiListItemText",t)}const r=e("MuiListItemText",["root","multiline","dense","inset","primary","secondary"]);export{a as g,r as l};
