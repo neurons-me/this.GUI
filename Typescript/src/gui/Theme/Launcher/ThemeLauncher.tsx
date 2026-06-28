@@ -100,8 +100,8 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
                 position: 'absolute',
                 bottom: 0,
                 right: 0,
-                width: 16,
-                height: 16,
+                width: 20,
+                height: 20,
                 borderRadius: '999px',
                 bgcolor: 'background.paper',
                 border: '1px solid',
@@ -112,7 +112,7 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
                 pointerEvents: 'none',
               }}
             >
-              <Icon name={mode === 'light' ? 'light_mode' : 'dark_mode'} fontSize="0.7rem" iconColor="primary" />
+              <Icon name={mode === 'light' ? 'light_mode' : 'dark_mode'} fontSize="0.9rem" iconColor="primary" />
             </Box>
           </Box>
           {!isRailView && (
