@@ -32,14 +32,48 @@ const TYPOGRAPHY_VARIANTS = [
 // shown via the real component that actually uses that color in the app,
 // so "what is primary" or "what is a link" is answered by example instead
 // of an abstract swatch + hex you have to mentally map back to usage.
+const SHADE_KEYS = ['light', 'main', 'dark', 'contrastText'] as const;
+
+// Small swatch squares for a color group's shades (light/main/dark/
+// contrastText) — kept alongside the "real usage" preview so you get
+// both: what it looks like in context, and the actual shade ramp.
+function ShadeSwatches({ group }: { group: Record<string, any> | undefined }) {
+  if (!group) return null;
+  const shades = SHADE_KEYS.filter((k) => typeof group[k] === 'string');
+  if (!shades.length) return null;
+  return (
+    <Box sx={{ display: 'flex', gap: 0.75, flexShrink: 0 }}>
+      {shades.map((shadeKey) => (
+        <Box key={shadeKey} sx={{ textAlign: 'center' }} title={`${shadeKey}: ${group[shadeKey]}`}>
+          <Box
+            sx={{
+              width: 24,
+              height: 24,
+              borderRadius: 0.75,
+              bgcolor: group[shadeKey],
+              border: '1px solid',
+              borderColor: 'divider',
+            }}
+          />
+          <Typography variant="caption" sx={{ display: 'block', fontSize: '0.6rem', color: 'text.secondary', lineHeight: 1.4 }}>
+            {shadeKey === 'contrastText' ? 'text' : shadeKey[0]}
+          </Typography>
+        </Box>
+      ))}
+    </Box>
+  );
+}
+
 function PaletteRow({
   label,
   hex,
   preview,
+  shadeGroup,
 }: {
   label: string;
   hex?: string;
   preview: React.ReactNode;
+  shadeGroup?: Record<string, any>;
 }) {
   return (
     <Box
@@ -56,6 +90,7 @@ function PaletteRow({
         {label}
       </Typography>
       <Box sx={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center' }}>{preview}</Box>
+      <ShadeSwatches group={shadeGroup} />
       {hex && (
         <Typography variant="caption" sx={{ flexShrink: 0, color: 'text.secondary', fontFamily: 'monospace' }}>
           {hex}
@@ -74,31 +109,37 @@ function PaletteTab() {
       <PaletteRow
         label="Primary"
         hex={palette.primary?.main}
+        shadeGroup={palette.primary}
         preview={<Button variant="contained" color="primary" size="small">Primary action</Button>}
       />
       <PaletteRow
         label="Secondary"
         hex={palette.secondary?.main}
+        shadeGroup={palette.secondary}
         preview={<Button variant="contained" color="secondary" size="small">Secondary action</Button>}
       />
       <PaletteRow
         label="Success"
         hex={palette.success?.main}
+        shadeGroup={palette.success}
         preview={<Chip label="Success" color="success" size="small" />}
       />
       <PaletteRow
         label="Warning"
         hex={palette.warning?.main}
+        shadeGroup={palette.warning}
         preview={<Chip label="Warning" color="warning" size="small" />}
       />
       <PaletteRow
         label="Error"
         hex={palette.error?.main}
+        shadeGroup={palette.error}
         preview={<Chip label="Error" color="error" size="small" />}
       />
       <PaletteRow
         label="Info"
         hex={palette.info?.main}
+        shadeGroup={palette.info}
         preview={<Chip label="Info" color="info" size="small" />}
       />
       <PaletteRow
