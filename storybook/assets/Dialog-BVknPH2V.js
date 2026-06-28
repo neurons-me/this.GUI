@@ -1,0 +1,1 @@
+import{j as t}from"./iframe-p6i3_M1l.js";import{D as n}from"./DialogContent-BnBW1tUt.js";function e(o){return t.jsx(n,{...o,sx:{p:2,bgcolor:"background.paper",...o.sx}})}e.__docgenInfo={description:"",methods:[],displayName:"DialogContent"};export{e as D};

@@ -292,7 +292,20 @@ function PaletteTab() {
       <PaletteRow
         label="Link"
         hex={palette.link?.main ?? palette.primary?.main}
-        preview={<Link href="#" onClick={(e: any) => e.preventDefault()}>Visit neurons.me</Link>}
+        preview={
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+            <Link href="#" onClick={(e: any) => e.preventDefault()}>Visit neurons.me</Link>
+            {palette.link?.visited && (
+              <Link
+                href="#"
+                onClick={(e: any) => e.preventDefault()}
+                sx={{ color: palette.link.visited }}
+              >
+                Already visited
+              </Link>
+            )}
+          </Box>
+        }
       />
       <IconShowcase palette={palette} />
       <PaletteRow
