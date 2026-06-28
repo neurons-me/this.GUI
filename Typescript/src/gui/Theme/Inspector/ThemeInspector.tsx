@@ -16,11 +16,97 @@ import Chip from '@/gui/Atoms/Chip/Chip';
 import Link from '@/gui/Atoms/Link/Link';
 import Divider from '@/gui/Atoms/Divider/Divider';
 import Paper from '@/gui/Atoms/Paper/Paper';
+import Avatar from '@/gui/Atoms/Avatar/Avatar';
 import { useGuiTheme } from '@/gui-internals/Hooks';
+import { useThemeContext } from '@/gui-internals/Contexts/ThemeContext';
+import { getGuiThemes } from '@/gui/Theme/utils/catalog';
 
 export interface ThemeInspectorProps {
   open: boolean;
   onClose: () => void;
+}
+
+// Horizontal theme strip — switch themes right here and watch the
+// Palette/Typography preview below update live, instead of having to
+// close the inspector, go open the full catalog, pick, then reopen it.
+function ThemeStrip() {
+  const themes = getGuiThemes();
+  const { themeId, setThemeId } = useThemeContext();
+
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        gap: 1,
+        overflowX: 'auto',
+        px: 2,
+        py: 1.5,
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+      }}
+    >
+      {themes.map((theme) => {
+        const isActive = theme.themeId === themeId;
+        return (
+          <Box
+            key={theme.themeId}
+            component="button"
+            type="button"
+            aria-label={`Switch to ${theme.themeName} theme`}
+            aria-pressed={isActive}
+            onClick={() => setThemeId?.(theme.themeId!)}
+            sx={{
+              flexShrink: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 0.5,
+              p: 0.5,
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              width: 56,
+            }}
+          >
+            <Box
+              sx={{
+                width: 36,
+                height: 36,
+                borderRadius: '999px',
+                border: '2px solid',
+                borderColor: isActive ? 'primary.main' : 'divider',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                boxSizing: 'border-box',
+              }}
+            >
+              {theme.badgeUrl ? (
+                <Avatar src={theme.badgeUrl} alt={theme.themeName} sx={{ width: 28, height: 28 }} />
+              ) : (
+                <Avatar sx={{ width: 28, height: 28, fontSize: 12 }}>{theme.themeName?.[0] ?? 'T'}</Avatar>
+              )}
+            </Box>
+            <Typography
+              variant="caption"
+              sx={{
+                fontSize: '0.65rem',
+                fontWeight: isActive ? 700 : 400,
+                color: isActive ? 'text.primary' : 'text.secondary',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                maxWidth: '100%',
+              }}
+            >
+              {theme.themeName}
+            </Typography>
+          </Box>
+        );
+      })}
+    </Box>
+  );
 }
 
 const TYPOGRAPHY_VARIANTS = [
@@ -224,6 +310,7 @@ const ThemeInspector: React.FC<ThemeInspectorProps> = ({ open, onClose }) => {
           <Icon name="close" fontSize="1rem" />
         </IconButton>
       </DialogTitle>
+      <ThemeStrip />
       <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ px: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
         <Tab label="Palette" />
         <Tab label="Typography" />

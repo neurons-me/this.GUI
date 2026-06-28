@@ -1,1 +1,0 @@
-import{as as t}from"./iframe-CQnOlLv9.js";function p(s){const{theme:o,name:e,props:n}=s;return!o||!o.components||!o.components[e]||!o.components[e].defaultProps?n:t(o.components[e].defaultProps,n)}export{p as g};
