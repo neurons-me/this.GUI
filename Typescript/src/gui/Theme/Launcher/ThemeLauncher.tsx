@@ -20,7 +20,10 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
   const { themeId, mode } = useThemeContext();
   const leftSidebarContext = React.useContext(LeftSidebarContext);
   const isRailView = leftSidebarContext?.view === 'rail';
-  const [expanded, setExpanded] = useState(false);
+  // Mirror the LeftBar's own view: when the sidebar itself is expanded
+  // (not the narrow rail), the launcher should default to its expanded
+  // view too — names visible — instead of staying collapsed to a bubble.
+  const [expanded, setExpanded] = useState(!isRailView);
   const [hoverOpen, setHoverOpen] = useState(false);
   const [optimisticThemeId, setOptimisticThemeId] = useState<string | null>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -33,6 +36,12 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
   useEffect(() => {
     setOptimisticThemeId(null);
   }, [themeId]);
+
+  // Keep following the LeftBar's own view if it toggles between rail and
+  // expanded at runtime (e.g. user collapses/expands the sidebar itself).
+  useEffect(() => {
+    setExpanded(!isRailView);
+  }, [isRailView]);
 
   const handleMouseEnter = () => {
     if (!expanded) setHoverOpen(true);
