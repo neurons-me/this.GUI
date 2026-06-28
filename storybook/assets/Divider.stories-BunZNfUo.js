@@ -1,0 +1,32 @@
+import{j as r,a as i,B as n}from"./iframe-D3kdS_Ub.js";import"./Button-Bvsv15Nb.js";import"./Chip-AI67ht8y.js";import{D as t}from"./InspectorToggle-B44Z1qvW.js";import"./Paper-BLqP_ThU.js";import"./Hero-D1ARQo6k.js";import"./ListItemIcon-QHJwmHr3.js";import"./ListItemText-_077PsP6.js";import"./Drawer-Dq0mrwVn.js";import{S as s}from"./Stack-Dotb41iV.js";import"./Tooltip-DUrGEKTJ.js";import"./preload-helper-Dp1pzeXC.js";import"./Icon-CXtYlj0b.js";import"./Button-CgnwsOCQ.js";import"./ButtonBase-ZURSVDQf.js";import"./TransitionGroupContext-rD0k-wnc.js";import"./useForkRef-2K53oxYJ.js";import"./CircularProgress-Bk_e6z-b.js";import"./createSvgIcon-Rh2ioi1Z.js";import"./renderer-CrhpmlvX.js";import"./runtimeContext-C7CBx7OH.js";import"./Toolbar-DK5_ylbE.js";import"./IconButton-DP73IHnG.js";import"./IconButton-BqokRRXF.js";import"./Paper-D3ZWzLoD.js";import"./listItemIconClasses-Dv7WtwhG.js";import"./ListContext-BbXpk_HZ.js";import"./listItemTextClasses-BmzBaLhy.js";import"./useSlot-BrC-uMuC.js";import"./resolveComponentProps-C1JfeoUS.js";import"./dividerClasses-DlqItYuU.js";import"./Grow-CCwjpSQx.js";import"./Modal-CnGFTZzj.js";import"./useSlotProps-cU1fxryi.js";import"./getThemeProps-L_ZyXWLY.js";import"./useControlled-DWJouKPk.js";const K={title:"Atoms/Divider",component:t,tags:["autodocs"],parameters:{docs:{description:{component:"The Divider component is a thin wrapper over MUI's `MuiDivider`. It preserves all props and allows styling via the `sx` prop.  \n\nUse it to divide content, lists or layouts."}}},argTypes:{orientation:{control:{type:"radio"},options:["horizontal","vertical"],description:"The orientation of the divider."},variant:{control:{type:"radio"},options:["fullWidth","inset","middle"],description:"The variant to use."},flexItem:{control:{type:"boolean"},description:"If true, the divider is a flex item."}},args:{orientation:"horizontal",variant:"fullWidth",flexItem:!1}},e={render:d=>r.jsxs(s,{spacing:2,sx:{width:300,display:"flex"},children:[r.jsx(i,{variant:"h6",children:"Horizontal Divider"}),r.jsx(i,{children:"Item One"}),r.jsx(t,{}),r.jsx(i,{children:"Item Two"}),r.jsx(i,{variant:"h6",children:"Vertical Divider"}),r.jsxs(n,{sx:{display:"flex",flexDirection:"row",gap:"20px",alignItems:"center",height:"100px"},children:[r.jsx(i,{children:"Left"}),r.jsx(t,{orientation:"vertical",flexItem:!0}),r.jsx(i,{children:"Right"})]}),r.jsx(i,{variant:"h6",children:"Inset Divider"}),r.jsx(i,{children:"First"}),r.jsx(t,{variant:"inset"}),r.jsx(i,{children:"Second"}),r.jsx(i,{variant:"h6",children:"Text Divider"}),r.jsx(t,{children:"Text Content"})]})};var o,p,a;e.parameters={...e.parameters,docs:{...(o=e.parameters)==null?void 0:o.docs,source:{originalSource:`{
+  render: args => <Stack spacing={2} sx={{
+    width: 300,
+    display: 'flex'
+  }}>
+      <Typography variant="h6">Horizontal Divider</Typography>
+       <Typography>Item One</Typography>
+      <Divider />
+       <Typography>Item Two</Typography>
+
+      <Typography variant="h6">Vertical Divider</Typography>
+      <Box sx={{
+      display: "flex",
+      flexDirection: "row",
+      gap: "20px",
+      alignItems: "center",
+      height: "100px"
+    }}>
+        <Typography>Left</Typography>
+        <Divider orientation="vertical" flexItem />
+        <Typography>Right</Typography>
+      </Box>
+
+      <Typography variant="h6">Inset Divider</Typography>
+       <Typography>First</Typography>
+      <Divider variant="inset" />
+       <Typography>Second</Typography>
+
+      <Typography variant="h6">Text Divider</Typography>
+      <Divider>Text Content</Divider>
+    </Stack>
+}`,...(a=(p=e.parameters)==null?void 0:p.docs)==null?void 0:a.source}}};const N=["Variants"];export{e as Variants,N as __namedExportsOrder,K as default};
