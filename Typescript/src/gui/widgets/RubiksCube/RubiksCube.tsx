@@ -3,6 +3,7 @@ import { useRef } from 'react';
 import * as THREE from 'three';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
+import { useGuiTheme } from '@/gui-internals/Hooks';
 import type { RubiksCubeProps, RubiksCubeColors } from './RubiksCube.types';
 
 // Classic Rubik's cube colors — the recognizable default.
@@ -16,9 +17,10 @@ const CLASSIC_COLORS: RubiksCubeColors = {
   base: '#111418',
 };
 
-// neurons.me theme palette — same teal/blue/amber/coral set as the
-// official "neurons.me" theme tokens (dark.tokens.ts) and the topbar accent.
-const THEMED_COLORS: RubiksCubeColors = {
+// Static fallback for 'themed' when there is no <Theme>/ThemeProvider
+// ancestor (e.g. the standalone README mount) — same values as the
+// official "neurons.me" Catalog theme (dark.tokens.ts).
+const THEMED_FALLBACK_COLORS: RubiksCubeColors = {
   px: '#4fd1c5', // teal — primary accent
   nx: '#0f6a78', // deep teal
   py: '#e8eded', // light text color
@@ -153,9 +155,13 @@ function RubiksHero({ spin = true, colors }: { spin?: boolean; colors: RubiksCub
  * react-three-fiber + drei. Originally lived in neurons.me's "Embracing ML"
  * business page; promoted here as a reusable GUI widget.
  *
- * `palette`: 'classic' (default, the real Rubik's colors) or 'themed'
- * (the neurons.me teal/amber/coral palette). Pass `colors` to fully
- * override either preset.
+ * `palette`: 'classic' (default, the real Rubik's colors) or 'themed' —
+ * 'themed' reads live from the nearest `<Theme>`/MUI ThemeProvider, so
+ * switching themes in the Catalog actually changes the cube's colors.
+ * With no ThemeProvider ancestor (e.g. a bare standalone mount), MUI's
+ * `useTheme()` falls back to its own default palette — wrap the mount
+ * in a ThemeProvider if you want a specific look without an app-wide
+ * `<Theme>`. Pass `colors` to override any face regardless of palette.
  */
 export default function RubiksCube({
   height = 340,
@@ -165,8 +171,21 @@ export default function RubiksCube({
   palette = 'classic',
   colors,
 }: RubiksCubeProps) {
+  const muiTheme = useGuiTheme();
+  const themedColors: RubiksCubeColors =
+    muiTheme && muiTheme.palette
+      ? {
+          px: muiTheme.palette.primary?.main ?? THEMED_FALLBACK_COLORS.px,
+          nx: muiTheme.palette.primary?.dark ?? THEMED_FALLBACK_COLORS.nx,
+          py: muiTheme.palette.text?.primary ?? THEMED_FALLBACK_COLORS.py,
+          ny: muiTheme.palette.warning?.main ?? THEMED_FALLBACK_COLORS.ny,
+          pz: muiTheme.palette.info?.main ?? THEMED_FALLBACK_COLORS.pz,
+          nz: muiTheme.palette.error?.main ?? THEMED_FALLBACK_COLORS.nz,
+          base: muiTheme.palette.background?.default ?? THEMED_FALLBACK_COLORS.base,
+        }
+      : THEMED_FALLBACK_COLORS;
   const resolvedColors: RubiksCubeColors = {
-    ...(palette === 'themed' ? THEMED_COLORS : CLASSIC_COLORS),
+    ...(palette === 'themed' ? themedColors : CLASSIC_COLORS),
     ...colors,
   };
   return (

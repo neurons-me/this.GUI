@@ -1,10 +1,9 @@
-<p align="center">
-  <div
-    data-gui-rubiks-cube
-    data-height="240"
-    style="width:320px; max-width:80vw; margin:0 auto;"
-  ></div>
-</p>
+<div
+  data-gui-rubiks-cube
+  data-height="240"
+  style="width:320px; max-width:80vw; margin:0 auto;"
+></div>
+
 <h1 align="center">.GUI</h1>
 <h5 align="center" style="color: gray;">Generative User Interface</h5>
 

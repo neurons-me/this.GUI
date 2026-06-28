@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import RubiksCube from './RubiksCube';
 
 const meta: Meta<typeof RubiksCube> = {
@@ -34,4 +35,40 @@ export const Static: Story = {
 export const NoOrbitControls: Story = {
   name: 'Orbit disabled',
   args: { orbit: false },
+};
+
+const purpleTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: { main: '#a855f7', dark: '#581c87' },
+    info: { main: '#a855f7' },
+    background: { default: '#1a0b2e' },
+  },
+});
+const greenTheme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: { main: '#16a34a', dark: '#14532d' },
+    info: { main: '#16a34a' },
+    background: { default: '#f0fdf4' },
+  },
+});
+
+export const ThemeReactivity: Story = {
+  name: 'Themed — reacts to whichever theme wraps it',
+  args: { palette: 'themed', spin: false, orbit: false },
+  render: (args) => (
+    <div style={{ display: 'flex', gap: 16 }}>
+      <ThemeProvider theme={purpleTheme}>
+        <div style={{ flex: 1 }}>
+          <RubiksCube {...args} />
+        </div>
+      </ThemeProvider>
+      <ThemeProvider theme={greenTheme}>
+        <div style={{ flex: 1 }}>
+          <RubiksCube {...args} />
+        </div>
+      </ThemeProvider>
+    </div>
+  ),
 };
