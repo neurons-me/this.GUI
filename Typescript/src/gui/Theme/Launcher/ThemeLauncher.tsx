@@ -20,10 +20,8 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
   const { themeId, mode } = useThemeContext();
   const leftSidebarContext = React.useContext(LeftSidebarContext);
   const isRailView = leftSidebarContext?.view === 'rail';
-  // Mirror the LeftBar's own view: when the sidebar itself is expanded
-  // (not the narrow rail), the launcher should default to its expanded
-  // view too — names visible — instead of staying collapsed to a bubble.
-  const [expanded, setExpanded] = useState(!isRailView);
+  // `expanded` = the full catalog (all themes) is open — only after a click.
+  const [expanded, setExpanded] = useState(false);
   const [hoverOpen, setHoverOpen] = useState(false);
   const [optimisticThemeId, setOptimisticThemeId] = useState<string | null>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -36,12 +34,6 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
   useEffect(() => {
     setOptimisticThemeId(null);
   }, [themeId]);
-
-  // Keep following the LeftBar's own view if it toggles between rail and
-  // expanded at runtime (e.g. user collapses/expands the sidebar itself).
-  useEffect(() => {
-    setExpanded(!isRailView);
-  }, [isRailView]);
 
   const handleMouseEnter = () => {
     if (!expanded) setHoverOpen(true);
@@ -57,66 +49,76 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
     >
       {!expanded ? (
         <Box
+          component="button"
+          type="button"
+          aria-label="Open theme options"
+          aria-expanded={false}
+          onClick={() => setExpanded(true)}
           sx={{
             position: 'relative',
-            width: 44,
+            width: isRailView ? 44 : '100%',
             height: 44,
-            mx: 'auto',
+            mx: isRailView ? 'auto' : 0,
+            p: 0,
+            border: 'none',
+            background: 'transparent',
+            color: 'inherit',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: isRailView ? 'center' : 'flex-start',
+            gap: 1,
+            cursor: 'pointer',
+            boxSizing: 'border-box',
           }}
         >
-          <Box
-            component="button"
-            type="button"
-            aria-label="Open theme options"
-            aria-expanded={false}
-            onClick={() => setExpanded(true)}
-            sx={{
-              width: 44,
-              height: 44,
-              p: 0,
-              border: '1px solid',
-              borderColor: 'divider',
-              borderRadius: '999px',
-              background: 'transparent',
-              color: 'inherit',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              overflow: 'hidden',
-              boxSizing: 'border-box',
-              transition: 'border-color 120ms ease, transform 120ms ease',
-              '&:hover': { transform: 'translateY(-1px)' },
-            }}
-          >
-            {activeTheme?.badgeUrl ? (
-              <Avatar src={activeTheme.badgeUrl} alt={activeLabel} sx={{ width: 34, height: 34 }} />
-            ) : (
-              <Avatar sx={{ width: 34, height: 34, fontSize: 13 }}>{activeLabel[0] ?? 'T'}</Avatar>
-            )}
+          <Box sx={{ position: 'relative', width: 44, height: 44, flexShrink: 0 }}>
+            <Box
+              sx={{
+                width: 44,
+                height: 44,
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: '999px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                boxSizing: 'border-box',
+                transition: 'border-color 120ms ease, transform 120ms ease',
+                '&:hover': { transform: 'translateY(-1px)' },
+              }}
+            >
+              {activeTheme?.badgeUrl ? (
+                <Avatar src={activeTheme.badgeUrl} alt={activeLabel} sx={{ width: 34, height: 34 }} />
+              ) : (
+                <Avatar sx={{ width: 34, height: 34, fontSize: 13 }}>{activeLabel[0] ?? 'T'}</Avatar>
+              )}
+            </Box>
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                width: 16,
+                height: 16,
+                borderRadius: '999px',
+                bgcolor: 'background.paper',
+                border: '1px solid',
+                borderColor: 'divider',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                pointerEvents: 'none',
+              }}
+            >
+              <Icon name={mode === 'light' ? 'light_mode' : 'dark_mode'} fontSize="0.7rem" iconColor="primary" />
+            </Box>
           </Box>
-          <Box
-            sx={{
-              position: 'absolute',
-              bottom: 0,
-              right: 0,
-              width: 16,
-              height: 16,
-              borderRadius: '999px',
-              bgcolor: 'background.paper',
-              border: '1px solid',
-              borderColor: 'divider',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              pointerEvents: 'none',
-            }}
-          >
-            <Icon name={mode === 'light' ? 'light_mode' : 'dark_mode'} fontSize="0.7rem" iconColor="primary" />
-          </Box>
+          {!isRailView && (
+            <Typography variant="body2" sx={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {activeLabel}
+            </Typography>
+          )}
         </Box>
       ) : (
         <Box
