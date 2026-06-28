@@ -4,8 +4,10 @@ export default function GUIHero() {
   return (
     <>
       <Box sx={{ color: 'text.primary' }}>
-        <Box sx={{ maxWidth: 320, mx: 'auto', mb: 1 }}>
-          <RubiksCube height={240} borderRadius={0} />
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+          <Box sx={{ width: 320, maxWidth: '100%' }}>
+            <RubiksCube height={240} borderRadius={0} />
+          </Box>
         </Box>
         <Typography variant="h1" >
           .GUI
