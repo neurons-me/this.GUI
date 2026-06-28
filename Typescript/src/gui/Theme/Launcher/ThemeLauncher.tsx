@@ -8,6 +8,7 @@ import Popper from '@mui/material/Popper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 import ThemesCatalog from '@/gui/Theme/Catalog/Catalog';
+import ThemeInspector from '@/gui/Theme/Inspector/ThemeInspector';
 import { useThemeContext } from '@/gui-internals/Contexts/ThemeContext';
 import { getGuiThemes } from '@/gui/Theme/utils/catalog';
 import { LeftSidebarContext } from '@/gui-internals/Contexts/LeftSidebarContext';
@@ -24,6 +25,7 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
   const [expanded, setExpanded] = useState(false);
   const [hoverOpen, setHoverOpen] = useState(false);
   const [optimisticThemeId, setOptimisticThemeId] = useState<string | null>(null);
+  const [inspectorOpen, setInspectorOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
 
   const themes = getGuiThemes();
@@ -196,12 +198,27 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
               boxShadow: 4,
             }}
           >
-            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700 }}>
-              Theme
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              {activeLabel}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, display: 'block' }}>
+                  Theme
+                </Typography>
+                <Typography variant="body2" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {activeLabel}
+                </Typography>
+              </Box>
+              <ThemeModeToggle variant="minimal" iconSize="small" />
+              <IconButton
+                size="small"
+                aria-label="Open theme settings"
+                onClick={() => {
+                  setHoverOpen(false);
+                  setInspectorOpen(true);
+                }}
+              >
+                <Icon name="settings" fontSize="1rem" />
+              </IconButton>
+            </Box>
             <Box
               component="button"
               type="button"
@@ -228,6 +245,8 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
           </Box>
         </ClickAwayListener>
       </Popper>
+
+      <ThemeInspector open={inspectorOpen} onClose={() => setInspectorOpen(false)} />
     </Box>
   );
 };
