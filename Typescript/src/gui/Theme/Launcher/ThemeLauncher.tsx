@@ -27,6 +27,10 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
   const [optimisticThemeId, setOptimisticThemeId] = useState<string | null>(null);
   const [inspectorOpen, setInspectorOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
+  // Popper anchors to the avatar bubble itself, not the full-width row —
+  // otherwise, with the sidebar expanded, the tooltip pops out far to the
+  // right of the avatar+name instead of right next to it.
+  const bubbleRef = useRef<HTMLDivElement>(null);
 
   const themes = getGuiThemes();
   const displayThemeId = optimisticThemeId || themeId;
@@ -74,7 +78,7 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
             boxSizing: 'border-box',
           }}
         >
-          <Box sx={{ position: 'relative', width: 44, height: 44, flexShrink: 0 }}>
+          <Box ref={bubbleRef} sx={{ position: 'relative', width: 44, height: 44, flexShrink: 0 }}>
             <Box
               sx={{
                 width: 44,
@@ -180,7 +184,7 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
 
       <Popper
         open={hoverOpen && !expanded}
-        anchorEl={anchorRef.current}
+        anchorEl={bubbleRef.current}
         placement="right-start"
         sx={{ zIndex: (theme: any) => theme.zIndex.drawer + 3 }}
       >
