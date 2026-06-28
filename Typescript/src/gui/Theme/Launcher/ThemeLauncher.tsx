@@ -57,6 +57,7 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
           sx={{
             position: 'relative',
             width: isRailView ? 44 : '100%',
+            minWidth: 0,
             height: 44,
             mx: isRailView ? 'auto' : 0,
             p: 0,
@@ -115,7 +116,10 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
             </Box>
           </Box>
           {!isRailView && (
-            <Typography variant="body2" sx={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: 600, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+            >
               {activeLabel}
             </Typography>
           )}
