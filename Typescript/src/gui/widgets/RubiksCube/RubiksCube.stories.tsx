@@ -10,6 +10,7 @@ const meta: Meta<typeof RubiksCube> = {
     spin: true,
     orbit: true,
     borderRadius: 16,
+    palette: 'classic',
   },
 };
 
@@ -18,6 +19,11 @@ type Story = StoryObj<typeof RubiksCube>;
 
 export const Default: Story = {
   name: 'Default (spinning, draggable)',
+};
+
+export const Themed: Story = {
+  name: 'Themed (neurons.me palette)',
+  args: { palette: 'themed' },
 };
 
 export const Static: Story = {

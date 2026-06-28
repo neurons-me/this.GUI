@@ -6,7 +6,7 @@ export default function GUIHero() {
       <Box sx={{ color: 'text.primary' }}>
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
           <Box sx={{ width: 320, maxWidth: '100%' }}>
-            <RubiksCube height={240} borderRadius={0} />
+            <RubiksCube height={240} borderRadius={0} palette="themed" />
           </Box>
         </Box>
         <Typography variant="h1" >

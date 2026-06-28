@@ -15,8 +15,9 @@ function mountAll() {
     const spin = node.dataset.spin !== 'false';
     const orbit = node.dataset.orbit !== 'false';
     const borderRadius = node.dataset.borderRadius ? Number(node.dataset.borderRadius) : undefined;
+    const palette = node.dataset.palette === 'classic' ? 'classic' : 'themed';
     createRoot(node).render(
-      React.createElement(RubiksCube, { height, spin, orbit, borderRadius })
+      React.createElement(RubiksCube, { height, spin, orbit, borderRadius, palette })
     );
   });
 }
