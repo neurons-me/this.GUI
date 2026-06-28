@@ -17,6 +17,7 @@ import Link from '@/gui/Atoms/Link/Link';
 import Divider from '@/gui/Atoms/Divider/Divider';
 import Paper from '@/gui/Atoms/Paper/Paper';
 import Avatar from '@/gui/Atoms/Avatar/Avatar';
+import ThemeModeToggle from '@/gui/Theme/ToggleMode/ToggleMode';
 import { useGuiTheme } from '@/gui-internals/Hooks';
 import { useThemeContext } from '@/gui-internals/Contexts/ThemeContext';
 import { getGuiThemes } from '@/gui/Theme/utils/catalog';
@@ -240,8 +241,13 @@ function PaletteTab() {
       />
       <PaletteRow
         label="Link"
-        hex={palette.primary?.main}
+        hex={palette.link?.main ?? palette.primary?.main}
         preview={<Link href="#" onClick={(e: any) => e.preventDefault()}>Visit neurons.me</Link>}
+      />
+      <PaletteRow
+        label="Icon"
+        hex={palette.icon?.main}
+        preview={<Icon name="favorite" fontSize="1.25rem" style={{ color: palette.icon?.main }} />}
       />
       <PaletteRow
         label="Divider"
@@ -306,6 +312,7 @@ const ThemeInspector: React.FC<ThemeInspectorProps> = ({ open, onClose }) => {
         <Typography variant="subtitle1" sx={{ fontWeight: 700, flex: 1 }}>
           Theme
         </Typography>
+        <ThemeModeToggle variant="minimal" iconSize="small" />
         <IconButton size="small" aria-label="Close theme inspector" onClick={onClose}>
           <Icon name="close" fontSize="1rem" />
         </IconButton>
