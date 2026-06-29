@@ -124,6 +124,15 @@ export type {
   MonadNamespaceSleepingEntry,
   MonadNamespaceRestartStatus,
 } from '@/gui/All.This/monad.ai/Surface/MonadNamespaceCard';
+export { default as MonadClaims } from '@/gui/All.This/monad.ai/Surface/MonadClaims';
+export type { MonadClaimsProps, MonadClaimIdentity } from '@/gui/All.This/monad.ai/Surface/MonadClaims';
+export { default as MonadMesh } from '@/gui/All.This/monad.ai/Surface/MonadMesh';
+export type {
+  MonadMeshProps,
+  MonadMeshAppEntry,
+  MonadMeshSleepingEntry,
+  MonadMeshRestartStatus,
+} from '@/gui/All.This/monad.ai/Surface/MonadMesh';
 export { default as HighLighter } from '@/gui/widgets/HighLighter/HighLighter';
 export { default as CodeBlock } from '@/gui/Molecules/CodeBlock/CodeBlock';
 export { default as MarkdownDocument } from '@/gui/Molecules/Documents/MarkdownDocument/MarkdownDocument';
