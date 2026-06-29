@@ -116,6 +116,14 @@ export { default as RubiksCube } from '@/gui/widgets/RubiksCube/RubiksCube';
 export type { RubiksCubeProps } from '@/gui/widgets/RubiksCube/RubiksCube.types';
 export { default as Monad } from '@/gui/All.This/monad.ai/monad.ai';
 export type { MonadProps } from '@/gui/All.This/monad.ai/monad.ai';
+export { default as MonadNamespaceCard } from '@/gui/All.This/monad.ai/Surface/MonadNamespaceCard';
+export type {
+  MonadNamespaceCardProps,
+  MonadNamespaceClaimIdentity,
+  MonadNamespaceAppEntry,
+  MonadNamespaceSleepingEntry,
+  MonadNamespaceRestartStatus,
+} from '@/gui/All.This/monad.ai/Surface/MonadNamespaceCard';
 export { default as HighLighter } from '@/gui/widgets/HighLighter/HighLighter';
 export { default as CodeBlock } from '@/gui/Molecules/CodeBlock/CodeBlock';
 export { default as MarkdownDocument } from '@/gui/Molecules/Documents/MarkdownDocument/MarkdownDocument';
