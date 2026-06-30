@@ -48,20 +48,20 @@ const CardHeaderResolver: RegistryEntry = {
     const headerId = ensureNodeId('cardHeader', id);
     const resolvedComponent = component ?? as;
 
-    return (
-      <CardHeader
-        title={title}
-        subheader={subheader}
-        action={action}
-        avatar={avatar}
-        sx={sx}
-        className={className}
-        id={headerId}
-        data-testid={p['data-testid']}
-        {...(resolvedComponent ? { component: resolvedComponent } : {})}
-        {...rest}
-      />
-    );
+    const resolvedProps: Record<string, any> = {
+      title,
+      subheader,
+      action,
+      avatar,
+      sx,
+      className,
+      id: headerId,
+      'data-testid': p['data-testid'],
+      ...(resolvedComponent ? { component: resolvedComponent } : {}),
+      ...rest,
+    };
+
+    return <CardHeader {...(resolvedProps as React.ComponentProps<typeof CardHeader>)} />;
   },
 };
 
