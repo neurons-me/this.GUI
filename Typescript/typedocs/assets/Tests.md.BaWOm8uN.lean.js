@@ -1,0 +1,1 @@
+import{_ as s,o as t,c as a,ae as o}from"./chunks/framework.CeSSdbxO.js";const u=JSON.parse('{"title":"Tests","description":"","frontmatter":{},"headers":[],"relativePath":"Tests.md","filePath":"Tests.md"}'),i={name:"Tests.md"};function n(d,e,r,c,l,p){return t(),a("div",null,[...e[0]||(e[0]=[o("",39)])])}const g=s(i,[["render",n]]);export{u as __pageData,g as default};
