@@ -55,6 +55,12 @@ const config: StorybookConfig = {
     "options": {}
   },
   viteFinal: async (viteConfig) => {
+    // Storybook's preview iframe uses an internal router whose basename
+    // defaults from Vite's `base`. Left unset, it defaults to "/", which
+    // breaks the static build once it's deployed under a subpath (e.g.
+    // /GUI/storybook/) — the router strips the .html extension and any
+    // query string from the URL, silently losing the selected story id.
+    viteConfig.base = './';
     viteConfig.plugins = viteConfig.plugins || [];
     viteConfig.plugins.push(tsconfigPaths());
     const storybookPackageDir = findStorybookPackageDir();

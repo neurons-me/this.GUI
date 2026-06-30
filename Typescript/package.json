@@ -103,7 +103,7 @@
     "dev:root": "vite",
     "preview": "DEMO=true vite preview",
     "storybook": "STORYBOOK=true storybook dev -p 6006",
-    "build-storybook": "STORYBOOK=true storybook build -o ../storybook",
+    "build-storybook": "STORYBOOK=true storybook build -o ../storybook && node scripts/fix-storybook-static-base.mjs",
     "chromatic": "STORYBOOK=true chromatic"
   },
   "dependencies": {
