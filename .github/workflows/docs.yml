@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "Typescript/docs/**"
+      - "Typescript/typedocs/**"
       - "Typescript/src/**"
       - "Typescript/typedoc.json"
       - "storybook/**"
@@ -25,12 +25,15 @@ jobs:
         with:
           node-version: "24"
 
-      # Install VitePress from repo root — avoids Typescript/package.json workspace:* deps.
+      # Install from repo root — avoids Typescript/package.json workspace:* deps
+      # that npm cannot resolve (workspace: is pnpm-only syntax).
       - name: Install VitePress
-        run: npm install --no-save vitepress
+        run: npm install --no-save vitepress vue
 
+      # Source .md and built .html live side by side in Typescript/typedocs/ —
+      # outDir: '.' + emptyOutDir: false in .vitepress/config.ts builds in place.
       - name: Build VitePress
-        run: npx vitepress build Typescript/docs
+        run: npx vitepress build Typescript/typedocs
         env:
           VITEPRESS_BASE: /GUI/Typescript/typedocs/
 

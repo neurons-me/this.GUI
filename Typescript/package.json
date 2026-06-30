@@ -77,6 +77,12 @@
     "this.gui": "./dist/bin/cli.js"
   },
   "scripts": {
+    "docs:api": "typedoc",
+    "docs:api:watch": "typedoc --watch",
+    "docs:dev": "vitepress dev typedocs",
+    "docs:build": "vitepress build typedocs",
+    "docs:preview": "vitepress preview typedocs",
+    "docs:publish": "npm run docs:api && npm run docs:build",
     "prebuild": "npm run test:runtime",
     "build": "vite build && npm run build:types && npm run build:types:sync && npm run build:cli && npm run build:copy-init && npm run build:umd",
     "build:all": "npm run build",
@@ -140,6 +146,8 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.13",
     "@chromatic-com/storybook": "^5.2.1",
     "@eslint/js": "^9.21.0",
     "@mdx-js/loader": "^3.1.0",

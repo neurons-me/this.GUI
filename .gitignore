@@ -38,3 +38,7 @@ Rust/Cargo.lock
 
 # ─── Local dev vendor (served by netget in full stack) ────
 vendor/
+
+# ─── VitePress build cache ────────────────────
+Typescript/typedocs/.vitepress/cache
+Typescript/typedocs/.vitepress/dist
