@@ -12,7 +12,7 @@ export interface HeroProps {
   /** Altura opcional (por defecto: 100vh) */
   height?: string | number;
   /** Padding interno (por defecto: responsive según theme.spacing) */
-  padding?: number | string;
+  padding?: number | string | Partial<Record<'xs' | 'sm' | 'md' | 'lg' | 'xl', number | string>>;
   /** Nivel de desenfoque: 'none' | 'light' | 'medium' | 'heavy' | 'all' */
   blur?: 'none' | 'light' | 'medium' | 'heavy' | 'all';
   /** Color personalizado del overlay (anula overlayColor si se define) */

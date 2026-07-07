@@ -22,7 +22,7 @@ import { Hero, Stack } from '@/gui/Molecules';
 function TemplateHome() {
   const title = useMeValue<string>('apps.my-app.manifest.title') || 'My App';
   return (
-    <Hero height="100vh" mode="left" padding={6} contentMaxWidth={680}>
+    <Hero height="100vh" mode="left" padding={{ xs: 3, md: 8 }} contentMaxWidth={680}>
       <Stack spacing={2} alignItems="flex-start">
         <Typography variant="h1">{title}</Typography>
         <Typography variant="h5">Powered by this.gui</Typography>
