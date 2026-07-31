@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Box } from '@mui/material';
 import Typography from '@/gui/Atoms/Typography/Typography';
-import Me from './me';
 import QRme from './QR/QR.me';
+import Me from './me';
 import { deriveIdentityRootHash } from './identity';
 
 export default {
@@ -112,44 +112,3 @@ function HelloMe() {
 }
 
 export const Default = () => <HelloMe />;
-
-export const Display = () => (
-  <Me
-    label=".me Display"
-    path="name"
-    initialValue="Jose Abella"
-    mode="display"
-  />
-);
-
-export const TextArea = () => (
-  <Me
-    label=".me Bio"
-    path="bio"
-    type="textarea"
-    rows={5}
-    initialValue="Building semantic systems with React-first tooling."
-    buttonLabel="Save Bio"
-  />
-);
-
-export const Live = () => (
-  <Me
-    label=".me Live Status"
-    path="profile.status"
-    initialValue="online"
-    mode="live"
-    rows={1}
-  />
-);
-
-export const NumberField = () => (
-  <Me
-    label=".me Count"
-    path="metrics.count"
-    type="number"
-    coerce="number"
-    initialValue={3}
-    buttonLabel="Update Count"
-  />
-);
