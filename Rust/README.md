@@ -1,23 +1,9 @@
-<p align="center">
-  <img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760894993/neurons-crates-io-no-background_yfxaer.png" alt=".GUI logo" width="203"/>
-</p>
+# .GUI · Rust 🦀
 
+**Not ready yet.** The working implementation is in [.GUI · Typescript](https://neurons-me.github.io/GUI/Typescript/) — start there.
 
-<h1 align="center">.GUI</h1>
-
-<p align="center">
-  A collection of components and building blocks enabling <strong>Generative User Interfaces</strong>.
-</p>
-<p align="center">
-  Available for <a href="https://www.npmjs.com/package/this.gui"><strong>Javascript</strong></a> only. </br>
-<strong>Crate coming soon.</strong></br>
-Collaborate.
-</p>
+Status: in development. `cargo add this-gui` is the reserved package name for when this lands; there is no functional Rust code here yet.
 
 ---
 
-<p align="center">
-  <a href="https://neurons-me.github.io/GUI/" style="text-decoration:none" target="_blank">Website</a>
-  &nbsp;&nbsp;•&nbsp;&nbsp;
-  <a href="https://neurons-me.github.io/GUI/storybook" style="text-decoration:none" target="_blank">Storybook</a>
-</p>
+→ [.GUI · Typescript (working implementation)](https://neurons-me.github.io/GUI/Typescript/) · [.GUI on GitHub](https://github.com/neurons-me/GUI)
