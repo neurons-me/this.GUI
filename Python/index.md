@@ -5,16 +5,12 @@ title: this.gui — Python
 
 # this.gui · Python 🐍
 
-> **Status: In development**
+> **Not ready yet.** The working implementation is in
+> [this.gui · Typescript](../Typescript/) — start there.
 
-The Python implementation of `this.gui` is currently in development.
-
-## Install
-
-```bash
-pip install this-gui
-```
+Status: in development. `pip install this-gui` is the reserved package name for
+when this lands; there is no functional code here yet.
 
 ---
 
-→ Back to [this.gui](../)
+→ [this.gui · Typescript (working implementation)](../Typescript/) · [back to this.gui](../)

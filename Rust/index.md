@@ -5,16 +5,12 @@ title: this.gui — Rust
 
 # this.gui · Rust 🦀
 
-> **Status: In development**
+> **Not ready yet.** The working implementation is in
+> [this.gui · Typescript](../Typescript/) — start there.
 
-The Rust implementation of `this.gui` is currently in development.
-
-## Install
-
-```bash
-cargo add this-gui
-```
+Status: in development. `cargo add this-gui` is the reserved package name for
+when this lands; there is no functional code here yet.
 
 ---
 
-→ Back to [this.gui](../)
+→ [this.gui · Typescript (working implementation)](../Typescript/) · [back to this.gui](../)
