@@ -6,8 +6,9 @@ import { Box } from "@mui/material";
 import { GlobalStyles } from "@mui/system";
 import type { Theme } from "@mui/material/styles";
 import { useTheme } from "@mui/material";
+import { keccak_256 } from "js-sha3";
 export type MonadProps = {
-  variant?: "bubble" | "inline";
+  variant?: "bubble" | "inline" | "identity";
   mode?: "float" | "contained";
   kind?: "me" | "monad";
   seed?: string;
@@ -100,7 +101,11 @@ export default function Monad({ variant = "bubble", mode = "float", kind, seed, 
   const [meContext, setMeContext] = useState<MonadContextValue>(() => resolveMeContext());
   const visualKind = kind || (meContext.hasMe ? "me" : "monad");
   const visualSeed = seed || meContext.meName || label || (visualKind === "me" ? "me" : "monad.ai");
-  const tooltipLabel = label || meContext.meName || (visualKind === "me" ? "me" : "monad.ai");
+  const baseLabel = label || meContext.meName || (visualKind === "me" ? "me" : "monad.ai");
+  // identityHash = keccak256("this.me/identity:v1::" + seed) — the kernel's real public fingerprint.
+  const identityHash = useMemo(() => "0x" + keccak_256(`this.me/identity:v1::${visualSeed}`), [visualSeed]);
+  const tooltipLabel =
+    variant === "identity" ? `${baseLabel} · ${identityHash.slice(0, 10)}…${identityHash.slice(-6)}` : baseLabel;
   const pixelCells = useMemo(() => buildPixelCells(visualSeed), [visualSeed]);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [containerSize, setContainerSize] = useState<{ w: number; h: number } | null>(null);
@@ -444,6 +449,7 @@ export default function Monad({ variant = "bubble", mode = "float", kind, seed, 
               const primary = t.palette.primary?.main || "#29bfff";
               const lightRing = `0 0 0 3px ${primary}, 0 0 20px 5px color-mix(in srgb, ${primary} 55%, transparent)`;
               const lightBorder = `2.5px solid ${primary}`;
+              const isIdentity = variant === "identity";
               return ({
               position: mode === "contained" ? "relative" : "absolute",
               top: mode === "contained" ? "auto" : 10,
@@ -452,14 +458,19 @@ export default function Monad({ variant = "bubble", mode = "float", kind, seed, 
               width: 60,
               height: 60,
               borderRadius: "50%",
-              background: t.palette.mode === "light" ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.1)",
-              boxShadow:
-                !status.active || status.error
-                  ? "0 0 0 3px #ff4d4d, 0 0 20px 6px rgba(255,0,0,0.6)"
-                  : (t.palette.mode === "light" ? lightRing : "0 0 0 3px #29bfff, 0 0 22px 6px rgba(0,200,255,0.6)"),
-              border: !status.active || status.error
-                ? "2.5px solid #ff1a1a"
-                : (t.palette.mode === "light" ? lightBorder : "2.5px solid #9ff6ff"),
+              background: isIdentity
+                ? (t.palette.mode === "light" ? "rgba(255,255,255,0.5)" : "rgba(8,10,11,0.55)")
+                : (t.palette.mode === "light" ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.1)"),
+              boxShadow: isIdentity
+                ? "none"
+                : (!status.active || status.error
+                    ? "0 0 0 3px #ff4d4d, 0 0 20px 6px rgba(255,0,0,0.6)"
+                    : (t.palette.mode === "light" ? lightRing : "0 0 0 3px #29bfff, 0 0 22px 6px rgba(0,200,255,0.6)")),
+              border: isIdentity
+                ? "none"
+                : (!status.active || status.error
+                    ? "2.5px solid #ff1a1a"
+                    : (t.palette.mode === "light" ? lightBorder : "2.5px solid #9ff6ff")),
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -470,7 +481,7 @@ export default function Monad({ variant = "bubble", mode = "float", kind, seed, 
               animation: "float 6s ease-in-out infinite, glow 4.5s ease-in-out infinite",
               backdropFilter: "blur(10px) saturate(160%)",
               pointerEvents: "auto",
-              "&::before": {
+              ...(isIdentity ? {} : { "&::before": {
                 content: '""',
                 position: "absolute",
                 top: "15%",
@@ -486,13 +497,40 @@ export default function Monad({ variant = "bubble", mode = "float", kind, seed, 
                 animation: "blobMove 8s ease-in-out infinite",
                 pointerEvents: "none",
                 mixBlendMode: "screen",
-              },
+              } }),
               "&:hover": { transform: "scale(1.08)" },
               "&:hover .monad-tooltip": { opacity: 1, transform: "translateX(-50%) translateY(-2px)" },
             });
             }}
           >
-            {visualKind === "monad" ? (
+            {variant === "identity" ? (
+              <Box aria-hidden="true" sx={{ position: "relative", width: 34, height: 34, display: "grid", placeItems: "center" }}>
+                <Box
+                  sx={{
+                    position: "absolute",
+                    inset: 0,
+                    borderRadius: "50%",
+                    border: theme.palette.mode === "light" ? "2px solid rgba(0,90,122,0.7)" : "2px solid rgba(230,245,245,0.85)",
+                    boxShadow:
+                      theme.palette.mode === "light"
+                        ? "0 0 10px rgba(0,90,122,0.3)"
+                        : "0 0 12px rgba(180,230,230,0.4)",
+                  }}
+                />
+                <Box
+                  sx={{
+                    width: 9,
+                    height: 9,
+                    borderRadius: "50%",
+                    background: theme.palette.mode === "light" ? "#005a7a" : "#eafcfa",
+                    boxShadow:
+                      theme.palette.mode === "light"
+                        ? "0 0 8px rgba(0,90,122,0.55)"
+                        : "0 0 10px rgba(234,252,250,0.75)",
+                  }}
+                />
+              </Box>
+            ) : visualKind === "monad" ? (
               <>
                 <Box
                   aria-hidden="true"

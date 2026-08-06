@@ -16,6 +16,13 @@ export const Bubble: Story = {
   },
 };
 
+export const Identity: Story = {
+  args: {
+    variant: 'identity',
+    seed: 'jabellae',
+  },
+};
+
 export const Inline: Story = {
   args: {
     variant: 'inline',
