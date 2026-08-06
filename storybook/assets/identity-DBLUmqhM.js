@@ -1,0 +1,1 @@
+import{s as r}from"./sha3-ClQEZSy8.js";function e(n,t){const i=String(n||"")+String(t||"");return"0x"+r.keccak_256(i)}function c(n,t){const i=String(n||"")+String(t||"");return"0x"+r.keccak_256(i)}function d({secret:n,namespace:t}){const i=e(n,t);return{namespace:t,identityRoot:i}}export{c as a,d as b,e as d};
