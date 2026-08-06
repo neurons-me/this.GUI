@@ -503,7 +503,7 @@ export default function Monad({ variant = "bubble", mode = "float", kind, seed, 
             });
             }}
           >
-            {variant === "identity" ? (
+            {variant === "identity" && visualKind === "me" ? (
               <Box aria-hidden="true" sx={{ position: "relative", width: 34, height: 34, display: "grid", placeItems: "center" }}>
                 <Box
                   sx={{

@@ -19,7 +19,24 @@ export const Bubble: Story = {
 export const Identity: Story = {
   args: {
     variant: 'identity',
+    kind: 'me',
     seed: 'jabellae',
+  },
+};
+
+export const IdentityMonad: Story = {
+  args: {
+    variant: 'identity',
+    kind: 'monad',
+    seed: 'jabellae',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'monad has no identityHash-ring concept yet — variant="identity" intentionally falls back to the same pixel-grid it uses under variant="bubble".',
+      },
+    },
   },
 };
 
