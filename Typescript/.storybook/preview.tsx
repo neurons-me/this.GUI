@@ -94,9 +94,25 @@ const docsTheme = {
     'ui-monospace, SFMono-Regular, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace',
 } as const;
 
+export const globalTypes = {
+  mode: {
+    description: 'Color mode',
+    defaultValue: 'light',
+    toolbar: {
+      title: 'Mode',
+      icon: 'circlehollow',
+      items: [
+        { value: 'light', icon: 'sun', title: 'Light' },
+        { value: 'dark', icon: 'moon', title: 'Dark' },
+      ],
+      dynamicTitle: true,
+    },
+  },
+};
+
 export const decorators = [
-  (Story: React.FC) => (
-    <Theme initialThemeId="neurons.me" initialMode="light">
+  (Story: React.FC, context: any) => (
+    <Theme initialThemeId="neurons.me" initialMode={context.globals?.mode === 'dark' ? 'dark' : 'light'}>
       <MemoryRouter initialEntries={['/']} future={routerFuture}>
         <MDXProvider components={mdxComponents}>
           <Story />
