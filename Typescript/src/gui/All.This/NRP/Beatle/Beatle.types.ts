@@ -1,14 +1,17 @@
 import type { NRPExpression, NRPNode } from './NRPExpression';
 
 /**
- * NRP disclosure levels (mirrors monad pathResolver contract).
+ * NRP disclosure levels (mirrors monad pathResolver/disclosure.ts contract).
  *   public    — value is readable by anyone
- *   closed    — namespace exists but this caller has no access
- *   stealth   — namespace does not reveal its own existence (A0/A2 axioms)
+ *   opened    — secret scope, caller presented valid key material
+ *   closed    — namespace exists but this caller has no access. Also covers
+ *               "stealth" (namespace that would not reveal its own existence,
+ *               A0/A2 axioms) — the wire never distinguishes the two, so the
+ *               UI must not either.
  *   contested — Total Monad Synthesis found multiple conflicting monads;
  *               channel is open but resolution authority is ambiguous
  */
-export type NRPDisclosure = 'public' | 'closed' | 'stealth' | 'contested';
+export type NRPDisclosure = 'public' | 'opened' | 'closed' | 'contested';
 
 /** Typed payload from the server's 'resolved' message */
 export type ResolvedPayload = {

@@ -294,7 +294,7 @@ error         parse error, connection refused, or resolution failed
     audience?: string[],
     capabilities?: string[],
     surface?: string,     // resolved overlay/projection surface, if any
-    disclosure: 'public' | 'closed' | 'stealth' | 'contested'
+    disclosure: 'public' | 'opened' | 'closed' | 'contested'
   },
   timestamp: number
 }
@@ -327,11 +327,11 @@ The server returns a `disclosure` level based on what the `.me` kernel reveals:
 | Level | Meaning |
 |---|---|
 | `public` | Namespace is readable, endpoints available |
-| `closed` | Namespace exists, caller has no access |
-| `stealth` | Namespace does not reveal its own existence (A0/A2 axioms) |
+| `opened` | Secret scope, caller presented valid key material |
+| `closed` | Namespace exists (or would not confirm existence — A0/A2 stealth axioms), caller has no access |
 | `contested` | Multiple conflicting monads claim this namespace |
 
-`stealth` is structural — the `.me` kernel never confirms existence of a secret scope root. Do not show existence hints to the user when `disclosure === 'stealth'`.
+`closed` is structural whenever it covers a stealth root — the `.me` kernel never confirms existence of a secret scope root, and the wire never distinguishes "no access" from "would not say if it exists." Do not show existence hints to the user when `disclosure === 'closed'`.
 
 ---
 
