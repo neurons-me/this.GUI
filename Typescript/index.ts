@@ -116,6 +116,8 @@ export { default as RubiksCube } from '@/gui/widgets/RubiksCube/RubiksCube';
 export type { RubiksCubeProps } from '@/gui/widgets/RubiksCube/RubiksCube.types';
 export { default as Monad } from '@/gui/All.This/monad.ai/monad.ai';
 export type { MonadProps } from '@/gui/All.This/monad.ai/monad.ai';
+export { default as QRme } from '@/gui/All.This/me/QR/QR.me';
+export type { QRmeProps } from '@/gui/All.This/me/QR/QR.me';
 export { default as MonadNamespaceCard } from '@/gui/All.This/monad.ai/Surface/MonadNamespaceCard';
 export type {
   MonadNamespaceCardProps,

@@ -7,8 +7,7 @@
 // No fetching, no table markup.
 //@/gui/Session/Session.tsx
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Button, IconButton, Typography } from '@/gui/Atoms';
-import { Tooltip } from '@/gui/Molecules';
+import { Box, Button, IconButton, Typography, Tooltip } from '@/gui/Atoms';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import { useGuiTheme, useGuiMediaQuery } from '@/gui-internals/Hooks';
 import { useGuiParts } from '@/runtime/parts';

@@ -7,6 +7,7 @@ import { GlobalStyles } from "@mui/system";
 import type { Theme } from "@mui/material/styles";
 import { useTheme } from "@mui/material";
 import { keccak_256 } from "js-sha3";
+import QRme from "../me/QR/QR.me";
 export type MonadProps = {
   variant?: "bubble" | "inline" | "identity";
   mode?: "float" | "contained";
@@ -16,6 +17,8 @@ export type MonadProps = {
   label?: string;
   /** Drive the orb glow: true = green/online, false = red/offline, null/undefined = default blue. */
   healthy?: boolean | null;
+  /** Diameter (px) of the identity ring. Border and dot scale proportionally. Only applies to variant="identity". Defaults to 34. */
+  size?: number;
   children?: ReactNode;
 };
 
@@ -90,8 +93,13 @@ function resolveMeContext(): MonadContextValue {
   return { hasMe: Boolean(me), me, meName };
 }
 
-export default function Monad({ variant = "bubble", mode = "float", kind, seed, label, healthy, children }: MonadProps) {
+export default function Monad({ variant = "bubble", mode = "float", kind, seed, label, healthy, size, children }: MonadProps) {
   const [open, setOpen] = useState(false);
+  const [qrExpanded, setQrExpanded] = useState(false);
+  const identitySize = size ?? 34;
+  const identityButtonSize = Math.round(identitySize * (60 / 34));
+  const identityBorderWidth = Math.max(2, Math.round(identitySize * (2 / 34)));
+  const identityDotSize = Math.max(3, Math.round(identitySize * (9 / 34)));
   const status = {
     active: healthy !== false,
     error: healthy === false,
@@ -455,8 +463,8 @@ export default function Monad({ variant = "bubble", mode = "float", kind, seed, 
               top: mode === "contained" ? "auto" : 10,
               left: mode === "contained" ? "auto" : 10,
               transform: "none",
-              width: 60,
-              height: 60,
+              width: isIdentity ? identityButtonSize : 60,
+              height: isIdentity ? identityButtonSize : 60,
               borderRadius: "50%",
               background: isIdentity
                 ? (t.palette.mode === "light" ? "rgba(255,255,255,0.5)" : "rgba(8,10,11,0.55)")
@@ -504,13 +512,16 @@ export default function Monad({ variant = "bubble", mode = "float", kind, seed, 
             }}
           >
             {variant === "identity" && visualKind === "me" ? (
-              <Box aria-hidden="true" sx={{ position: "relative", width: 34, height: 34, display: "grid", placeItems: "center" }}>
+              <Box aria-hidden="true" sx={{ position: "relative", width: identitySize, height: identitySize, display: "grid", placeItems: "center" }}>
                 <Box
                   sx={{
                     position: "absolute",
                     inset: 0,
                     borderRadius: "50%",
-                    border: theme.palette.mode === "light" ? "2px solid rgba(0,90,122,0.7)" : "2px solid rgba(230,245,245,0.85)",
+                    border:
+                      theme.palette.mode === "light"
+                        ? `${identityBorderWidth}px solid rgba(0,90,122,0.7)`
+                        : `${identityBorderWidth}px solid rgba(230,245,245,0.85)`,
                     boxShadow:
                       theme.palette.mode === "light"
                         ? "0 0 10px rgba(0,90,122,0.3)"
@@ -519,8 +530,8 @@ export default function Monad({ variant = "bubble", mode = "float", kind, seed, 
                 />
                 <Box
                   sx={{
-                    width: 9,
-                    height: 9,
+                    width: identityDotSize,
+                    height: identityDotSize,
                     borderRadius: "50%",
                     background: theme.palette.mode === "light" ? "#005a7a" : "#eafcfa",
                     boxShadow:
@@ -608,32 +619,81 @@ export default function Monad({ variant = "bubble", mode = "float", kind, seed, 
             ) : (
               "⊙"
             )}
-            <Box
-              className="monad-tooltip"
-              sx={{
-                position: "absolute",
-                bottom: "calc(100% + 8px)",
-                left: "50%",
-                transform: "translateX(-50%) translateY(4px)",
-                opacity: 0,
-                transition: "opacity 0.18s ease, transform 0.18s ease",
-                pointerEvents: "none",
-                whiteSpace: "nowrap",
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: "0.06em",
-                color: theme.palette?.mode === "light" ? "#005a7a" : "#baf3ff",
-                background: theme.palette?.mode === "light" ? "rgba(255,255,255,0.85)" : "rgba(10,14,18,0.85)",
-                border: "1px solid rgba(255,255,255,0.2)",
-                backdropFilter: "blur(8px)",
-                borderRadius: "8px",
-                px: 1,
-                py: 0.4,
-                boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
-              }}
-            >
-              {tooltipLabel}
-            </Box>
+            {variant === "identity" ? (
+              <Box
+                className="monad-tooltip"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setQrExpanded((prev) => !prev);
+                }}
+                sx={{
+                  position: "absolute",
+                  bottom: "calc(100% + 10px)",
+                  left: "50%",
+                  transform: "translateX(-50%) translateY(4px)",
+                  opacity: 0,
+                  transition: "opacity 0.18s ease, transform 0.18s ease",
+                  pointerEvents: "auto",
+                  cursor: "pointer",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 0.75,
+                }}
+              >
+                <Box
+                  sx={{
+                    transform: qrExpanded ? "scale(1.8)" : "scale(1)",
+                    transformOrigin: "bottom center",
+                    transition: "transform 0.25s cubic-bezier(0.22,1,0.36,1)",
+                    filter: "drop-shadow(0 6px 18px rgba(0,0,0,0.35))",
+                  }}
+                >
+                  <QRme value={`me://${visualSeed}`} diameter={56} hoverFlip={false} clickFlip={false} />
+                </Box>
+                {qrExpanded ? (
+                  <Box
+                    sx={{
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: "0.04em",
+                      whiteSpace: "nowrap",
+                      color: theme.palette?.mode === "light" ? "#005a7a" : "#baf3ff",
+                      opacity: 0.85,
+                    }}
+                  >
+                    {identityHash.slice(0, 10)}…{identityHash.slice(-6)}
+                  </Box>
+                ) : null}
+              </Box>
+            ) : (
+              <Box
+                className="monad-tooltip"
+                sx={{
+                  position: "absolute",
+                  bottom: "calc(100% + 8px)",
+                  left: "50%",
+                  transform: "translateX(-50%) translateY(4px)",
+                  opacity: 0,
+                  transition: "opacity 0.18s ease, transform 0.18s ease",
+                  pointerEvents: "none",
+                  whiteSpace: "nowrap",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: "0.06em",
+                  color: theme.palette?.mode === "light" ? "#005a7a" : "#baf3ff",
+                  background: theme.palette?.mode === "light" ? "rgba(255,255,255,0.85)" : "rgba(10,14,18,0.85)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  backdropFilter: "blur(8px)",
+                  borderRadius: "8px",
+                  px: 1,
+                  py: 0.4,
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
+                }}
+              >
+                {tooltipLabel}
+              </Box>
+            )}
           </Box>
           </Box>
         </MonadContext.Provider>

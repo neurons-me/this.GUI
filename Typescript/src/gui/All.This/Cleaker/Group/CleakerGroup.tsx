@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Avatar, Box, Button, Chip, Link, TextField, Typography } from "@/gui/Atoms";
-import { Tooltip } from "@/gui/Molecules";
+import { Avatar, Box, Button, Chip, Link, TextField, Typography, Tooltip } from "@/gui/Atoms";
 import Icon from "@/gui/Atoms/Icon/Icon";
 import { useGuiTheme } from "@/gui-internals/Hooks";
 import { buildCleakerNamespaceUrl, parseCleakerNamespaceExpression } from "../namespaceExpression";

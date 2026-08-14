@@ -5,7 +5,7 @@ import IconButton from '@/gui/Atoms/IconButton/IconButton';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
  
 import Icon from '@/gui/Atoms/Icon/Icon';
-import Tooltip from '@/gui/Molecules/Tooltip/Tooltip';
+import Tooltip from '@/gui/Atoms/Tooltip/Tooltip';
 import Drawer from '@/gui/Molecules/Drawer/Drawer';
 import HighLightsDrawer from '@/gui/widgets/HighLighter/HighLightsDrawer';
 

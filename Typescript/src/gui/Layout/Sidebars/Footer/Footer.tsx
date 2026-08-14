@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { Bar, Box, Typography, Avatar } from '@/gui/Atoms';
-import { Toolbar, Tooltip } from '@/gui/Molecules';
+import { Bar, Box, Typography, Avatar, Tooltip } from '@/gui/Atoms';
+import { Toolbar } from '@/gui/Molecules';
 import { Link as RouterLink } from 'react-router-dom';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import { useGuiTheme, useGuiMediaQuery, useInsets, useUpdateInsets } from '@/gui-internals/Hooks';

@@ -12,7 +12,7 @@ import Typography from '@/gui/Atoms/Typography/Typography';
 import Box from '@/gui/Atoms/Box/Box';
 import Avatar from '@/gui/Atoms/Avatar/Avatar';
 import Checkbox from '@/gui/Atoms/Checkbox/Checkbox';
-import Tooltip from '@/gui/Molecules/Tooltip/Tooltip';
+import Tooltip from '@/gui/Atoms/Tooltip/Tooltip';
 import Switch from '@/gui/Atoms/Switch/Switch';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import { useThemeContext } from '@/gui-internals/Contexts/ThemeContext';

@@ -24,6 +24,7 @@ import SliderResolver from "@/gui/Atoms/Slider/Slider.resolver";
 import SurfaceResolver from "@/gui/Atoms/Surface/Surface.resolver";
 import SwitchResolver from "@/gui/Atoms/Switch/Switch.resolver";
 import TextFieldResolver from "@/gui/Atoms/TextField/TextField.resolver";
+import TooltipResolver from "@/gui/Atoms/Tooltip/Tooltip.resolver";
 import TypographyResolver from "@/gui/Atoms/Typography/Typography.resolver";
 
 // Molecules
@@ -31,7 +32,6 @@ import HeroResolver from "@/gui/Molecules/Hero/Hero.resolver";
 import PageResolver from "@/gui/Molecules/Page/Page.resolver";
 import MarkdownDocumentRegistration from "@/gui/Molecules/Documents/MarkdownDocument/MarkdownDocument.registration";
 import DrawerResolver from "@/gui/Molecules/Drawer/Drawer.resolver";
-import TooltipResolver from "@/gui/Molecules/Tooltip/Tooltip.resolver";
 import AdminViewToggleResolver from "@/gui/Molecules/AdminViewToggle/AdminViewToggle.resolver";
 import InspectorToggleResolver from "@/gui/Molecules/InspectorToggle/InspectorToggle.resolver";
 import LineChartResolver from "@/gui/Compounds/Charts/LineChart/LineChart.resolver";
@@ -87,13 +87,13 @@ export const GuiRegistry = createRegistry([
   SurfaceResolver,
   SwitchResolver,
   TextFieldResolver,
+  TooltipResolver,
   TypographyResolver,
   // Molecules
   HeroResolver,
   PageResolver,
   MarkdownDocumentRegistration,
   DrawerResolver,
-  TooltipResolver,
   AdminViewToggleResolver,
   InspectorToggleResolver,
   // Charts

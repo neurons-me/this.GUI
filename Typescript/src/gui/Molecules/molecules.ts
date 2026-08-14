@@ -97,8 +97,8 @@ import TableRow, { type TableRowProps } from '@/gui/Molecules/Table/Row/TableRow
 export type { TableRowProps } from '@/gui/Molecules/Table/Row/TableRow';
 import Toolbar, { type ToolbarProps } from '@/gui/Molecules/Toolbar/Toolbar';
 export type { ToolbarProps } from '@/gui/Molecules/Toolbar/Toolbar';
-import Tooltip, { type TooltipProps } from '@/gui/Molecules/Tooltip/Tooltip';
-export type { TooltipProps } from '@/gui/Molecules/Tooltip/Tooltip';
+// Tooltip moved to Atoms/ (2026-08) — its own resolver already declared group: 'Atoms'.
+// Import from '@/gui/atoms' now.
 import AdminViewToggle from '@/gui/Molecules/AdminViewToggle/AdminViewToggle';
 export type { AdminViewToggleProps } from '@/gui/Molecules/AdminViewToggle/AdminViewToggle.types';
 import InspectorToggle from '@/gui/Molecules/InspectorToggle/InspectorToggle';
@@ -129,7 +129,6 @@ type MoleculesRegistry = {
   TableHead: typeof TableHead;
   TableRow: typeof TableRow;
   Toolbar: typeof Toolbar;
-  Tooltip: typeof Tooltip;
   AdminViewToggle: typeof AdminViewToggle;
   InspectorToggle: typeof InspectorToggle;
 };
@@ -158,7 +157,6 @@ const Molecules: MoleculesRegistry = {
   TableHead,
   TableRow,
   Toolbar,
-  Tooltip,
   AdminViewToggle,
   InspectorToggle,
 };
@@ -187,7 +185,6 @@ export {
   TableHead,
   TableRow,
   Toolbar,
-  Tooltip,
   AdminViewToggle,
   InspectorToggle,
 };

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography } from '@/gui/Atoms';
-import { Tooltip } from '@/gui/Molecules';
+import { Box, Typography, Tooltip } from '@/gui/Atoms';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import { useRightSidebar } from '@/gui-internals/Hooks';
 

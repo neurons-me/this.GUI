@@ -58,8 +58,8 @@ export const meta = {
   path: ['Feedback'],
   tags: ["tooltip"],
   story: {
-    title: 'Atoms/Content/Tooltip',
-    primary: 'atoms-content-tooltip--playground',
+    title: 'Atoms/Tooltip',
+    primary: 'atoms-tooltip--playground',
   },
   demoSpec: {
     type: 'Tooltip',

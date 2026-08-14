@@ -1,10 +1,11 @@
 import React from 'react';
-import { 
+import {
     Avatar,
-    Box, 
+    Box,
     IconButton,
-    Typography } from '@/gui/Atoms';
-import { Table, TableHead, TableRow, TableCell, TableBody, Tooltip } from '@/gui/Molecules';
+    Typography,
+    Tooltip } from '@/gui/Atoms';
+import { Table, TableHead, TableRow, TableCell, TableBody } from '@/gui/Molecules';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import { useGuiTheme } from '@/gui-internals/Hooks';
 import { selectionStore } from '@/runtime/selectionStore';

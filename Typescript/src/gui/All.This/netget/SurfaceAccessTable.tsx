@@ -1,37 +1,44 @@
 import { Box } from '@mui/material';
 import Typography from '@/gui/Atoms/Typography/Typography';
 
-type Row = {
-  address: string;
-  handler: string;
-  surface: string;
-  kind: 'netget' | 'monad' | 'direct' | 'public';
-  href: string;
-};
+// Mirrors netget's own `Surface` type (modules/netget/Typescript/src/types/Surface.ts) --
+// not re-imported across the package boundary (GUI has no dependency on netget today),
+// but kept structurally identical on purpose. "The thing that answers/is reachable at a
+// namespace" -- the shape apps.json entries, this table's old hardcoded rows, and
+// WelcomeNetget.jsx's domainRows/portsWithStatus each converged on independently.
+export type SurfaceKind = 'netget' | 'monad' | 'direct' | 'public';
+export type SurfaceTrust = 'owner' | 'admin' | 'peer' | 'guest';
 
-const ROWS: Row[] = [
-  { address: 'local.netget',         handler: 'NetGet Express',              surface: 'NetGet Dashboard',  kind: 'netget', href: 'http://local.netget' },
-  { address: 'hostname.local',       handler: 'surface_proxy.lua → Monad',   surface: 'Namespace Root',    kind: 'monad',  href: 'https://neurons-me.github.io/monad/docs/Initiating-Monads' },
-  { address: '{handle}.hostname.local', handler: 'nrp_handle.lua → Monad',  surface: 'Handle Surface',    kind: 'monad',  href: 'https://neurons-me.github.io/NRP/' },
-  { address: 'IP:80 / IP:443',       handler: 'NetGet OpenResty',            surface: 'Public Gateway',    kind: 'public', href: 'https://neurons-me.github.io/netget/Typescript/typedocs/Placement' },
-  { address: 'domain.com',           handler: 'surface_proxy.lua → routing', surface: 'Public Surface',    kind: 'public', href: 'https://neurons-me.github.io/netget/Typescript/typedocs/custom-domains' },
-];
+export interface Surface {
+  namespace: string;
+  kind: SurfaceKind;
+  endpoint?: string;
+  identity?: string;
+  trust?: SurfaceTrust;
+  online: boolean;
+  lastSeenMs?: number;
+}
 
-const KIND_COLOR: Record<Row['kind'], string> = {
+export interface SurfaceAccessTableProps {
+  /** Pure display: caller fetches (e.g. via netget's createMeNetgetClient) and passes rows in. */
+  rows: Surface[];
+}
+
+const KIND_COLOR: Record<SurfaceKind, string> = {
   netget: '#4fc3f7',
   monad:  '#81c784',
   direct: '#ffb74d',
   public: '#ce93d8',
 };
 
-const KIND_LABEL: Record<Row['kind'], string> = {
+const KIND_LABEL: Record<SurfaceKind, string> = {
   netget: 'NetGet',
   monad:  'Monad',
   direct: 'Direct',
   public: 'Public',
 };
 
-export default function SurfaceAccessTable() {
+export default function SurfaceAccessTable({ rows }: SurfaceAccessTableProps) {
   return (
     <Box sx={{ width: '100%' }}>
       <Typography
@@ -61,7 +68,7 @@ export default function SurfaceAccessTable() {
             borderColor: 'divider',
           }}
         >
-          {['Address', 'Handled by', 'Surface', ''].map(h => (
+          {['Address', 'Endpoint', 'Kind', ''].map(h => (
             <Typography key={h} variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', fontSize: '0.68rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               {h}
             </Typography>
@@ -69,25 +76,23 @@ export default function SurfaceAccessTable() {
         </Box>
 
         {/* Rows */}
-        {ROWS.map((row, i) => (
+        {rows.length === 0 ? (
+          <Box sx={{ px: 2, py: 2 }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
+              No surfaces resolved.
+            </Typography>
+          </Box>
+        ) : rows.map((row, i) => (
           <Box
-            key={row.address}
-            component="a"
-            href={row.href}
-            target="_blank"
-            rel="noopener noreferrer"
+            key={row.namespace}
             sx={{
               display: 'grid',
               gridTemplateColumns: '1fr 1.4fr 1fr 28px',
               px: 2, py: 1.25,
-              borderBottom: i < ROWS.length - 1 ? '1px solid' : 'none',
+              borderBottom: i < rows.length - 1 ? '1px solid' : 'none',
               borderColor: 'divider',
-              textDecoration: 'none',
-              color: 'inherit',
-              cursor: 'pointer',
               transition: 'background 120ms ease',
               '&:hover': { bgcolor: 'action.hover' },
-              '&:hover .row-arrow': { opacity: 1 },
             }}
           >
             {/* Address */}
@@ -95,34 +100,36 @@ export default function SurfaceAccessTable() {
               variant="caption"
               sx={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.78rem', color: KIND_COLOR[row.kind] }}
             >
-              {row.address}
+              {row.namespace}
             </Typography>
 
-            {/* Handler */}
-            <Typography variant="caption" sx={{ fontSize: '0.75rem', color: 'text.secondary' }}>
-              {row.handler}
+            {/* Endpoint */}
+            <Typography variant="caption" sx={{ fontFamily: 'monospace', fontSize: '0.75rem', color: 'text.secondary' }}>
+              {row.endpoint || '—'}
             </Typography>
 
-            {/* Surface */}
+            {/* Kind */}
             <Typography variant="caption" sx={{ fontSize: '0.75rem', fontWeight: 600, color: KIND_COLOR[row.kind] }}>
-              {row.surface}
+              {KIND_LABEL[row.kind]}
             </Typography>
 
-            {/* Arrow */}
-            <Typography
-              className="row-arrow"
-              variant="caption"
-              sx={{ fontSize: '0.8rem', color: KIND_COLOR[row.kind], opacity: 0.3, transition: 'opacity 120ms ease', textAlign: 'right' }}
-            >
-              ↗
-            </Typography>
+            {/* Status */}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+              <Box
+                title={row.online ? 'online' : 'offline'}
+                sx={{
+                  width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
+                  bgcolor: row.online ? '#4caf50' : 'rgba(255,255,255,0.18)',
+                }}
+              />
+            </Box>
           </Box>
         ))}
       </Box>
 
       {/* Legend */}
       <Box sx={{ display: 'flex', gap: 2.5, mt: 1.5, flexWrap: 'wrap' }}>
-        {(Object.keys(KIND_LABEL) as Row['kind'][]).map(kind => (
+        {(Object.keys(KIND_LABEL) as SurfaceKind[]).map(kind => (
           <Box key={kind} sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
             <Box sx={{ width: 8, height: 8, borderRadius: '2px', bgcolor: KIND_COLOR[kind], flexShrink: 0 }} />
             <Typography variant="caption" sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>

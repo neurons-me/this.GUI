@@ -1,8 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box, Typography } from '@/gui/Atoms';
 import Layout from '@/gui/Layout/Layout';
-import SurfaceAccessTable from '@/gui/All.This/netget/SurfaceAccessTable';
+import SurfaceAccessTable, { type Surface } from '@/gui/All.This/netget/SurfaceAccessTable';
 import Beatle from './Beatle';
+
+// Real-shaped mock (see All.This/netget/local.netget.stories.tsx for the live-verified
+// version) -- themed to this story's own .me expression examples above.
+const MOCK_SURFACES: Surface[] = [
+  { namespace: 'jabellae',    kind: 'monad', online: true,  endpoint: 'http://127.0.0.1:4021', trust: 'owner' },
+  { namespace: 'alex',        kind: 'monad', online: true,  endpoint: 'http://127.0.0.1:4022' },
+  { namespace: 'team.acme',   kind: 'monad', online: false, endpoint: 'http://127.0.0.1:4023' },
+  { namespace: 'local.netget', kind: 'netget', online: true },
+];
 
 const meta: Meta<typeof Beatle> = {
   title: 'All.This/NRP/Beatle',
@@ -81,7 +90,7 @@ export const InLayout: Story = {
           ))}
         </Box>
 
-        <SurfaceAccessTable />
+        <SurfaceAccessTable rows={MOCK_SURFACES} />
       </Box>
     </Layout>
   ),

@@ -95,6 +95,10 @@ export type { TypographyProps } from './Typography/Typography';
 import Section from './Section/Section';
 export { default as Section } from './Section/Section';
 export type { SectionProps } from './Section/Section.types';
+// Tooltip is not polymorphic so we wrap it with forwardRef
+import Tooltip, { type TooltipProps } from './Tooltip/Tooltip';
+export { default as Tooltip } from './Tooltip/Tooltip';
+export type { TooltipProps } from './Tooltip/Tooltip';
 /* -------------------------------------------------------------------------------------------------
  * GuiSx — re-export of MUI’s SxProps<Theme>
  * -------------------------------------------------------------------------------------------------*/
@@ -131,6 +135,7 @@ export type Atoms = {
   Paper: typeof Paper;
   Avatar: typeof Avatar;
   Section: typeof Section;
+  Tooltip: typeof Tooltip;
 };
 
 export const atoms: Atoms = {
@@ -157,4 +162,5 @@ export const atoms: Atoms = {
   Paper,
   Avatar,
   Section,
+  Tooltip,
 };
