@@ -3,8 +3,9 @@
   data-height="240"
   style="width:300px; max-width:55vw; margin:0 auto;"
 >
-<img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760629119/this.gui.neurons.me_mkapde.png">
+<img src="https://res.cloudinary.com/dkwnxf6gm/image/upload/v1760629119/this.gui.neurons.me_mkapde.png" width="303">
 </div>
+
 
 <h1 align="center">.GUI</h1>
 <h5 align="center" style="color: gray;">Generative User Interface</h5>
