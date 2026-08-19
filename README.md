@@ -6,11 +6,7 @@
 
 <h1 align="center">.GUI</h1>
 <h5 align="center" style="color: gray;">Generative User Interface</h5>
-<p align="center">
-
-  <code>npx this.gui my-app</code>
-
-</p>
+<p align="center"> <code>npx this.gui my-app</code></p>
 <p align="center">
   <a href="https://neurons-me.github.io/GUI/docs/">⌬ Docs</a>
   &nbsp;·&nbsp;
