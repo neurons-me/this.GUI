@@ -28,7 +28,15 @@ export function defineSpecView(
   return Object.assign(factory, { [SPEC_VIEW_TAG]: true as const });
 }
 
-function isSpecViewFactory(
+/**
+ * Runtime companion to `defineSpecView()` — true for a factory tagged by it,
+ * false for a plain `React.ComponentType` (or an untagged factory, which
+ * isn't a safely-detectable case — see `defineSpecView()`'s own comment).
+ * Exported so callers building their own app-shell (custom nav, routing,
+ * etc. — see `mountApp()` below for the canonical shell) can branch on a
+ * view the same way `mountApp()` does, instead of reimplementing this check.
+ */
+export function isSpecViewFactory(
   view: React.ComponentType | (() => GuiSpecNode),
 ): view is (() => GuiSpecNode) & { [SPEC_VIEW_TAG]: true } {
   return typeof view === 'function' && (view as any)[SPEC_VIEW_TAG] === true;

@@ -17,7 +17,7 @@ function isEventLike(value: any): boolean {
   );
 }
 
-function normalizeActionPayload(args: any[]): any {
+export function normalizeActionPayload(args: any[]): any {
   if (args.length === 0) return undefined;
   if (args.length === 1) {
     return isEventLike(args[0]) ? undefined : args[0];
@@ -32,7 +32,7 @@ function normalizeDottedPath(value: string): string {
     .replace(/\//g, '.');
 }
 
-function normalizeWriteTarget(value: string, prefix: string): string {
+export function normalizeWriteTarget(value: string, prefix: string): string {
   const trimmed = String(value ?? '').trim();
   if (!trimmed) return '';
   if (trimmed.startsWith('me://')) return trimmed;
@@ -41,7 +41,7 @@ function normalizeWriteTarget(value: string, prefix: string): string {
   return normalizeDottedPath(withoutPrefix);
 }
 
-function normalizeReadTarget(value: string, prefix: string, allowBarePath = false): string {
+export function normalizeReadTarget(value: string, prefix: string, allowBarePath = false): string {
   const trimmed = String(value ?? '').trim();
   if (!trimmed) return '';
   if (trimmed.startsWith('me://')) return trimmed;
@@ -103,7 +103,7 @@ function combineUnsubscribers(unsubs: UnsubscribeFn[]): UnsubscribeFn {
   };
 }
 
-function createInternalStore() {
+export function createInternalStore() {
   let version = 0;
   const listeners = new Set<() => void>();
 

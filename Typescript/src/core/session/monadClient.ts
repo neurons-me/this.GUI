@@ -405,7 +405,17 @@ async function requestEnvelope<Code extends string>(
     });
   }
 
-  const url = new URL(input.path, transportOrigin);
+  // transportOrigin may itself carry a base path (e.g. netget's
+  // /monads/<name> path-based proxy route, so a monad doesn't need its own
+  // subdomain — see modules/netget's monad_proxy.lua). `new URL(path, base)`
+  // would silently drop that base path: per the URL spec, an absolute path
+  // (input.path always starts with "/") replaces the base's entire path
+  // rather than appending to it. Resolve against the origin only, with the
+  // base's own path prepended, so a path-prefixed transportOrigin survives.
+  const baseUrl = new URL(transportOrigin);
+  const basePath = baseUrl.pathname.replace(/\/+$/, '');
+  const requestPath = input.path.startsWith('/') ? input.path : `/${input.path}`;
+  const url = new URL(`${basePath}${requestPath}`, baseUrl.origin);
   const headers = createSemanticHeaders(
     semanticNamespace,
     input.headers,

@@ -7,5 +7,6 @@ export * from './parts';
 export * from './provider';
 export * from './monads';
 export * from './run-me';
+export * from './createWsMeRuntime';
 export * from './runtimeContext';
 export * from './start-app';
