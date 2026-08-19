@@ -93,6 +93,42 @@ export type MsgStream = {
   timestamp: number;
 };
 
+/**
+ * Client → server: request the current value at a semantic path, on an
+ * already-open channel (after 'nrp.open'/'resolved'). Server replies with a
+ * MsgData whose payload is { path, value, disclosure: NRPDisclosure }.
+ */
+export type MsgRead = {
+  type: 'read';
+  channelId?: string;
+  namespace: string;
+  path: string;
+  timestamp: number;
+};
+
+/**
+ * Client → server: subscribe to live updates for a semantic path. Server
+ * replies once with a MsgData (current value), then a MsgStream — same
+ * payload shape as MsgRead's reply — every time that path (or an
+ * ancestor/descendant of it) changes, until 'unsubscribe' or disconnect.
+ */
+export type MsgSubscribe = {
+  type: 'subscribe';
+  channelId?: string;
+  namespace: string;
+  path: string;
+  timestamp: number;
+};
+
+/** Client → server: stop receiving MsgStream updates for a subscribed path */
+export type MsgUnsubscribe = {
+  type: 'unsubscribe';
+  channelId?: string;
+  namespace: string;
+  path: string;
+  timestamp: number;
+};
+
 /** Server → client: resolution or channel error */
 export type MsgError = {
   type: 'error';
@@ -109,6 +145,9 @@ export type BeatleMessage =
   | MsgResolved
   | MsgData
   | MsgStream
+  | MsgRead
+  | MsgSubscribe
+  | MsgUnsubscribe
   | MsgError
   | MsgPing
   | MsgPong;
