@@ -279,34 +279,60 @@ function RuntimeSelectionRoot({
   const selection = useSelection();
   const registerNode = selection.registerNode;
   const unregisterNode = selection.unregisterNode;
-  const pendingResolved = React.useRef<ResolvedNodeRecord[]>([]);
-  const lastResolvedIds = React.useRef<Set<string>>(new Set());
-  const collectResolved = React.useCallback((record: ResolvedNodeRecord) => {
-    pendingResolved.current.push(record);
-  }, []);
+  // renderWithGUI defers onNodeResolved via queueMicrotask (see
+  // scheduleResolvedRecord in renderer.ts), which fires *after* React's
+  // synchronous mount + layout-effect pass completes. A same-pass
+  // useLayoutEffect keyed on [registerNode, unregisterNode] (both stable
+  // references) would only ever run once, before any resolved record has
+  // arrived, and never fire again to flush it — so nothing gets registered.
+  // Registering directly inside the resolved callback avoids that: by the
+  // time any microtask runs, we're already outside React's render/commit
+  // phase, so calling registerNode there is safe.
+  // ids registered as of the end of the PREVIOUS pass.
+  const registeredIds = React.useRef<Set<string>>(new Set());
+  // ids resolved so far in the pass currently in flight.
+  const currentPassIds = React.useRef<Set<string>>(new Set());
+  const collectResolved = React.useCallback(
+    (record: ResolvedNodeRecord) => {
+      currentPassIds.current.add(record.id);
+      registerNode(record);
+    },
+    [registerNode]
+  );
 
-  React.useLayoutEffect(() => {
-    if (!pendingResolved.current.length) return;
-    const batch = pendingResolved.current.slice();
-    pendingResolved.current = [];
-    const deduped = new Map<string, ResolvedNodeRecord>();
-    batch.forEach((record) => deduped.set(record.id, record));
-    const nextIds = new Set(deduped.keys());
-
-    lastResolvedIds.current.forEach((id) => {
-      if (!nextIds.has(id)) {
-        unregisterNode(id);
-      }
+  // mount()'s own contract is that repeated calls on the same host *update*
+  // the tree — a real, documented pattern (route changes, closing a modal,
+  // a shrinking list, all within the same mount() root). Without this
+  // effect, a node that stops resolving in a new pass keeps its record in
+  // selectionStore forever: registeredIds only ever grew, and the sole
+  // cleanup was full-unmount. This restores per-update pruning.
+  //
+  // Ordering this relies on: RuntimeCoreRoot's `rendered` walk (which
+  // queues each node's onNodeResolved as a queueMicrotask — see
+  // scheduleResolvedRecord in renderer.ts) runs synchronously during
+  // render, inside the same commit that triggers this passive effect.
+  // Passive effects (useEffect) are flushed on a LATER macrotask than the
+  // microtask queue, so by the time this effect body runs, every
+  // collectResolved call for the pass that just committed has already
+  // executed and `currentPassIds.current` already holds that pass's
+  // complete id set — no extra queueMicrotask hop is needed (or correct:
+  // resetting currentPassIds here and deferring the diff to a *new*
+  // microtask, as an earlier version of this effect did, discards the set
+  // this same effect is about to read, unregistering every node that just
+  // registered). Diff first, THEN roll the sets forward for the next pass.
+  React.useEffect(() => {
+    const thisPassIds = currentPassIds.current;
+    registeredIds.current.forEach((id) => {
+      if (!thisPassIds.has(id)) unregisterNode(id);
     });
-
-    deduped.forEach((record) => registerNode(record));
-    lastResolvedIds.current = nextIds;
-  }, [registerNode, unregisterNode]);
+    registeredIds.current = thisPassIds;
+    currentPassIds.current = new Set();
+  }, [spec, unregisterNode]);
 
   React.useEffect(() => {
     return () => {
-      lastResolvedIds.current.forEach((id) => unregisterNode(id));
-      lastResolvedIds.current = new Set();
+      registeredIds.current.forEach((id) => unregisterNode(id));
+      registeredIds.current = new Set();
     };
   }, [unregisterNode]);
 

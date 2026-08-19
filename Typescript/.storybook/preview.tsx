@@ -9,6 +9,21 @@ import CodeBlock from '../src/gui/Molecules/CodeBlock/CodeBlock';
 import Typography from '../src/gui/Atoms/Typography/Typography';
 import Link from '../src/gui/Atoms/Link/Link';
 import Box from '../src/gui/Atoms/Box/Box';
+import { SelectionProvider, useSelection } from '../src/runtime/selection';
+import { RuntimeInspector } from '../src/runtime/inspector';
+
+// Bridges the "Inspector" toolbar global (below) to SelectionProvider's own
+// state, so toggling it in the toolbar turns the Semantic Inspector on/off
+// for the current story. Only has something to show for stories rendered
+// through the declarative runtime (data-gui-node-id present) — plain
+// hand-written example JSX (e.g. Quick Start) has nothing to select.
+function InspectorGlobalSync({ enabled }: { enabled: boolean }) {
+  const { setInspectorEnabled } = useSelection();
+  React.useEffect(() => {
+    setInspectorEnabled(enabled);
+  }, [enabled, setInspectorEnabled]);
+  return null;
+}
 
 const routerFuture = {
   v7_startTransition: true,
@@ -95,6 +110,19 @@ const docsTheme = {
 } as const;
 
 export const globalTypes = {
+  inspector: {
+    description: 'Semantic Inspector — click any declaratively-rendered node to see its spec, resolved props, and kernel provenance',
+    defaultValue: 'off',
+    toolbar: {
+      title: 'Inspector',
+      icon: 'cog',
+      items: [
+        { value: 'off', icon: 'cog', title: 'Inspector Off' },
+        { value: 'on', icon: 'wrench', title: 'Inspector On' },
+      ],
+      dynamicTitle: true,
+    },
+  },
   mode: {
     description: 'Color mode',
     defaultValue: 'light',
@@ -115,7 +143,11 @@ export const decorators = [
     <Theme initialThemeId="neurons.me" initialMode={context.globals?.mode === 'dark' ? 'dark' : 'light'}>
       <MemoryRouter initialEntries={['/']} future={routerFuture}>
         <MDXProvider components={mdxComponents}>
-          <Story />
+          <SelectionProvider>
+            <InspectorGlobalSync enabled={context.globals?.inspector === 'on'} />
+            <RuntimeInspector />
+            <Story />
+          </SelectionProvider>
         </MDXProvider>
       </MemoryRouter>
     </Theme>

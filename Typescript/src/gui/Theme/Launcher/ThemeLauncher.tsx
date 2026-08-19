@@ -12,6 +12,7 @@ import ThemeInspector from '@/gui/Theme/Inspector/ThemeInspector';
 import { useThemeContext } from '@/gui-internals/Contexts/ThemeContext';
 import { getGuiThemes } from '@/gui/Theme/utils/catalog';
 import { LeftSidebarContext } from '@/gui-internals/Contexts/LeftSidebarContext';
+import { useOptionalSelection, useRegisterGuiNode } from '@/runtime/selection';
 
 export interface ThemeLauncherProps {
   sx?: any;
@@ -32,6 +33,26 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
   // right of the avatar+name instead of right next to it.
   const bubbleRef = useRef<HTMLDivElement>(null);
 
+  // Optional: only present when a SelectionProvider is mounted (dev-tooling
+  // contexts, e.g. Storybook with the Semantic Inspector wired in) — most
+  // real consumer apps render ThemeLauncher without one, so this must never
+  // throw. When the Runtime Inspector's own (heavier) side panel opens for a
+  // selected node, collapse this catalog too: having both floating panels
+  // open and recalculating position under rapid clicks was enough forced
+  // layout/reflow work to make the tab appear to hang for several seconds.
+  const optionalSelection = useOptionalSelection();
+  const inspectorSelectedNodeId = optionalSelection?.selectedNodeId;
+  useRegisterGuiNode('ThemeLauncher.avatar', 'ThemeLauncherAvatar');
+  useRegisterGuiNode('ThemeLauncher.label', 'ThemeLauncherLabel');
+  useRegisterGuiNode('ThemeLauncher.preview.settingsButton', 'ThemeLauncherSettingsButton');
+  useRegisterGuiNode('ThemeLauncher.preview.showAll', 'ThemeLauncherShowAll');
+  useEffect(() => {
+    if (inspectorSelectedNodeId) {
+      setExpanded(false);
+      setHoverOpen(false);
+    }
+  }, [inspectorSelectedNodeId]);
+
   const themes = getGuiThemes();
   const displayThemeId = optimisticThemeId || themeId;
   const activeTheme = themes.find((t) => t.themeId === displayThemeId);
@@ -41,44 +62,59 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
     setOptimisticThemeId(null);
   }, [themeId]);
 
+  // Mirrors DevToolsLauncher's openMenu: opens on hover and stays open until
+  // a click-away, rather than closing the instant the mouse leaves the
+  // avatar — that made the preview impossible to actually interact with,
+  // since moving toward the popper itself closed it first.
   const handleMouseEnter = () => {
-    if (!expanded) setHoverOpen(true);
+    if (!expanded) {
+      if (inspectorSelectedNodeId) optionalSelection?.clearSelection();
+      setHoverOpen(true);
+    }
   };
-  const handleMouseLeave = () => setHoverOpen(false);
+
+  // Mirrors DevToolsLauncher's onClick: a node can already be selected on
+  // mount (restored from this origin's localStorage) — clear it before
+  // opening this catalog so it never overlaps the inspector's own panel.
+  const openCatalog = () => {
+    if (inspectorSelectedNodeId) optionalSelection?.clearSelection();
+    setExpanded(true);
+  };
 
   return (
     <Box
       ref={anchorRef}
+      data-gui-inspector-control="true"
       sx={{ width: '100%', minWidth: 0, ...sx }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
     >
       {!expanded ? (
         <Box
-          component="button"
-          type="button"
-          aria-label="Open theme options"
-          aria-expanded={false}
-          onClick={() => setExpanded(true)}
           sx={{
-            position: 'relative',
-            width: isRailView ? 44 : '100%',
-            minWidth: 0,
-            height: 44,
-            mx: isRailView ? 'auto' : 0,
-            p: 0,
-            border: 'none',
-            background: 'transparent',
-            color: 'inherit',
             display: 'flex',
             alignItems: 'center',
             justifyContent: isRailView ? 'center' : 'flex-start',
             gap: 1,
-            cursor: 'pointer',
+            width: isRailView ? 44 : '100%',
+            minWidth: 0,
+            height: 44,
+            mx: isRailView ? 'auto' : 0,
             boxSizing: 'border-box',
           }}
         >
-          <Box ref={bubbleRef} sx={{ position: 'relative', width: 44, height: 44, flexShrink: 0 }}>
+          {/* Avatar: hover shows the theme preview popper (mouse-only). In
+              rail view it's also the only clickable target, since there's
+              no label to click there. */}
+          <Box
+            ref={bubbleRef}
+            data-gui-node-id="ThemeLauncher.avatar"
+            data-gui-component="ThemeLauncherAvatar"
+            role={isRailView ? 'button' : undefined}
+            tabIndex={isRailView ? 0 : undefined}
+            aria-label={isRailView ? 'Open theme options' : undefined}
+            onMouseEnter={handleMouseEnter}
+            onClick={isRailView ? openCatalog : undefined}
+            sx={{ position: 'relative', width: 44, height: 44, flexShrink: 0, cursor: isRailView ? 'pointer' : 'default' }}
+          >
             <Box
               sx={{
                 width: 44,
@@ -121,13 +157,36 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
               <Icon name={mode === 'light' ? 'light_mode' : 'dark_mode'} fontSize="0.9rem" iconColor="primary" />
             </Box>
           </Box>
+          {/* Label: click opens the full catalog directly (skips the hover
+              preview). Hidden in rail view — the avatar above covers both
+              hover and click there instead. */}
           {!isRailView && (
-            <Typography
-              variant="body2"
-              sx={{ fontWeight: 600, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+            <Box
+              component="button"
+              type="button"
+              data-gui-node-id="ThemeLauncher.label"
+              data-gui-component="ThemeLauncherLabel"
+              aria-label="Open theme options"
+              aria-expanded={false}
+              onClick={openCatalog}
+              sx={{
+                flex: 1,
+                minWidth: 0,
+                p: 0,
+                border: 'none',
+                background: 'transparent',
+                color: 'inherit',
+                textAlign: 'left',
+                cursor: 'pointer',
+              }}
             >
-              {activeLabel}
-            </Typography>
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: 600, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+              >
+                {activeLabel}
+              </Typography>
+            </Box>
           )}
         </Box>
       ) : (
@@ -214,6 +273,8 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
               <ThemeModeToggle variant="minimal" iconSize="small" />
               <IconButton
                 size="small"
+                data-gui-node-id="ThemeLauncher.preview.settingsButton"
+                data-gui-component="ThemeLauncherSettingsButton"
                 aria-label="Open theme settings"
                 onClick={() => {
                   setHoverOpen(false);
@@ -226,9 +287,11 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
             <Box
               component="button"
               type="button"
+              data-gui-node-id="ThemeLauncher.preview.showAll"
+              data-gui-component="ThemeLauncherShowAll"
               onClick={() => {
                 setHoverOpen(false);
-                setExpanded(true);
+                openCatalog();
               }}
               sx={{
                 width: '100%',

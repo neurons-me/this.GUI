@@ -3,7 +3,12 @@
 import HighLighter from './HighLighter/HighLighter';
 import HighLightsDrawer from './HighLighter/HighLightsDrawer';
 import FaceRecognition from './FaceRecognition/FaceRecognition';
-import RubiksCube from './RubiksCube/RubiksCube';
+// Lazy+Suspense wrapper, not the concrete component — RubiksCube.tsx pulls
+// in @react-three/fiber -> react-reconciler, which crashes under React 19
+// if imported eagerly (see RubiksCubeLazy.tsx). This barrel isn't wired
+// into a published entry point today, but importing the wrapper here too
+// means it stays correct if that changes.
+import RubiksCube from './RubiksCube/RubiksCubeLazy';
 import Monad from '../All.This/monad.ai/monad.ai';
 export type { MonadProps } from '../All.This/monad.ai/monad.ai';
 import LocalNetGet from '../All.This/netget/local.netget';

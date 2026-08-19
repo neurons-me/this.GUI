@@ -109,6 +109,7 @@ export default defineConfig({
             runtime: resolve(dirname, 'src/runtime-entry.ts'),
             react: resolve(dirname, 'src/react-entry.ts'),
             devtools: resolve(dirname, 'src/devtools-entry.ts'),
+            cleaker: resolve(dirname, 'src/cleaker-entry.ts'),
             atoms: resolve(dirname, 'src/gui/Atoms/atoms.ts'),
             molecules: resolve(dirname, 'src/gui/Molecules/molecules.ts'),
             compounds: resolve(dirname, 'src/gui/Compounds/compounds.ts'),
@@ -144,6 +145,11 @@ export default defineConfig({
               if (format === 'es') return 'react/index.js';
               if (format === 'cjs') return 'react/index.cjs';
               return `react/index.${format}.js`;
+            }
+            if (entryName === 'cleaker') {
+              if (format === 'es') return 'cleaker/index.js';
+              if (format === 'cjs') return 'cleaker/index.cjs';
+              return `cleaker/index.${format}.js`;
             }
             if (entryName === 'devtools') {
               if (format === 'es') return 'devtools/index.js';

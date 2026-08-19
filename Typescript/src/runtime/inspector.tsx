@@ -118,22 +118,35 @@ function isPlainObject(value: any): value is Record<string, any> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
 }
 
+const FLATTEN_MAX_DEPTH = 20;
+
 function flattenObject(
   input: any,
   prefix = '',
-  out: Record<string, any> = {}
+  out: Record<string, any> = {},
+  seen: WeakSet<object> = new WeakSet(),
+  depth = 0
 ): Record<string, any> {
   if (!isPlainObject(input)) {
     out[prefix || '$'] = input;
     return out;
   }
+  // Props can carry circular references (DOM nodes, React fibers, class
+  // instances with back-pointers) — without cycle detection this recurses
+  // until the call stack overflows. depth is a belt-and-suspenders cap for
+  // pathologically deep (but acyclic) trees.
+  if (seen.has(input) || depth >= FLATTEN_MAX_DEPTH) {
+    out[prefix || '$'] = seen.has(input) ? '[Circular]' : '[Max depth exceeded]';
+    return out;
+  }
+  seen.add(input);
   const keys = Object.keys(input);
   if (!keys.length && prefix) out[prefix] = {};
   for (const key of keys) {
     const nextPath = prefix ? `${prefix}.${key}` : key;
     const value = input[key];
     if (isPlainObject(value)) {
-      flattenObject(value, nextPath, out);
+      flattenObject(value, nextPath, out, seen, depth + 1);
     } else {
       out[nextPath] = value;
     }
@@ -166,7 +179,12 @@ function buildPropsDiff(rawSpec: any, resolvedProps: any) {
     }
     const a = normalizedSpec[key];
     const b = normalizedResolved[key];
-    if (JSON.stringify(a) !== JSON.stringify(b)) {
+    // flattenObject only recurses into plain objects, so a leaf value here
+    // can still be an array (or another non-plain-object) carrying a
+    // circular reference — safeStringify (cycle-guarded, never throws) is
+    // required here; a bare JSON.stringify crashed the whole inspector on
+    // exactly this shape (RangeError / "Converting circular structure to JSON").
+    if (safeStringify(a) !== safeStringify(b)) {
       changed[key] = { from: a, to: b };
     }
   }
@@ -557,6 +575,7 @@ export function RuntimeInspector({
   const {
     inspectorEnabled,
     setInspectorEnabled,
+    gridEnabled,
     selectedNodeId,
     selected,
     selectNode,
@@ -830,6 +849,10 @@ export function RuntimeInspector({
         max-height: 180px;
         border-radius: 6px;
       }
+      .gui-grid-overlay-active [data-gui-node-id] {
+        outline: 1px solid rgba(59, 130, 246, 0.35);
+        outline-offset: -1px;
+      }
     `;
     document.head.appendChild(style);
     return () => {
@@ -877,6 +900,16 @@ export function RuntimeInspector({
     host.classList.add(highlightClass);
     lastHighlighted.current = host;
   }, [highlightClass, inspectorEnabled, selectedNodeId]);
+
+  // Outlines every registered node at once (see CSS rule above) — a global
+  // layout debug view, independent of the single-node inspector selection.
+  React.useEffect(() => {
+    if (typeof document === 'undefined') return;
+    document.body.classList.toggle('gui-grid-overlay-active', Boolean(gridEnabled));
+    return () => {
+      document.body.classList.remove('gui-grid-overlay-active');
+    };
+  }, [gridEnabled]);
 
   React.useEffect(() => {
     const onClickCapture = (ev: MouseEvent) => {

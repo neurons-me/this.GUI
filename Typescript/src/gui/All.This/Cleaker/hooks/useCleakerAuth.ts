@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import MeKernel from 'this.me';
-import cleaker from 'cleaker';
 import { MonadClientError } from '@/core/session/monadClient';
+import {
+  canonicalJson as sharedCanonicalJson,
+  genNonce as sharedGenNonce,
+  sha256Hex as sharedSha256Hex,
+  signedRequest as sharedSignedRequest,
+  fetchGatewayHostname,
+  deriveCleakerNode,
+} from '../signedRequest';
 import type { SeedSession } from '@/core/session/createSeedSession';
 import { useSeedSession } from '@/react/session/useSeedSession';
 import {
@@ -279,57 +285,25 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
   const cleakerNodeRef    = useRef<any>(null);
   const gatewayHostnameRef = useRef<string>('');
 
-  // Canonical JSON (sorted keys) for tamper-proof request fingerprinting.
-  const canonicalJson = useCallback((obj: Record<string, unknown>): string => {
-    return JSON.stringify(
-      Object.fromEntries(Object.entries(obj).sort(([a], [b]) => a.localeCompare(b))),
-    );
-  }, []);
+  // Canonical JSON, nonce, and body-hash helpers, plus the signing protocol
+  // itself, now live in ../signedRequest as plain functions — shared with
+  // any caller outside this hook (e.g. a page that only needs to sign
+  // requests, not run this hook's full login/registration state machine).
+  // These wrappers preserve the hook's existing callback identity/signature
+  // for its own consumers; behavior is unchanged.
+  const canonicalJson = useCallback(sharedCanonicalJson, []);
+  const genNonce      = useCallback(sharedGenNonce, []);
+  const sha256Hex     = useCallback(sharedSha256Hex, []);
 
-  // Random hex nonce — client-generated, marks each request uniquely.
-  const genNonce = useCallback((): string => {
-    const arr = new Uint8Array(16);
-    crypto.getRandomValues(arr);
-    return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
-  }, []);
-
-  // signedFetch — wraps fetch with X-Me-Proof on every request.
-  // Falls back to plain fetch if no Cleaker session is active.
-  const signedFetch = useCallback(async (
+  // signedFetch — wraps fetch with X-Me-Proof on every request, reading the
+  // active node/hostname from this hook's own session refs. Falls back to
+  // plain fetch if no Cleaker session is active.
+  const signedFetch = useCallback((
     input: RequestInfo | URL,
     init?: RequestInit,
   ): Promise<Response> => {
-    const node     = cleakerNodeRef.current;
-    const hostname = gatewayHostnameRef.current;
-    if (!node || !hostname) return fetch(input, init);
-
-    const method    = (init?.method ?? 'GET').toUpperCase();
-    const url       = typeof input === 'string' ? input
-                    : input instanceof URL       ? input.pathname
-                    : (input as Request).url;
-    const path      = new URL(url, window.location.origin).pathname;
-    const nonce     = genNonce();
-    const timestamp = Date.now();
-
-    const challenge = canonicalJson({ method, nonce, path, timestamp });
-
-    try {
-      const proof     = await (node as any).prove({ rootNamespace: hostname, challenge });
-      const proofB64  = btoa(JSON.stringify(proof))
-        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-
-      return fetch(input, {
-        ...init,
-        headers: {
-          ...(init?.headers ?? {}),
-          'X-Me-Proof': proofB64,
-        },
-      });
-    } catch {
-      // prove() failed (key gone / session ended) → plain fetch, will get 401
-      return fetch(input, init);
-    }
-  }, [canonicalJson, genNonce]);
+    return sharedSignedRequest(cleakerNodeRef.current, gatewayHostnameRef.current, input, init);
+  }, []);
 
   useEffect(() => {
     const explicit = sanitizeCleakerUsername(String(externalUsername || '').trim());
@@ -447,23 +421,15 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
     if (typeof window !== 'undefined') {
       try {
         // Step 1 — get physical hostname from gateway
-        const gwRes = await fetch('/me/gateway').catch(() => null);
-        if (gwRes?.ok) {
-          const gwData = await gwRes.json().catch(() => ({}));
-          const hostname = typeof gwData?.hostname === 'string' ? gwData.hostname.trim() : '';
-
-          if (hostname) {
+        const hostname = await fetchGatewayHostname();
+        if (hostname) {
             setAuthStatus('checking');
             setAuthAction(requestedAction);
             setClaimResolution('checking');
 
             try {
               // Step 2 — seed me + bind to physical hostname via cleaker
-              const ME_RESEED = Symbol.for('me.internal.reseed');
-              const me = new (MeKernel as any)();
-              me[ME_RESEED](value, secret);
-              // cleaker(me, hostname) = "who am I HERE" on this physical machine
-              const node = cleaker(me as any, hostname);
+              const node = deriveCleakerNode(value, secret, hostname);
 
               // Temporarily store for signedFetch
               cleakerNodeRef.current    = node;
@@ -571,7 +537,6 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
             setAuthStatus('idle');
             setClaimResolution('idle');
           }
-        }
         // /me/gateway not reachable → fall through to monad
       } catch {
         // fetch failed → go straight to monad
@@ -639,17 +604,12 @@ export function useCleakerAuth(options: UseCleakerAuthOptions): UseCleakerAuthRe
 
     try {
       // Step 1 — get physical hostname (namespace anchor)
-      const gwRes = await fetch('/me/gateway').catch(() => null);
-      if (!gwRes?.ok) throw new Error('Could not reach gateway. Is nginx running?');
-      const gwData = await gwRes.json().catch(() => ({}));
-      const hostname = typeof gwData?.hostname === 'string' ? gwData.hostname.trim() : '';
-      if (!hostname) throw new Error('Gateway did not return a hostname.');
+      // fetchGatewayHostname() throws its own distinct message for
+      // "unreachable" vs. "reachable but no hostname" — let it propagate.
+      const hostname = await fetchGatewayHostname();
 
       // Step 2 — derive keypair from credentials
-      const ME_RESEED = Symbol.for('me.internal.reseed');
-      const me = new (MeKernel as any)();
-      me[ME_RESEED](validated.value, input.password);
-      const node = cleaker(me as any, hostname);
+      const node = deriveCleakerNode(validated.value, input.password, hostname);
 
       // Step 3 — build signed claim proof
       const nonce     = genNonce();

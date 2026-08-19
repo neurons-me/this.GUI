@@ -16,6 +16,20 @@ import { selectionStore } from '@/runtime/selectionStore';
 import type { ResolvedNodeRecord } from '@/runtime/renderer';
 import { mergeLeftSidebarCollections } from '@/gui/Layout/Sidebars/Collections/resolveCollections';
 
+// Shared, module-level — not object literals inlined at each use below.
+// selectionStore's registerNode bail-out (isSameRecord) compares
+// `spec.props`/`spec.provenance` by reference; a fresh `{}` built inline on
+// every effect run can never match a previous call's `{}`, so the bail-out
+// never fires and every dependency change on the registration effect forces
+// a full store mutation + notify() for these three synthetic records even
+// when their actual content is unchanged. One shared reference per constant
+// value lets the existing bail-out work as intended.
+const EMPTY_SYNTHETIC_PROPS: Record<string, unknown> = {};
+const LEFT_SIDEBAR_TOGGLE_PROVENANCE = {
+  source: 'LeftBar.LeftSidebarToggleButton',
+  note: 'Expand/collapse control for the left sidebar rail; view state is local (useLeftSidebar context), not kernel-bound, so no semanticPath/explainPath applies.',
+} as const;
+
 function getSidebarRootPath(nodeId: string): string {
   const normalized = String(nodeId || '').trim();
   if (!normalized) return 'LeftSidebar';
@@ -91,6 +105,8 @@ const LeftSidebar = ({
     'data-gui-node-id': adminNodeId,
     'data-gui-component': dataGuiComponent || 'LeftSidebar',
   };
+  const toggleButtonNodeId = `${adminNodeId}.toggleButton`;
+  const headerNodeId = `${adminNodeId}.header`;
   const rawHeaderNode = (() => {
     if (!header) return null;
     if (React.isValidElement(header)) return header;
@@ -165,7 +181,51 @@ const LeftSidebar = ({
   }, [mobileOpen, view]);
 
   useEffect(() => {
-    const syntheticRecords: ResolvedNodeRecord[] = [];
+    const rootPath = getSidebarRootPath(adminNodeId);
+    // When `data-gui-node-id` was supplied as a prop, LeftBar is being
+    // rendered as a resolved declarative spec node (via LeftBarResolver) —
+    // the renderer already registered a real record for `adminNodeId`
+    // (actual resolvedProps, provenance). Registering a second, bare-bones
+    // record here for the same id would silently clobber it, whichever
+    // registration commits last. Only self-register the root when there's
+    // no such record already owned by the renderer (LeftBar used directly,
+    // outside the declarative pipeline, where `adminNodeId` falls back to
+    // the plain `id` prop or the 'LeftSidebar' default). The header/toggle
+    // sub-records below are always safe — their ids are derived from
+    // adminNodeId and the renderer never separately resolves them.
+    const syntheticRecords: ResolvedNodeRecord[] = dataGuiNodeId
+      ? []
+      : [
+          {
+            id: adminNodeId,
+            type: dataGuiComponent || 'LeftSidebar',
+            path: rootPath,
+            spec: {
+              type: dataGuiComponent || 'LeftSidebar',
+              props: EMPTY_SYNTHETIC_PROPS,
+            },
+          },
+        ];
+    syntheticRecords.push(
+      {
+        id: headerNodeId,
+        type: 'LeftSidebarHeader',
+        path: `${rootPath}.header`,
+        parentId: adminNodeId,
+        spec: { type: 'LeftSidebarHeader', props: EMPTY_SYNTHETIC_PROPS },
+      },
+      {
+        id: toggleButtonNodeId,
+        type: 'LeftSidebarToggleButton',
+        path: `${rootPath}.header.toggleButton`,
+        parentId: headerNodeId,
+        spec: {
+          type: 'LeftSidebarToggleButton',
+          props: EMPTY_SYNTHETIC_PROPS,
+          provenance: LEFT_SIDEBAR_TOGGLE_PROVENANCE,
+        },
+      },
+    );
     const registerRecord = (
       el: LeftSidebarElement,
       section: 'elements' | 'footerElements',
@@ -178,7 +238,7 @@ const LeftSidebar = ({
         path: meta.path,
         spec: {
           type: meta.componentName,
-          props: el.props ?? {},
+          props: el.props ?? EMPTY_SYNTHETIC_PROPS,
         },
         resolvedProps: {
           ...(el.props ?? {}),
@@ -195,7 +255,7 @@ const LeftSidebar = ({
     return () => {
       syntheticRecords.forEach((record) => selectionStore.actions.unregisterNode(record.id));
     };
-  }, [adminNodeId, resolvedElements, resolvedFooterElements]);
+  }, [adminNodeId, dataGuiNodeId, dataGuiComponent, headerNodeId, toggleButtonNodeId, resolvedElements, resolvedFooterElements]);
 
   const renderElements = () =>
     resolvedElements.map((el, idx) => {
@@ -251,6 +311,8 @@ const LeftSidebar = ({
       >
         <Box
           component="header"
+          data-gui-node-id={headerNodeId}
+          data-gui-component="LeftSidebarHeader"
           sx={{
             flexShrink: 0,
             borderBottom: '1px solid',
@@ -272,6 +334,8 @@ const LeftSidebar = ({
           <LeftSidebarToggleButton
             expanded={view === ('expanded' as any)}
             onToggle={() => setView(view === 'rail' ? 'expanded' : 'rail')}
+            data-gui-node-id={toggleButtonNodeId}
+            data-gui-component="LeftSidebarToggleButton"
           />
         </Box>
         <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>{renderElements()}</Box>
@@ -354,6 +418,8 @@ const LeftSidebar = ({
         >
           <Box
             component="header"
+            data-gui-node-id={headerNodeId}
+            data-gui-component="LeftSidebarHeader"
             sx={{
               flexShrink: 0,
               borderBottom: '1px solid',
@@ -371,7 +437,12 @@ const LeftSidebar = ({
                 {headerNode}
               </Box>
             )}
-            <LeftSidebarToggleButton expanded onToggle={() => setMobileOpen(false)} />
+            <LeftSidebarToggleButton
+              expanded
+              onToggle={() => setMobileOpen(false)}
+              data-gui-node-id={toggleButtonNodeId}
+              data-gui-component="LeftSidebarToggleButton"
+            />
           </Box>
           <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>{renderElements()}</Box>
           {hasFooterElements && (
@@ -422,6 +493,8 @@ const LeftSidebar = ({
     >
       <Box
         component="header"
+        data-gui-node-id={headerNodeId}
+        data-gui-component="LeftSidebarHeader"
         sx={{
           flexShrink: 0,
           borderBottom: '1px solid',
@@ -443,6 +516,8 @@ const LeftSidebar = ({
         <LeftSidebarToggleButton
           expanded={view === ('expanded' as any)}
           onToggle={() => setView(view === 'expanded' ? 'rail' : 'expanded')}
+          data-gui-node-id={toggleButtonNodeId}
+          data-gui-component="LeftSidebarToggleButton"
         />
       </Box>
       <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>{renderElements()}</Box>

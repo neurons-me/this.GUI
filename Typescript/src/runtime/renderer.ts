@@ -646,7 +646,15 @@ function renderResolvedSpecNode(
     return React.cloneElement(type, props ?? null, ...kids);
   }
 
-  if (typeof type === 'function' || (typeof type === 'object' && type != null)) {
+  if (
+    typeof type === 'function' ||
+    typeof type === 'symbol' ||
+    (typeof type === 'object' && type != null)
+  ) {
+    // React's built-in "opaque" types (Fragment, StrictMode, Suspense,
+    // Profiler) are Symbols, not functions/objects/strings — without this
+    // branch they fall through every check below and silently render as
+    // nothing, taking everything nested inside them down too.
     return React.createElement(type, props ?? null, ...kids);
   }
 

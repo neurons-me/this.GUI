@@ -9,6 +9,7 @@ export type SelectionMeta = {
 
 export type SelectionStateCore = {
   inspectorEnabled: boolean;
+  gridEnabled: boolean;
   selectedNodeId: string | null;
   records: Record<string, ResolvedNodeRecord>;
   recordsByPath: Record<string, ResolvedNodeRecord>;
@@ -23,6 +24,7 @@ export type SelectionStore = {
   subscribe: (listener: Listener) => () => void;
   actions: {
     setInspectorEnabled: (enabled: boolean) => void;
+    setGridEnabled: (enabled: boolean) => void;
     selectNode: (id: string | null) => void;
     clearSelection: () => void;
     registerNode: (record: ResolvedNodeRecord) => void;
@@ -98,6 +100,7 @@ function isSameRecord(
 function createSelectionStore(): SelectionStore {
   let state: SelectionStateCore = {
     inspectorEnabled: false,
+    gridEnabled: false,
     selectedNodeId: null,
     records: {},
     recordsByPath: {},
@@ -174,6 +177,9 @@ function createSelectionStore(): SelectionStore {
           selectedNodeId: enabled ? state.selectedNodeId : null,
           selectedMeta: enabled ? state.selectedMeta : null,
         });
+      },
+      setGridEnabled: (enabled: boolean) => {
+        setState({ gridEnabled: Boolean(enabled) });
       },
       selectNode: (id: string | null) => {
         setState({ selectedNodeId: id });

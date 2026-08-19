@@ -38,6 +38,14 @@ declare const __GUI_VERSION__: string;
 const injectedVersion = typeof __GUI_VERSION__ !== 'undefined' ? __GUI_VERSION__ : undefined;
 export const version = injectedVersion || '0.0.0-dev';
 export type { Theme as MuiTheme } from '@mui/material/styles';
+
+// RubiksCube is the only export in this root barrel that pulls in
+// @react-three/fiber -> react-reconciler, which crashes at load time under
+// React 19 (see RubiksCubeLazy.tsx for the full explanation). Import the
+// shared lazy+Suspense wrapper — not RubiksCube.tsx directly, and not a
+// second inline lazy() here — so the fix lives in one place. widgets.ts
+// imports the same wrapper for the same reason.
+import RubiksCube from '@/gui/widgets/RubiksCube/RubiksCubeLazy';
 // 2) named exports (tree-shakeable)
 // Core primitives (ergonomic root exports)
 // NOTE: Export from concrete modules (not barrels) to preserve tree-shaking and avoid pulling in the whole atoms surface.
@@ -112,7 +120,7 @@ export type {
   TokenIssueInput,
 } from '@/gui/All.This/Cleaker/access';
 export { default as FaceRecognition } from '@/gui/widgets/FaceRecognition/FaceRecognition';
-export { default as RubiksCube } from '@/gui/widgets/RubiksCube/RubiksCube';
+export { RubiksCube }; // lazy — see definition above
 export type { RubiksCubeProps } from '@/gui/widgets/RubiksCube/RubiksCube.types';
 export { default as Monad } from '@/gui/All.This/monad.ai/monad.ai';
 export type { MonadProps } from '@/gui/All.This/monad.ai/monad.ai';
@@ -230,7 +238,7 @@ import AdminViewToggle from '@/gui/Molecules/AdminViewToggle/AdminViewToggle';
 import InspectorToggle from '@/gui/Molecules/InspectorToggle/InspectorToggle';
 import { GUISettings } from '@/gui/Layout/Sidebars/Collections';
 import FaceRecognition from '@/gui/widgets/FaceRecognition/FaceRecognition';
-import RubiksCube from '@/gui/widgets/RubiksCube/RubiksCube';
+// RubiksCube: reuse the lazy() component defined above — not a second eager import.
 import Monad from '@/gui/All.This/monad.ai/monad.ai';
 import HighLighter from '@/gui/widgets/HighLighter/HighLighter';
 import HighLightsDrawer from '@/gui/widgets/HighLighter/HighLightsDrawer';
