@@ -82,6 +82,42 @@ mount(spec, '#root', { gui: GUI, React, ReactDOM, me, runtime });
 When `me` is passed, `this.gui` can derive the runtime adapter automatically.
 For mixed React + mounted-spec screens, sharing an explicit `runtime` is the recommended path.
 
+### `.me` runtime, live over a network monad
+
+`createMeRuntime()` above is local-only — `me` is an in-memory kernel with no
+network awareness. `createWsMeRuntime()` is a drop-in `RuntimeAdapter` for
+talking to a **remote** monad instead: reads/writes go over HTTP, and
+`subscribe`/`getSnapshot` ride a `/nrp` WebSocket connection, so
+`useMeValue`/`{ read: ... }` tokens reflect writes made by *other* connected
+clients — no polling.
+
+```ts
+import ME from 'this.me';
+import { createWsMeRuntime, mount } from 'this.gui/runtime';
+
+const me = new ME();
+const runtime = createWsMeRuntime(me, {
+  semanticNamespace: 'myapp.mymachine.local',
+  transportOrigin: 'http://local.netget/apps/myapp',
+});
+
+mount(spec, '#root', { gui: GUI, React, ReactDOM, me, runtime });
+```
+
+Two things this doesn't do automatically:
+
+- **`transportOrigin` is opaque to this adapter** — it can be a bare origin
+  or carry a base path (e.g. `.../apps/myapp`, netget's app-mesh proxy — see
+  [Apps Over Netget](../../../modules/netget/Typescript/docs/AppsOverNetget.md)
+  for why that's the recommended shape rather than a dedicated subdomain).
+  Get `semanticNamespace` wrong and writes silently land in the wrong `.me`
+  namespace server-side — nothing here validates that they match.
+- **Pass `runtime` explicitly wherever it's used** — `MeRuntimeProvider`'s
+  `runtime` prop, and separately to any standalone `SpecBoundary` (not
+  context-aware on its own). Omitting it falls back to a no-op identity
+  adapter with no error — a `{ read: ... }` token just echoes its own path
+  string back, easy to mistake for a security-allowlist rejection (§5).
+
 ## 2. React Bridge
 
 When your host app is React, use `this.gui/react`.
