@@ -6,7 +6,11 @@
 
 <h1 align="center">.GUI</h1>
 <h5 align="center" style="color: gray;">Generative User Interface</h5>
+<p align="center">
 
+  <code>npx this.gui my-app</code>
+
+</p>
 <p align="center">
   <a href="https://neurons-me.github.io/GUI/docs/">⌬ Docs</a>
   &nbsp;·&nbsp;
@@ -16,7 +20,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/this.gui"><img src="https://img.shields.io/npm/v/this.gui" alt="npm" /></a>
+  <a href="https://www.npmjs.com/package/this.gui">
+  <img src="https://img.shields.io/npm/v/this.gui" alt="npm" /></a>
 </p>
 
-<script src="https://neurons-me.github.io/GUI/assets/scripts/gui-rubiks-cube.iife.js" defer></script>
