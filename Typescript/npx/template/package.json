@@ -11,7 +11,7 @@
   "dependencies": {
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "this.gui": "^2.1.8",
+    "this.gui": "^2.3.0",
     "this.me": "^3.5.7"
   },
   "devDependencies": {

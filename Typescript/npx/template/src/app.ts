@@ -1,4 +1,5 @@
-import createHomeSpec from './views/Home';
+import Home from './views/Home';
+import Spaces from './views/Spaces';
 import type { AppDeclaration } from 'this.gui/runtime';
 
 const app: AppDeclaration = {
@@ -7,7 +8,8 @@ const app: AppDeclaration = {
   title: '__APP_TITLE__',
   theme: 'neurons.me',
   views: {
-    home: createHomeSpec,
+    home: Home,
+    spaces: Spaces,
   },
 };
 
