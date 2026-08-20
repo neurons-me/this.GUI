@@ -5,6 +5,15 @@ export {
   useOptionalSeedSessionContext,
 } from '@/react/session/SeedSessionProvider';
 export { useSeedSession, useOptionalSeedSession } from '@/react/session/useSeedSession';
+export {
+  SessionSurface,
+  useSessionSurface,
+  useOptionalSessionSurface,
+} from '@/react/session/SessionSurface';
+export type {
+  SessionSurfaceContextValue,
+  SessionSurfaceProps,
+} from '@/react/session/SessionSurface';
 export { useMe } from '@/react/useMe';
 export { useMeValue } from '@/react/useMeValue';
 export { useMeAction } from '@/react/useMeAction';
