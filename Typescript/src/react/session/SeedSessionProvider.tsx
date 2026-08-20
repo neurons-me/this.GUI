@@ -1,3 +1,4 @@
+import ME from 'this.me';
 import * as React from 'react';
 import { MeRuntimeProvider } from '@/react/MeRuntimeProvider';
 import type { RuntimeAdapter } from '@/runtime/adapter';
@@ -48,11 +49,25 @@ export type ResolveSeedFromCredentials = (
   input: SeedCredentialsLoginInput,
 ) => Promise<SeedCredentialResolution> | SeedCredentialResolution;
 
+export type CreateSeedSessionRuntime = (
+  me: MeLike,
+  context: { semanticNamespace: string | null; transportOrigin: string },
+) => RuntimeAdapter;
+
 export type SeedSessionProviderProps = MonadClientOptions & {
   children: React.ReactNode;
   transportOrigin?: string;
   resolveSeedFromCredentials?: ResolveSeedFromCredentials;
   onSessionChange?: (session: SeedSession | null) => void;
+  /**
+   * Overrides the RuntimeAdapter createSeedSession() builds internally
+   * (default: createMeRuntime(me), local-only, no network subscribe).
+   * Pass e.g. `(me, ctx) => createWsMeRuntime(me, ctx)` for a session with
+   * live WS subscriptions against a remote monad — createSeedSession()
+   * itself has no network-adapter concept, only this provider constructs
+   * `me` early enough to hand it to a runtime factory before login.
+   */
+  createRuntime?: CreateSeedSessionRuntime;
 };
 
 export type SeedSessionContextErrorCode =
@@ -227,6 +242,7 @@ export function SeedSessionProvider({
   onSessionChange,
   fetchImpl,
   headers,
+  createRuntime,
 }: SeedSessionProviderProps) {
   const defaultTransportOrigin = React.useMemo(
     () => normalizeMonadTransportOrigin(transportOrigin),
@@ -300,6 +316,14 @@ export function SeedSessionProvider({
         fetchImpl,
         headers,
       });
+      if (createRuntime) {
+        const me = (new ME(options.seed) as unknown) as MeLike;
+        options.me = me;
+        options.runtime = createRuntime(me, {
+          semanticNamespace: options.semanticNamespace ?? null,
+          transportOrigin: options.transportOrigin || defaultTransportOrigin,
+        });
+      }
       const nextSession = createSeedSession(options);
       const shouldAutoOpen = input.autoOpen !== false && Boolean(options.semanticNamespace);
 
@@ -319,7 +343,7 @@ export function SeedSessionProvider({
         return fail(cause);
       }
     },
-    [commitSnapshot, defaultTransportOrigin, fail, fetchImpl, headers],
+    [commitSnapshot, createRuntime, defaultTransportOrigin, fail, fetchImpl, headers],
   );
 
   const loginWithCredentials = React.useCallback(

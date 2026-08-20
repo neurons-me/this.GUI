@@ -616,10 +616,16 @@ export async function claimNamespace(
     semanticNamespace,
     transportOrigin,
     method: 'POST',
-    path: '/',
+    // Kernel claim/open commands live on /me/*, not the generic write
+    // endpoint (/) — meCommandHandler parses "kernel:claim" and the
+    // namespace out of this exact path shape (see modules/monad's
+    // handlers/commandHandler.ts). Posting to '/' silently fell through to
+    // rootCommandHandler instead, which has no concept of claim/open at
+    // all and always fails with NAMESPACE_REQUIRED (this path was never
+    // exercised against a real monad before).
+    path: `/me/kernel:claim/${encodeURIComponent(semanticNamespace)}`,
     knownErrorCodes: CLAIM_ERROR_CODES,
     body: {
-      operation: 'claim',
       secret: seed,
       identityHash,
       ...(input.publicKey ? { publicKey: String(input.publicKey).trim() } : {}),
@@ -702,10 +708,10 @@ export async function openNamespace(
     semanticNamespace,
     transportOrigin,
     method: 'POST',
-    path: '/',
+    // See claimNamespace()'s comment — same fix, same reason.
+    path: `/me/kernel:open/${encodeURIComponent(semanticNamespace)}`,
     knownErrorCodes: OPEN_ERROR_CODES,
     body: {
-      operation: 'open',
       secret: seed,
       identityHash,
     },

@@ -15,7 +15,9 @@ export type {
   MeSubscribeBridge,
   MeTargetLike,
 } from '@/react/types';
+export type { SeedSession } from '@/core/session/createSeedSession';
 export type {
+  CreateSeedSessionRuntime,
   ResolveSeedFromCredentials,
   SeedCredentialResolution,
   SeedCredentialsLoginInput,
