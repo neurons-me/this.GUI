@@ -18,3 +18,5 @@ export { mountApp, declareApp, defineSpecView, isSpecViewFactory } from './runti
 export type { AppDeclaration, MountAppOptions } from './runtime/mountApp';
 export { SpecBoundary } from './runtime/SpecBoundary';
 export type { SpecBoundaryProps } from './runtime/SpecBoundary';
+export { AppShell } from './runtime/AppShell';
+export type { AppShellProps, AppShellNavItem } from './runtime/AppShell';
