@@ -3,6 +3,7 @@ import Theme from '@/gui/Theme/Theme';
 import Layout from '@/gui/Layout/Layout';
 import ThemeLauncher from '@/gui/Theme/Launcher/ThemeLauncher';
 import DevToolsLauncher from './DevToolsLauncher';
+import MeLauncher from '@/react/session/MeLauncher';
 import { MeRuntimeProvider, useOptionalMeRuntimeContext } from '@/react/MeRuntimeProvider';
 import { useMeAction } from '@/react/useMeAction';
 import { useMeValue } from '@/react/useMeValue';
@@ -101,6 +102,7 @@ function AppShellNav({ app, navItems, footerElements }: Pick<AppShellProps, 'app
         elements,
         footerElements: [
           { type: 'action', props: { element: <ThemeLauncher /> } },
+          { type: 'action', props: { element: <MeLauncher /> } },
           { type: 'action', props: { element: <DevToolsLauncher /> } },
           ...(footerElements ?? []).map((element) => ({ type: 'action' as const, props: { element } })),
         ],

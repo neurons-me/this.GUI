@@ -14,6 +14,8 @@ export type {
   SessionSurfaceContextValue,
   SessionSurfaceProps,
 } from '@/react/session/SessionSurface';
+export { default as MeLauncher } from '@/react/session/MeLauncher';
+export type { MeLauncherProps } from '@/react/session/MeLauncher';
 export { useMe } from '@/react/useMe';
 export { useMeValue } from '@/react/useMeValue';
 export { useMeAction } from '@/react/useMeAction';

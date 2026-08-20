@@ -99,7 +99,23 @@ export function SessionSurface({
     logout: endSeedSession,
   } = useSeedSession();
   const entering = React.useRef(false);
-  const [handle, setHandle] = React.useState<string | null>(null);
+
+  // Derived, not stored: SeedSessionProvider wraps its children in an extra
+  // MeRuntimeProvider layer the moment snapshot.me/runtime first appear
+  // (see SeedSessionProvider.tsx's `content`) — that changes the element
+  // type at this component's position in the tree, so React unmounts and
+  // remounts everything below it, including this component, at exactly the
+  // moment a login succeeds. Any useState here would reset to its initial
+  // value in that same instant. session.semanticNamespace comes from
+  // SeedSessionProvider's own state instead, which doesn't remount, so
+  // deriving handle from it survives the remount intact.
+  const handle = React.useMemo(() => {
+    if (!session?.semanticNamespace) return null;
+    const suffix = `.${claimRootNamespace}`;
+    return session.semanticNamespace.endsWith(suffix)
+      ? session.semanticNamespace.slice(0, -suffix.length)
+      : session.semanticNamespace;
+  }, [session, claimRootNamespace]);
 
   const enter = React.useCallback(async () => {
     if (entering.current) return;
@@ -118,7 +134,6 @@ export function SessionSurface({
         await nextSession.claimAndOpen(namespace);
       }
       if (onEnter) await onEnter(nextSession, nextHandle);
-      setHandle(nextHandle);
       activateSession(nextSession);
     } finally {
       entering.current = false;
@@ -127,7 +142,6 @@ export function SessionSurface({
 
   const logout = React.useCallback(() => {
     endSeedSession();
-    setHandle(null);
   }, [endSeedSession]);
 
   const value = React.useMemo<SessionSurfaceContextValue>(
