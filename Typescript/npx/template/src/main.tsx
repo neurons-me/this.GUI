@@ -33,7 +33,7 @@ if (!el) throw new Error('main: #root not found');
 createRoot(el).render(
   <SeedSessionProvider
     transportOrigin={monadOrigin}
-    createRuntime={(me, ctx) => createWsMeRuntime(me, ctx)}
+    createRuntime={(me: any, ctx: any) => createWsMeRuntime(me, ctx)}
   >
     <SessionSurface claimRootNamespace={MONAD_ROOT_NAMESPACE} seedStorageKey={SEED_STORAGE_KEY}>
       <Root app={app} me={publicMe} runtime={publicRuntime} />

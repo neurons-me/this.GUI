@@ -54,8 +54,8 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      <Button variant="outlined" sx={{ alignSelf: 'flex-start' }} onClick={() => setRoute('spaces')}>
-        Ver Espacios
+      <Button variant="outlined" sx={{ alignSelf: 'flex-start' }} onClick={() => setRoute('admin')}>
+        Abrir Admin
       </Button>
     </Box>
   );

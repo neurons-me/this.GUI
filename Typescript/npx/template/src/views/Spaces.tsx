@@ -17,45 +17,74 @@ function slugify(name: string): string {
 }
 
 /**
- * The generic space browser — this is the actual thesis of the template.
- * Instead of one hand-written React view per "table" (Tractos.tsx,
- * Remolques.tsx, ...), any plural anyone declares under apps.__APP_ID__.*
- * shows up and opens here, with no code change. `.me`'s own algebra (see
+ * The generic space browser — this is the actual thesis of the template,
+ * and the app's authoring surface ("Admin" in the nav). Instead of one
+ * hand-written React view per "table" (Tractos.tsx, Remolques.tsx, ...),
+ * any plural anyone declares under apps.__APP_ID__.* shows up and opens
+ * here, with no code change. `.me`'s own algebra (see
  * Algebra-of-Contexts.md / Plurality-Is-Grammar.md) doesn't require a
  * table/schema to exist before you write to it — this view just reflects
  * that: creating a space is nothing more than writing an entry into the
  * registry below and initializing an empty array at its path.
  *
- * Write actions are gated on `authenticated` here as an app-level UI
- * decision, not kernel enforcement — the monad doesn't check identity on
- * writes today (see this.gui's docs on the current disclosure model), so
- * this is "ask nicely," not a real access boundary yet.
+ * The whole view — not just the write actions — is gated on `authenticated`:
+ * this is the Finder-style authoring tool, not something a published site's
+ * visitors should see at all. That gate is app-level UI, not kernel
+ * enforcement (the monad doesn't check identity on writes today), so:
+ *
+ *   v1 admin = authenticated.
+ *   future admin = capability-gated (see the algebra's `C` axis — a
+ *   separate, not-yet-built policy layer that would validate WHAT a given
+ *   session can write, not just whether one exists).
+ *
+ * A real published app (a polls site, a news site) would never route its
+ * visitors into this view at all — they'd get purpose-built views (vote,
+ * like, comment) that only ever touch specific, pre-declared paths. This
+ * explorer is for whoever is building the namespace, not consuming it.
  */
 export default function Spaces() {
-  const { authenticated, enter } = useSessionSurface();
+  const { authenticated, pending, error, enter } = useSessionSurface();
   const spaces = useMeValue<SpaceEntry[]>(SPACES_PATH) ?? [];
   const setSpaces = useMeAction(SPACES_PATH);
   const [selected, setSelected] = useState<SpaceEntry | null>(null);
   const [newSpaceName, setNewSpaceName] = useState('');
 
+  if (!authenticated) {
+    return (
+      <Box sx={{ padding: 4, display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 420 }}>
+        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+          Admin
+        </Typography>
+        <Card>
+          <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              Esta es la superficie de autoría — crear/editar espacios requiere sesión.
+            </Typography>
+            {error && (
+              <Typography variant="body2" sx={{ color: 'error.main' }}>
+                {error.message}
+              </Typography>
+            )}
+            <Button variant="contained" onClick={enter} disabled={pending}>
+              {pending ? 'Entrando…' : 'Entrar con .me'}
+            </Button>
+          </CardContent>
+        </Card>
+      </Box>
+    );
+  }
+
   const createSpace = () => {
     const name = newSpaceName.trim();
     if (!name) return;
     const path = `apps.__APP_ID__.${slugify(name)}`;
-    if (spaces.some((s) => s.path === path)) return;
+    if (spaces.some((s: SpaceEntry) => s.path === path)) return;
     setSpaces([...spaces, { name, path, createdAt: Date.now() }]);
     setNewSpaceName('');
   };
 
   if (selected) {
-    return (
-      <SpaceDetail
-        space={selected}
-        onBack={() => setSelected(null)}
-        canWrite={authenticated}
-        onRequestEnter={enter}
-      />
-    );
+    return <SpaceDetail space={selected} onBack={() => setSelected(null)} />;
   }
 
   return (
@@ -74,7 +103,7 @@ export default function Spaces() {
             Todavía no hay espacios.
           </Typography>
         )}
-        {spaces.map((space) => (
+        {spaces.map((space: SpaceEntry) => (
           <Card key={space.path} sx={{ cursor: 'pointer' }} onClick={() => setSelected(space)}>
             <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box>
@@ -91,22 +120,16 @@ export default function Spaces() {
         ))}
       </Box>
 
-      {authenticated ? (
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <TextField
-            placeholder="Nombre del espacio (p. ej. tractos)"
-            value={newSpaceName}
-            onChange={(e: any) => setNewSpaceName(e.target.value)}
-          />
-          <Button variant="contained" onClick={createSpace}>
-            + Nuevo espacio
-          </Button>
-        </Box>
-      ) : (
-        <Button variant="outlined" onClick={enter} sx={{ alignSelf: 'flex-start' }}>
-          Entra con .me para crear un espacio
+      <Box sx={{ display: 'flex', gap: 1 }}>
+        <TextField
+          placeholder="Nombre del espacio (p. ej. tractos)"
+          value={newSpaceName}
+          onChange={(e: any) => setNewSpaceName(e.target.value)}
+        />
+        <Button variant="contained" onClick={createSpace}>
+          + Nuevo espacio
         </Button>
-      )}
+      </Box>
     </Box>
   );
 }
@@ -119,17 +142,7 @@ function inferColumns(members: Member[]): string[] {
   return Array.from(keys);
 }
 
-function SpaceDetail({
-  space,
-  onBack,
-  canWrite,
-  onRequestEnter,
-}: {
-  space: SpaceEntry;
-  onBack: () => void;
-  canWrite: boolean;
-  onRequestEnter: () => void;
-}) {
+function SpaceDetail({ space, onBack }: { space: SpaceEntry; onBack: () => void }) {
   const members = useMeValue<Member[]>(space.path) ?? [];
   const setMembers = useMeAction(space.path);
   const columns = useMemo(() => inferColumns(members), [members]);
@@ -177,7 +190,7 @@ function SpaceDetail({
               </tr>
             </thead>
             <tbody>
-              {members.map((member, i) => (
+              {members.map((member: Member, i: number) => (
                 <tr key={i}>
                   {columns.map((col) => (
                     <td key={col} style={{ padding: '6px 10px' }}>
@@ -191,41 +204,35 @@ function SpaceDetail({
         </Box>
       )}
 
-      {canWrite ? (
-        <Card>
-          <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-            <Typography variant="body2" sx={{ fontWeight: 600 }}>
-              + Nuevo miembro
-            </Typography>
-            {fields.map((field, i) => (
-              <Box key={i} sx={{ display: 'flex', gap: 1 }}>
-                <TextField
-                  placeholder="campo"
-                  value={field.key}
-                  onChange={(e: any) => updateField(i, { key: e.target.value })}
-                />
-                <TextField
-                  placeholder="valor"
-                  value={field.value}
-                  onChange={(e: any) => updateField(i, { value: e.target.value })}
-                />
-              </Box>
-            ))}
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button variant="outlined" onClick={addFieldRow}>
-                + Campo
-              </Button>
-              <Button variant="contained" onClick={saveMember}>
-                Guardar miembro
-              </Button>
+      <Card>
+        <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+            + Nuevo miembro
+          </Typography>
+          {fields.map((field, i) => (
+            <Box key={i} sx={{ display: 'flex', gap: 1 }}>
+              <TextField
+                placeholder="campo"
+                value={field.key}
+                onChange={(e: any) => updateField(i, { key: e.target.value })}
+              />
+              <TextField
+                placeholder="valor"
+                value={field.value}
+                onChange={(e: any) => updateField(i, { value: e.target.value })}
+              />
             </Box>
-          </CardContent>
-        </Card>
-      ) : (
-        <Button variant="outlined" onClick={onRequestEnter} sx={{ alignSelf: 'flex-start' }}>
-          Entra con .me para agregar miembros
-        </Button>
-      )}
+          ))}
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button variant="outlined" onClick={addFieldRow}>
+              + Campo
+            </Button>
+            <Button variant="contained" onClick={saveMember}>
+              Guardar miembro
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
     </Box>
   );
 }
