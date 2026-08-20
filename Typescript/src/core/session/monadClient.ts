@@ -170,7 +170,7 @@ export type MonadOpenResult = {
 export type MonadWriteResult = {
   ok: true;
   target: MonadTarget;
-  blockId: string;
+  memoryHash: string;
   timestamp: number;
 };
 
@@ -809,7 +809,7 @@ export async function writeNamespace<TValue = unknown>(
       semanticNamespace,
       transportOrigin,
     }),
-    blockId: requireStringField<MonadWriteErrorCode>(payload, 'blockId', {
+    memoryHash: requireStringField<MonadWriteErrorCode>(payload, 'memoryHash', {
       operation: 'write',
       semanticNamespace,
       transportOrigin,
