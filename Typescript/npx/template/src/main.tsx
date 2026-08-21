@@ -7,10 +7,13 @@ import Root from './Root';
 import 'this.gui/style.css';
 import './index.css';
 
-// The monad's own DNS-style root namespace — set when you provision the
-// monad (see this.gui's docs on running one locally / registering with
-// netget). NOT the same thing as app.namespace (that's a `.me` path prefix
-// like "apps.__APP_ID__"); this is the claim/routing identity.
+// The monad's own DNS-style root namespace. `npm run dev`'s `predev` hook
+// already starts (or reuses) a monad under this exact name/namespace via
+// `npx monads start __APP_ID__ --namespace __APP_ID__.local` (the monad.ai
+// CLI — a real dependency of this app, not a separate install) — nothing
+// to provision by hand. `npm run monad:status` / `monad:logs` / `monad:stop`
+// manage it directly. NOT the same thing as app.namespace (that's a `.me`
+// path prefix like "apps.__APP_ID__"); this is the claim/routing identity.
 const MONAD_ROOT_NAMESPACE = '__APP_ID__.local';
 const monadOrigin = import.meta.env.VITE_MONAD_ORIGIN || `http://local.netget/apps/__APP_ID__`;
 const SEED_STORAGE_KEY = `${app.id}.operator.seed:v1`;

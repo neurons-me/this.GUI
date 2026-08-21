@@ -4,15 +4,20 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "predev": "npx monads start __APP_ID__ --namespace __APP_ID__.local || true",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "monad:status": "npx monads status __APP_ID__",
+    "monad:logs": "npx monads logs __APP_ID__ --tail",
+    "monad:stop": "npx monads stop __APP_ID__"
   },
   "dependencies": {
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "this.gui": "^2.3.0",
-    "this.me": "^3.5.7"
+    "this.me": "^3.5.7",
+    "monad.ai": "^2.2.4"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
