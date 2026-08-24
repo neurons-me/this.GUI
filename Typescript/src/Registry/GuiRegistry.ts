@@ -47,6 +47,7 @@ import FooterResolver from "@/gui/Layout/Sidebars/Footer/Footer.resolver";
 import LeftBarResolver from "@/gui/Layout/Sidebars/LeftBar/LeftBar.resolver";
 import RightBarResolver from "@/gui/Layout/Sidebars/RightBar/RightBar.resolver";
 import TopBarResolver from "@/gui/Layout/Sidebars/TopBar/TopBar.resolver";
+import ViewStageResolver from "@/gui/Layout/Stage/ViewStage/ViewStage.resolver";
 
 // All.This
 import CleakerResolver from "@/gui/All.This/Cleaker/Cleaker.resolver";
@@ -108,6 +109,7 @@ export const GuiRegistry = createRegistry([
   LeftBarResolver,
   RightBarResolver,
   FooterResolver,
+  ViewStageResolver,
   // All.This
   MeResolver,
   SessionQRResolver,
