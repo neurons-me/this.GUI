@@ -372,6 +372,10 @@ export function makeMuiTheme(themeTokens: any, modeTokens: any, mode: 'light' | 
             '--gui-link': theme.palette.link.main,
             '--gui-link-visited': theme.palette.link.visited || theme.palette.link.main,
             '--gui-border': theme.custom?.border || theme.palette.divider,
+            '--gui-success': theme.palette.success.main,
+            '--gui-warning': theme.palette.warning.main,
+            '--gui-error': theme.palette.error.main,
+            '--gui-info': theme.palette.info.main,
             // Motion / opacity / icon sizes CSS vars for non-MUI DOM
             '--gui-ease-standard': theme.transitions.easing.easeInOut,
             '--gui-duration-standard': `${theme.transitions.duration.standard}ms`,

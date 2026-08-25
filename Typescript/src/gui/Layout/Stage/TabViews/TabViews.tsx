@@ -1,6 +1,6 @@
-// Layout/Stage/ViewStage/ViewStage.tsx
+// Layout/Stage/TabViews/TabViews.tsx
 //
-// ViewStage — N views, one "front" (active, full render), the rest "parked"
+// TabViews — N views, one "front" (active, full render), the rest "parked"
 // (dimmed preview tiles you click to bring forward). Extracted from
 // local.netget's WelcomeNetget.jsx, which hand-built exactly this shape for
 // exactly two views (terminal/netget) — generalized here to N, since a third
@@ -12,7 +12,7 @@
 // Lives in Layout/, not Molecules/: it's a main-content region a Layout
 // composes (the same tier as Content, TopBar, LeftBar, RightBar, Footer),
 // not an atoms-composed Molecule an app assembles ad hoc. An app that wants
-// tab/view rotation as its Layout's main area passes ViewStage as Layout's
+// tab/view rotation as its Layout's main area passes TabViews as Layout's
 // children, the same way AppShellNav passes a single ActiveView today.
 //
 // Blurred views (secret scopes not yet decrypted, see the Web OS "blurred
@@ -24,9 +24,9 @@ import * as React from 'react';
 import Box from '@/gui/Atoms/Box/Box';
 import Typography from '@/gui/Atoms/Typography/Typography';
 import Icon from '@/gui/Atoms/Icon/Icon';
-import type { ViewStageProps } from './ViewStage.types';
+import type { TabViewsProps } from './TabViews.types';
 
-export type { ViewStageProps, ViewStageItem } from './ViewStage.types';
+export type { TabViewsProps, TabViewsItem } from './TabViews.types';
 
 function BlurredPlaceholder({ label, size = 'preview' }: { label: string; size?: 'preview' | 'front' }) {
   return (
@@ -55,13 +55,13 @@ function BlurredPlaceholder({ label, size = 'preview' }: { label: string; size?:
   );
 }
 
-export function ViewStage({ views, activeId, onActiveChange, sx }: ViewStageProps) {
+export function TabViews({ views, activeId, onActiveChange, sx }: TabViewsProps) {
   const active = views.find((v) => v.id === activeId) ?? views[0];
   const parked = views.filter((v) => v.id !== active?.id);
 
   return (
     <Box
-      data-gui-component="ViewStage"
+      data-gui-component="TabViews"
       sx={{
         position: 'relative',
         width: '100%',
@@ -74,7 +74,7 @@ export function ViewStage({ views, activeId, onActiveChange, sx }: ViewStageProp
     >
       {parked.length > 0 && (
         <Box
-          data-gui-component="ViewStageParked"
+          data-gui-component="TabViewsParked"
           sx={{
             display: 'flex',
             flexWrap: 'wrap',
@@ -120,7 +120,7 @@ export function ViewStage({ views, activeId, onActiveChange, sx }: ViewStageProp
       )}
 
       <Box
-        data-gui-component="ViewStageFront"
+        data-gui-component="TabViewsFront"
         sx={{
           position: 'relative',
           flex: 1,
@@ -141,4 +141,4 @@ export function ViewStage({ views, activeId, onActiveChange, sx }: ViewStageProp
   );
 }
 
-export default ViewStage;
+export default TabViews;

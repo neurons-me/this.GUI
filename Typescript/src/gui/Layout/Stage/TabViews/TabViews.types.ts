@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export interface ViewStageItem {
+export interface TabViewsItem {
   id: string;
   label: string;
   render: () => React.ReactNode;
@@ -13,8 +13,8 @@ export interface ViewStageItem {
   blurred?: boolean;
 }
 
-export interface ViewStageProps {
-  views: ViewStageItem[];
+export interface TabViewsProps {
+  views: TabViewsItem[];
   activeId: string;
   onActiveChange: (id: string) => void;
   sx?: any;

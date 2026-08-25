@@ -1,13 +1,13 @@
-// Layout/Stage/ViewStage/ViewStage.resolver.tsx
+// Layout/Stage/TabViews/TabViews.resolver.tsx
 import * as React from 'react';
-import ViewStage from './ViewStage';
+import TabViews from './TabViews';
 import type { RegistryEntry } from '@/Registry/types';
-import type { ViewStageItem } from './ViewStage.types';
+import type { TabViewsItem } from './TabViews.types';
 
-type ViewStageSpec = {
-  type: 'ViewStage';
+type TabViewsSpec = {
+  type: 'TabViews';
   props?: {
-    views: ViewStageItem[];
+    views: TabViewsItem[];
     activeId: string;
     onActiveChange: (id: string) => void;
     sx?: any;
@@ -15,22 +15,22 @@ type ViewStageSpec = {
 };
 
 export const meta = {
-  id: 'layout.viewstage',
-  type: 'ViewStage',
-  label: 'ViewStage',
+  id: 'layout.tabviews',
+  type: 'TabViews',
+  label: 'TabViews',
   group: 'Layout',
   path: ['Layout', 'Stage'],
   tags: ['tabs', 'stage', 'views'],
 } as const;
 
-const ViewStageResolver: RegistryEntry = {
-  type: 'ViewStage',
-  resolve(spec: ViewStageSpec) {
-    const p = spec.props ?? ({} as ViewStageSpec['props']);
+const TabViewsResolver: RegistryEntry = {
+  type: 'TabViews',
+  resolve(spec: TabViewsSpec) {
+    const p = spec.props ?? ({} as TabViewsSpec['props']);
     if (!p) return null;
 
     return (
-      <ViewStage
+      <TabViews
         views={p.views}
         activeId={p.activeId}
         onActiveChange={p.onActiveChange}
@@ -40,4 +40,4 @@ const ViewStageResolver: RegistryEntry = {
   },
 };
 
-export default ViewStageResolver;
+export default TabViewsResolver;
