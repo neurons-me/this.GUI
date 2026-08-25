@@ -13,6 +13,7 @@ import { useThemeContext } from '@/gui-internals/Contexts/ThemeContext';
 import { getGuiThemes } from '@/gui/Theme/utils/catalog';
 import { LeftSidebarContext } from '@/gui-internals/Contexts/LeftSidebarContext';
 import { useOptionalSelection, useRegisterGuiNode } from '@/runtime/selection';
+import { useLauncherPopover } from '@/runtime/launcherPopover';
 
 export interface ThemeLauncherProps {
   sx?: any;
@@ -24,7 +25,13 @@ const ThemeLauncher: React.FC<ThemeLauncherProps> = ({ sx }) => {
   const isRailView = leftSidebarContext?.view === 'rail';
   // `expanded` = the full catalog (all themes) is open — only after a click.
   const [expanded, setExpanded] = useState(false);
-  const [hoverOpen, setHoverOpen] = useState(false);
+  // Shared with ThemeLauncher's sibling launchers (MeLauncher,
+  // DevToolsLauncher) — opening this popper closes theirs, and vice versa,
+  // instead of each floating panel tracking visibility independently and
+  // potentially all being open (and overlapping) at once. `expanded`
+  // (the full catalog) stays local: it grows this row inline rather than
+  // floating over siblings, so it doesn't need the same coordination.
+  const [hoverOpen, setHoverOpen] = useLauncherPopover('theme');
   const [optimisticThemeId, setOptimisticThemeId] = useState<string | null>(null);
   const [inspectorOpen, setInspectorOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);

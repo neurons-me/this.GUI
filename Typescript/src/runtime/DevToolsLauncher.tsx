@@ -10,7 +10,7 @@
 // there is nothing useful this component can do without a SelectionProvider
 // (it exists to toggle inspector/grid state that only that context holds),
 // so it renders nothing rather than a broken partial UI.
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import Box from '@/gui/Atoms/Box/Box';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import Typography from '@/gui/Atoms/Typography/Typography';
@@ -18,6 +18,7 @@ import Popper from '@mui/material/Popper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { LeftSidebarContext } from '@/gui-internals/Contexts/LeftSidebarContext';
 import { useOptionalSelection, useRegisterGuiNode } from './selection';
+import { useLauncherPopover } from './launcherPopover';
 
 export interface DevToolsLauncherProps {
   sx?: any;
@@ -31,7 +32,7 @@ const DevToolsLauncher: React.FC<DevToolsLauncherProps> = ({ sx }) => {
   useRegisterGuiNode('DevToolsLauncher.menu.gridToggle', 'DevToolsLauncherToggle');
   const leftSidebarContext = React.useContext(LeftSidebarContext);
   const isRailView = leftSidebarContext?.view === 'rail';
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useLauncherPopover('devtools');
   const bubbleRef = useRef<HTMLDivElement>(null);
 
   // Only one floating dev-tools surface may be open at a time — see the

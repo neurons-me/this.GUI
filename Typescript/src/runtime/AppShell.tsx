@@ -9,6 +9,7 @@ import { useMeAction } from '@/react/useMeAction';
 import { useMeValue } from '@/react/useMeValue';
 import type { MeLike } from '@/react/types';
 import { SelectionProvider } from './selection';
+import { LauncherPopoverProvider } from './launcherPopover';
 import { RuntimeEnvironmentProvider } from './runtimeContext';
 import { RuntimeInspector } from './inspector';
 import { declareApp, isSpecViewFactory } from './mountApp';
@@ -146,16 +147,18 @@ export function AppShell({ app, me, runtime, navItems, devtools = true, footerEl
 
   return (
     <Theme initialThemeId={app.theme}>
-      {devtools ? (
-        <SelectionProvider>
-          <RuntimeEnvironmentProvider value={{ me, runtime }}>
-            {body}
-            <RuntimeInspector />
-          </RuntimeEnvironmentProvider>
-        </SelectionProvider>
-      ) : (
-        body
-      )}
+      <LauncherPopoverProvider>
+        {devtools ? (
+          <SelectionProvider>
+            <RuntimeEnvironmentProvider value={{ me, runtime }}>
+              {body}
+              <RuntimeInspector />
+            </RuntimeEnvironmentProvider>
+          </SelectionProvider>
+        ) : (
+          body
+        )}
+      </LauncherPopoverProvider>
     </Theme>
   );
 }

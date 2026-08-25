@@ -396,6 +396,7 @@ export {
   useSelection,
   SelectionProvider,
 } from '@/runtime/selection';
+export { useLauncherPopover, LauncherPopoverProvider } from '@/runtime/launcherPopover';
 export { MeRuntimeProvider, useMeRuntime, useOptionalMeRuntimeContext } from '@/react/MeRuntimeProvider';
 export {
   SeedSessionProvider,

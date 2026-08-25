@@ -9,7 +9,7 @@
 // renders AppShell without SessionSurface (no identity concept at all)
 // doesn't crash — it just renders nothing, the same graceful-degradation
 // DevToolsLauncher already established for useOptionalSelection().
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import Box from '@/gui/Atoms/Box/Box';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import Typography from '@/gui/Atoms/Typography/Typography';
@@ -17,6 +17,7 @@ import Popper from '@mui/material/Popper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { LeftSidebarContext } from '@/gui-internals/Contexts/LeftSidebarContext';
 import { useOptionalSessionSurface } from './SessionSurface';
+import { useLauncherPopover } from '@/runtime/launcherPopover';
 
 export interface MeLauncherProps {
   sx?: any;
@@ -26,7 +27,7 @@ const MeLauncher: React.FC<MeLauncherProps> = ({ sx }) => {
   const surface = useOptionalSessionSurface();
   const leftSidebarContext = React.useContext(LeftSidebarContext);
   const isRailView = leftSidebarContext?.view === 'rail';
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useLauncherPopover('me');
   const bubbleRef = useRef<HTMLDivElement>(null);
 
   if (!surface) return null;
