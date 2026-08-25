@@ -20,6 +20,12 @@ export type LeftSidebarActionProps = {
   style?: React.CSSProperties;
   resolver?: string; // legacy global action name; inline JS execution is disabled for CSP safety
   view: LeftSidebarMode; // added line
+  /** Set false for a custom `element` that already opens its own floating
+   * panel on hover (ThemeLauncher/MeLauncher/DevToolsLauncher-shaped
+   * launchers) — otherwise this rail's own label Tooltip anchors to the
+   * same icon and collides with the element's own popper. Defaults to
+   * true, matching the plain icon+label rail button's existing tooltip. */
+  tooltip?: boolean;
 };
 
 const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
@@ -34,6 +40,7 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
   style,
   resolver,
   view,
+  tooltip = true,
   ...rest
 }) => {
   const legacyResolver = typeof resolver === 'string' ? resolver.trim() : '';
@@ -123,15 +130,23 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
       </Box>
     );
 
-    // No Tooltip wrapper here, even in rail view: a custom `element` (e.g.
-    // ThemeLauncher/MeLauncher/DevToolsLauncher) is already a self-contained
-    // bubble+popper that opens its own floating panel on hover — wrapping it
-    // in a second, independent Tooltip anchored to the same icon produces
-    // two floating panels racing for the same hover, each positioned
-    // without knowledge of the other (visibly colliding/overlapping once
-    // the element's own popper opens). The element's own popper already
-    // names itself (see each launcher's panel header), so the label isn't
-    // lost — just not duplicated as a competing tooltip.
+    // `tooltip={false}` is required for a custom `element` that already
+    // opens its own floating panel on hover (ThemeLauncher/MeLauncher/
+    // DevToolsLauncher-shaped launchers) — wrapping it in a second,
+    // independent Tooltip anchored to the same icon produces two floating
+    // panels racing for the same hover, each positioned without knowledge
+    // of the other (visibly colliding/overlapping once the element's own
+    // popper opens). Those launchers' own poppers already name themselves
+    // (see each one's panel header), so opting out loses nothing there.
+    const wrappedContent =
+      view === 'rail' && label && tooltip ? (
+        <Tooltip title={label} placement="right" arrow>
+          {elementContent}
+        </Tooltip>
+      ) : (
+        elementContent
+      );
+
     return (
       <Box
         {...rest}
@@ -148,7 +163,7 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
           textAlign: view === 'rail' ? 'center' : 'left',
         }}
       >
-        {elementContent}
+        {wrappedContent}
       </Box>
     );
   }

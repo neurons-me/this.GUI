@@ -101,9 +101,11 @@ function AppShellNav({ app, navItems, footerElements }: Pick<AppShellProps, 'app
         initialView: 'expanded',
         elements,
         footerElements: [
-          { type: 'action', props: { element: <ThemeLauncher /> } },
-          { type: 'action', props: { element: <MeLauncher /> } },
-          { type: 'action', props: { element: <DevToolsLauncher /> } },
+          // tooltip: false — each of these already opens its own hover
+          // popper (see LeftSidebarAction's `tooltip` prop doc).
+          { type: 'action', props: { element: <ThemeLauncher />, tooltip: false } },
+          { type: 'action', props: { element: <MeLauncher />, tooltip: false } },
+          { type: 'action', props: { element: <DevToolsLauncher />, tooltip: false } },
           ...(footerElements ?? []).map((element) => ({ type: 'action' as const, props: { element } })),
         ],
       }}

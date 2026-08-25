@@ -24,7 +24,8 @@ import * as React from 'react';
 import Box from '@/gui/Atoms/Box/Box';
 import Typography from '@/gui/Atoms/Typography/Typography';
 import Icon from '@/gui/Atoms/Icon/Icon';
-import type { TabViewsProps } from './TabViews.types';
+import { useRegisterGuiNode } from '@/runtime/selection';
+import type { TabViewsItem, TabViewsProps } from './TabViews.types';
 
 export type { TabViewsProps, TabViewsItem } from './TabViews.types';
 
@@ -55,12 +56,83 @@ function BlurredPlaceholder({ label, size = 'preview' }: { label: string; size?:
   );
 }
 
-export function TabViews({ views, activeId, onActiveChange, sx }: TabViewsProps) {
+// Each parked tile registers itself individually (a hook can't be called
+// inside the .map() below), so Layout Grid outlines every tile and the
+// Semantic Inspector can select "Show Request Terminal" specifically,
+// rather than only the parked strip as one lump.
+function ParkedTile({
+  view,
+  nodeId,
+  parentId,
+  onActiveChange,
+}: {
+  view: TabViewsItem;
+  nodeId: string;
+  parentId: string;
+  onActiveChange: (id: string) => void;
+}) {
+  useRegisterGuiNode(nodeId, 'TabViewsParkedTile', parentId);
+
+  return (
+    <Box
+      component="button"
+      type="button"
+      data-gui-node-id={nodeId}
+      data-gui-component="TabViewsParkedTile"
+      onClick={() => onActiveChange(view.id)}
+      aria-label={`Show ${view.label}`}
+      sx={{
+        flex: '1 1 160px',
+        minWidth: 120,
+        maxWidth: 260,
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 2,
+        background: 'transparent',
+        color: 'inherit',
+        textAlign: 'left',
+        cursor: 'pointer',
+        padding: 1.25,
+        transition: 'opacity 120ms ease, transform 120ms ease',
+        '&:hover': { opacity: 1, transform: 'translateY(-1px)' },
+      }}
+    >
+      {view.blurred ? (
+        <BlurredPlaceholder label={view.label} size="preview" />
+      ) : view.renderPreview ? (
+        view.renderPreview()
+      ) : (
+        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+          {view.label}
+        </Typography>
+      )}
+    </Box>
+  );
+}
+
+export function TabViews({ views, activeId, onActiveChange, sx, id }: TabViewsProps) {
+  const generatedId = React.useId();
+  const baseId = id || `TabViews${generatedId}`;
+  const rootId = `${baseId}.root`;
+  const parkedId = `${baseId}.parked`;
+  const frontId = `${baseId}.front`;
+
+  // Registers this instance's own chrome (root/parked strip/front box) into
+  // the same node registry the declarative render(spec) pipeline uses — see
+  // useRegisterGuiNode's doc comment. A consuming app gets Layout Grid /
+  // Semantic Inspector coverage for TabViews' own frame for free; each
+  // view's own render() content still needs its own registration for
+  // finer-grained inspection, same as any other hand-written component.
+  useRegisterGuiNode(rootId, 'TabViews');
+  useRegisterGuiNode(parkedId, 'TabViewsParked', rootId);
+  useRegisterGuiNode(frontId, 'TabViewsFront', rootId);
+
   const active = views.find((v) => v.id === activeId) ?? views[0];
   const parked = views.filter((v) => v.id !== active?.id);
 
   return (
     <Box
+      data-gui-node-id={rootId}
       data-gui-component="TabViews"
       sx={{
         position: 'relative',
@@ -74,6 +146,7 @@ export function TabViews({ views, activeId, onActiveChange, sx }: TabViewsProps)
     >
       {parked.length > 0 && (
         <Box
+          data-gui-node-id={parkedId}
           data-gui-component="TabViewsParked"
           sx={{
             display: 'flex',
@@ -83,43 +156,19 @@ export function TabViews({ views, activeId, onActiveChange, sx }: TabViewsProps)
           }}
         >
           {parked.map((view) => (
-            <Box
+            <ParkedTile
               key={view.id}
-              component="button"
-              type="button"
-              onClick={() => onActiveChange(view.id)}
-              aria-label={`Show ${view.label}`}
-              sx={{
-                flex: '1 1 160px',
-                minWidth: 120,
-                maxWidth: 260,
-                border: '1px solid',
-                borderColor: 'divider',
-                borderRadius: 2,
-                background: 'transparent',
-                color: 'inherit',
-                textAlign: 'left',
-                cursor: 'pointer',
-                padding: 1.25,
-                transition: 'opacity 120ms ease, transform 120ms ease',
-                '&:hover': { opacity: 1, transform: 'translateY(-1px)' },
-              }}
-            >
-              {view.blurred ? (
-                <BlurredPlaceholder label={view.label} size="preview" />
-              ) : view.renderPreview ? (
-                view.renderPreview()
-              ) : (
-                <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                  {view.label}
-                </Typography>
-              )}
-            </Box>
+              view={view}
+              nodeId={`${baseId}.parked.${view.id}`}
+              parentId={parkedId}
+              onActiveChange={onActiveChange}
+            />
           ))}
         </Box>
       )}
 
       <Box
+        data-gui-node-id={frontId}
         data-gui-component="TabViewsFront"
         sx={{
           position: 'relative',

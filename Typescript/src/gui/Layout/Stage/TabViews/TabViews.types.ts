@@ -18,4 +18,9 @@ export interface TabViewsProps {
   activeId: string;
   onActiveChange: (id: string) => void;
   sx?: any;
+  /** Stable id prefix for this instance's Semantic Inspector / Layout Grid
+   * nodes (root, parked strip, front box, each parked tile). Defaults to a
+   * generated per-instance id — pass one explicitly if you want a
+   * predictable id to reference from outside (tests, deep links). */
+  id?: string;
 }

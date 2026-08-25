@@ -390,6 +390,12 @@ export {
 } from '@/runtime/run-me';
 export { deriveRouteState, normalizeRoutePath, startApp } from '@/runtime/start-app';
 export type { GuiRouteState, StartAppOptions } from '@/runtime/start-app';
+export {
+  useRegisterGuiNode,
+  useOptionalSelection,
+  useSelection,
+  SelectionProvider,
+} from '@/runtime/selection';
 export { MeRuntimeProvider, useMeRuntime, useOptionalMeRuntimeContext } from '@/react/MeRuntimeProvider';
 export {
   SeedSessionProvider,
