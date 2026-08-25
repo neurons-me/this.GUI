@@ -123,15 +123,15 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
       </Box>
     );
 
-    const wrappedContent =
-      view === 'rail' && label ? (
-        <Tooltip title={label} placement="right" arrow>
-          {elementContent}
-        </Tooltip>
-      ) : (
-        elementContent
-      );
-
+    // No Tooltip wrapper here, even in rail view: a custom `element` (e.g.
+    // ThemeLauncher/MeLauncher/DevToolsLauncher) is already a self-contained
+    // bubble+popper that opens its own floating panel on hover — wrapping it
+    // in a second, independent Tooltip anchored to the same icon produces
+    // two floating panels racing for the same hover, each positioned
+    // without knowledge of the other (visibly colliding/overlapping once
+    // the element's own popper opens). The element's own popper already
+    // names itself (see each launcher's panel header), so the label isn't
+    // lost — just not duplicated as a competing tooltip.
     return (
       <Box
         {...rest}
@@ -148,7 +148,7 @@ const LeftSidebarAction: React.FC<LeftSidebarActionProps> = ({
           textAlign: view === 'rail' ? 'center' : 'left',
         }}
       >
-        {wrappedContent}
+        {elementContent}
       </Box>
     );
   }
