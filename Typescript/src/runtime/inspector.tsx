@@ -1029,14 +1029,14 @@ export function RuntimeInspector({
   }, [selectedNodeId, explainPath, me]);
 
   const handleExplain = React.useCallback(async () => {
-    if (!explainPath) {
-      setExplainState({
-        status: 'error',
-        sourcePath: null,
-        error: describeExplainGap(provenance),
-      });
-      return;
-    }
+    // No-op, not an error state: the permanent "no provenance contract"
+    // notice below (rendered whenever !explainPath, regardless of whether
+    // Explain was ever clicked) already says this. Setting explainState to
+    // 'error' here duplicated that exact same describeExplainGap() text a
+    // second time, in its own separate error-styled box, the moment this
+    // button was clicked — the button is also disabled in this state now,
+    // but this guard stays as a safety net against calling it any other way.
+    if (!explainPath) return;
 
     if (!kernelAvailable) {
       setExplainState({
@@ -1318,16 +1318,18 @@ export function RuntimeInspector({
                   <button
                     type="button"
                     onClick={handleExplain}
-                    disabled={explainState.status === 'loading'}
+                    disabled={explainState.status === 'loading' || !explainPath}
+                    title={!explainPath ? describeExplainGap(provenance) : undefined}
                     style={{
                       border: '1px solid rgba(255,255,255,0.2)',
                       background: explainState.status === 'loading' ? 'rgba(255,255,255,0.08)' : 'transparent',
                       color: '#e5e7eb',
                       borderRadius: 8,
                       padding: '6px 10px',
-                      cursor: explainState.status === 'loading' ? 'wait' : 'pointer',
+                      cursor: explainState.status === 'loading' ? 'wait' : !explainPath ? 'not-allowed' : 'pointer',
                       fontSize: 11,
                       fontWeight: 600,
+                      opacity: !explainPath ? 0.5 : 1,
                     }}
                   >
                     {explainState.status === 'ready' ? 'Refresh Explain' : 'Explain'}
