@@ -20,6 +20,8 @@ export type JsonSearchItem = {
   kind?: 'root' | 'doc' | 'source' | string;
 };
 
+export type SearchBarThemeMode = 'auto' | 'light' | 'dark';
+
 export type SearchBarProps = {
   /** URL of the JSON index to fetch (e.g. https://neurons-me.github.io/index.json). */
   src?: string;
@@ -33,6 +35,8 @@ export type SearchBarProps = {
   kindOrder?: string[];
   /** Focus the input when the user presses "/". */
   enableSlashShortcut?: boolean;
+  /** Visual mode. `auto` follows the page/theme color scheme. */
+  themeMode?: SearchBarThemeMode;
   /** Called when a result is activated. Defaults to `window.location.href = item.url`. */
   onSelect?: (item: JsonSearchItem) => void;
   id?: string;

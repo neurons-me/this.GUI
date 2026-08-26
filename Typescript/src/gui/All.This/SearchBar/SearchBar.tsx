@@ -28,6 +28,61 @@ function resolveIcon(icon: JsonSearchIcon | undefined, isLight: boolean): string
   return isLight ? icon.light : icon.dark;
 }
 
+function isDarkCssColor(value: string): boolean {
+  const rgba = value.match(/rgba?\(([^)]+)\)/i);
+  if (!rgba) return false;
+  const parts = rgba[1].split(',').map((part) => Number.parseFloat(part.trim()));
+  const [r, g, b, a = 1] = parts;
+  if ([r, g, b].some((n) => Number.isNaN(n)) || a === 0) return false;
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) < 128;
+}
+
+function detectPageDarkMode(): boolean {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return false;
+
+  const root = document.documentElement;
+  const attrTheme = root.dataset.theme || root.getAttribute('color-scheme');
+  if (root.classList.contains('dark') || attrTheme === 'dark') return true;
+  if (root.classList.contains('light') || attrTheme === 'light') return false;
+
+  for (const element of [document.body, root]) {
+    if (!element) continue;
+    const bg = window.getComputedStyle(element).backgroundColor;
+    if (bg && bg !== 'transparent' && isDarkCssColor(bg)) return true;
+  }
+
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+}
+
+function usePageDarkMode(enabled: boolean): boolean {
+  const [isDark, setIsDark] = useState(() => (enabled ? detectPageDarkMode() : false));
+
+  useEffect(() => {
+    if (!enabled || typeof window === 'undefined') return;
+
+    const update = () => setIsDark(detectPageDarkMode());
+    const media = window.matchMedia?.('(prefers-color-scheme: dark)');
+    media?.addEventListener?.('change', update);
+
+    const observer = typeof MutationObserver !== 'undefined'
+      ? new MutationObserver(update)
+      : null;
+    observer?.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theme', 'color-scheme', 'style'],
+    });
+
+    update();
+
+    return () => {
+      media?.removeEventListener?.('change', update);
+      observer?.disconnect();
+    };
+  }, [enabled]);
+
+  return isDark;
+}
+
 function Icon({
   icon,
   size,
@@ -90,6 +145,7 @@ export default function SearchBar(props: SearchBarProps) {
     maxResults = 8,
     kindOrder = DEFAULT_KIND_ORDER,
     enableSlashShortcut = true,
+    themeMode = 'auto',
     onSelect,
     id,
     className,
@@ -98,7 +154,14 @@ export default function SearchBar(props: SearchBarProps) {
   } = props;
 
   const guiTheme = useGuiTheme();
-  const isLight = guiTheme.palette.mode !== 'dark';
+  const pageDarkMode = usePageDarkMode(themeMode === 'auto');
+  const isLight = themeMode === 'light'
+    ? true
+    : themeMode === 'dark'
+      ? false
+      : guiTheme.palette.mode === 'dark'
+        ? false
+        : !pageDarkMode;
 
   const [fetchedItems, setFetchedItems] = useState<JsonSearchItem[] | null>(null);
   const [error, setError] = useState<string | null>(null);
