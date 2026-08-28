@@ -330,19 +330,27 @@ export default function MainServerView({ endpoint, namespaceRootUrl, pollInterva
                   <Typography variant="body2">Owned by</Typography>
                   {state.ownerUsername ? (
                     (() => {
+                      // The full @user.namespace form, not the bare username —
+                      // "@suign" alone is ambiguous (the same handle can exist
+                      // claimed under a different namespace entirely, e.g.
+                      // @suign.cleaker.me); the namespace suffix is what
+                      // actually identifies which claimed .me this is.
                       const root = namespaceRootUrl || endpoint;
                       const url = root ? buildCleakerNamespaceUrl(root, state.ownerUsername) : '';
+                      const label = state.servingNamespace
+                        ? `@${state.ownerUsername}.${state.servingNamespace}`
+                        : `@${state.ownerUsername}`;
                       return url ? (
                         <Typography
                           component="a"
                           href={url}
                           variant="body2"
-                          sx={{ fontWeight: 700, color: 'primary.main', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+                          sx={{ fontFamily: 'monospace', fontWeight: 700, color: 'primary.main', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
                         >
-                          @{state.ownerUsername}
+                          {label}
                         </Typography>
                       ) : (
-                        <Typography variant="body2" sx={{ fontWeight: 700 }}>@{state.ownerUsername}</Typography>
+                        <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 700 }}>{label}</Typography>
                       );
                     })()
                   ) : (
