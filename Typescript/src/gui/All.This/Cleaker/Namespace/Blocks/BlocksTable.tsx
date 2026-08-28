@@ -504,7 +504,20 @@ export function BlocksTable({
     if (!base) return '';
 
     try {
-      return buildCleakerNamespaceUrl(base, identity.subject === identity.root ? undefined : identity.subject);
+      const url = buildCleakerNamespaceUrl(base, identity.subject === identity.root ? undefined : identity.subject);
+      if (!url) return url;
+
+      // Append the row's own branch so the QR reflects exactly what's in
+      // view, not just the root identity — resolveChainNamespace() in
+      // monad's own http/namespace.ts already resolves a trailing path
+      // after /@handle/, nothing new needed server-side. A pointer row
+      // (row.path === "users.<handle>" exactly, same check getRowIdentity
+      // uses above) already names the identity itself — appending it again
+      // would read as ".../@handle/users.handle", redundant.
+      const path = String(row.path || '').trim();
+      const isPointerRow = /^users\.[a-z0-9_-]+$/i.test(path);
+      if (!path || isPointerRow) return url;
+      return `${url.replace(/\/+$/, '')}/${path}`;
     } catch {
       return '';
     }

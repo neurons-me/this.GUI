@@ -50,6 +50,14 @@ export interface NamespaceProps {
   resolverSurfaceNamespace?: string;
   resolverSubjectSurfaceNamespace?: string;
   namespaceUrl?: string;
+  /** Set false when the caller already renders its own frame/card around
+   * this component (border + background + padding) — e.g. a stage/tab
+   * container that already has rounded corners. Defaults to true so every
+   * existing standalone usage (Storybook, a bare page) is unaffected.
+   * When false, this root renders without its own border/background/
+   * padding/maxWidth, so it doesn't nest a second frame inside the
+   * caller's. */
+  framed?: boolean;
   'data-gui-node-id'?: string;
   'data-gui-component'?: string;
 }
@@ -393,6 +401,7 @@ export default function Namespace({
   resolverSurfaceNamespace: resolverSurfaceNamespaceProp = '',
   resolverSubjectSurfaceNamespace: resolverSubjectSurfaceNamespaceProp = '',
   namespaceUrl: namespaceUrlProp = '',
+  framed = true,
   'data-gui-node-id': dataGuiNodeId = 'Namespace',
   'data-gui-component': dataGuiComponent = 'Namespace',
 }: NamespaceProps) {
@@ -1864,13 +1873,17 @@ export default function Namespace({
       data-gui-node-id={rootNodeId}
       data-gui-component={rootNodeType}
       sx={{
-        border: '1px solid',
-        borderColor: 'divider',
-        borderRadius: 2,
-        padding: '1.5rem',
-        maxWidth: '900px',
-        margin: '0 auto',
-        background: 'background.paper',
+        ...(framed
+          ? {
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: 2,
+              padding: '1.5rem',
+              maxWidth: '900px',
+              margin: '0 auto',
+              background: 'background.paper',
+            }
+          : {}),
         position: 'relative',
       }}
     >
@@ -2425,6 +2438,83 @@ export default function Namespace({
                   </Box>
                 ))}
               </Box>
+            </Box>
+
+            <Box
+              {...nodeAttrs('surface-activity', 'Namespace.SurfaceActivity')}
+              sx={{
+                p: 1.5,
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                bgcolor: 'background.paper',
+                gridColumn: isMobile ? 'auto' : '1 / -1',
+              }}
+            >
+              <Typography
+                {...nodeAttrs('surface-activity-title', 'Namespace.SurfaceActivityTitle')}
+                variant="subtitle2"
+                sx={{ mb: 1 }}
+              >
+                Active Requests
+              </Typography>
+              {surfaceRequestEvents.length === 0 ? (
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Waiting for request traffic...
+                </Typography>
+              ) : (
+                <Box
+                  sx={{
+                    mt: 0.25,
+                    p: 1,
+                    borderRadius: 1.5,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    bgcolor: 'background.default',
+                    height: 220,
+                    minHeight: 140,
+                    resize: 'vertical',
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
+                    fontFamily: 'monospace',
+                    fontSize: '0.76rem',
+                    lineHeight: 1.45,
+                    fontVariantNumeric: 'tabular-nums',
+                  }}
+                >
+                  {surfaceRequestEvents.slice(0, 40).map((event) => (
+                    <Typography
+                      key={event.id}
+                      variant="caption"
+                      title={`${event.method} ${event.status} ${event.durationMs}ms ${event.url} ${new Date(event.timestamp).toLocaleTimeString()} · ${event.namespace || '—'} · ${event.operation || 'read'}`}
+                      sx={{
+                        display: 'block',
+                        color: 'text.primary',
+                        fontFamily: 'inherit',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        '&:not(:last-child)': {
+                          mb: 0.45,
+                        },
+                      }}
+                    >
+                      <Box component="span" sx={{ color: 'primary.main', fontWeight: 700 }}>
+                        {event.method} {event.status}
+                      </Box>{' '}
+                      <Box component="span" sx={{ color: 'text.secondary' }}>
+                        {event.durationMs}ms
+                      </Box>{' '}
+                      <Box component="span" sx={{ color: 'text.primary' }}>
+                        {event.url}
+                      </Box>{' '}
+                      <Box component="span" sx={{ color: 'text.secondary' }}>
+                        {new Date(event.timestamp).toLocaleTimeString()} · {event.namespace || '—'} · {event.operation || 'read'}
+                      </Box>
+                    </Typography>
+                  ))}
+                </Box>
+              )}
             </Box>
           </Box>
         </Box>

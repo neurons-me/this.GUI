@@ -10,6 +10,10 @@
 
 import MeKernel from 'this.me';
 import cleaker from 'cleaker';
+import sha3 from 'js-sha3';
+
+const { keccak256 } = sha3;
+const COMPOUND_SEED_DOMAIN = 'me.seed/compound:v1::';
 
 // Canonical JSON (sorted keys) for tamper-proof request fingerprinting.
 export function canonicalJson(obj: Record<string, unknown>): string {
@@ -50,6 +54,38 @@ export async function fetchGatewayHostname(): Promise<string> {
   return hostname;
 }
 
+// The identity root a person has explicitly picked when a UI offers a
+// choice between reachable roots for the same physical gateway (e.g.
+// CleakerLanding's local.cleaker/cleaker.me switch) — read by
+// resolveNetgetSeedFromCredentials-style resolvers at claim/open time so the
+// namespace actually claimed matches what was shown, instead of always
+// falling back to fetchGatewayHostname()'s single physical answer. A
+// globalThis-keyed singleton, not a module-scope variable — this.gui ships
+// from separate build entries (this.gui, this.gui/react, this.gui/cleaker),
+// and each bundled copy of a plain variable would be its own independent
+// instance (same failure class launcherPopover.tsx's context duplication
+// hit, fixed the same way).
+const ACTIVE_NAMESPACE_ROOT_KEY = '__thisGui_activeNamespaceRoot__';
+
+export function setActiveNamespaceRoot(root: string | null): void {
+  (globalThis as any)[ACTIVE_NAMESPACE_ROOT_KEY] = root || null;
+}
+
+export function getActiveNamespaceRoot(): string | null {
+  return (globalThis as any)[ACTIVE_NAMESPACE_ROOT_KEY] || null;
+}
+
+// Same formula this.me's ME_RESEED uses internally (me/Typescript/src/me.ts,
+// deriveCompoundSeed) — exposed here so a caller can derive the identical
+// seed WITHOUT going through a .me kernel instance, e.g. to open a real
+// monad session (createSeedSession({ seed })) for the same identity
+// deriveCleakerNode below signs gateway proofs with. Same identity, two
+// consumers — see modules/monad's claim/open vs this file's signedRequest,
+// unified under docs/wild-bubbling-lemon plan.
+export function deriveCompoundSeed(username: string, secret: string): string {
+  return keccak256(COMPOUND_SEED_DOMAIN + username + '::' + secret);
+}
+
 // Step 2: seed a .me kernel from username+secret, then bind it to this
 // physical gateway via cleaker(me, hostname) — "who am I HERE". Cleaker does
 // not add a second cryptographic identity system; it composes the namespace
@@ -61,6 +97,17 @@ export function deriveCleakerNode(username: string, secret: string, hostname: st
   const ME_RESEED = Symbol.for('me.internal.reseed');
   const me = new (MeKernel as any)();
   (me as any)[ME_RESEED](username, secret);
+  return cleaker(me as any, hostname);
+}
+
+// Same binding as deriveCleakerNode above, but starting from an already-live
+// `me` kernel instance (e.g. SeedSession.me from a real monad session)
+// instead of re-deriving one from username+secret. Lets a page that already
+// holds an open seed session (via this.gui/react's SeedSessionProvider)
+// produce the exact same kind of signing node deriveCleakerNode makes,
+// without importing `cleaker` itself as a direct dependency — this file is
+// the one place that owns the cleaker import.
+export function deriveCleakerNodeFromMe(me: unknown, hostname: string): unknown {
   return cleaker(me as any, hostname);
 }
 

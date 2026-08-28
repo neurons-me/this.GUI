@@ -40,6 +40,10 @@ export type CleakerSurfaceEntry = {
   rootName: string;
   usage?: {
     cpu: number;
+    /** 0-1 fraction of total RAM currently in use, when reported. */
+    memory?: number;
+    /** 0-1 fraction of the root filesystem currently in use, when reported. */
+    storage?: number;
     requestRatePer10s?: number;
   };
   pressure?: {

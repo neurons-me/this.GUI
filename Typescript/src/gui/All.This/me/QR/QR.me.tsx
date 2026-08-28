@@ -1,7 +1,10 @@
 import React from 'react';
+import { GlobalStyles } from '@mui/system';
 import { Avatar, Box, Typography } from '@/gui/Atoms';
 import { useGuiTheme } from '@/gui-internals/Hooks';
 import QR from '../QR';
+import PixelWordmark from './PixelWordmark';
+import { ME_WORDMARK_EMBED_BITMAP } from './meMark';
 
 export type QRmeProps = {
   value: string;
@@ -79,9 +82,14 @@ export default function QRme({
   const faceRotation = showingAvatar ? 180 : 0;
   const rootNodeId = String(dataGuiNodeId || 'QR.me');
   const rootNodeType = String(dataGuiComponent || 'QR.me');
+  // Small inset — just enough to keep the QR's own square corners (clipped
+  // by the circular mask below) from touching the outer rim border. A
+  // bigger inset here is what read as "too much white circle around it" —
+  // the square QR should nearly circumscribe the circle, not float inside
+  // it with room to spare.
   const qrInset = isTopbar
-    ? Math.max(3, Math.round(effectiveDiameter * 0.08))
-    : Math.max(6, Math.round(effectiveDiameter * 0.06));
+    ? Math.max(2, Math.round(effectiveDiameter * 0.02))
+    : Math.max(2, Math.round(effectiveDiameter * 0.015));
   const qrSize = effectiveDiameter - qrInset * 2;
   const qrBg = bg ?? theme.palette.background.paper;
   const qrFg = fg ?? theme.palette.primary.main;
@@ -114,8 +122,25 @@ export default function QRme({
   };
 
   return (
-    <Box
-      data-gui-node-id={rootNodeId}
+    <>
+      {/* Less "glowing ring," more "drifting in zero gravity" — a jellyfish
+          (medusa de mar) feel: a soft, mostly-static glow with a slow
+          vertical drift + gentle breathing scale, not an intensity pulse.
+          The earlier version animated opacity/glow-strength and read as
+          "too much glow" — the motion was the part that landed, so the
+          glow itself is now flat and weak and only the transform animates.
+          Scoped to the QR face only (not the avatar face, not the tiny
+          topbar variant). */}
+      <GlobalStyles
+        styles={{
+          '@keyframes qrmeGlow': {
+            '0%, 100%': { transform: 'translateY(0px) scale(1)' },
+            '50%': { transform: 'translateY(-5px) scale(1.012)' },
+          },
+        }}
+      />
+      <Box
+        data-gui-node-id={rootNodeId}
       data-gui-component={rootNodeType}
       className={className}
       role={clickFlip ? 'button' : undefined}
@@ -172,7 +197,12 @@ export default function QRme({
               ? `0 0 0 1px ${theme.palette.primary.main}22, 0 3px 8px rgba(0,0,0,0.14)`
               : showingAvatar
                 ? `0 0 0 1px ${theme.palette.primary.main}22, 0 12px 22px rgba(0,0,0,0.18)`
-                : `0 0 0 1px ${theme.palette.primary.main}33, 0 8px 18px rgba(0,0,0,0.14)`,
+                // Dialed way back from the earlier "stronger" pass, which
+                // read as too much glow — thin ring, soft low-alpha spread.
+                // The drift/scale animation (qrmeGlow, above) is doing the
+                // "alive" work now, not shadow intensity.
+                : `0 0 0 2px ${theme.palette.primary.main}, 0 0 14px 3px ${theme.palette.primary.main}40, 0 8px 18px rgba(0,0,0,0.14)`,
+            animation: !isTopbar && !showingAvatar ? 'qrmeGlow 5s ease-in-out infinite' : undefined,
             overflow: 'hidden',
           }}
         >
@@ -196,39 +226,59 @@ export default function QRme({
               bg={qrBg}
               fg={qrFg}
               ecc="H"
-              embedMode="positive-overlay"
-              embedScale={0.28}
+              // Default quietZone (4 modules) bakes a wide white margin
+              // into the QR's own square canvas, on top of the circular
+              // frame's own inset — combined, that's what read as "too
+              // much white circle around it." A slim 1-module zone (still
+              // real whitespace, just not padded) plus ECC=H keeps it
+              // scannable while letting the pattern reach much closer to
+              // the circular clip.
+              quietZone={1}
+              // No embed props at all here — QR.tsx's embedMode="negative-space"
+              // turned out to still draw the bitmap back as a filled shape
+              // (buildAsciiOverlayPath runs for both "negative-space" and
+              // "positive-overlay" — a real inconsistency in that
+              // component, not something this call site can configure its
+              // way around). A full, undisturbed QR underneath, with
+              // PixelWordmark sitting directly on top below (no backing
+              // patch — see that comment for why that's fine for
+              // scannability, not just a look).
             />
-            <Box
-              sx={{
+            <PixelWordmark
+              bitmap={ME_WORDMARK_EMBED_BITMAP}
+              pixelSize={Math.max(1.4, qrSize / 100)}
+              // Widens the glyphs without redrawing the bitmap — cells are
+              // wider than tall instead of square. Pushed further (1.5 -> 1.8).
+              pixelAspect={1.8}
+              fg={qrFg}
+              // No backing patch: an opaque patch was a clean geometric cut
+              // against the QR's noise — asked for it to just blend instead.
+              // Drawing the wordmark directly onto the QR (letting whatever
+              // sits underneath show through the gaps between strokes) is
+              // both the more organic look and, if anything, safer for
+              // scannability than the patch was — sparse text strokes cover
+              // less area than a solid filled shape did, well inside what
+              // ECC=H already tolerates. Stacked drop-shadows (qrBg) give
+              // it real separation from busy QR noise without reintroducing
+              // a hard geometric shape — each one follows the letters' own
+              // silhouette, not a box. Radii capped at 0.5x-2x the base
+              // pixel size (not 1x-4x, tried first) — at the compact default
+              // size the wordmark is only ~9px tall, so a 4x radius blurred
+              // way past the actual letters into a big vertical smear above
+              // and below; halving the ceiling keeps the glow close to the
+              // glyphs themselves at every size.
+              style={{
                 position: 'absolute',
-                left: '50%',
                 top: '50%',
+                left: '50%',
                 transform: 'translate(-50%, -50%)',
-                px: isTopbar ? 0.55 : 0.95,
-                py: isTopbar ? 0.12 : 0.35,
-                borderRadius: 999,
-                bgcolor: `${theme.palette.background.paper}EE`,
-                border: '1px solid',
-                borderColor: `${theme.palette.primary.main}44`,
-                backdropFilter: isTopbar ? 'blur(4px)' : 'blur(8px)',
-                boxShadow: isTopbar
-                  ? `0 1px 4px ${theme.palette.primary.main}18`
-                  : `0 2px 8px ${theme.palette.primary.main}22`,
+                filter: Array.from(
+                  { length: 4 },
+                  (_, i) => `drop-shadow(0 0 ${Math.max(1.4, qrSize / 100) * (i + 1) * 0.5}px ${qrBg})`,
+                ).join(' '),
               }}
-            >
-              <Typography
-                variant="caption"
-                sx={{
-                  color: 'primary.main',
-                  fontWeight: 800,
-                  fontSize: isTopbar ? '0.48rem' : resolvedDiameter <= 80 ? '0.62rem' : '0.68rem',
-                  letterSpacing: '0.08em',
-                }}
-              >
-                .me
-              </Typography>
-            </Box>
+              data-gui-node-id="QR.me.wordmark"
+            />
           </Box>
         </Box>
 
@@ -311,6 +361,7 @@ export default function QRme({
           ) : null}
         </Box>
       </Box>
-    </Box>
+      </Box>
+    </>
   );
 }

@@ -1,41 +1,130 @@
 // MeLauncher.tsx — sidebar bubble for the current .me session. Mirrors
 // ThemeLauncher/DevToolsLauncher's bubble+popper shape so all three sit
-// consistently in a LeftBar footer. This is the visible face of
-// SessionSurface: entering/leaving here is the single action that changes
+// consistently in a LeftBar footer. This is the visible face of the app's
+// identity session: entering/leaving here is the single action that changes
 // what the rest of the app can see and write — every view reading
-// useSessionSurface()/useMeValue() reacts to it, nothing else needs wiring.
+// useSeedSession()/useMeValue() reacts to it, nothing else needs wiring.
 //
-// Uses useOptionalSessionSurface() (not useSessionSurface()) so an app that
-// renders AppShell without SessionSurface (no identity concept at all)
-// doesn't crash — it just renders nothing, the same graceful-degradation
-// DevToolsLauncher already established for useOptionalSelection().
-import React, { useRef } from 'react';
+// Supports two shapes of "how do I get a seed", auto-detected from which
+// provider wraps the app (never both at once, so no explicit mode prop):
+//   - SessionSurface (useOptionalSessionSurface()) — one-click anonymous
+//     entry, seed generated client-side. FullTrailer-style apps use this.
+//   - Bare SeedSessionProvider with resolveSeedFromCredentials
+//     (useOptionalSeedSessionContext()) — username/secret form, seed
+//     derived from credentials server-side-equivalent (deriveCompoundSeed).
+//     netget-style gateway apps use this; this branch absorbs what used to
+//     be Domains.jsx's own UnlockDialog.
+// If neither provider is present, renders nothing — same
+// graceful-degradation DevToolsLauncher already established for
+// useOptionalSelection().
+import React, { useRef, useState } from 'react';
 import Box from '@/gui/Atoms/Box/Box';
 import Icon from '@/gui/Atoms/Icon/Icon';
 import Typography from '@/gui/Atoms/Typography/Typography';
 import Popper from '@mui/material/Popper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
+import TextField from '@mui/material/TextField';
 import { LeftSidebarContext } from '@/gui-internals/Contexts/LeftSidebarContext';
 import { useOptionalSessionSurface } from './SessionSurface';
+import { useOptionalSeedSessionContext } from './SeedSessionProvider';
 import { useLauncherPopover } from '@/runtime/launcherPopover';
+import CleakerQR from '@/gui/All.This/Cleaker/QR/CleakerQR';
 
 export interface MeLauncherProps {
   sx?: any;
+  /**
+   * Cleaker endpoint the credentials-branch QR resolves against (e.g.
+   * "http://local.cleaker" for a netget-hosted gateway). Defaults to
+   * CleakerQR's own default (https://cleaker.me) when omitted — only
+   * meaningful for the credentials branch; the SessionSurface branch has
+   * no username concept and never renders a QR.
+   */
+  cleakerEndpoint?: string;
 }
 
-const MeLauncher: React.FC<MeLauncherProps> = ({ sx }) => {
+// Adapts either provider's shape into what the bubble/popper below render —
+// keeps the JSX single-sourced instead of duplicating the whole component
+// per branch.
+export interface MeLauncherView {
+  authenticated: boolean;
+  label: string;
+  pending: boolean;
+  error: Error | null;
+  onEnter: () => Promise<void>;
+  onLogout: () => void;
+  // Credentials-branch only — null for SessionSurface's one-click shape.
+  credentialsForm: { username: string; setUsername: (v: string) => void; password: string; setPassword: (v: string) => void } | null;
+  // The full claimed namespace (e.g. "jabellae.local.cleaker") once
+  // authenticated — unlike credentialsForm.username, this survives
+  // SeedSessionProvider's remount (it comes straight from context state,
+  // same reasoning as `label`'s own identityHash). null before auth, and
+  // for SessionSurface's one-click shape (no separate username/root split
+  // there — `label`/`handle` already is the whole identity).
+  semanticNamespace: string | null;
+}
+
+// Exported so CleakerLanding.tsx (the full-page "Hello, I am .me" landing,
+// same session, different chrome) can share this exact adapter instead of
+// re-deriving it — one source of truth for "how do I get a seed" across
+// both the compact sidebar bubble and the landing page.
+export function useMeLauncherView(): MeLauncherView | null {
   const surface = useOptionalSessionSurface();
+  const seedSession = useOptionalSeedSessionContext();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  if (surface) {
+    const { authenticated, handle, pending, error, enter, logout } = surface;
+    return {
+      authenticated,
+      label: authenticated ? (handle || '') : 'Entrar con .me',
+      pending,
+      error,
+      onEnter: enter,
+      onLogout: logout,
+      credentialsForm: null,
+      semanticNamespace: null,
+    };
+  }
+
+  if (seedSession) {
+    const { authenticated, identityHash, semanticNamespace, pending, error, loginWithCredentials, logout } = seedSession;
+    return {
+      authenticated,
+      // The username itself doesn't survive SeedSessionProvider's remount
+      // on first-login (see SessionSurface.tsx's comment on the same
+      // issue) — identityHash comes from context state, so it does.
+      label: authenticated ? (identityHash ? identityHash.slice(0, 10) : 'Conectado') : 'Entrar con .me',
+      pending,
+      error,
+      onEnter: async () => {
+        await loginWithCredentials({ username: username.trim(), password });
+        setUsername('');
+        setPassword('');
+      },
+      onLogout: logout,
+      credentialsForm: { username, setUsername, password, setPassword },
+      semanticNamespace: authenticated ? semanticNamespace : null,
+    };
+  }
+
+  return null;
+}
+
+const MeLauncher: React.FC<MeLauncherProps> = ({ sx, cleakerEndpoint }) => {
+  const view = useMeLauncherView();
   const leftSidebarContext = React.useContext(LeftSidebarContext);
   const isRailView = leftSidebarContext?.view === 'rail';
   const [open, setOpen] = useLauncherPopover('me');
   const bubbleRef = useRef<HTMLDivElement>(null);
 
-  if (!surface) return null;
-  const { authenticated, handle, pending, error, enter, logout } = surface;
+  if (!view) return null;
+  const { authenticated, label: handle, pending, error, onEnter: enter, onLogout: logout, credentialsForm } = view;
 
   const openMenu = () => setOpen((v) => !v);
 
   const handleEnter = async () => {
+    if (credentialsForm && (!credentialsForm.username.trim() || !credentialsForm.password)) return;
     await enter();
     setOpen(false);
   };
@@ -204,6 +293,41 @@ const MeLauncher: React.FC<MeLauncherProps> = ({ sx }) => {
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
                   Sin sesión — datos públicos visibles, escritura deshabilitada.
                 </Typography>
+                {credentialsForm && (
+                  <>
+                    {credentialsForm.username.trim() && (
+                      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+                        <CleakerQR
+                          username={credentialsForm.username.trim()}
+                          endpoint={cleakerEndpoint}
+                          variant="icon"
+                          data-gui-node-id="MeLauncher.qr"
+                        />
+                      </Box>
+                    )}
+                    <TextField
+                      size="small"
+                      label="Username"
+                      value={credentialsForm.username}
+                      onChange={(e) => credentialsForm.setUsername(e.target.value)}
+                      disabled={pending}
+                      autoFocus
+                      fullWidth
+                      sx={{ mb: 1 }}
+                    />
+                    <TextField
+                      size="small"
+                      label="Secret"
+                      type="password"
+                      value={credentialsForm.password}
+                      onChange={(e) => credentialsForm.setPassword(e.target.value)}
+                      disabled={pending}
+                      onKeyDown={(e) => { if (e.key === 'Enter') handleEnter(); }}
+                      fullWidth
+                      sx={{ mb: 1 }}
+                    />
+                  </>
+                )}
                 {error && (
                   <Typography variant="body2" sx={{ color: 'error.main', mb: 1 }}>
                     {error.message}
@@ -213,7 +337,7 @@ const MeLauncher: React.FC<MeLauncherProps> = ({ sx }) => {
                   component="button"
                   type="button"
                   onClick={handleEnter}
-                  disabled={pending}
+                  disabled={pending || (!!credentialsForm && (!credentialsForm.username.trim() || !credentialsForm.password))}
                   sx={{
                     width: '100%',
                     display: 'flex',

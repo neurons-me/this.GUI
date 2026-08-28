@@ -19,6 +19,15 @@ import Theme from '@/gui/Theme/Theme';
 import Layout from '@/gui/Layout/Layout';
 import ThemeLauncher from '@/gui/Theme/Launcher/ThemeLauncher';
 import DevToolsLauncher from '@/runtime/DevToolsLauncher';
+import { LauncherPopoverProvider, useLauncherPopover } from '@/runtime/launcherPopover';
+import { useRegisterGuiNode } from '@/runtime/selection';
+import MeLauncher from '@/react/session/MeLauncher';
+import Box from '@/gui/Atoms/Box/Box';
+import Icon from '@/gui/Atoms/Icon/Icon';
+import Popper from '@mui/material/Popper';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import { SeedSessionProvider } from '@/react/session/SeedSessionProvider';
+import { SessionSurface } from '@/react/session/SessionSurface';
 import { MeRuntimeProvider } from '@/react/MeRuntimeProvider';
 import { declareApp } from '@/runtime/mountApp';
 import type { AppDeclaration } from '@/runtime/mountApp';
@@ -54,7 +63,7 @@ function createTemplateHomeSpec(): GuiSpecNode {
         },
         {
           type: 'Typography',
-          props: { variant: 'h5', children: 'Powered by this.gui' },
+          props: { variant: 'h5', children: 'Powered by .me' },
           provenance: {
             source: 'views/Home.ts#subtitle',
             note: 'Static template copy — no kernel binding.',
@@ -75,11 +84,123 @@ function createTemplateHomeSpec(): GuiSpecNode {
 
 const SPEC_REGISTRY = { Typography, Button, Hero, Stack };
 
+// ── Demo stand-in for netget's FrontendModeLauncher ────────────────────────
+// netget's own LeftBar footer rail has a 4th bubble between Theme and .me
+// (DevTools → Theme → Frontend Mode → .me — see App.jsx) that this.gui
+// itself does not export: FrontendModeLauncher lives entirely in netget's
+// own app (frontend_local/src/components/FrontendModeLauncher), because it
+// switches netget's own gateway between dev (Vite proxy) and production
+// (built dist) by calling netget's own `/frontend-mode` HTTP route — a
+// concept specific to that one deployment, not something a generic
+// `npx this.gui` scaffold has. It's reproduced here as a visual-only demo
+// (local state, no real fetch) purely so this story shows the same 4-bubble
+// rail shape netget's real sidebar has — not as a new this.gui export.
+function FrontendModeLauncherDemo() {
+  const [open, setOpen] = useLauncherPopover('frontendMode');
+  const [mode, setMode] = React.useState<'dev' | 'production'>('dev');
+  const bubbleRef = React.useRef<HTMLDivElement>(null);
+  useRegisterGuiNode('FrontendModeLauncherDemo.icon', 'FrontendModeLauncherDemoIcon');
+  const production = mode === 'production';
+
+  return (
+    <Box sx={{ width: '100%', minWidth: 0 }}>
+      <Box
+        ref={bubbleRef}
+        data-gui-node-id="FrontendModeLauncherDemo.icon"
+        role="button"
+        tabIndex={0}
+        aria-label="Open frontend mode switch (demo)"
+        onMouseEnter={() => setOpen(true)}
+        onClick={() => setOpen((v) => !v)}
+        sx={{ position: 'relative', width: 44, height: 44, flexShrink: 0, cursor: 'pointer' }}
+      >
+        <Box
+          sx={{
+            width: 44,
+            height: 44,
+            border: '1px solid',
+            borderColor: production ? 'success.main' : 'primary.main',
+            borderRadius: '999px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxSizing: 'border-box',
+            transition: 'border-color 120ms ease, transform 120ms ease',
+            '&:hover': { transform: 'translateY(-1px)' },
+          }}
+        >
+          <Icon name={production ? 'cloud_done' : 'bolt'} fontSize="1.3rem" iconColor={production ? 'success' : 'primary'} />
+        </Box>
+      </Box>
+
+      <Popper open={open} anchorEl={bubbleRef.current} placement="right-start" sx={{ zIndex: (theme: any) => theme.zIndex.drawer + 3 }}>
+        <ClickAwayListener onClickAway={() => setOpen(false)}>
+          <Box
+            sx={{
+              ml: 1,
+              p: 1.5,
+              minWidth: 240,
+              maxWidth: 300,
+              borderRadius: 1.5,
+              border: '1px solid',
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+              boxShadow: 4,
+            }}
+          >
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, display: 'block', mb: 1 }}>
+              Frontend Mode (demo)
+            </Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 1 }}>
+              Currently: {production ? 'Production' : 'Dev'}
+            </Typography>
+            {(['dev', 'production'] as const).map((candidate) => (
+              <Box
+                key={candidate}
+                component="button"
+                type="button"
+                onClick={() => setMode(candidate)}
+                sx={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  p: 0.75,
+                  mt: candidate === 'production' ? 0.75 : 0,
+                  border: '1px solid',
+                  borderColor: mode === candidate ? (candidate === 'production' ? 'success.main' : 'primary.main') : 'divider',
+                  borderRadius: 1,
+                  background: 'transparent',
+                  color: 'inherit',
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: 'action.hover' },
+                }}
+              >
+                <Icon
+                  name={candidate === 'production' ? 'cloud_done' : 'bolt'}
+                  fontSize="1rem"
+                  iconColor={mode === candidate ? (candidate === 'production' ? 'success' : 'primary') : undefined}
+                />
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  {candidate === 'production' ? 'Production (dist)' : 'Dev (Vite)'}
+                </Typography>
+              </Box>
+            ))}
+            <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 1, opacity: 0.7 }}>
+              Real version regenerates netget's gateway config and reloads OpenResty — this demo just flips local state.
+            </Typography>
+          </Box>
+        </ClickAwayListener>
+      </Popper>
+    </Box>
+  );
+}
+
 // ── Mirrors npx/template/src/app.ts ────────────────────────────────────────
 const templateApp: AppDeclaration = {
   id: 'my-app',
   namespace: 'apps.my-app',
-  title: 'GUI',
+  title: '.GUI',
   theme: 'neurons.me',
   views: { home: createTemplateHomeSpec },
 };
@@ -102,17 +223,40 @@ function QuickStartPreview() {
   return (
     <Theme initialThemeId={templateApp.theme}>
       <MeRuntimeProvider me={me}>
-        <Layout
-          LeftBar={{
-            initialView: 'expanded',
-            footerElements: [
-              { type: 'action', props: { element: <DevToolsLauncher /> } },
-              { type: 'action', props: { element: <ThemeLauncher /> } },
-            ],
-          }}
-        >
-          <SpecBoundary spec={homeSpec} registry={SPEC_REGISTRY} runtime={runtime} />
-        </Layout>
+        {/* SeedSessionProvider + SessionSurface: the one-click anonymous
+            session (client-generated seed, no credentials form) — the
+            default shape for a bare `npx this.gui <AppName>` scaffold with
+            no identity backend of its own yet. MeLauncher auto-detects this
+            provider and renders its own bubble+popover from it, same as
+            DevToolsLauncher/ThemeLauncher render from ambient context. */}
+        <SeedSessionProvider>
+          <SessionSurface claimRootNamespace="my-app.demo.local" seedStorageKey="this-gui-quickstart-demo-seed:v1">
+            {/* LauncherPopoverProvider: without it, each footer launcher's
+                useLauncherPopover() falls back to independent local state
+                (its own documented no-provider fallback) — nothing then
+                stops two of their poppers from being open at once. This
+                story never had it, for either of the two launchers it
+                already carried before MeLauncher was added — confirmed
+                live (DevTools + .me both open simultaneously) before this
+                was added. A real app built from this template needs this
+                too, the same way it needs Theme/MeRuntimeProvider. */}
+            <LauncherPopoverProvider>
+              <Layout
+                LeftBar={{
+                  initialView: 'expanded',
+                  footerElements: [
+                    { type: 'action', props: { element: <DevToolsLauncher /> } },
+                    { type: 'action', props: { element: <ThemeLauncher /> } },
+                    { type: 'action', props: { element: <FrontendModeLauncherDemo /> } },
+                    { type: 'action', props: { element: <MeLauncher /> } },
+                  ],
+                }}
+              >
+                <SpecBoundary spec={homeSpec} registry={SPEC_REGISTRY} runtime={runtime} />
+              </Layout>
+            </LauncherPopoverProvider>
+          </SessionSurface>
+        </SeedSessionProvider>
       </MeRuntimeProvider>
     </Theme>
   );

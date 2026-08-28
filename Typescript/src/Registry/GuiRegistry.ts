@@ -34,6 +34,7 @@ import MarkdownDocumentRegistration from "@/gui/Molecules/Documents/MarkdownDocu
 import DrawerResolver from "@/gui/Molecules/Drawer/Drawer.resolver";
 import AdminViewToggleResolver from "@/gui/Molecules/AdminViewToggle/AdminViewToggle.resolver";
 import InspectorToggleResolver from "@/gui/Molecules/InspectorToggle/InspectorToggle.resolver";
+import SearchFieldResolver from "@/gui/Molecules/SearchField/SearchField.resolver";
 import LineChartResolver from "@/gui/Compounds/Charts/LineChart/LineChart.resolver";
 import BarChartResolver from "@/gui/Compounds/Charts/BarChart/BarChart.resolver";
 import ChartSliderResolver from "@/gui/Compounds/Charts/Slider/Slider.resolver";
@@ -97,6 +98,7 @@ export const GuiRegistry = createRegistry([
   DrawerResolver,
   AdminViewToggleResolver,
   InspectorToggleResolver,
+  SearchFieldResolver,
   // Charts
   LineChartResolver,
   BarChartResolver,

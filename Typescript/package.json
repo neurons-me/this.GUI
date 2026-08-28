@@ -121,8 +121,6 @@
     "@lexical/rich-text": "^0.33.1",
     "@mediapipe/tasks-vision": "^0.10.22-rc.20250304",
     "@mui/icons-material": "^6.5.0",
-    "@mui/material": "^6.4.6",
-    "@mui/system": "^6.5.0",
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",
     "@uiw/react-markdown-preview": "^5.1.5",
@@ -154,6 +152,8 @@
   "devDependencies": {
     "vitepress": "^1.6.4",
     "vue": "^3.5.13",
+    "@mui/material": "^6.4.6",
+    "@mui/system": "^6.5.0",
     "@chromatic-com/storybook": "^5.2.1",
     "@eslint/js": "^9.21.0",
     "@mdx-js/loader": "^3.1.0",
@@ -198,7 +198,9 @@
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0",
-    "react-router-dom": "^6.0.0"
+    "react-router-dom": "^6.0.0",
+    "@mui/material": "^6.0.0",
+    "@mui/system": "^6.0.0"
   },
   "peerDependenciesMeta": {
     "react-router-dom": {

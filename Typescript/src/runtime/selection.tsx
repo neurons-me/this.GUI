@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import type { ResolvedNodeRecord } from './renderer';
+import type { GuiNodeProvenance } from '@/types/gui.types';
 import { selectionStore, type SelectionMeta } from './selectionStore';
 
 type SelectionState = {
@@ -42,21 +43,30 @@ export function useOptionalSelection(): SelectionState | undefined {
 // onNodeResolved records and calls this same registerNode/unregisterNode
 // pair) — so dev-tooling chrome like ThemeLauncher/DevToolsLauncher can
 // participate in the grid overlay and Semantic Inspector without being
-// backed by a real spec. `spec`/`provenance` are synthetic: the Inspector's
-// "Explain" panel will show them as "Not declared", same as any other
-// node with no provenance contract. No-ops outside a SelectionProvider.
+// backed by a real spec. `spec` is still synthetic (`{ type }`), but
+// `provenance` is a real opt-in contract: pass `{ semanticPath }` (or
+// `explainPath`) when this node actually corresponds to a kernel-backed
+// value, and the Inspector's "Explain" button lights up for it exactly the
+// same way a spec-rendered node's would. Omit it (or pass nothing) and the
+// node still shows in the grid/tree, just with Explain showing "Not
+// declared" — same as before. No-ops outside a SelectionProvider.
 // The caller still renders `data-gui-node-id={id}` / `data-gui-component`
 // on the element itself — this hook only adds it to the registry so
 // `getNode`/`selectNode`/the highlight effect can resolve it by id.
-export function useRegisterGuiNode(id: string, type: string, parentId?: string) {
+export function useRegisterGuiNode(
+  id: string,
+  type: string,
+  parentId?: string,
+  provenance?: GuiNodeProvenance
+) {
   const ctx = React.useContext(SelectionContext);
   const registerNode = ctx?.registerNode;
   const unregisterNode = ctx?.unregisterNode;
   React.useEffect(() => {
     if (!registerNode || !unregisterNode) return;
-    registerNode({ id, type, spec: { type }, path: id, parentId });
+    registerNode({ id, type, spec: { type }, path: id, parentId, provenance });
     return () => unregisterNode(id);
-  }, [registerNode, unregisterNode, id, type, parentId]);
+  }, [registerNode, unregisterNode, id, type, parentId, provenance]);
 }
 
 export function SelectionProvider({

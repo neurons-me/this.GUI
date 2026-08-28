@@ -216,6 +216,25 @@ export default defineConfig({
           return false;
         }
 
+        // @mui/material and @mui/system as peer deps (non-UMD only — UMD stays
+        // self-contained, same reasoning as router/JSX runtime above). Without
+        // this, this.gui bundles its OWN internal copy of MUI, and any
+        // consuming app's OWN @mui/material usage (a different module
+        // instance, with its own separate ThemeContext object) never sees
+        // values from this.gui's <Theme> — confirmed by testing: raw MUI
+        // components (Dialog, Table, Select) in a consuming app rendered with
+        // literal unmodified MUI defaults (#fff background, rgba(0,0,0,.87)
+        // text) regardless of the app's actual dark theme, because
+        // useTheme() was reading a completely different Context. Matched by
+        // prefix, not exact id, since MUI is imported via deep subpaths
+        // throughout this codebase (e.g. '@mui/material/Box').
+        if (!isUMD && (
+          id === '@mui/material' || id.startsWith('@mui/material/') ||
+          id === '@mui/system' || id.startsWith('@mui/system/')
+        )) {
+          return true;
+        }
+
         return baseExternalIds.has(id);
       },
       output: {

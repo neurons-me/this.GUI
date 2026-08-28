@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { alpha } from '@mui/material/styles';
+import { GlobalStyles } from '@mui/system';
 import Box from '@/gui/Atoms/Box/Box';
 import Button from '@/gui/Atoms/Button/Button';
 import Icon from '@/gui/Atoms/Icon/Icon';
@@ -9,6 +10,8 @@ import IconButton from '@/gui/Atoms/IconButton/IconButton';
 import TextField from '@/gui/Atoms/TextField/TextField';
 import Stack from '@/gui/Molecules/Stack/Stack';
 import QR from '../me/QR';
+import PixelWordmark from '../me/QR/PixelWordmark';
+import { ME_WORDMARK_EMBED_BITMAP } from '../me/QR/meMark';
 import ClaimSurface from './ClaimSurface';
 import GeneratePairingQR from './GeneratePairingQR';
 
@@ -181,7 +184,20 @@ export default function CleakerCard(props: CleakerCardProps) {
   } = props;
 
   return (
-    <Box
+    <>
+      {/* Same jellyfish-drift feel as QR.me.tsx — a soft, mostly-static
+          glow with a slow vertical drift + gentle breathing scale, not an
+          intensity pulse. See QR.me.tsx's comment: an earlier version
+          pulsed the glow's own strength and read as too much glow. */}
+      <GlobalStyles
+        styles={{
+          '@keyframes qrmeGlow': {
+            '0%, 100%': { transform: 'translateY(0px) scale(1)' },
+            '50%': { transform: 'translateY(-5px) scale(1.012)' },
+          },
+        }}
+      />
+      <Box
       {...nodeAttrs('card', 'Cleaker.Card')}
       sx={{
         border: `1px solid ${themedUi.shellBorder}`,
@@ -211,12 +227,19 @@ export default function CleakerCard(props: CleakerCardProps) {
               {...nodeAttrs('avatar', 'Cleaker.AvatarQR')}
               onClick={() => setAvatarExpanded((value) => !value)}
               sx={{
-                width: avatarExpanded ? 164 : 72,
-                height: avatarExpanded ? 164 : 72,
+                width: avatarExpanded ? 146 : 64,
+                height: avatarExpanded ? 146 : 64,
                 borderRadius: '50%',
                 overflow: 'hidden',
                 border: `1px solid ${themedUi.qrBorder}`,
-                boxShadow: avatarExpanded ? themedUi.qrExpandedShadow : themedUi.qrCollapsedShadow,
+                // Monad.tsx's own ring: a thicker solid ring plus a real
+                // colored glow, not just a soft dark drop shadow — same
+                // touch as QR.me.tsx's QR face.
+                // Dialed way back — see QR.me.tsx's matching comment: thin
+                // ring, soft low-alpha spread, the drift animation is doing
+                // the "alive" work now, not shadow intensity.
+                boxShadow: `0 0 0 2px ${theme.palette.primary.main}, 0 0 14px 3px ${theme.palette.primary.main}40, ${avatarExpanded ? '0 12px 22px rgba(0,0,0,0.18)' : '0 8px 18px rgba(0,0,0,0.14)'}`,
+                animation: 'qrmeGlow 5s ease-in-out infinite',
                 background: themedUi.qrBackground,
                 cursor: 'pointer',
                 transition: 'width 180ms ease, height 180ms ease, box-shadow 180ms ease',
@@ -224,35 +247,46 @@ export default function CleakerCard(props: CleakerCardProps) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexShrink: 0,
+                position: 'relative',
               }}
               aria-label={avatarExpanded ? 'Collapse avatar QR' : 'Expand avatar QR'}
               title={avatarExpanded ? 'Click to collapse' : 'Click to expand'}
             >
               <QR
                 value={activeNamespaceUrl || identityRoot}
-                size={avatarExpanded ? 164 : 72}
+                size={avatarExpanded ? 146 : 64}
                 fg={theme.palette.primary.main}
                 ecc="H"
-                embedMode="positive-overlay"
-                embedScale={0.36}
-                embedBitmap={[
-                  '000000000000000000000000000111111000',
-                  '000000000000000000000000000111111000',
-                  '111000111111111110000000111111111111',
-                  '111000111111111110000000111000000111',
-                  '111000111111111110000000111000000111',
-                  '000000111001111001110000111111111111',
-                  '000000111001111001110000111111111111',
-                  '000000111001111001110000111111111111',
-                  '000000111001111001110000111000000000',
-                  '000000111001111001110000111000000000',
-                  '000000000000000000000000000000000000',
-                  '000000111000000001110000111000000000',
-                  '000000111000000001110000111000000000',
-                  '000000111000000001110000111111111111',
-                  '000000111000000001110000000111111111',
-                  '000000111000000001110000000111111111',
-                ]}
+                // No embed props — see QR.me.tsx's comment: QR.tsx's
+                // embedMode="negative-space" still draws the bitmap back as
+                // a filled shape, so it can't produce a genuinely blank
+                // patch on its own. A full, undisturbed QR underneath, with
+                // PixelWordmark sitting directly on top (no backing patch —
+                // see QR.me.tsx's comment on why that's fine for scannability).
+              />
+              <PixelWordmark
+                bitmap={ME_WORDMARK_EMBED_BITMAP}
+                pixelSize={Math.max(1.4, (avatarExpanded ? 146 : 64) / 100)}
+                pixelAspect={1.8}
+                fg={theme.palette.primary.main}
+                // Stacked drop-shadows (see QR.me.tsx's comment) — follows
+                // the letters' own silhouette rather than a geometric
+                // patch, layered up to a properly opaque halo instead of
+                // one faint pass. Radii capped at 0.5x-2x the base pixel
+                // size (not 1x-4x) — see QR.me.tsx's comment on why the
+                // wider ceiling blurred well past the actual glyphs at
+                // compact sizes.
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  filter: Array.from(
+                    { length: 4 },
+                    (_, i) => `drop-shadow(0 0 ${Math.max(1.4, (avatarExpanded ? 146 : 64) / 100) * (i + 1) * 0.5}px ${theme.palette.background.paper})`,
+                  ).join(' '),
+                }}
+                data-gui-node-id="Cleaker.AvatarQR.wordmark"
               />
             </Box>
 
@@ -752,6 +786,7 @@ export default function CleakerCard(props: CleakerCardProps) {
           {pairingLinkError}
         </Box>
       ) : null}
-    </Box>
+      </Box>
+    </>
   );
 }

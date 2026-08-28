@@ -19,6 +19,7 @@ import QRme from '@/gui/All.This/me/QR/QR.me';
 import SearchField from '@/gui/Molecules/SearchField/SearchField';
 import type { SearchFieldResult } from '@/gui/Molecules/SearchField/SearchField.types';
 import UsersTable from '@/gui/All.This/Cleaker/Namespace/Usernames/Usernames';
+import BlocksTable from '@/gui/All.This/Cleaker/Namespace/Blocks/BlocksTable';
 import { buildCleakerNamespaceUrl } from '@/gui/All.This/Cleaker/namespaceExpression';
 import { setActiveNamespaceRoot } from '@/gui/All.This/Cleaker/signedRequest';
 import { useMeLauncherView } from './MeLauncher';
@@ -266,14 +267,17 @@ const CleakerLandingHome: React.FC<CleakerLandingProps> = ({ sx, cleakerEndpoint
         ...sx,
       }}
     >
-      {/* Users directory — mirrors the search icon's top-right placement on
-          the opposite corner. A real route (/users, client-side — see the
-          <Routes> wrapper below), not a modal or state toggle: it's an
-          NRP-addressable subtree (local.cleaker/users, cleaker.me/users),
-          so it needs its own URL. No sidebars/Layout shell here on
+      {/* Users directory + Blockchain — mirrors the search icon's top-right
+          placement on the opposite corner. Both are real routes (/users,
+          /blockchain — client-side, see the <Routes> wrapper below), not
+          modals or state toggles: each is an NRP-addressable subtree
+          (local.cleaker/users vs local.cleaker/blockchain — the claims
+          directory vs the full memory log behind it, see
+          modules/cleaker/Typescript/typedocs/Namespace-Is-Context.md §4),
+          so each needs its own URL. No sidebars/Layout shell here on
           purpose — this stays the same minimal, centered chrome as the
           landing page, just different center content. */}
-      <Box sx={{ position: 'fixed', top: { xs: 12, sm: 20 }, left: { xs: 12, sm: 20 }, zIndex: 20 }}>
+      <Box sx={{ position: 'fixed', top: { xs: 12, sm: 20 }, left: { xs: 12, sm: 20 }, zIndex: 20, display: 'flex', gap: 1 }}>
         <LinkIconButton
           component={Link}
           to="/users"
@@ -291,6 +295,24 @@ const CleakerLandingHome: React.FC<CleakerLandingProps> = ({ sx, cleakerEndpoint
           }}
         >
           <Icon name="group" fontSize={18 as any} />
+        </LinkIconButton>
+        <LinkIconButton
+          component={Link}
+          to="/blockchain"
+          aria-label="Browse the namespace blockchain"
+          data-gui-node-id="CleakerLanding.blockchainLink"
+          sx={{
+            width: 40,
+            height: 40,
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: '50%',
+            bgcolor: 'background.paper',
+            color: 'text.secondary',
+            '&:hover': { color: 'text.primary', borderColor: 'primary.main', bgcolor: 'action.hover' },
+          }}
+        >
+          <Icon name="link" fontSize={18 as any} />
         </LinkIconButton>
       </Box>
 
@@ -570,10 +592,61 @@ const CleakerUsersView: React.FC<CleakerLandingProps> = ({ sx, cleakerEndpoint }
   );
 };
 
+// The other half of the /blockchain route — same shell as CleakerUsersView
+// above (this route is its sibling, not its child: the claims directory
+// lists WHO claimed this namespace, the blockchain shows EVERYTHING ever
+// written to it — claim events, content, host self-report, all still shown
+// as one stream today, see Namespace-Is-Context.md §4 for the split this
+// should eventually render as). Reuses BlocksTable rather than building a
+// second ledger view.
+const CleakerBlockchainView: React.FC<CleakerLandingProps> = ({ sx, cleakerEndpoint }) => {
+  const resolvedEndpoint = cleakerEndpoint || DEFAULT_CLEAKER_ENDPOINT;
+  const namespaceRootLabel = useMemo(
+    () => deriveNamespaceRootLabel(resolvedEndpoint),
+    [resolvedEndpoint],
+  );
+
+  return (
+    <Box
+      data-gui-node-id="CleakerBlockchainView"
+      data-gui-component="CleakerBlockchainView"
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        px: 3,
+        py: 6,
+        boxSizing: 'border-box',
+        ...sx,
+      }}
+    >
+      <Box sx={{ width: '100%', maxWidth: 720 }}>
+        <LinkIconButton
+          component={Link}
+          to="/"
+          aria-label="Back to .me"
+          data-gui-node-id="CleakerBlockchainView.back"
+          sx={{ mb: 1, color: 'text.secondary', '&:hover': { color: 'text.primary' } }}
+        >
+          <Icon name="arrow_back" fontSize={18 as any} />
+        </LinkIconButton>
+        <BlocksTable
+          endpoint={getNetgetMonadOrigin()}
+          namespaceRootUrl={resolvedEndpoint}
+          namespaceLabel={namespaceRootLabel}
+          data-gui-node-id="CleakerBlockchainView.table"
+        />
+      </Box>
+    </Box>
+  );
+};
+
 const CleakerRoutes: React.FC<CleakerLandingProps> = (props) => (
   <Routes>
     <Route path="/" element={<CleakerLandingHome {...props} />} />
     <Route path="/users" element={<CleakerUsersView {...props} />} />
+    <Route path="/blockchain" element={<CleakerBlockchainView {...props} />} />
   </Routes>
 );
 

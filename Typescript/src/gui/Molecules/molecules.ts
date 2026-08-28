@@ -103,6 +103,8 @@ import AdminViewToggle from '@/gui/Molecules/AdminViewToggle/AdminViewToggle';
 export type { AdminViewToggleProps } from '@/gui/Molecules/AdminViewToggle/AdminViewToggle.types';
 import InspectorToggle from '@/gui/Molecules/InspectorToggle/InspectorToggle';
 export type { InspectorToggleProps } from '@/gui/Molecules/InspectorToggle/InspectorToggle.types';
+import SearchField from '@/gui/Molecules/SearchField/SearchField';
+export type { SearchFieldProps, SearchFieldResult } from '@/gui/Molecules/SearchField/SearchField.types';
 type MoleculesRegistry = {
   Dialog: typeof Dialog;
   Hero: typeof Hero;
@@ -131,6 +133,7 @@ type MoleculesRegistry = {
   Toolbar: typeof Toolbar;
   AdminViewToggle: typeof AdminViewToggle;
   InspectorToggle: typeof InspectorToggle;
+  SearchField: typeof SearchField;
 };
 
 const Molecules: MoleculesRegistry = {
@@ -159,6 +162,7 @@ const Molecules: MoleculesRegistry = {
   Toolbar,
   AdminViewToggle,
   InspectorToggle,
+  SearchField,
 };
 
 export {
@@ -187,6 +191,7 @@ export {
   Toolbar,
   AdminViewToggle,
   InspectorToggle,
+  SearchField,
 };
 
 export type {
