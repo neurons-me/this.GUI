@@ -330,16 +330,23 @@ export default function MainServerView({ endpoint, namespaceRootUrl, pollInterva
                   <Typography variant="body2">Owned by</Typography>
                   {state.ownerUsername ? (
                     (() => {
-                      // The full @user.namespace form, not the bare username —
-                      // "@suign" alone is ambiguous (the same handle can exist
-                      // claimed under a different namespace entirely, e.g.
-                      // @suign.cleaker.me); the namespace suffix is what
-                      // actually identifies which claimed .me this is.
+                      // Deliberately the bare @username, NOT @username.namespace.
+                      // ownerUsername comes from gateway-claims.json's own
+                      // netget.<gatewayId>.meta.owner ledger -- a gateway-
+                      // administration claim, a different system from a real
+                      // namespace claim (users.<owner> under a namespace
+                      // tree). identityHash is a portable fingerprint,
+                      // independent of any namespace; appending
+                      // servingNamespace here would assert a namespace
+                      // binding this data never actually verified. Everything
+                      // shown here (owner, ownerUsername, bootstrapped) comes
+                      // from a local snapshot with zero remote calls — that
+                      // has to stay true; a fabricated namespace suffix would
+                      // read as a live dependency on some other namespace
+                      // resolving, which is exactly the fragility to avoid.
                       const root = namespaceRootUrl || endpoint;
                       const url = root ? buildCleakerNamespaceUrl(root, state.ownerUsername) : '';
-                      const label = state.servingNamespace
-                        ? `@${state.ownerUsername}.${state.servingNamespace}`
-                        : `@${state.ownerUsername}`;
+                      const label = `@${state.ownerUsername}`;
                       return url ? (
                         <Typography
                           component="a"
