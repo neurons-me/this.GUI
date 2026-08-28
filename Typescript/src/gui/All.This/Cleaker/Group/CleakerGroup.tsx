@@ -19,6 +19,7 @@ import {
   normalizeGroupKey,
   openCreatedGroup,
 } from "../groupsApi";
+import { useOptionalSeedSessionContext } from "@/react/session/SeedSessionProvider";
 
 export interface CleakerGroupProps {
   endpoint?: string;
@@ -131,6 +132,11 @@ export default function CleakerGroup({
   kernel = null,
 }: CleakerGroupProps) {
   const theme = useGuiTheme();
+  // The real, logged-in cleaker session -- not `kernel` (createCleakerKernelContext's
+  // `new ME()` has no active expression, can't sign anything; see groupsApi.ts's
+  // CommitSigner). Group creation writes must be attributable to whoever is
+  // actually signed in, which is what this provides.
+  const session = useOptionalSeedSessionContext()?.session ?? null;
   const safeEndpoint = useMemo(() => normalizeEndpoint(endpoint), [endpoint]);
   const [bootstrapInfo, setBootstrapInfo] = useState<CleakerBootstrapInfo | null>(null);
   const [localKernel, setLocalKernel] = useState<CleakerKernelContext | null>(null);
@@ -383,6 +389,10 @@ export default function CleakerGroup({
       setCreateError("Group key is required");
       return;
     }
+    if (!session) {
+      setCreateError("Sign in to create a group");
+      return;
+    }
 
     try {
       setCreating(true);
@@ -392,6 +402,7 @@ export default function CleakerGroup({
         rootNamespace,
         groupKey: nextKey,
         name: nextName,
+        session,
       });
       setDraftName("");
       setDraftKey("");

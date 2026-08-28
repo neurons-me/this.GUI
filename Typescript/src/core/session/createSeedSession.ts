@@ -64,6 +64,19 @@ export interface SeedSession {
     value: TValue,
     options?: SeedSessionWriteOptions<TValue>,
   ): Promise<MonadWriteResult>;
+  /**
+   * Sign an arbitrary message with this session's own claim-identity key —
+   * the same Ed25519 key derived at claim time (this.me's
+   * deriveBranchProofSeed/importEd25519SigningKey/signEd25519Proof
+   * pipeline), not a new parallel credential. For write paths that need to
+   * prove authorship of specific content (e.g. monad's /api/v1/commit,
+   * which verifies via isNamespaceWriteAuthorized against the caller's own
+   * claim), sign the canonical JSON of that content and attach the result
+   * as `signature`. Optional because not every session backend can produce
+   * one (the plain REST createSeedSession.ts backend holds only a derived
+   * seed string, not necessarily one bound to an active expression).
+   */
+  signPayload?(message: string): Promise<string>;
   clear(): void;
   logout(): void;
 }

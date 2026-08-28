@@ -10,7 +10,11 @@
 // { secret, identityHash } — the server accepts an unverified, self-asserted
 // identityHash whenever no proof is present (confirmed live: claim/records.ts's
 // resolveClaimIdentity()). cleaker's claim path closes that gap.
-import ME from 'this.me';
+import ME, {
+  deriveBranchProofSeed,
+  importEd25519SigningKey,
+  signEd25519Proof,
+} from 'this.me';
 import cleaker from 'cleaker';
 import type { CleakerNode, MeKernel } from 'cleaker';
 import type { RuntimeAdapter } from '@/runtime/adapter';
@@ -272,6 +276,20 @@ export function createCleakerSession(options: CleakerSessionOptions): SeedSessio
         body: writeOptions.body,
         signal: writeOptions.signal,
       });
+    },
+    // Same branch-proof key derivation prove() uses internally
+    // (deriveBranchProofSeed(seed, expression) -> importEd25519SigningKey),
+    // now signing a caller-supplied message instead of prove()'s own fixed
+    // claim/challenge shape. secretForWire and username are already in
+    // closure scope from session creation -- the raw key never leaves this
+    // module, and this derives the exact same key the server already holds
+    // the public half of from claim time (see modules/monad's
+    // records.ts:rawEd25519PublicKeyToPem, and the cross-package
+    // compatibility test in modules/monad's crossPackageSigning.test.ts).
+    async signPayload(message: string): Promise<string> {
+      const branchSeed = await deriveBranchProofSeed(secretForWire, username);
+      const { privateKey } = await importEd25519SigningKey(branchSeed);
+      return signEd25519Proof(privateKey, message);
     },
     clear,
     logout() {
