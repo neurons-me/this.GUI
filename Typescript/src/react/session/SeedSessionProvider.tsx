@@ -9,14 +9,17 @@ import {
   type SeedSessionOptions,
   type SeedSessionWriteOptions,
 } from '@/core/session/createSeedSession';
+import { createCleakerSession } from '@/core/session/createCleakerSession';
 import {
   DEFAULT_MONAD_TRANSPORT_ORIGIN,
   normalizeMonadTransportOrigin,
+  MonadClientError,
   type MonadClaimResult,
   type MonadClientOptions,
   type MonadOpenResult,
   type MonadWriteResult,
 } from '@/core/session/monadClient';
+import { getActiveNamespaceRoot, fetchGatewayHostname } from '@/gui/All.This/Cleaker/signedRequest';
 
 export type SeedSessionStatus = 'idle' | 'pending' | 'ready' | 'error';
 
@@ -68,12 +71,35 @@ export type SeedSessionProviderProps = MonadClientOptions & {
    * `me` early enough to hand it to a runtime factory before login.
    */
   createRuntime?: CreateSeedSessionRuntime;
+  /**
+   * Which session implementation loginWithCredentials() builds on.
+   * - 'monad' (default, unchanged): createSeedSession() — REST-only
+   *   claimNamespace()/openNamespace() against monadClient.ts, sending only
+   *   { secret, identityHash }. Matches every existing real caller's
+   *   behavior today.
+   * - 'cleaker': createCleakerSession() — mounts a real ME(username,
+   *   password) kernel and claims/opens through cleaker's own
+   *   bindKernel(), which sends a real signed Ed25519 proof
+   *   (me['!'].prove()) alongside the secret. Closes a real gap the REST
+   *   path has: monad's claimNamespace() accepts a self-asserted,
+   *   unverified identityHash whenever no proof is present (confirmed live
+   *   this session). Only affects loginWithCredentials() — this backend
+   *   needs the raw username+password directly (it derives its own seed),
+   *   not a pre-resolved seed, so resolveSeedFromCredentials is bypassed
+   *   entirely when this is 'cleaker'. loginWithSeed() is unaffected either
+   *   way (it always uses createSeedSession()) since it starts from an
+   *   already-derived seed, which the cleaker path can't use (it needs
+   *   #activeExpression set from the real username, which only the
+   *   2-arg ME(who, secret) constructor does).
+   */
+  sessionBackend?: 'monad' | 'cleaker';
 };
 
 export type SeedSessionContextErrorCode =
   | 'SESSION_REQUIRED'
   | 'CREDENTIAL_LOGIN_UNAVAILABLE'
-  | 'INVALID_CREDENTIAL_RESULT';
+  | 'INVALID_CREDENTIAL_RESULT'
+  | 'INVALID_CLAIM';
 
 export class SeedSessionContextError<
   Code extends SeedSessionContextErrorCode = SeedSessionContextErrorCode,
@@ -127,7 +153,32 @@ type SessionSnapshot = {
   authenticated: boolean;
 };
 
-const SeedSessionContext = React.createContext<SeedSessionContextValue | null>(null);
+// This module ends up bundled into multiple separate chunks — this.gui
+// ships runtime/react/devtools/cleaker as SEPARATE entry points, and a
+// consumer pulled from each one drags its own copy of this file along with
+// it (Vite doesn't dedupe a shared internal module across entry-point
+// boundaries by default). Each copy calling React.createContext() at
+// module scope produces a DIFFERENT context object, so a <Provider> from
+// one copy (e.g. netget's App.jsx importing SeedSessionProvider via
+// `this.gui/react`) is invisible to useContext() reading a different
+// bundled copy (e.g. one pulled in via `this.gui` or `this.gui/devtools`)
+// — every consumer of the "wrong" copy sees `null`/defaults regardless of
+// what the real Provider was given, which is exactly what produced "No
+// credential resolver was provided to SeedSessionProvider" on a real
+// submit even though App.jsx correctly passes resolveSeedFromCredentials.
+// Same root cause, same fix already applied to runtime/launcherPopover.tsx
+// this session: key the actual Context object off `globalThis`, so every
+// bundled copy of this file resolves to the exact same object no matter
+// how many chunks it got duplicated into.
+const SEED_SESSION_CONTEXT_KEY = '__THIS_GUI_SEED_SESSION_CONTEXT__';
+
+function getSeedSessionContext(): React.Context<SeedSessionContextValue | null> {
+  const g = globalThis as unknown as Record<string, React.Context<SeedSessionContextValue | null>>;
+  if (!g[SEED_SESSION_CONTEXT_KEY]) {
+    g[SEED_SESSION_CONTEXT_KEY] = React.createContext<SeedSessionContextValue | null>(null);
+  }
+  return g[SEED_SESSION_CONTEXT_KEY];
+}
 
 function toError(error: unknown): Error {
   if (error instanceof Error) return error;
@@ -218,6 +269,29 @@ function normalizeCredentialResolution(
   };
 }
 
+// Shared by both backends (loginWithSeed's createSeedSession path and
+// loginWithCredentials' opt-in createCleakerSession path) so they produce
+// identical behavior and error messages regardless of which one is active.
+// Only a genuinely UNCLAIMED namespace falls through to claimAndOpen()
+// ("first claimer wins" — SessionSurface.enter() originally did this by
+// hand). A WRONG SECRET against an already-claimed namespace must NOT
+// attempt a claim (it used to, silently, producing a confusing raw
+// "CLAIM NAMESPACE_TAKEN") — surfaced instead as a clean "Invalid Claim".
+async function openOrClaim(session: SeedSession, namespace: string): Promise<void> {
+  try {
+    await session.open(namespace);
+  } catch (openError) {
+    const code = openError instanceof MonadClientError ? openError.code : null;
+    if (code === 'CLAIM_NOT_FOUND') {
+      await session.claimAndOpen(namespace);
+    } else if (code === 'IDENTITY_MISMATCH' || code === 'CLAIM_VERIFICATION_FAILED') {
+      throw new SeedSessionContextError('INVALID_CLAIM', 'Invalid Claim');
+    } else {
+      throw openError;
+    }
+  }
+}
+
 function buildSeedSessionOptions(
   input: SeedSessionLoginInput,
   defaults: Pick<SeedSessionProviderProps, 'fetchImpl' | 'headers'> & {
@@ -243,6 +317,7 @@ export function SeedSessionProvider({
   fetchImpl,
   headers,
   createRuntime,
+  sessionBackend = 'monad',
 }: SeedSessionProviderProps) {
   const defaultTransportOrigin = React.useMemo(
     () => normalizeMonadTransportOrigin(transportOrigin),
@@ -329,7 +404,7 @@ export function SeedSessionProvider({
 
       try {
         if (shouldAutoOpen && options.semanticNamespace) {
-          await nextSession.open(options.semanticNamespace);
+          await openOrClaim(nextSession, options.semanticNamespace);
         }
         commitSnapshot(nextSession);
         return nextSession;
@@ -346,8 +421,84 @@ export function SeedSessionProvider({
     [commitSnapshot, createRuntime, defaultTransportOrigin, fail, fetchImpl, headers],
   );
 
+  // sessionBackend: 'cleaker' path — bypasses resolveSeedFromCredentials
+  // entirely (it needs the raw username+password to construct
+  // ME(username, password) directly, not a pre-derived seed — see
+  // SeedSessionProviderProps.sessionBackend's doc comment for why). input.
+  // namespace is the ROOT here (e.g. "local.cleaker"), not the full
+  // <handle>.<root> loginWithSeed expects — createCleakerSession composes
+  // the full namespace itself via ME.bindNamespace().
+  const loginWithCleaker = React.useCallback(
+    async (input: SeedCredentialsLoginInput) => {
+      const username = String(input.username || input.email || '').trim();
+      const password = String(input.password || '');
+
+      if (!username) {
+        return fail(new SeedSessionContextError('INVALID_CREDENTIAL_RESULT', 'Username is required.'));
+      }
+
+      // Mirrors resolveNetgetSeedFromCredentials' own fallback chain
+      // (getActiveNamespaceRoot() || await fetchGatewayHostname()) so a
+      // caller like MeLauncher's onEnter — which never passes `namespace`,
+      // relying on the 'monad' backend's resolveSeedFromCredentials to fill
+      // it in — gets the same root resolved for free under this backend
+      // too, instead of needing backend-aware wiring at every call site.
+      let rootNamespace = String(input.namespace || '').trim() || getActiveNamespaceRoot() || '';
+      if (!rootNamespace) {
+        try {
+          rootNamespace = await fetchGatewayHostname();
+        } catch (cause) {
+          return fail(cause instanceof Error ? cause : new Error(String(cause)));
+        }
+      }
+      if (!rootNamespace) {
+        return fail(new SeedSessionContextError('INVALID_CREDENTIAL_RESULT', 'A root namespace is required.'));
+      }
+
+      React.startTransition(() => {
+        setStatus('pending');
+        setError(null);
+      });
+
+      const cleakerTransportOrigin = normalizeMonadTransportOrigin(
+        input.transportOrigin || defaultTransportOrigin,
+      );
+      const nextSession = createCleakerSession({
+        username,
+        password,
+        namespace: rootNamespace,
+        transportOrigin: cleakerTransportOrigin,
+        fetchImpl,
+        headers,
+      });
+      const fullNamespace = `${username.toLowerCase()}.${rootNamespace}`;
+      const shouldAutoOpen = input.autoOpen !== false;
+
+      try {
+        if (shouldAutoOpen) {
+          await openOrClaim(nextSession, fullNamespace);
+        }
+        commitSnapshot(nextSession);
+        return nextSession;
+      } catch (cause) {
+        try {
+          nextSession.logout();
+        } catch {
+          // Best-effort cleanup for failed logins.
+        }
+        commitSnapshot(null);
+        return fail(cause);
+      }
+    },
+    [commitSnapshot, defaultTransportOrigin, fail, fetchImpl, headers],
+  );
+
   const loginWithCredentials = React.useCallback(
     async (input: SeedCredentialsLoginInput) => {
+      if (sessionBackend === 'cleaker') {
+        return loginWithCleaker(input);
+      }
+
       if (typeof resolveSeedFromCredentials !== 'function') {
         return fail(new SeedSessionContextError(
           'CREDENTIAL_LOGIN_UNAVAILABLE',
@@ -378,7 +529,7 @@ export function SeedSessionProvider({
         return fail(cause);
       }
     },
-    [defaultTransportOrigin, fail, loginWithSeed, resolveSeedFromCredentials],
+    [defaultTransportOrigin, fail, loginWithCleaker, loginWithSeed, resolveSeedFromCredentials, sessionBackend],
   );
 
   const claim = React.useCallback(async (namespace: string) => {
@@ -546,6 +697,7 @@ export function SeedSessionProvider({
     children
   );
 
+  const SeedSessionContext = getSeedSessionContext();
   return (
     <SeedSessionContext.Provider value={contextValue}>
       {content}
@@ -554,5 +706,5 @@ export function SeedSessionProvider({
 }
 
 export function useOptionalSeedSessionContext(): SeedSessionContextValue | null {
-  return React.useContext(SeedSessionContext);
+  return React.useContext(getSeedSessionContext());
 }

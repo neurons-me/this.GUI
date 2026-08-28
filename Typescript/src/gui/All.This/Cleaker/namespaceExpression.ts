@@ -236,7 +236,14 @@ function deriveConstantAndPrefix(base: string): {
 
 function isLocalishHost(host: string): boolean {
   const normalized = String(host || "").trim().toLowerCase();
-  return /^(localhost|127(?:\.\d{1,3}){3}|0\.0\.0\.0)$/.test(normalized) || /\.local$/.test(normalized);
+  // local.host (canonical) / local.cleaker (legacy alias): a machine's own
+  // local .me kernel surface, addressed by name rather than by
+  // localhost/127.x — same "only one hostname actually resolves,
+  // subdomains don't" constraint as .local, so it gets the same /@handle
+  // path-form treatment (see /etc/hosts: no wildcard syntax exists there,
+  // only one static entry per host is possible).
+  return /^(localhost|127(?:\.\d{1,3}){3}|0\.0\.0\.0|local\.host|local\.cleaker)$/.test(normalized)
+    || /\.local$/.test(normalized);
 }
 
 function findSelectorValue(context: NamespaceSelectorSet, selectorType: string): string | null {

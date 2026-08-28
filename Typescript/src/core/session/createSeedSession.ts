@@ -116,7 +116,15 @@ function replayKernelMemories(me: MeLike, memories: MonadReplayMemory[]) {
   );
 }
 
-function writeLocalSessionState(
+// Exported so createCleakerSession.ts (the cleaker(me,...)-backed session
+// alternative — see SeedSessionProvider.tsx's pluggable backend) can write
+// the exact same local session-state paths after its own claim/open, rather
+// than re-deriving this convention. SeedSessionProvider.tsx's own
+// snapshotSession() reads `identity.session.authenticated`/`.openedAt`
+// straight off the session's kernel via session.read(...) — any session
+// implementation that skips this write silently reports "not authenticated"
+// even after a real, successful claim/open.
+export function writeLocalSessionState(
   me: MeLike,
   runtime: RuntimeAdapter,
   namespace: string | null,
